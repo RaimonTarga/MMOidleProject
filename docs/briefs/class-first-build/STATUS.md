@@ -3,8 +3,8 @@
 Kept by the conductor. Plan: [class-first-build-plan-2026-10-14.md](../class-first-build-plan-2026-10-14.md).
 Integration branch `rework/class-first` (conductor worktree `../mmo-rework`).
 
-**Updated:** 2026-10-15 (overnight, later): Phase 0 done but the F7 panel (Grok). The Striker track has started: the Order runs at T1 (CS.1, CS.2) and its editor's view model is in (CS.5 conductor half). DOC-1 and ICONS-2B merged.
-**Baseline:** `rework/class-first` at `c3908184`: full suite **335/335**, typecheck clean (verified in `../mmo-rw-verify2`).
+**Updated:** 2026-10-15 (morning): the Striker's and the Squire's T1 runtimes are in (CS.1–CS.4, CQ.1–CQ.4, with their editor view models); S1–S3 and F6 done; every overnight delegate task merged. Waiting on the designer: S4 (in-combat Recovery baseline), S7 (charm bases), moved gear lines.
+**Baseline:** `rework/class-first` at `e6cb72ed`: full suite **338/338**, typecheck clean (verified in `../mmo-rw-verify2`).
 Codex hit rate limits on 2026-10-14, so D5, K1–K3, D1, T0 and D2 ran as Claude subagents of the conductor (same briefs, same worktrees).
 
 ## Open tasks
@@ -13,10 +13,13 @@ Codex hit rate limits on 2026-10-14, so D5, K1–K3, D1, T0 and D2 ran as Claude
 |---|---|---|---|---|
 | F7-PANEL | [The class screen's shell (client)](F7-class-screen-panel.md) | Grok | `../mmo-rw-f7-panel` · `rw/f7-panel` | ready |
 | CS6-ROUTE | [The Striker's guided tutorial and bot route](CS6-striker-route.md) | Codex or Grok | `../mmo-rw-cs6-route` · `rw/cs6-route` | ready |
-| ICONS-2A | [Striker, Squire, Apprentice T2–T4 pieces + discipline crests](ICONS-2.md) | Codex (image generation) | `../mmo-rw-icons-2a` · `rw/icons-2a` | running |
+| CQ6-ROUTE | [The Squire's guided tutorial and bot route](CQ-squire-delegates.md) | Codex or Grok | `../mmo-rw-cq6-route` · `rw/cq6-route` | ready |
+| CQ7-CLEANUP | [Delete the Squire's old frame and path content](CQ-squire-delegates.md) | Codex or Grok | `../mmo-rw-cq7-cleanup` · `rw/cq7-cleanup` | ready once CS7 is merged (they trim the same key and view files) |
+| CS7-CLEANUP | [Delete the Striker's old frame and path content](CS7-striker-cleanup.md) | Claude subagent | `../mmo-rw-cs7-cleanup` · `rw/cs7-cleanup` | running |
 
-They touch disjoint files, so all can run at once. CS5-UI (the Order editor and beat strip) is
-briefed and waits for F7-PANEL: the conductor creates its worktree once the panel is merged.
+F7-PANEL, CS6-ROUTE and CQ6-ROUTE touch disjoint files and can run at once. CS5-UI and CQ5-UI
+(the two class editors and their HUD pieces) are briefed and wait for F7-PANEL: the conductor
+creates their worktrees once the panel is merged.
 
 ## Paste-ready prompts
 
@@ -42,29 +45,34 @@ never run pnpm install. When you're done, commit on your branch, write your repo
 where the brief says, and tell me.
 ```
 
-**ICONS-2A (Codex, image generation)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-icons-2a`:
+**CQ6-ROUTE (Codex or Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-cq6-route`:
 
 ```text
-You're making game icons for the MMO Idle class-first rework, in this folder, on branch
-rw/icons-2a. First read docs/briefs/class-first-build/AGENT-RULES.md, then do the part
-marked ICONS-2A in docs/briefs/class-first-build/ICONS-2.md with your built-in image
-generation, one image per call. The new icons must look like they belong to the set the
-game already ships, above all the Tier 1 class icons in
-client/public/assets/concept-icons/class-pieces/ and .../trophies/: the same
-semi-painterly style, rim lighting, level of detail and near-black backdrop. Follow
-ICONS-T1.md's style rules and design_docs/visual_and_aesthetics_design/openai-icon-generation.md,
-and attach the reference icons the brief lists to every generation. Check every icon at
-its in-game size and regenerate any that don't read. When you're done, commit on your
-branch, write your report where the brief says, and tell me.
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/cq6-route. First read docs/briefs/class-first-build/AGENT-RULES.md, then do the
+task marked CQ6-ROUTE in docs/briefs/class-first-build/CQ-squire-delegates.md. Work only
+in this folder; never run pnpm install. When you're done, commit on your branch, write your
+report where the brief says, and tell me.
+```
+
+**CQ7-CLEANUP (Codex or Grok, after CS7 is merged)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-cq7-cleanup`:
+
+```text
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/cq7-cleanup. First run `git merge --ff-only rework/class-first` to pick up the
+conductor's latest. Then read docs/briefs/class-first-build/AGENT-RULES.md and do the
+task marked CQ7-CLEANUP in docs/briefs/class-first-build/CQ-squire-delegates.md. Work only
+in this folder; never run pnpm install. When you're done, commit on your branch, write your
+report where the brief says, and tell me.
 ```
 
 ## Queued (briefs written when their inputs land)
 
 | ID | Task | Agent | Waits for |
 |---|---|---|---|
-| CS.4 | The Striker's T1 gear: weapon jobs and armor/charm line runtime | Conductor | in progress; Rhythm and Cairnstone wait on S4 |
+| CQ5-UI | [The Response rules editor, Resolve pips, callouts](CQ-squire-delegates.md) | Grok | F7-PANEL merged |
+| Next class | The Conduit (the old slice plan's map), then Slinger, Spirit, Apprentice | Conductor | — |
 | CS5-UI | [The Order editor and beat strip](CS5-striker-ui.md) | Grok | F7-PANEL merged |
-| S2 | The rest of the T1 moments: enemy-casts, telegraph-at-me, target-closing-fast | Conductor | — |
 | S4 | Recovery and flow bound to a state (the charm-line mechanism) | Conductor | the designer: what in-combat Recovery a class has before its charm line (the Striker's pulse is gone; "Recovery doubles/triples" lines need a base to multiply) |
 | S7 | XC1: the recharging barrier leaves the shared charms | Grok | the designer: what the Mountain and Tundra charm bases carry instead |
 
@@ -106,6 +114,14 @@ branch, write your report where the brief says, and tell me.
   (`STRIKER_TECHNIQUE_SWING`). Mastery picks the first techniques in beat order (stand-in: the
   Order doesn't say which one a step masters; T1 never masters). Sunder II's plating loss has no
   number yet.
+- **Recovery lines (designer, S4):** Rhythm, Cairnstone (Striker), Counterbalance, Stone Patience
+  (Squire) say Recovery "doubles"/"triples", but a Striker or Squire has no in-combat Recovery
+  running before its charm line (the Striker's pulse is gone; the Squire's share moved to Old
+  Guard). What do they multiply? Their gear entries stay empty until then.
+- **Planted:** the brace resists knockback only up to the existing forced-movement cap (the
+  bible says "can't be knocked back"); stuns are refused outright.
+- **Striker crests:** the three Striker discipline crests are the old frame crests (shield on a
+  plate) and look different from the 15 new ones; redraw them in the new crest style?
 - **From S1:** monster-ability effects (generic slow/antiheal/sunder) and ambient ramps still
   reach players only; summons show no statuses on the client yet (the Conduit HUD decides).
 - **From D2:** `CrestDiamond` (primitive + CSS) is unused; `resolveFinalDamageMultipliers`
@@ -128,6 +144,11 @@ branch, write your report where the brief says, and tell me.
 | I3 | Bench fights real T1 nodes; `bench:summon-cap` (Grok) | `d1ba3b3b` |
 | K4–K6 | Slinger, Spirit, Conduit kits through T4 (Grok); 11 undesigned trophy ranks given placeholders | `07e6d86f`, `68711dd9`, `29b72c28`, `78d2fbb4` |
 | ICONS-T1 | 60 Tier 1 icons, 52 generated (Codex image generation); full-res sources kept in the main checkout's `art/candidates/openai-icons/` | `d04a6a85` |
+| CQ.1, CQ.2, CQ.4 | The Squire: Resolve (raw hits, trickle, refunds), the slam and its hold rule, the five T1 responses, the five T1 trophies, the T1 gear lines; `C-squire.md` | `8d9ca7b1`, `3fccd177`, `e6cb72ed` |
+| CQ.5 (view model) | `composeResponsesView`, `withRule`, `withGroundTelegraphs`, `withHoldSlam`; Resolve on the player view | `bd30623b`, `2f5db102` |
+| CS.4 | The Striker's T1 gear: weapon jobs, armor and charm lines (`striker.*` keys, three generic `defense.*` keys) | `216e27c3` |
+| S2 | The last T1 moments: enemy-casts, telegraph-at-me, target-closing-fast | `c619c262` |
+| ICONS-2A | 52 Striker/Squire/Apprentice T2–T4 pieces, 15 discipline crests (Codex) | `rw/icons-2a` merge |
 | CS.1, CS.2 | The Striker's Order at runtime with its T1 techniques (Sweep, Hamstring, Rend, Coil, Focus) and trophies (Wide Arc, Double Slash, Festering Cut, Skyfall, Sunder); class casts on the cast machine; the root's Recovery pulse removed | `8dc3fa6a`, `a311329f` |
 | CS.5 (view model) | `composeOrderView`, `withBeat`, `withRelic` | `eb43c183` |
 | DOC-1 | 15 docs archived, ~30 living docs corrected (Grok); runic attunement archived after D3 | `rw/doc-1` merge, `6be2ae0f` |
