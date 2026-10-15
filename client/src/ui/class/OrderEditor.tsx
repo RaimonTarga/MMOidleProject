@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import type { ClassScreenView, OrderBeatView } from '@mmo-idle/shared';
 import { STRIKER_KIT, withBeat } from '@mmo-idle/shared';
-import { disciplineIdAtom, playerTierAtom, specializationIdAtom } from '../../hud/atoms';
+import { disciplineIdAtom, playerTierAtom, specializationIdAtom, unlockedSkillsAtom } from '../../hud/atoms';
 import { hudBus } from '../../hudBus';
 import { GameIcon } from '../GameIcon';
 import { classPieceIconSource, trophyIconSource } from '../conceptIcons';
@@ -54,6 +54,7 @@ export function OrderEditor({ view }: { view: ClassScreenView }) {
   const disciplineId = useAtomValue(disciplineIdAtom);
   const specializationId = useAtomValue(specializationIdAtom);
   const playerTier = useAtomValue(playerTierAtom);
+  const unlockedSkills = useAtomValue(unlockedSkillsAtom);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [fullNotice, setFullNotice] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -77,6 +78,8 @@ export function OrderEditor({ view }: { view: ClassScreenView }) {
 
   const discipline = STRIKER_KIT.disciplines.find((entry) => entry.id === disciplineId) ?? null;
   const specialization = STRIKER_KIT.specializations.find((entry) => entry.id === specializationId) ?? null;
+  // The T4 leaf: the picked discipline's leaf among the unlocked skills (one pick per tier so far).
+  const leaf = STRIKER_KIT.leaves.find((entry) => entry.disciplineId === disciplineId && unlockedSkills.includes(entry.id)) ?? null;
   const config = view.config?.system.kind === 'order' ? view.config : null;
   const openBeat = openIndex === null ? null : order.beats.find((beat) => beat.index === openIndex) ?? null;
   const slots = order.slots;
@@ -132,6 +135,16 @@ export function OrderEditor({ view }: { view: ClassScreenView }) {
             <p className="order-editor__discipline-hint" role="status">
               Pick a specialization in the Passive Tree: three for {discipline.name}. It bends what your discipline
               builds.
+            </p>
+          ) : null}
+          {leaf ? (
+            <>
+              <h4 className="class-panel__subheading">{`Leaf: ${leaf.name}`}</h4>
+              <p className="class-panel__line">{leaf.text}</p>
+            </>
+          ) : playerTier >= 4 && specialization ? (
+            <p className="order-editor__discipline-hint" role="status">
+              Pick a leaf in the Passive Tree: three for {discipline.name}, each an answer to what kills you.
             </p>
           ) : null}
         </div>

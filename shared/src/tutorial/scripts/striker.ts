@@ -17,6 +17,10 @@
  * After that comes the Tier 3 stretch (T3-W2, bible §12.6 and §12.16), the same shape over the
  * seven T3 zones: the specialization pick first (again a pointer), then one lesson and one
  * boss line per zone, including the two new zones, the Tundra and the Volcanic.
+ *
+ * Last comes the Tier 4 stretch (T4-W2, bible §12.7 and §12.16): the leaf pick first (a pointer, as the
+ * discipline and specialization picks are), then one lesson and one boss line per zone, including the two
+ * new zones, the Wasteland (`graveyard`) and the Trench.
  */
 import { biomeLevelCap } from '../../config/gameConfig';
 import { absoluteZoneLevel } from '../../classKits/registry';
@@ -134,6 +138,7 @@ export function buildStrikerBeats(): TutorialBeat[] {
     sealBeat(seal, 'farewell'),
     ...buildStrikerTierTwoBeats(),
     ...buildStrikerTierThreeBeats(),
+    ...buildStrikerTierFourBeats(),
   ];
 }
 
@@ -220,7 +225,8 @@ function buildTierBeats(
     const zoneLines = lines[biomeGroup];
     const lessonLevel = lessonLevelAt(biomeGroup, tier);
     const cap = biomeLevelCap(tier, biomeGroup);
-    const chapter = `Tier ${tier}: ${biomeGroup.charAt(0).toUpperCase()}${biomeGroup.slice(1)}`;
+    const zoneName = biomeGroup === 'graveyard' ? 'Wasteland' : `${biomeGroup.charAt(0).toUpperCase()}${biomeGroup.slice(1)}`;
+    const chapter = `Tier ${tier}: ${zoneName}`;
     beats.push(
       {
         id: `striker${tier}:${biomeGroup}`,
@@ -308,4 +314,59 @@ export function buildStrikerTierThreeBeats(): TutorialBeat[] {
 /** The biome level (as the game counts it) at which a T3 zone teaches its lesson. */
 export function strikerT3LessonLevel(biomeGroup: T3Zone): number {
   return lessonLevelAt(biomeGroup, 3);
+}
+
+/** The Tier 4 zones in the guide's order: the Swamp and Cave have retired; the Wasteland and Trench are new. */
+export const STRIKER_T4_ZONES = ['mountain', 'tundra', 'jungle', 'desert', 'volcanic', 'graveyard', 'trench'] as const;
+type T4Zone = typeof STRIKER_T4_ZONES[number];
+
+const LEAF_SAY =
+  'Tier 4. Your next skill point is a leaf: three for your discipline, each an answer to what kills you. Pick one in the Passive Tree.';
+
+const T4_LINES: Readonly<Record<T4Zone, TierTwoLine>> = {
+  mountain: {
+    arrive: LEAF_SAY,
+    lesson: 'Avalanche is learned: a wind-up that charges through a line of enemies and knocks them down.',
+    boss: 'The Mountain boss is open again. Win, and Skyfall ranks up once more: the blow hits harder still.',
+  },
+  tundra: {
+    arrive: 'The Tundra is tougher now. Fight through it.',
+    lesson: 'Frostbind is learned: ice roots the target and everything around it.',
+    boss: 'The Tundra boss is open again. Win, and Hoarfrost ranks up: a bigger slow step, and a deeper cap.',
+  },
+  jungle: {
+    arrive: 'The Jungle is tougher now. Fight through it.',
+    lesson: 'Bloodrush is learned: no cast, and your beats come faster for the rest of the combo.',
+    boss: 'The Jungle boss is open again. Win, and Pounce ranks up: the leap and the landing hit harder.',
+  },
+  desert: {
+    arrive: 'The Desert is tougher now. Fight through it.',
+    lesson: 'Coup de Grâce is learned: you hit much harder against a target low on HP.',
+    boss: 'The Desert boss is open again. Win, and Verdict ranks up: it executes at a higher threshold.',
+  },
+  volcanic: {
+    arrive: 'The Volcanic is tougher now. Fight through it.',
+    lesson: 'Magma Breaker is learned: a wind-up that blows the ground apart, harder against shelled enemies.',
+    boss: 'The Volcanic boss is open again. Win, and Eruption ranks up: a wider blast and a heavier splash.',
+  },
+  graveyard: {
+    arrive: "The Wasteland is new: the dead rise again, and the Swamp's gear jobs have moved here. Fight in.",
+    lesson: 'Reaping Arc is learned: a wide sweep that cuts every enemy around you.',
+    boss: 'The Wasteland boss is open. Win, and you earn Grave Toll: your next combo hits harder for every enemy on you.',
+  },
+  trench: {
+    arrive: "The Trench is new: crushing depths and slow, heavy prey. The Cave's gear jobs have moved here. Fight in.",
+    lesson: 'Pressure Point is learned: it arms your next finisher on this target.',
+    boss: 'The Trench boss is open. Win, and you earn Deep Pressure: your finisher hits hardest against a healthy target.',
+  },
+};
+
+/** The Tier 4 stretch, after the Tier 3 one. */
+export function buildStrikerTierFourBeats(): TutorialBeat[] {
+  return buildTierBeats(4, STRIKER_T4_ZONES, T4_LINES);
+}
+
+/** The biome level (as the game counts it) at which a T4 zone teaches its lesson. */
+export function strikerT4LessonLevel(biomeGroup: T4Zone): number {
+  return lessonLevelAt(biomeGroup, 4);
 }
