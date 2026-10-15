@@ -9,9 +9,8 @@ import { elementColor } from './elementTint';
  *
  * The `dot-tick` branch in combatFx only ever drew three of the six elements —
  * `conflagration`, `lightning` (Tempest's storm) and `doom` (Cultist). Every
- * other DoT tick produced a damage NUMBER and nothing else, which is why
- * Hemomancer's bleed (a finisher that deals no direct damage at all, converting
- * 150% into a wound) had no visual presence whatsoever.
+ * other DoT tick produced a damage NUMBER and nothing else, so a bleed (the
+ * Striker's Rend, Festering Cut's rot) had no visual presence whatsoever.
  *
  * These are deliberately SMALL. A tick fires roughly once a second per affected
  * target and there can be many affected targets at once, so each one is a single
