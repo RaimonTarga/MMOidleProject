@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState, useRef, type ReactNode } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { hudBus } from '../hudBus';
 import { ClassPanel } from '../ui/class/ClassPanel';
+import { useThresholdsView } from '../ui/class/useThresholdsView';
+import { StormGauge } from './StormGauge';
 import { useClassScreen } from '../ui/class/useClassScreen';
 import { classEmblemIconSource } from '../ui/conceptIcons';
 import { SkillTreePanel } from '../ui/SkillTreePanel';
@@ -121,6 +123,7 @@ function MobileHUDContent() {
   const eligibleRecipeKeys = useMemo(() => eligibleMakeKeys(makeEntries), [makeEntries]);
   const playerId = useAtomValue(playerIdAtom);
   const classScreen = useClassScreen();
+  const thresholds = useThresholdsView();
   const newRecipes = useNewEntries('craft', playerId, eligibleRecipeKeys);
 
   // ── HP-bar layers (all as % of maxHp), mirroring the desktop crown ──
@@ -325,7 +328,7 @@ function MobileHUDContent() {
           <span className={`status-dot ${status}`} />
           <span className="mhud-top__name">{playerName ?? '…'}</span>
           <div className="mhud-hp">
-            {barrierMax > 0 && (
+            {thresholds ? <StormGauge view={thresholds} /> : barrierMax > 0 && (
               <div className={`hp-shield-strip${barrierRecharging ? ' hp-shield-strip--recharging' : ''}`}>
                 <div className="hp-shield-strip__fill" style={{ width: `${barrierPct}%` }} />
               </div>

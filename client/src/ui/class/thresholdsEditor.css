@@ -1,0 +1,89 @@
+.thresholds-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.thresholds-editor__budget,
+.thresholds-editor__pips,
+.thresholds-editor__choices {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.thresholds-editor__budget {
+  color: var(--hud-text);
+  font-size: 13px;
+}
+
+.thresholds-editor__pips i {
+  width: 8px;
+  height: 12px;
+  border: 1px solid var(--hud-primary-strong);
+  background: var(--hud-primary);
+}
+
+.thresholds-editor__floor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  color: var(--hud-text);
+  font: 12px/1.3 monospace;
+}
+
+.thresholds-editor__floor input {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--hud-warning);
+}
+
+.thresholds-editor__choice {
+  min-height: 32px;
+  padding: 4px 8px;
+  background: var(--hud-material-control);
+  border-top: 1px solid var(--hud-edge-light);
+  border-left: 1px solid var(--hud-edge-light);
+  border-right: 1px solid var(--hud-edge-dark);
+  border-bottom: 1px solid var(--hud-edge-dark);
+  border-radius: 2px;
+  color: var(--hud-text);
+  font: 12px/1.3 monospace;
+  cursor: pointer;
+}
+
+.thresholds-editor__choice:hover:not(:disabled),
+.thresholds-editor__choice[aria-pressed='true'] {
+  border-color: var(--hud-primary);
+  color: var(--hud-primary-strong);
+}
+
+.thresholds-editor__choice:focus-visible,
+.thresholds-editor__floor input:focus-visible {
+  outline: var(--hud-focus-width) solid var(--hud-focus-color);
+  outline-offset: 2px;
+}
+
+.thresholds-editor__choice:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.thresholds-editor__problems {
+  margin: 4px 0 0;
+  padding: 8px 10px 8px 22px;
+  background: color-mix(in srgb, var(--hud-danger, #d9534f) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--hud-danger, #d9534f) 70%, transparent);
+  border-radius: 2px;
+  color: color-mix(in srgb, var(--hud-danger, #d9534f) 80%, #fff);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+@media (max-width: 560px) {
+  .thresholds-editor__choice {
+    min-height: 40px;
+  }
+}
