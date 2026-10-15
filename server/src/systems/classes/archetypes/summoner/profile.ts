@@ -28,6 +28,9 @@ function rosterOf(owner: PlayerEntity): readonly RosterBody[] | undefined {
       mode: piece.mode,
       row: piece.row,
       body: piece.body,
+      hpMult: piece.params.hpMult,
+      damageMult: piece.params.damageMult,
+      cooldownMult: piece.params.cooldownMult,
     });
   }
   return bodies;

@@ -24,6 +24,10 @@ import {
 export interface RosterBody {
   pieceId: string;
   family: 'generic' | 'tank' | 'damage' | 'support';
+  /** The piece's stat multipliers (kit params `hpMult`, `damageMult`, `cooldownMult`); 1 when absent. */
+  hpMult?: number;
+  damageMult?: number;
+  cooldownMult?: number;
   /** What it costs to field; a slot's share of the formation's offense and HP follows it. */
   command: number;
   mode: SummonerAttackMode;
@@ -56,6 +60,10 @@ export interface SummonerSlotProfile {
   body?: MinionMonsterType;
   /** Roster slots only: how far this body attacks from (its mode's range). */
   attackRange?: number;
+  /** Roster slots only: this body's own multipliers on HP, damage and attack cooldown. */
+  hpMult?: number;
+  damageMult?: number;
+  cooldownMult?: number;
 }
 
 export interface SummonerProfile {
@@ -134,6 +142,9 @@ function rosterSlots(roster: readonly RosterBody[]): SummonerSlotProfile[] {
       row: body.row,
       mode: body.mode,
       body: body.body,
+      hpMult: body.hpMult ?? 1,
+      damageMult: body.damageMult ?? 1,
+      cooldownMult: body.cooldownMult ?? 1,
       attackRange: body.mode === 'melee' ? SUMMONER_BASELINE_ATTACK_RANGE : SUMMONER_RANGE_TUNING[MODE_RANGE[body.mode]].attackRange,
     };
   });

@@ -1,0 +1,73 @@
+/**
+ * The T1 summon types' jobs (class-first build plan CD.2; bible §7.4). A summon attacks through
+ * the owner's player pipeline (`runFormationAttack`), so a piece's job is a listener keyed on the
+ * hitting slot's piece: the Spitter's acid, the Marksman's power shot, the tanks' taunting sweep.
+ * Every number is a kit `params` placeholder.
+ */
+import { CONDUIT_KIT, getResource, setResource, type ConduitPiece } from '@mmo-idle/shared';
+import type { MinionEntity, MonsterEntity, PlayerEntity } from '../../../../ecs/entity';
+import type { World } from '../../../../world/World';
+import { applyTaunt } from '../../../combat/ai/targeting';
+import { playerAoeTargets } from '../../../combat/damage/aoeDamage';
+import { attackNow, registerCombatListener, type CombatContext } from '../../../combat/engine/combatPipeline';
+import { evadeBlocksDebuffs } from '../../../defense/mitigation/evasion';
+import { applyFramePlatingShred } from '../../shared/frameLoop';
+
+const PIECES = new Map<string, ConduitPiece>(CONDUIT_KIT.pieces.map((piece) => [piece.id, piece]));
+
+const SHOTS = 'summon.shots';
+const LAST_TAUNT_AT = 'summon.lastTauntAt';
+
+/** The piece behind a formation hit, with the minion that swung. */
+function swing(ctx: CombatContext, world: World): { owner: PlayerEntity; minion: MinionEntity; piece: ConduitPiece; target: MonsterEntity } | null {
+  if (!ctx.formation || ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return null;
+  const minion = world.getMinionEntity(ctx.formation.physicalEntityId);
+  const piece = PIECES.get(ctx.formation.slotId.split('#')[0] ?? '');
+  if (!minion || !piece) return null;
+  return { owner: ctx.attacker, minion, piece, target: ctx.defender };
+}
+
+export function registerSummonPieces(): void {
+  // Ridge Marksman: every few shots is a heavy one. One multiplier per hit: recorded as the
+  // hit's empowered multiplier so a Technique rider reads the hit as it was before it.
+  registerCombatListener('onHit', (ctx, world) => {
+    const hit = swing(ctx, world);
+    const every = hit?.piece.params.shotEvery ?? 0;
+    if (!hit || every <= 0) return;
+    const cs = hit.minion.tracksCombat;
+    const shots = getResource(cs, SHOTS) + 1;
+    if (shots < every) { setResource(cs, SHOTS, shots); return; }
+    setResource(cs, SHOTS, 0);
+    const mult = hit.piece.params.shotMult ?? 1;
+    if (mult <= 1 || ctx.metadata['empoweredMultiplier'] !== undefined) return;
+    ctx.damage = Math.round(ctx.damage * mult);
+    ctx.metadata['empoweredMultiplier'] = mult;
+  });
+
+  registerCombatListener('afterHit', (ctx, world) => {
+    const hit = swing(ctx, world);
+    if (!hit) return;
+    const { owner, minion, piece, target } = hit;
+
+    // Bile Spitter: its acid strips a share of the target's plating.
+    const shred = piece.params.shredFraction ?? 0;
+    if (shred > 0 && !evadeBlocksDebuffs(ctx) && target.hasHealth.hp > 0) {
+      applyFramePlatingShred(owner, target, shred, piece.params.shredMs ?? 4000);
+    }
+
+    // Tanks (Plains Warden, Cave Brute): the sweep taunts the enemies around the target.
+    const every = piece.params.tauntEveryMs ?? 0;
+    if (every > 0) {
+      const now = attackNow(ctx);
+      const cs = minion.tracksCombat;
+      const last = getResource(cs, LAST_TAUNT_AT);
+      if (last > 0 && now - last < every) return;
+      setResource(cs, LAST_TAUNT_AT, now);
+      const around = [target, ...playerAoeTargets(world, owner, target.hasPosition.current, piece.params.tauntRadius ?? 100, target.isMonster.id)];
+      for (const monster of around) {
+        if (monster.hasHealth.hp <= 0) continue;
+        applyTaunt(world, monster, { id: minion.isMinion.id, kind: 'minion' }, piece.params.tauntMs ?? 3000, now);
+      }
+    }
+  });
+}

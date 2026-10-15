@@ -48,8 +48,8 @@ export type ConduitTrophy = TrophyDef<ConduitTrophyKind> & {
   body: MinionMonsterType;
 };
 
-export function summon(piece: Omit<ConduitPiece, 'classId' | 'params'>): ConduitPiece {
-  return { classId: 'summoner', params: {}, ...piece };
+export function summon(piece: Omit<ConduitPiece, 'classId' | 'params'> & { params?: ConduitPiece['params'] }): ConduitPiece {
+  return { classId: 'summoner', ...piece, params: piece.params ?? {} };
 }
 
 export function soul(entry: Omit<ConduitTrophy, 'classId' | 'params' | 'kind'>): ConduitTrophy {
@@ -93,6 +93,7 @@ const PIECES: readonly ConduitPiece[] = [
   // ── T1 specialists (§7.4). Names are the brief's placeholders. ──
   summon({
     id: 'conduit-plains-tank',
+    params: { hpMult: 1.5, damageMult: 0.7, tauntEveryMs: 6000, tauntMs: 3000, tauntRadius: 120 },
     name: 'Plains Warden',
     family: 'tank',
     command: 1,
@@ -103,6 +104,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-forest-bruiser',
+    params: { hpMult: 0.6, damageMult: 0.9, cooldownMult: 0.6 },
     name: 'Thornrunner',
     family: 'damage',
     command: 1,
@@ -113,6 +115,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-swamp-spitter',
+    params: { hpMult: 0.8, damageMult: 0.6, shredFraction: 0.25, shredMs: 4000 },
     name: 'Bile Spitter',
     family: 'support',
     command: 1,
@@ -123,6 +126,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-mountain-marksman',
+    params: { hpMult: 0.6, damageMult: 0.8, shotEvery: 3, shotMult: 2.5 },
     name: 'Ridge Marksman',
     family: 'damage',
     command: 1,
@@ -133,6 +137,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-cave-heavy',
+    params: { hpMult: 1.2, damageMult: 0.9, tauntEveryMs: 8000, tauntMs: 3000, tauntRadius: 120 },
     name: 'Cave Brute',
     family: 'tank',
     command: 2,

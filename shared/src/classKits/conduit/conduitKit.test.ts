@@ -79,7 +79,9 @@ for (const entry of pieces) {
   }
   assert(entry.sidegradeOf === undefined, `${entry.id} is not a sidegrade`);
   assert((entry.ranks ?? []).length === 0, `${entry.id} has no ranks`);
-  assert(Object.keys(entry.params).length === 0, `${entry.id} params stay empty`);
+  // The T1 types carry their runtime numbers since CD.2; later pieces stay empty until their tier's track.
+  const hasRuntime = ['conduit-plains-tank', 'conduit-forest-bruiser', 'conduit-swamp-spitter', 'conduit-mountain-marksman', 'conduit-cave-heavy'].includes(entry.id);
+  assert(hasRuntime ? Object.values(entry.params).every(Number.isFinite) : Object.keys(entry.params).length === 0, `${entry.id} params: empty until its runtime, finite numbers after`);
 }
 
 /** piece id, biome, tier. T1's five, then seven a tier (§7.16). */

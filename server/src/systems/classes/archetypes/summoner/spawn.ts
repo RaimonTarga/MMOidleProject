@@ -101,7 +101,7 @@ export function computeMinionMaxHp(owner: PlayerEntity, slot = 0): number {
   const legacyHpMult = owner.usesSkills.passives['summoner.minion-hp-pct'] ?? 1.0;
   return Math.max(
     MINION_BASE_HP_MIN,
-    Math.round(owner.hasHealth.maxHp * profile.totalSummonHpPct * slotProfile.defenseWeight * legacyHpMult),
+    Math.round(owner.hasHealth.maxHp * profile.totalSummonHpPct * slotProfile.defenseWeight * (slotProfile.hpMult ?? 1) * legacyHpMult),
   );
 }
 
@@ -230,7 +230,7 @@ export function spawnMinionForOwner(
   const attackRange = slotProfile.attackRange ?? profile.attackRange;
   const attackCooldown = Math.max(
     100,
-    Math.round(owner.performsAttack.attackCooldown * profile.summonAttackCooldownMult),
+    Math.round(owner.performsAttack.attackCooldown * profile.summonAttackCooldownMult * (slotProfile.cooldownMult ?? 1)),
   );
   const sizeMult = computeMinionSizeMult(owner, slot);
   const monsterTypeId = resolveMinionType(owner, slot);
@@ -240,7 +240,7 @@ export function spawnMinionForOwner(
 
   const maxHp = computeMinionMaxHp(owner, slot);
   const attack = Math.max(1, Math.round(
-    owner.dealsDamage.attack * damagePct * profile.formationOffenseMult * slotProfile.offenseWeight,
+    owner.dealsDamage.attack * damagePct * profile.formationOffenseMult * slotProfile.offenseWeight * (slotProfile.damageMult ?? 1),
   ));
 
   const id = world.allocMinionId(owner.isPlayer.id);

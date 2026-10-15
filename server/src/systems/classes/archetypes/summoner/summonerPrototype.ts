@@ -27,6 +27,7 @@ import { syncSummonerFormationTarget } from './formationTarget';
 import { isPlayerInCombat } from '../../../combat/ai/engagement';
 import { pruneFormationTechnique } from './formationTechnique';
 import { registerSummonerFrameLoop, summonerFrenzyApsPct } from './frameLoop';
+import { registerSummonPieces } from './summonPieces';
 import { summonerLineBonus, syncSummonerLine } from './lineHolds';
 
 type SummonerPlayerEntity = PlayerEntity & {
@@ -132,7 +133,7 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
     const desiredAttack = Math.max(
       1,
       Math.round(
-        owner.dealsDamage.attack * damagePct * profile.formationOffenseMult * slot.offenseWeight,
+        owner.dealsDamage.attack * damagePct * profile.formationOffenseMult * slot.offenseWeight * (slot.damageMult ?? 1),
       ),
     );
     if (minion.dealsDamage.attack !== desiredAttack) {
@@ -145,7 +146,7 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
     const desiredCooldown = Math.max(
       100,
       Math.round(
-        (owner.performsAttack.attackCooldown * profile.summonAttackCooldownMult)
+        (owner.performsAttack.attackCooldown * profile.summonAttackCooldownMult * (slot.cooldownMult ?? 1))
         / (1 + summonerFrenzyApsPct(owner)),
       ),
     );
@@ -230,6 +231,7 @@ export function initSummonerArchetype(): void {
   // Frame loops + the root's `mechanic-fired` moment, both hung off the formation
   // cycle (progression rework Phase 3).
   registerSummonerFrameLoop();
+  registerSummonPieces();
 }
 
 export function updateSummonerArchetype(world: World, dt: number, now: number): void {

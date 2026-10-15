@@ -10,12 +10,14 @@ import {
   defaultClassConfig,
   emptyEquipment,
   SUMMONER_BASELINE_ATTACK_RANGE,
+  getStatusEffect,
   SUMMONER_RANGE_TUNING,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { attachComponent } from '../src/ecs/markerHelpers';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
+import { runFormationAttack } from '../src/systems/classes/archetypes/summoner/formationAttack';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
 import { summonerProfileFor } from '../src/systems/classes/archetypes/summoner/profile';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
@@ -96,6 +98,39 @@ const piece = (id: string) => CONDUIT_KIT.pieces.find((p) => p.id === id)!;
 {
   const { player } = setup(['conduit-thrall', 'conduit-thrall', 'conduit-thrall']);
   assert.deepEqual(summonerProfileFor(player).slots.map((slot) => slot.slotId), ['conduit-thrall#0', 'conduit-thrall#1', 'conduit-thrall#2']);
+}
+
+// CD.2: each T1 type does its job through the owner's attack pipeline.
+{
+  const { world, player } = setup(['conduit-plains-tank', 'conduit-swamp-spitter', 'conduit-mountain-marksman']);
+  updateSummonerArchetype(world, 100, 1_000);
+  updateSummonerArchetype(world, 100, 1_100);
+  const [warden, spitter, marksman] = player.summonsMinions!.minionIds.map((id) => world.getMinionEntity(id)!);
+  assert.ok(warden && spitter && marksman, 'all three fielded');
+  const mk = (x: number) => {
+    const m = world.createMonster('node-5-5', 'bone-crawler', { x, y: 400 })!;
+    m.hasHealth.hp = m.hasHealth.maxHp = 1_000_000;
+    m.mitigatesDamage.plating = 20;
+    m.mitigatesDamage.damageReduction = 0;
+    return m;
+  };
+  const target = mk(430);
+  const bystander = mk(470);
+
+  runFormationAttack(world, player, spitter, target, 2_000);
+  assert.ok(getStatusEffect(target.tracksCombat, 'plating-shred'), 'the Spitter strips plating');
+
+  runFormationAttack(world, player, warden, target, 3_000);
+  assert.ok(target.heldByTaunt && bystander.heldByTaunt, 'the Warden taunts the target and the enemies around it');
+  assert.equal(target.heldByTaunt!.taunterId, warden.isMinion.id);
+
+  const dmg: number[] = [];
+  for (let i = 0; i < 3; i++) {
+    const before = target.hasHealth.hp;
+    runFormationAttack(world, player, marksman, target, 4_000 + i * 2_000);
+    dmg.push(before - target.hasHealth.hp);
+  }
+  assert.ok(dmg[2]! > dmg[0]! * 1.5, `the third shot is the heavy one: ${dmg.join(', ')}`);
 }
 
 console.log('conduitFormation: ok');
