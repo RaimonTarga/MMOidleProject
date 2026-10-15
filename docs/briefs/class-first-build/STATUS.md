@@ -180,6 +180,32 @@ brief says, and tell me.
 |---|---|---|---|
 | Next class | The Conduit ([C-conduit](C-conduit.md): CD.1–CD.5 done, CD6–CD8 are delegate tasks), then Slinger, Spirit, Apprentice | Conductor | — |
 
+## Live smoke run (2026-10-15 night, `a7fb962b`)
+
+A private server (port 4301, databases `gamedb_rework` / `logdb_rework` in the dev containers) and
+the bot at 25x rewards (a pipeline test, not an evaluation). **No server errors, no invariant
+failures, migrations and the marker/network checks all pass.**
+
+- **Conduit, Slinger, Spirit, Apprentice** (`smoke-t1`, `--class=summoner|reload|energy|dot`): each
+  picked its class, got its default config, fought through the Clearing and the Plains, crafted
+  and wore the Plains vest. 11-14 kills each, 0-1 deaths. (This proves the class pick, auto
+  config, the new runtimes' per-tick updates and the crafting path live; it does not exercise
+  their special mechanics beyond what auto play does. Their own routes arrive with CD7/CL6/SP6/AP6.)
+- **Striker** (`striker-t1`): first run had no gear steps and died in a loop at the Plains boss
+  (route gap, fixed in `a7fb962b`: the routes now craft and wear the seal zone's weapon job and vest).
+  With gear it reached the Plains boss every time (guards cleared in ~65 s) but lost all four
+  attempts, the boss at 52% / 44% / 43% HP when the Striker died (26-32 s into the boss fight).
+  81 kills and 5 deaths over 20 min.
+- **Squire** (`squire-t1`): farmed Plains, Forest and Swamp and was in the Mountain when the 20-minute
+  cap hit: 29 kills, 12 deaths (the Mountain hits hard).
+
+**Findings for the designer (balance, not wiring):** the Striker cannot kill the Plains boss with the
+T1 kit as built (bible §12: the base kit must win the first boss); the Squire dies often in the
+Mountain. Every number is a placeholder (`shared/src/classKits/*/kit.ts` params and the `configs/`
+constants); `pnpm bench:server` against a pre-rework baseline is the way to size it. **Not checked:**
+whether the Order's techniques fire as designed in a real fight (the run telemetry does not log
+them): worth a look in the client or a log line.
+
 ## Known follow-ups (not yet a task)
 
 - **Apprentice stand-ins and gaps:** Numb slows movement only (no attack slow); Petrify's "takes
