@@ -50,6 +50,13 @@ const STATES: Partial<Record<MomentId, StatePredicate>> = {
   'target-closing-fast': (s) => s.fastClosing,
   // Today only a boss getting away; ordinary fleeing and kiting arrive with T2.
   'target-flees': (s) => s.targetEscaping,
+  // Tier 2
+  'charging-at-me': (s) => s.chargingAtMe,
+  'burrow-at-me': (s) => s.burrowAtMe,
+  'ranged-attacker': (s) => s.rangedAttacker,
+  'target-frozen': (s) => s.targetFrozen,
+  'target-out-of-reach': (s) => s.targetOutOfReach,
+  'ally-threatened': (s) => s.allyThreatened,
 };
 
 /** The events, recorded as they happen. A param, when the moment has one, is a floor on the recorded value. */
@@ -65,6 +72,8 @@ const EVENTS: ReadonlySet<MomentId> = new Set<MomentId>([
   'big-hit',
   'repeat-hits',
   'dodged',
+  'ambush',
+  'target-resurfaces',
 ]);
 
 export function momentImplemented(id: MomentId): boolean {
@@ -153,6 +162,8 @@ export function updatePlayerMoments(world: World, player: PlayerEntity, now: num
     recordMoment(world, player, 'enemy-joins', snapshot.aggroCount - (previous?.aggroCount ?? 0));
   }
   if (previous?.targetId && monsterGone(world, previous.targetId)) recordMoment(world, player, 'target-dies');
+  // The target that had gone out of reach is back within it.
+  if (previous?.targetOutOfReach && !snapshot.targetOutOfReach && snapshot.targetId === previous.targetId) recordMoment(world, player, 'target-resurfaces');
   return snapshot;
 }
 

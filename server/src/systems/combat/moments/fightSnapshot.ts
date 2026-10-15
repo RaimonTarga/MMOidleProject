@@ -23,6 +23,8 @@ import { castedBuffCastEndsAt, chargedCastEndsAt, monsterAbilityCastEndsAt } fro
 import { heatEngagementTargets, heatManagementState } from '../ai/heatManagement';
 import { telegraphsContainingPlayer } from '../ai/telegraphEvasion';
 import { isPlayerControlled } from '../status/playerHardControl';
+import { isConcealedEntity, isInvulnerableMonster } from '../invulnerability';
+import { FROZEN_EFFECT } from '../status/frost';
 
 export interface FightSnapshot {
   hpPct: number;
@@ -65,6 +67,19 @@ export interface FightSnapshot {
   targetEscaping: boolean;
   moving: boolean;
   traveling: boolean;
+  // ── Tier 2 moments (class-first build plan §6) ──
+  /** An enemy on the player is in the middle of a charge at it. */
+  chargingAtMe: boolean;
+  /** An enemy on the player is burrowed or otherwise hidden and moving toward it. */
+  burrowAtMe: boolean;
+  /** An enemy on the player hits from range (its reach is beyond melee contact) and is not touching. */
+  rangedAttacker: boolean;
+  /** The player's target is frozen or brittle. */
+  targetFrozen: boolean;
+  /** The player's target has burrowed, dived or vanished out of reach. */
+  targetOutOfReach: boolean;
+  /** A party ally in this node stands under a telegraph or is low on HP. */
+  allyThreatened: boolean;
 }
 
 /**
@@ -80,13 +95,16 @@ function aggroStats(
   world: World,
   player: PlayerEntity,
   now: number,
-): { count: number; charging: boolean; contact: boolean; casting: boolean; windupAtMe: boolean; fastClosing: boolean } {
+): { count: number; charging: boolean; contact: boolean; casting: boolean; windupAtMe: boolean; fastClosing: boolean; chargingAtMe: boolean; burrowAtMe: boolean; rangedAttacker: boolean } {
   let count = 0;
   let charging = false;
   let contact = false;
   let casting = false;
   let windupAtMe = false;
   let fastClosing = false;
+  let chargingAtMe = false;
+  let burrowAtMe = false;
+  let rangedAttacker = false;
   const playerBox = posHitboxFromEntity(player);
   for (const monster of world.aggroedMonsters) {
     if (
@@ -101,6 +119,9 @@ function aggroStats(
       }
       const touching = inMeleeContact(player, playerBox, monster);
       if (!contact) contact = touching;
+      if (!chargingAtMe && (monster.controlsMonster.chargeRemainingMs ?? 0) > 0) chargingAtMe = true;
+      if (!burrowAtMe && monster.isConcealed !== undefined && monster.isMoving !== undefined) burrowAtMe = true;
+      if (!rangedAttacker && !touching && (monster.performsAttack?.attackRange ?? 0) > MELEE_CONTACT_MAX_REACH) rangedAttacker = true;
       if (!fastClosing && !touching && monster.isMoving !== undefined) {
         fastClosing = (monster.controlsMonster.chargeRemainingMs ?? 0) > 0
           || monster.hasPosition.speed >= player.hasPosition.speed * FAST_CLOSING_SPEED_RATIO;
@@ -116,7 +137,7 @@ function aggroStats(
       charging = true;
     }
   }
-  return { count, charging, contact, casting, windupAtMe, fastClosing };
+  return { count, charging, contact, casting, windupAtMe, fastClosing, chargingAtMe, burrowAtMe, rangedAttacker };
 }
 
 /**
@@ -162,6 +183,27 @@ function bossEscapingFrom(world: World, player: PlayerEntity): boolean {
   return false;
 }
 
+/** The target is frozen, or carries a brittle stack (the freeze's shatter window). */
+function hasFrozenOrBrittle(monster: MonsterEntity): boolean {
+  return monster.tracksCombat.statusEffects.some((e) => e.remainingMs !== 0 && (e.id === FROZEN_EFFECT || e.id === 'brittle'));
+}
+
+/** Another player of this party, in this node, stands under a telegraph or is low on HP. */
+function allyThreatened(world: World, player: PlayerEntity, now: number): boolean {
+  const party = player.inParty;
+  if (!party) return false;
+  const ids = new Set(party.members.map((member) => member.id));
+  for (const ally of world.livePlayers) {
+    if (ally === player || !ids.has(ally.isPlayer.id) || ally.hasPosition.nodeId !== player.hasPosition.nodeId) continue;
+    if (ally.hasHealth.hp / Math.max(1, ally.hasHealth.maxHp) < ALLY_LOW_HP) return true;
+    if (telegraphsContainingPlayer(world, ally, now).length > 0) return true;
+  }
+  return false;
+}
+
+/** An ally this low on HP counts as threatened. PLACEHOLDER. */
+const ALLY_LOW_HP = 0.3;
+
 function isElite(monster: MonsterEntity | undefined): boolean {
   if (!monster) return false;
   if (monster.isMonster.isBoss) return true;
@@ -169,7 +211,7 @@ function isElite(monster: MonsterEntity | undefined): boolean {
 }
 
 function computeFightSnapshot(world: World, player: PlayerEntity, now: number): FightSnapshot {
-  const { count, charging, contact, casting, windupAtMe, fastClosing } = aggroStats(world, player, now);
+  const { count, charging, contact, casting, windupAtMe, fastClosing, chargingAtMe, burrowAtMe, rangedAttacker } = aggroStats(world, player, now);
   const targetId = player.hasAttackTarget?.targetId;
   const target = targetId ? world.getMonsterEntity(targetId) : undefined;
   const heatHolding = heatManagementState(player) === 'requested' && heatEngagementTargets(world, player).size > 0;
@@ -208,6 +250,12 @@ function computeFightSnapshot(world: World, player: PlayerEntity, now: number): 
     targetShielded: (target?.hasStatus.enemyBarrier?.amount ?? 0) > 0,
     targetPlated: (target?.mitigatesDamage.plating ?? 0) > 0,
     targetEscaping: bossEscapingFrom(world, player),
+    chargingAtMe,
+    burrowAtMe,
+    rangedAttacker,
+    targetFrozen: target ? hasFrozenOrBrittle(target) : false,
+    targetOutOfReach: target ? isConcealedEntity(target) || isInvulnerableMonster(target) : false,
+    allyThreatened: allyThreatened(world, player, now),
     moving: player.isMoving !== undefined,
     traveling:
       player.hasAutoTraversePath !== undefined &&

@@ -22,6 +22,7 @@
  * ground on foot like anything else.
  */
 
+import { recordMoment } from '../moments/moments';
 import {
   navigationBodyHalfExtents,
   type MonsterDefinition,
@@ -144,4 +145,6 @@ export function performAmbushLunge(
   monster.hasPosition.current = resolved;
   markSliceDirty(world, monster, "hasPosition");
   stopEntity(world, monster);
+  // The leap out of cover is the ambush moment (class-first T2).
+  recordMoment(world, target, 'ambush');
 }
