@@ -179,7 +179,7 @@ for (const beat of route) {
 }
 
 // ── Every class root gets the opening, then the seal route or its own builder ─
-assert(Object.keys(TUTORIAL_CLASS_BEATS).join(',') === 'cadence-root', 'only the Striker builder is registered');
+assert(Object.keys(TUTORIAL_CLASS_BEATS).join(',') === 'cadence-root,cooldown-root', 'the Striker and Squire builders are registered');
 assert(CLASS_ROOTS.length === 6, `six class roots, found ${CLASS_ROOTS.map((node) => node.id).join(',')}`);
 
 function sameRoute(script: TutorialScript): void {
@@ -261,7 +261,13 @@ for (const root of CLASS_ROOTS) {
   assert(script.classRoot === root.id, `${root.id}: class root is stored`);
   assert(tutorialScriptFor(root.id) === script, `${root.id}: the script is cached`);
   if (root.id === 'cadence-root') assertStrikerTail(script);
-  else sameRoute(script);
+  else if (TUTORIAL_CLASS_BEATS[root.id]) {
+    script.beats.slice(0, TUTORIAL_OPENING.beats.length).forEach((beat, i) => {
+      assert(beat === TUTORIAL_OPENING.beats[i], `${script.id}: opening beat ${beat.id} was replaced`);
+    });
+  } else {
+    sameRoute(script);
+  }
 }
 
 {

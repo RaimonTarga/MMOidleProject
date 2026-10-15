@@ -2,22 +2,25 @@ import { SKILL_TREE } from '../../data/skillTree';
 import type { TutorialBeat, TutorialScript } from '../types';
 import { TUTORIAL_OPENING } from './opening';
 import { buildSealRouteBeats } from './sealRoute';
+import { buildSquireBeats } from './squire';
 import { buildStrikerBeats } from './striker';
 
 export { TUTORIAL_FAREWELL } from './farewell';
 export { TUTORIAL_OPENING } from './opening';
 export { TUTORIAL_SEALS, T1_BIOME_ORDER, type T1Biome } from './plans';
 export { buildSealRouteBeats } from './sealRoute';
+export { buildSquireBeats } from './squire';
 
 const scripts = new Map<string, TutorialScript>();
 
 /**
  * Per-class beats after the opening, keyed by class root (`cadence-root`, …).
- * A class with no builder still gets the seal route. The Striker is the first
- * builder (plan §5.2, task C<c>.6).
+ * Each class's builder lands with its class track (plan §5.2, task C<c>.6).
+ * A class with no builder still gets the seal route; a builder replaces it.
  */
 export const TUTORIAL_CLASS_BEATS: Partial<Record<string, () => TutorialBeat[]>> = {
   'cadence-root': buildStrikerBeats,
+  'cooldown-root': buildSquireBeats,
 };
 
 /**
