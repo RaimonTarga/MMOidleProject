@@ -44,6 +44,30 @@ export const ACCEPTED_GAPS: Readonly<Record<string, string>> = {
     'Same carrier read: the targetStatusMeta entry exists; the audit only credits a badge to a monster or player carrier.',
   'conduit-bark: no authored icon lookup':
     'Same carrier read: the conceptIcons alias exists (a stand-in obsidian shell); the audit only credits icons to a monster or player carrier.',
+  'conduit-horn: player: no tile/projection':
+    'Warhorn hastens SUMMONS, never the player, and summons show no statuses yet (the audit reads a minion carrier as unknown, as for conduit-bark). The client copy, badge and icon exist for the day a summon status strip does.',
+  'conduit-horn: target: fallback help':
+    'Same carrier read: the statusHelp entry exists; the audit only credits copy to a monster or player carrier.',
+  'conduit-horn: target: fallback badge':
+    'Same carrier read: the targetStatusMeta entry exists; the audit only credits a badge to a monster or player carrier.',
+  'conduit-horn: no authored icon lookup':
+    'Same carrier read: the conceptIcons alias exists (a stand-in); the audit only credits icons to a monster or player carrier.',
+  'conduit-burn-bright: player: no tile/projection':
+    'Burn Bright hastens a fresh SUMMON, never the player, and summons show no statuses yet (the audit reads a minion carrier as unknown, as for conduit-bark). The client copy, badge and icon exist for the day a summon status strip does.',
+  'conduit-burn-bright: target: fallback help':
+    'Same carrier read: the statusHelp entry exists; the audit only credits copy to a monster or player carrier.',
+  'conduit-burn-bright: target: fallback badge':
+    'Same carrier read: the targetStatusMeta entry exists; the audit only credits a badge to a monster or player carrier.',
+  'conduit-burn-bright: no authored icon lookup':
+    'Same carrier read: the conceptIcons alias exists (a stand-in); the audit only credits icons to a monster or player carrier.',
+  'conduit-hibernate: player: no tile/projection':
+    'Hibernate encases a SUMMON, never the player, and summons show no statuses yet (the audit reads a minion carrier as unknown, as for conduit-bark). The client copy, badge and icon exist for the day a summon status strip does.',
+  'conduit-hibernate: target: fallback help':
+    'Same carrier read: the statusHelp entry exists; the audit only credits copy to a monster or player carrier.',
+  'conduit-hibernate: target: fallback badge':
+    'Same carrier read: the targetStatusMeta entry exists; the audit only credits a badge to a monster or player carrier.',
+  'conduit-hibernate: no authored icon lookup':
+    'Same carrier read: the conceptIcons alias exists (a stand-in); the audit only credits icons to a monster or player carrier.',
   'ability-entangled: authored label/help/badge; no status writer or descriptor found':
     'Its writer was an ability keystone, removed with the ability node rows (class-first rework D1). The status and its copy stay with the abilities until task D3 removes them.',
   'ability-immunity: descriptor requires unproduced status: ability-immunity (server/src/systems/player/abilities/abilityBuffs.ts:208)':

@@ -396,6 +396,12 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   // Stand-ins until the designer's icons: the mark wears the shatter window, the bark an obsidian shell.
   'conduit-mark': 'shatter-vulnerable',
   'conduit-bark': 'obsidian-shell',
+  // Tier 3 stand-ins, same rule: existing art until the designer's icons.
+  'conduit-horn': 'summoner-howl-banner',
+  'conduit-burn-bright': 'energy-overcharge',
+  'conduit-hibernate': 'dot-frozen',
+  'conduit-spore': 'debuff-swamp-rot',
+  'conduit-hunt': 'debuff-sun-mark',
   'slinger-venom': 'debuff-poison',
   'slinger-rot': 'debuff-poison',
   brittle: 'dot-frostbite',
