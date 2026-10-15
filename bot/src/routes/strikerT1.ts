@@ -63,6 +63,21 @@ function autoOrder(): ClassConfig {
   };
 }
 
+/** The seal zones' gear: the Striker's weapon job there and the zone's shared vest. */
+const SEAL_GEAR: Readonly<Record<string, readonly string[]>> = {
+  plains: ["striker-broadblade-t1", "plains-vest-t1"],
+  mountain: ["striker-maul-t1", "mountain-vest-t1"],
+};
+
+function gearUp(biomeGroup: string): RouteStep[] {
+  const ids = SEAL_GEAR[biomeGroup];
+  if (!ids) return [];
+  return [
+    { type: "craft", recipeIds: [...ids], farmAt: zone(biomeGroup), label: `craft the ${biomeGroup} gear` },
+    { type: "equip", definitionIds: [...ids], label: `wear the ${biomeGroup} gear` },
+  ];
+}
+
 export function strikerT1Route(): Route {
   const steps: RouteStep[] = [
     { type: "travel", to: CLEARING },
@@ -85,6 +100,8 @@ export function strikerT1Route(): Route {
       until: { type: "biomeLevelAtLeast", biomeGroup, level: strikerFarmLevel(biomeGroup) },
     });
     if (biomeGroup === FIRST_SEAL || biomeGroup === SECOND_SEAL) {
+      // The guided player wears the zone's gear (a class weapon and the shared vest) before its seal.
+      steps.push(...gearUp(biomeGroup));
       steps.push({ type: "attemptBoss", biomeGroup, tier: 1 });
     }
   }

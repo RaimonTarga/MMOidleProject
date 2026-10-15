@@ -56,7 +56,7 @@ const kinds = route.steps.map((step) => step.type);
 assert.deepEqual(kinds, [
   "travel", "farm", "chooseClass", "classConfig",
   "farm", "farm", "farm", "farm", "farm",
-  "attemptBoss", "attemptBoss",
+  "craft", "equip", "attemptBoss", "craft", "equip", "attemptBoss",
 ]);
 
 const [toClearing, quest, choose, config, ...rest] = route.steps;
@@ -80,7 +80,7 @@ assert(config.type === "classConfig" && config.config.system.kind === "responses
 }
 
 const zoneFarms = rest.slice(0, T1_BIOME_ORDER.length);
-const bosses = rest.slice(T1_BIOME_ORDER.length);
+const bosses = rest.slice(T1_BIOME_ORDER.length).filter((step) => step.type === "attemptBoss");
 assert.equal(zoneFarms.length, T1_BIOME_ORDER.length, "one farm per T1 zone");
 T1_BIOME_ORDER.forEach((biome, index) => {
   const step = zoneFarms[index];

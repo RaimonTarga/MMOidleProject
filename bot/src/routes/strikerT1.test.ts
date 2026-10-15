@@ -62,9 +62,9 @@ const kinds = route.steps.map((step) => step.type);
 const walks = T1_BIOME_ORDER.filter((biome) => biome !== FIRST_SEAL && biome !== SECOND_SEAL);
 assert.deepEqual(kinds, [
   "travel", "farm", "chooseClass", "classConfig",
-  "travel", "farm", "attemptBoss",
+  "travel", "farm", "craft", "equip", "attemptBoss",
   ...walks.flatMap(() => ["travel", "farm"]),
-  "travel", "farm", "attemptBoss",
+  "travel", "farm", "craft", "equip", "attemptBoss",
   "farm",
 ]);
 

@@ -63,6 +63,14 @@ function farmZone(biome: T1Biome): RouteStep {
   };
 }
 
+/** The guided player wears the seal zone's gear (a class weapon and the shared vest) before its boss. */
+function gearUp(biome: T1Biome, ids: string[]): RouteStep[] {
+  return [
+    { type: "craft", recipeIds: ids, farmAt: biomeRef(biome), label: `craft the ${biome} gear` },
+    { type: "equip", definitionIds: ids, label: `wear the ${biome} gear` },
+  ];
+}
+
 export function squireT1Route(): Route {
   return {
     id: SQUIRE_T1_ID,
@@ -81,7 +89,9 @@ export function squireT1Route(): Route {
       { type: "chooseClass", skillId: SQUIRE_CLASS_ROOT },
       { type: "classConfig", config: SQUIRE_AUTO },
       ...T1_BIOME_ORDER.map(farmZone),
+      ...gearUp("plains", ["squire-flanged-mace-t1", "plains-vest-t1"]),
       { type: "attemptBoss", biomeGroup: "plains", tier: 1 },
+      ...gearUp("mountain", ["squire-warhammer-t1", "mountain-vest-t1"]),
       { type: "attemptBoss", biomeGroup: "mountain", tier: 1 },
     ],
     completion: { type: "playerTierAtLeast", tier: 2 },
