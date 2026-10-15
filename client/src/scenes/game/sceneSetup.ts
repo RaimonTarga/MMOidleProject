@@ -72,6 +72,7 @@ import { drawLabels } from "../../render/labels";
 import { drawThoughtBubbles } from "../../render/thoughtBubbles";
 import { drawHealthBars } from "../../render/healthBars";
 import { drawCooldownBars } from "../../render/cooldownBars";
+import { drawSlingerRings } from "../../render/slingerRing";
 import { drawCastBars } from "../../render/castBars";
 import { drawDetonateWindups } from "../../fx/detonateWindup";
 import { drawAllyAoeFootprints } from "../../fx/allyAoeFootprint";
@@ -577,6 +578,7 @@ export function updateGameScene(scene: GameScene, delta: number): void {
   if (!isClientRenderPaused()) {
     drawTargetIndicator(scene.state, scene);
     drawCooldownBars(scene.state);
+    drawSlingerRings(scene.state);
     drawCastBars(scene.state, scene);
     drawDetonateWindups(scene.state);
     drawAllyAoeFootprints(scene.state);

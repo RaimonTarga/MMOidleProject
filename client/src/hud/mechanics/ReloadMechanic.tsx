@@ -1,7 +1,33 @@
-import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
+import { SLINGER_LAST_ROUND_CSS } from '../../ui/slingerClipColor';
 import { MechanicFrame } from './MechanicFrame';
 import { useMechanicHelp } from './mechanicHelp';
 import type { ReloadMechanicModel } from './types';
+
+/** Reload progress, 0 at the start and 1 when the bar is full. Smooths the 5 Hz sample. */
+function useReloadFill(remainingMs: number, durationMs: number): number {
+  const sample = useRef({ remainingMs, durationMs, at: performance.now() });
+  const [pct, setPct] = useState(0);
+
+  useEffect(() => {
+    sample.current = { remainingMs, durationMs, at: performance.now() };
+    if (durationMs <= 0 || remainingMs <= 0) {
+      setPct(0);
+      return;
+    }
+    let frame = 0;
+    const tick = () => {
+      const current = sample.current;
+      const left = Math.max(0, current.remainingMs - (performance.now() - current.at));
+      setPct(current.durationMs > 0 ? Math.min(1, Math.max(0, 1 - left / current.durationMs)) : 0);
+      if (left > 0) frame = window.requestAnimationFrame(tick);
+    };
+    frame = window.requestAnimationFrame(tick);
+    return () => window.cancelAnimationFrame(frame);
+  }, [remainingMs, durationMs]);
+
+  return pct;
+}
 
 const AMMO_CENTER = 35;
 
@@ -20,7 +46,23 @@ function ammoGeometry(max: number): { radius: number; dotRadius: number; density
   return { radius: 24, dotRadius: 3.5, density: '' };
 }
 
-function AmmoPolygon({ ammo, max }: { ammo: number; max: number }) {
+function AmmoPolygon({
+  ammo,
+  max,
+  clipColor,
+  nextClipColor,
+  clipName,
+  nextClipName,
+  reloadPct,
+}: {
+  ammo: number;
+  max: number;
+  clipColor: string | null;
+  nextClipColor: string | null;
+  clipName: string | null;
+  nextClipName: string | null;
+  reloadPct: number;
+}) {
   const previousAmmo = useRef(ammo);
   const [refilling, setRefilling] = useState(false);
   const [shot, setShot] = useState(false);
@@ -74,10 +116,25 @@ function AmmoPolygon({ ammo, max }: { ammo: number; max: number }) {
       ? ' mechanic-reload__assembly--refilling'
       : '';
 
+  const arcRadius = 33;
+  const arcLength = 2 * Math.PI * arcRadius;
+  const label = [
+    clipName ? `${clipName}.` : null,
+    `${ammo} of ${max} ammunition remaining`,
+    nextClipName ? `Next clip: ${nextClipName}.` : null,
+    reloadPct > 0 ? 'Reloading.' : null,
+  ].filter((part): part is string => !!part).join(' ');
+
   return (
     <div className={`mechanic-ammo-chamber${shot ? ' mechanic-ammo-chamber--shot' : ''}${refilling ? ' mechanic-ammo-chamber--refilling' : ''}`}>
       <span className="mechanic-ammo-chamber__rail" aria-hidden="true" />
-      <svg className={`mechanic-reload${geometry.density}`} viewBox="0 0 70 70" role="img" aria-label={`${ammo} of ${max} ammunition remaining`}>
+      <svg
+        className={`mechanic-reload${geometry.density}${clipColor ? ' mechanic-reload--clip' : ''}`}
+        viewBox="0 0 70 70"
+        role="img"
+        aria-label={label}
+        style={clipColor ? { '--clip-color': clipColor } as CSSProperties : undefined}
+      >
         <circle className="mechanic-reload__housing" cx="35" cy="35" r="31.5" />
         <path className="mechanic-reload__mounts" d="M35 1v4 M35 65v4 M1 35h4 M65 35h4" />
         <g className={`mechanic-reload__assembly${motionClass}`} style={assemblyStyle}>
@@ -93,11 +150,15 @@ function AmmoPolygon({ ammo, max }: { ammo: number; max: number }) {
             const point = ammoPoint(index, max, geometry.radius);
             const loaded = index >= spent;
             const current = ammo > 0 && index === spent;
-            const dotStyle = { '--ammo-dot-delay': `${Math.round(index * refillDelayStep)}ms` } as CSSProperties;
+            const last = loaded && index === max - 1;
+            const dotStyle = {
+              '--ammo-dot-delay': `${Math.round(index * refillDelayStep)}ms`,
+              ...(last ? { fill: SLINGER_LAST_ROUND_CSS, stroke: '#ffe7a3' } : {}),
+            } as CSSProperties;
             return (
               <circle
                 key={index}
-                className={`mechanic-reload__round${loaded ? ' mechanic-reload__round--loaded' : ''}${current ? ' mechanic-reload__round--current' : ''}`}
+                className={`mechanic-reload__round${loaded ? ' mechanic-reload__round--loaded' : ''}${current ? ' mechanic-reload__round--current' : ''}${last ? ' mechanic-reload__round--last' : ''}`}
                 cx={point.x}
                 cy={point.y}
                 r={geometry.dotRadius}
@@ -106,9 +167,29 @@ function AmmoPolygon({ ammo, max }: { ammo: number; max: number }) {
             );
           })}
         </g>
+        {reloadPct > 0 && (
+          <circle
+            className="mechanic-reload__reload-arc"
+            cx="35"
+            cy="35"
+            r={arcRadius}
+            style={{
+              strokeDasharray: `${arcLength}`,
+              strokeDashoffset: `${arcLength * (1 - reloadPct)}`,
+            }}
+          />
+        )}
         <path className="mechanic-reload__top-guide" d="M31.5 2.5 35 6l3.5-3.5" />
         <circle className="mechanic-reload__impact" cx="35" cy="35" r="29" />
       </svg>
+      {nextClipColor && (
+        <span
+          className="mechanic-ammo-chamber__next"
+          style={{ background: nextClipColor }}
+          title={nextClipName ? `Next clip: ${nextClipName}` : 'Next clip'}
+          aria-hidden="true"
+        />
+      )}
       {overflow > 0 && (
         <span className="mechanic-ammo-chamber__overflow" aria-hidden="true">+{overflow}</span>
       )}
@@ -116,8 +197,51 @@ function AmmoPolygon({ ammo, max }: { ammo: number; max: number }) {
   );
 }
 
+/** Mobile row: the same facts as the ring, fitted to the 24px mechanic slot. */
+export function LoadoutAmmoCompact({ model }: { model: ReloadMechanicModel }) {
+  const fill = useReloadFill(model.reloadRemainingMs, model.reloadDurationMs);
+  const reloading = model.reloadRemainingMs > 0 && model.reloadDurationMs > 0;
+  const ammoPct = model.ammoMax > 0 ? model.ammo / model.ammoMax : 0;
+  const width = reloading ? fill : ammoPct;
+  const color = !reloading && model.ammo === 1
+    ? SLINGER_LAST_ROUND_CSS
+    : reloading
+      ? '#e6a43c'
+      : (model.clipColor ?? '#9aa3ad');
+  const next = model.nextClipName ? ` Next: ${model.nextClipName}.` : '';
+  const label = reloading
+    ? `Reloading. ${model.clipName ?? 'Clip'}.${next}`
+    : `${model.ammo} of ${model.ammoMax}. ${model.clipName ?? 'Clip'}.${model.ammo > 0 ? ' Last round still loaded.' : ''}${next}`;
+
+  return (
+    <div
+      className="loadout-ammo-compact"
+      role="meter"
+      aria-label={label}
+      aria-valuemin={0}
+      aria-valuemax={model.ammoMax}
+      aria-valuenow={model.ammo}
+    >
+      <span className="loadout-ammo-compact__count">{reloading ? 'Reloading' : `${model.ammo}/${model.ammoMax}`}</span>
+      <span className="loadout-ammo-compact__track" aria-hidden="true">
+        <span style={{ width: `${Math.max(0, Math.min(100, width * 100))}%`, background: color }} />
+        {!reloading && model.ammo > 1 && <i className="loadout-ammo-compact__last" />}
+      </span>
+      {model.nextClipColor && (
+        <i
+          className="loadout-ammo-compact__next"
+          style={{ background: model.nextClipColor }}
+          title={model.nextClipName ? `Next clip: ${model.nextClipName}` : 'Next clip'}
+          aria-hidden="true"
+        />
+      )}
+    </div>
+  );
+}
+
 export function ReloadMechanic({ model }: { model: ReloadMechanicModel }) {
   const help = useMechanicHelp(model);
+  const reloadPct = useReloadFill(model.reloadRemainingMs, model.reloadDurationMs);
   if (model.mode === 'heat') {
     return (
       <MechanicFrame
@@ -154,7 +278,15 @@ export function ReloadMechanic({ model }: { model: ReloadMechanicModel }) {
       title="Ammo"
       state={model.ammo === 0 ? 'reloading' : undefined}
     >
-      <AmmoPolygon ammo={model.ammo} max={model.ammoMax} />
+      <AmmoPolygon
+        ammo={model.ammo}
+        max={model.ammoMax}
+        clipColor={model.loadout ? model.clipColor : null}
+        nextClipColor={model.loadout ? model.nextClipColor : null}
+        clipName={model.loadout ? model.clipName : null}
+        nextClipName={model.loadout ? model.nextClipName : null}
+        reloadPct={model.loadout ? reloadPct : 0}
+      />
     </MechanicFrame>
   );
 }

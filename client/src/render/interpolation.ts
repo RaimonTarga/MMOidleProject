@@ -9,7 +9,7 @@ import {
   reconcileOwnPathFromServer,
 } from '../input/pathPrediction';
 import { getOwnBlockShapes, getOwnMovePad } from '../input/obstacleResolve';
-import { predictManualMove, predictClickMove } from '../input/movement';
+import { ownReloadPredictMult, predictManualMove, predictClickMove } from '../input/movement';
 import { correctPlayerPosition } from './movementCorrection';
 import { predictAutoPath } from './autoPathPrediction';
 import { applyBodyPose } from '../fx/bodyPose';
@@ -42,7 +42,8 @@ export function stepInterpolation(scene: GameScene, dt: number): void {
 
     const own = id === state.ownId;
     const player = own ? state.view.get(id) as PlayerView | undefined : undefined;
-    const controlled = player?.isDead || player?.isChanneling || player?.activeBuffs.some(buff => buff.speedMult === 0);
+    const controlled = player?.isDead || player?.isChanneling || player?.activeBuffs.some(buff => buff.speedMult === 0)
+      || (!!player && ownReloadPredictMult(player) === 0);
     const preview = own && !isStopPending() ? state.entity.get(id)?.isMoving?.pathPreview : undefined;
     const predicted = own
       ? controlled ? { ...interp.base } : predictManualMove(scene, interp.base, dt) ?? predictClickMove(scene, interp.base, dt)

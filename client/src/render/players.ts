@@ -35,6 +35,8 @@ import { auraTint } from "../fx/aura";
 import { ambientStackFlashTint } from './ambientStackFlash';
 import { shouldRunClientFx } from '../fx/guard';
 import { resetPlayerNodePosition } from './playerNodePosition';
+import { syncSlingerRing } from './slingerRing';
+import { ownReloadPredictMult } from '../input/movement';
 
 function playerTint(state: RenderState, player: PlayerView): number | null {
   const base = flashShiftTint(player) ?? auraTint(player);
@@ -133,6 +135,7 @@ export function upsertPlayer(
   const isOwn = player.id === scene.myId;
   const isNew = !state.sprite.has(player.id);
   syncReloadTiming(state, player);
+  syncSlingerRing(player, scene);
 
   if (isNew) {
     state.ids.add(player.id);
@@ -325,7 +328,9 @@ export function upsertPlayer(
   if (transform) {
     transform.pos = { ...player.pos };
     transform.speed = player.speed * moveSpeedMult(player);
-    if (isOwn && (player.isChanneling || player.activeBuffs.some(buff => buff.speedMult === 0))) {
+    const reloadMult = isOwn ? ownReloadPredictMult(player) : null;
+    if (reloadMult !== null && reloadMult > 0) transform.speed *= reloadMult;
+    if (isOwn && (player.isChanneling || player.activeBuffs.some(buff => buff.speedMult === 0) || reloadMult === 0)) {
       clearOwnMovePath(state);
       setManualActive(false);
       clearPendingStop();

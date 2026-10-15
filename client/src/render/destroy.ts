@@ -5,6 +5,7 @@ import { destroyShadow } from './shadows';
 import { destroyLabel } from './labels';
 import { destroyHpBar } from './healthBars';
 import { destroyCdBar } from './cooldownBars';
+import { destroySlingerRing } from './slingerRing';
 import { destroyCastBar } from './castBars';
 import { destroySkillCallout } from './skillCallouts';
 import { destroyEffectOverlays } from './effectOverlays';
@@ -59,6 +60,7 @@ export function destroyEntity(
   state.techniqueArmed.delete(id);
   state.allyAoeFootprintPulse.delete(id);
   state.reloadTiming.delete(id);
+  destroySlingerRing(id);
   state.ambientStackFlash.delete(id);
   const frameCharge = state.frameChargeGlow.get(id);
   if (frameCharge?.graphics) frameCharge.graphics.destroy();

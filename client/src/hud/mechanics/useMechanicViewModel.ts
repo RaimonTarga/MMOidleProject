@@ -1,5 +1,6 @@
 import { useAtomValue } from 'jotai';
 import { dotElementForPlayer, resolveDotClassProfile, resolveDotStackCap, resolveDotRelicDeliveryProfile, relicRatingsFromPassives, summonerSpecializationFor } from '@mmo-idle/shared';
+import { slingerClipColor, slingerClipName } from '../../ui/slingerClipColor';
 import {
   ammoCountAtom,
   ammoMaxAtom,
@@ -114,7 +115,10 @@ export function useMechanicViewModel(): MechanicViewModel | null {
       };
     }
 
-    case 'reload':
+    case 'reload': {
+      const loadout = classConfig?.system.kind === 'loadout';
+      const clipId = loadout ? playerView?.reloadClip ?? '' : '';
+      const nextId = loadout ? playerView?.reloadNextClip ?? '' : '';
       return {
         kind: 'reload',
         mode: (passives['reload.laser'] ?? 0) > 0 ? 'heat' : 'ammo',
@@ -122,7 +126,15 @@ export function useMechanicViewModel(): MechanicViewModel | null {
         ammoMax: Math.max(0, ammoMax),
         heatPct: clampPct(heatPct),
         overheated,
+        loadout,
+        clipColor: slingerClipColor(clipId),
+        nextClipColor: slingerClipColor(nextId),
+        clipName: slingerClipName(clipId),
+        nextClipName: slingerClipName(nextId),
+        reloadRemainingMs: Math.max(0, playerView?.reloadRemainingMs ?? 0),
+        reloadDurationMs: Math.max(0, playerView?.reloadDurationMs ?? 0),
       };
+    }
 
     case 'summoner':
       return {

@@ -50,7 +50,11 @@ export function drawCooldownBars(state: RenderState): void {
         0,
         Math.min(1, 1 - remainingMs / reload.durationMs),
       );
-      show = true;
+      // A Loadout Slinger draws this fill as an arc around the world ring.
+      const loadout = state.kind.get(id) === 'player'
+        && 'classConfig' in snap
+        && snap.classConfig?.system.kind === 'loadout';
+      show = !loadout;
     } else {
       show = snap.attackTargetId !== null;
       pct = show

@@ -88,6 +88,22 @@ export function useMechanicHelp(model: MechanicViewModel): ReactNode {
       );
 
     case 'reload':
+      if (model.mode === 'ammo' && model.loadout) {
+        const loaded = model.clipName ? `${model.clipName}. ` : '';
+        const next = model.nextClipName ? ` Next clip: ${model.nextClipName}.` : '';
+        return (
+          <>
+            <div>
+              You fire a clip, then stand still to reload. The ring is the loaded
+              clip&apos;s colour, the last round is gold, and the mark beside the
+              ring is the next clip.
+            </div>
+            <div style={{ marginTop: 6 }}>
+              {loaded}{model.ammo} of {model.ammoMax} rounds loaded.{next}
+            </div>
+          </>
+        );
+      }
       return model.mode === 'ammo' ? (
         <>
           <div>

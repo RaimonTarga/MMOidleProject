@@ -2,6 +2,7 @@ import type { FormationView } from '@mmo-idle/shared';
 import { OrderStrip } from '../OrderStrip';
 import { useFormationView } from '../../ui/class/useFormationView';
 import { useOrderView } from '../../ui/class/useOrderView';
+import { LoadoutAmmoCompact } from './ReloadMechanic';
 import { ResolveCompact } from './ResolvePips';
 import type { MechanicViewModel, SummonerMechanicModel } from './types';
 
@@ -78,6 +79,9 @@ export function CompactMechanic({ model }: { model: MechanicViewModel }) {
   const formation = useFormationView();
   if (model.kind === 'cadence' && order) {
     return <OrderStrip order={order} count={model.count} armed={model.armed} compact />;
+  }
+  if (model.kind === 'reload' && model.mode === 'ammo' && model.loadout) {
+    return <LoadoutAmmoCompact model={model} />;
   }
   if (model.kind === 'cooldown' && model.responses) return <ResolveCompact model={model} />;
   if (model.kind === 'summoner' && formation) return <FormationCompact model={model} formation={formation} />;

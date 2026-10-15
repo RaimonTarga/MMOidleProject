@@ -700,6 +700,42 @@
   filter: drop-shadow(0 0 2px rgba(117, 194, 218, 0.62));
 }
 
+.mechanic-reload--clip .mechanic-reload__polygon {
+  stroke: var(--clip-color);
+}
+
+.mechanic-reload--clip .mechanic-reload__round--loaded {
+  fill: var(--clip-color);
+  stroke: color-mix(in srgb, var(--clip-color) 72%, white);
+  filter: none;
+}
+
+.mechanic-reload__round--last {
+  fill: #f5c542;
+  stroke: #ffe7a3;
+}
+
+.mechanic-reload__reload-arc {
+  fill: none;
+  stroke: #e6a43c;
+  stroke-width: 2;
+  stroke-linecap: butt;
+  transform: rotate(-90deg);
+  transform-origin: 35px 35px;
+}
+
+.mechanic-ammo-chamber__next {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  margin-top: -4px;
+  border: 1px solid rgba(0, 0, 0, 0.7);
+  border-radius: 1px;
+}
+
 .mechanic-reload__round--current {
   fill: #d9f6fb;
   stroke: var(--hud-primary-strong);
@@ -2210,6 +2246,52 @@
 .compact-mechanic--cooldown .compact-mechanic__track > span { background: var(--hud-mechanic-cooldown); }
 .compact-mechanic--energy .compact-mechanic__track > span { background: var(--hud-mechanic-energy); }
 .compact-mechanic--reload .compact-mechanic__track > span { background: var(--hud-mechanic-reload); }
+
+.loadout-ammo-compact {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 20px;
+  min-width: 0;
+}
+
+.loadout-ammo-compact__count {
+  flex: 0 0 auto;
+  color: var(--hud-text);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.loadout-ammo-compact__track {
+  position: relative;
+  flex: 1 1 auto;
+  height: 6px;
+  min-width: 0;
+  overflow: hidden;
+  background: #121411;
+  border: 1px solid var(--hud-edge-dark);
+}
+
+.loadout-ammo-compact__track > span {
+  display: block;
+  height: 100%;
+}
+
+.loadout-ammo-compact__last {
+  position: absolute;
+  top: -1px;
+  right: 0;
+  width: 3px;
+  height: calc(100% + 2px);
+  background: #f5c542;
+}
+
+.loadout-ammo-compact__next {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.7);
+}
 .compact-mechanic--summoner .compact-mechanic__track > span { background: var(--hud-mechanic-summoner); }
 .compact-mechanic--summoner-volatile-brood .compact-mechanic__track > span { background: #ef693f; }
 .compact-mechanic--summoner-endless-swarm .compact-mechanic__track > span { background: #64b979; }

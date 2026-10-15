@@ -39,6 +39,14 @@ export type ReloadMechanicModel = {
   ammoMax: number;
   heatPct: number;
   overheated: boolean;
+  /** A Slinger with a Loadout. The ring takes the loaded clip's colour. */
+  loadout: boolean;
+  clipColor: string | null;
+  nextClipColor: string | null;
+  clipName: string | null;
+  nextClipName: string | null;
+  reloadRemainingMs: number;
+  reloadDurationMs: number;
 };
 
 export type SummonerMechanicModel = {

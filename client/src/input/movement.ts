@@ -239,6 +239,17 @@ export function tickMovement(scene: GameScene): void {
   transform.target = dest;
 }
 
+/**
+ * A Loadout reload holds the Slinger like a root (0). Quickdraw's walk share is
+ * its own speed. Null when this reload does not change prediction.
+ */
+export function ownReloadPredictMult(player: PlayerView): number | null {
+  if (player.classConfig?.system.kind !== 'loadout') return null;
+  if (!(player.reloadRemainingMs > 0)) return null;
+  const walk = player.passives['slinger.reload-walk-pct'];
+  return typeof walk === 'number' && walk > 0 ? walk : 0;
+}
+
 /** Current full-speed manual heading, or null while manual prediction is gated. */
 export function manualMoveDirection(scene: GameScene): Vec2 | null {
   if (holdStill || !isManualActive()) return null;
@@ -248,7 +259,8 @@ export function manualMoveDirection(scene: GameScene): Vec2 | null {
   if (
     player?.isDead ||
     player?.isChanneling ||
-    player?.activeBuffs?.some((buff) => buff.speedMult === 0)
+    player?.activeBuffs?.some((buff) => buff.speedMult === 0) ||
+    (!!player && ownReloadPredictMult(player) === 0)
   ) return null;
   let dx = kbVec.dx + padVec.dx;
   let dy = kbVec.dy + padVec.dy;
