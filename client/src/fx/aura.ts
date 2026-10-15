@@ -61,11 +61,6 @@ const BUFF_AURA_BY_ID: Record<string, BuffAuraDef> = {
     kind: 'stacks', fullAt: 3, color: 0xff5577, tint: 0xffaabb,
     minIntensity: 0.7, maxIntensity: 1.6,
   },
-  // Desperado — 5 momentum stacks that persist through a fight.
-  'reload-momentum': {
-    kind: 'stacks', fullAt: 5, color: 0xffcc44, tint: 0xffe9a8,
-    minIntensity: 0.7, maxIntensity: 1.6,
-  },
 };
 
 /**

@@ -107,7 +107,6 @@ export * from './tutorial';
 
 export * from './systems/onHitDamage';
 export * from './systems/relicPreview';
-export * from './systems/laserProfile';
 export * from './systems/equipmentPreview';
 export * from './systems/classSecondaryDamage';
 

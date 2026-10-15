@@ -51,8 +51,6 @@ export interface T1SnapshotClassResources {
   cadenceEmpoweredArmed: boolean;
   ammoCount: number;
   ammoMax: number;
-  heatPct: number;
-  laserOverheated: boolean;
   executionReady: boolean;
   executionCooldownPct: number;
   energyCount: number;
@@ -67,7 +65,6 @@ export interface T1SnapshotClassResources {
   targetChillStacks: number;
   isChanneling: boolean;
   channelingPct: number;
-  cannonChargePct: number;
   aura: string | null;
   summonActiveCount: number;
   summonRespawnMaxMs: number;

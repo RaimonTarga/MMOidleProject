@@ -27,9 +27,9 @@ export function beginCombatPlayback(state: RenderState, snapshot: DeltaSnapshot,
   return true;
 }
 
-/** Channels/teleports and summon attacks have existing time-sensitive render owners. */
+/** Teleports and summon attacks have existing time-sensitive render owners. */
 function isBufferedPlayer(player: PlayerView, event: CombatEvent): boolean {
-  if ((player.summonsMinions ?? 0) > 0 || (player.passives['reload.laser'] ?? 0) > 0) return false;
+  if ((player.summonsMinions ?? 0) > 0) return false;
   return !(event.kind === 'player-hit' && event.effects?.some(effect =>
     effect === 'flash-teleport'));
 }

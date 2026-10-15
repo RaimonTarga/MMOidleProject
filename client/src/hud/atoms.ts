@@ -179,8 +179,6 @@ export const flashEvasionBonusPctAtom = atom<number>(0);
 
 export const ammoCountAtom = atom<number>(0);
 export const ammoMaxAtom = atom<number>(0);
-export const heatPctAtom = atom<number>(0);
-export const laserOverheatedAtom = atom<boolean>(false);
 
 export const targetDotStacksAtom = atom<number>(0);
 export const targetDotTickPctAtom = atom<number>(0);
@@ -208,7 +206,6 @@ export const summonHealthAtom = atom<SummonHealthView[]>([]);
 
 export const isChannelingAtom = atom<boolean>(false);
 export const channelingPctAtom = atom<number>(0);
-export const cannonChargePctAtom = atom<number>(0);
 
 export const skillPointsAtom = atom<number>(0);
 export const unlockedSkillsAtom = atom<string[]>([]);
@@ -687,8 +684,6 @@ function resetPlayerAtoms(): void {
   store.set(flashEvasionBonusPctAtom, 0);
   store.set(ammoCountAtom, 0);
   store.set(ammoMaxAtom, 0);
-  store.set(heatPctAtom, 0);
-  store.set(laserOverheatedAtom, false);
   store.set(targetDotStacksAtom, 0);
   store.set(targetDotTickPctAtom, 0);
   store.set(targetDotTickSerialAtom, 0);
@@ -801,8 +796,6 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(flashEvasionBonusPctAtom, player.flashEvasionBonusPct);
   setIfChanged(ammoCountAtom, player.ammoCount);
   setIfChanged(ammoMaxAtom, player.ammoMax);
-  setIfChanged(heatPctAtom, player.heatPct);
-  setIfChanged(laserOverheatedAtom, player.laserOverheated);
   setIfChanged(targetDotStacksAtom, player.targetDotStacks);
   setIfChanged(targetDotTickPctAtom, player.targetDotTickPct);
   setIfChanged(targetChillStacksAtom, player.targetChillStacks);
@@ -812,7 +805,6 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfSummonSlotsEqual(player.summonSlots);
   setIfChanged(isChannelingAtom, player.isChanneling);
   setIfChanged(channelingPctAtom, player.channelingPct);
-  setIfChanged(cannonChargePctAtom, player.cannonChargePct);
   setIfChanged(skillPointsAtom, player.skillPoints);
 
   setIfChanged(barrierAtom, player.barrier);

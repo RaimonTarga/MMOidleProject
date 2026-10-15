@@ -93,7 +93,7 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
     ["debuff-slow", ["magnitude"], ["shortens"]],
     ["defense-stationary-dr", ["over 4 seconds", "under attack", "over 1 second"], ["gradually fades"]],
     ["squire-guard", ["shield", "telegraphed"], []],
-    ["reload-momentum", ["completed reload", "shortens reload time"], ["hit streak"]],
+
   ];
   for (const [id, required, forbidden] of descriptionChecks) {
     const help = buffHelp(id)?.help ?? "";

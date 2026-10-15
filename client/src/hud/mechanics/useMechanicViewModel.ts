@@ -16,9 +16,7 @@ import {
   executionCooldownPctAtom,
   executionReadyAtom,
   flashShiftPctAtom,
-  heatPctAtom,
   isChannelingAtom,
-  laserOverheatedAtom,
   localPlayerViewAtom,
   passivesAtom,
   selectedSubVariantAtom,
@@ -53,8 +51,6 @@ export function useMechanicViewModel(): MechanicViewModel | null {
   const unlockedSkills = useAtomValue(unlockedSkillsAtom);
   const ammo = useAtomValue(ammoCountAtom);
   const ammoMax = useAtomValue(ammoMaxAtom);
-  const heatPct = useAtomValue(heatPctAtom);
-  const overheated = useAtomValue(laserOverheatedAtom);
   const activeCount = useAtomValue(summonActiveCountAtom);
   const slotCount = useAtomValue(summonSlotCountAtom);
   const summonSlots = useAtomValue(summonSlotsAtom);
@@ -117,11 +113,8 @@ export function useMechanicViewModel(): MechanicViewModel | null {
     case 'reload':
       return {
         kind: 'reload',
-        mode: (passives['reload.laser'] ?? 0) > 0 ? 'heat' : 'ammo',
         ammo: Math.max(0, ammo),
         ammoMax: Math.max(0, ammoMax),
-        heatPct: clampPct(heatPct),
-        overheated,
       };
 
     case 'summoner':

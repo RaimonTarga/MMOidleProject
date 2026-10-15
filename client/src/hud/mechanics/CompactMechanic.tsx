@@ -34,9 +34,7 @@ function compactState(model: MechanicViewModel): { label: string; value: string;
         pct: model.empowered && !model.isFlash ? 100 : model.pct,
       };
     case 'reload':
-      return model.mode === 'heat'
-        ? { label: 'Heat', value: model.overheated ? `Cooling ${model.heatPct}%` : `${model.heatPct}%`, pct: model.heatPct }
-        : { label: 'Ammo', value: model.ammo === 0 ? 'Reloading…' : `${model.ammo} / ${model.ammoMax}`, pct: model.ammoMax > 0 ? model.ammo / model.ammoMax * 100 : 0 };
+      return { label: 'Ammo', value: model.ammo === 0 ? 'Reloading…' : `${model.ammo} / ${model.ammoMax}`, pct: model.ammoMax > 0 ? model.ammo / model.ammoMax * 100 : 0 };
     case 'summoner':
       return {
         label: model.specialization ? SUMMONER_COMPACT_LABELS[model.specialization] : 'Summons',
@@ -58,11 +56,9 @@ export function CompactMechanic({ model }: { model: MechanicViewModel }) {
   const state = compactState(model);
   const tone = model.kind === 'dot'
     ? model.element
-    : model.kind === 'reload' && model.mode === 'heat'
-      ? 'heat'
-      : model.kind === 'summoner' && model.specialization
-        ? `summoner-${model.specialization}`
-        : model.kind;
+    : model.kind === 'summoner' && model.specialization
+      ? `summoner-${model.specialization}`
+      : model.kind;
   return (
     <div className={`compact-mechanic compact-mechanic--${tone}`}>
       <div className="stat-row">

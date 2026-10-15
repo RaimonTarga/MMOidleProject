@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
 import { MechanicFrame } from './MechanicFrame';
-import { useMechanicHelp } from './mechanicHelp';
+
 import type { ReloadMechanicModel } from './types';
 
 const AMMO_CENTER = 35;
@@ -117,37 +117,6 @@ function AmmoPolygon({ ammo, max }: { ammo: number; max: number }) {
 }
 
 export function ReloadMechanic({ model }: { model: ReloadMechanicModel }) {
-  const help = useMechanicHelp(model);
-  if (model.mode === 'heat') {
-    return (
-      <MechanicFrame
-        kind="reload"
-      help={help}
-        title="Heat"
-        state={model.overheated ? 'danger' : undefined}
-      >
-        <div
-          className={`mechanic-heat${model.overheated ? ' mechanic-heat--overheated' : ''}`}
-          role="meter"
-          aria-label="Weapon heat"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={model.heatPct}
-        >
-          <span className="mechanic-heat__bus" aria-hidden="true" />
-          <span className="mechanic-heat__chamber" aria-hidden="true">
-            <span className="mechanic-heat__fill" style={{ width: `${model.heatPct}%` }} />
-            <span className="mechanic-heat__wake" />
-            <span className="mechanic-heat__limit" />
-            <span className="mechanic-heat__divisions"><i /><i /><i /><i /></span>
-          </span>
-          <span className="mechanic-heat__vents" aria-hidden="true"><i /><i /><i /><i /><i /></span>
-          <span className="mechanic-heat__impact" aria-hidden="true" />
-        </div>
-      </MechanicFrame>
-    );
-  }
-
   return (
     <MechanicFrame
       kind="reload"

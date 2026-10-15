@@ -5,8 +5,7 @@
  * gear lines that bend them. Wiring only: every number is a placeholder (kit `params`, the
  * constants below, the gear keys).
  *
- * The old reload machinery (frame loop, T3 paths, laser, snipe) is untouched here and inert for
- * a character with a Loadout; it goes in the Slinger's cleanup task.
+ * The old frame, range, and T3 paths are gone (CL7). This file is the Loadout runtime.
  */
 import {
   SLINGER_KIT,
@@ -183,7 +182,7 @@ export function registerSlinger(): void {
   // Tag each shot with its clip and place in the clip. Registered after the reload gate and ammo
   // bookkeeping, so `ammo` is already this shot's remainder (0 = the last round).
   registerCombatListener('beforeAttack', (ctx) => {
-    if (ctx.attackerType !== 'player' || ctx.cancelled || ctx.metadata['blunderbussPellet']) return;
+    if (ctx.attackerType !== 'player' || ctx.cancelled) return;
     const player = ctx.attacker as PlayerEntity;
     const loadout = loadoutOf(player);
     if (!loadout || ctx.metadata['reloadClipShot'] !== true) return;

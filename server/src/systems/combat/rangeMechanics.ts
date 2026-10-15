@@ -158,26 +158,24 @@ function amplify(ctx: CombatContext, bonus: number): void {
     Number(ctx.metadata['empoweredMultiplier'] ?? 1) * (1 + bonus);
 }
 
-/** The at-bay movement slow — Lancer, Phalanx and Enforcer, and nothing else. */
+/** The at-bay movement slow — Lancer and Phalanx, and nothing else. */
 function applyAtBaySlow(
   world: World,
   player: PlayerEntity,
   target: MonsterEntity,
   passives: PassiveMap,
 ): void {
-  // Three keys, one layer: exactly one root's range node can ever be unlocked, so
+  // Two keys, one layer: exactly one root's range node can ever be unlocked, so
   // these are read as "whichever root authored it" rather than summed. A sum would
   // silently stack if a future source ever granted two.
   const pct = Math.max(
     passives['cadence.range-mid-at-bay-slow-pct'] ?? 0,
     passives['cooldown.range-mid-at-bay-slow-pct'] ?? 0,
-    passives['reload.range-mid-at-bay-slow-pct'] ?? 0,
   );
   if (pct <= 0) return;
   const ms = Math.max(
     passives['cadence.range-mid-at-bay-slow-ms'] ?? 0,
     passives['cooldown.range-mid-at-bay-slow-ms'] ?? 0,
-    passives['reload.range-mid-at-bay-slow-ms'] ?? 0,
   );
   if (ms <= 0) return;
   // `applyMonsterSlow` owns the record (and stores `totalMs` for the buff clock).
@@ -335,19 +333,6 @@ function applyReachVulnerability(
   }, ['damageMultiplier', 'totalMs']);
 }
 
-/** Deadeye: shots landed from the outer band of range hit harder. */
-function applyLongShot(
-  ctx: CombatContext,
-  player: PlayerEntity,
-  target: MonsterEntity,
-  passives: PassiveMap,
-): void {
-  const bonus = passives['reload.range-far-damage-pct'] ?? 0;
-  if (bonus <= 0) return;
-  if (!isFromMaxReach(player, target, passives['reload.range-far-max-reach-pct'] ?? 0)) return;
-  amplify(ctx, bonus);
-}
-
 // ── Registration ─────────────────────────────────────────────────────────────
 
 /**
@@ -386,7 +371,6 @@ export function initRangeMechanics(): void {
     deepenClassDot(player, target, passives);
     applyOpeningStrike(ctx, player, target, passives);
     applyReachVulnerability(ctx, player, target, passives);
-    applyLongShot(ctx, player, target, passives);
   });
 }
 
@@ -399,13 +383,11 @@ function hasRangeMechanic(passives: PassiveMap): boolean {
   return (
     (passives['cadence.range-mid-at-bay-slow-pct'] ?? 0) > 0 ||
     (passives['cooldown.range-mid-at-bay-slow-pct'] ?? 0) > 0 ||
-    (passives['reload.range-mid-at-bay-slow-pct'] ?? 0) > 0 ||
     (passives['energy.range-mid-discharge-stagger-ms'] ?? 0) > 0 ||
     (passives['dot.range-mid-spread-stacks'] ?? 0) > 0 ||
     (passives['cadence.range-far-opener-pct'] ?? 0) > 0 ||
     (passives['cooldown.range-far-vuln-pct'] ?? 0) > 0 ||
     (passives['dot.range-far-stack-cap-bonus'] ?? 0) > 0 ||
-    (passives['dot.range-far-duration-pct'] ?? 0) > 0 ||
-    (passives['reload.range-far-damage-pct'] ?? 0) > 0
+    (passives['dot.range-far-duration-pct'] ?? 0) > 0
   );
 }

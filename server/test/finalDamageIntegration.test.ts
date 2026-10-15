@@ -9,7 +9,7 @@ import { runPlayerAttack } from '../src/systems/combat/engine/combat';
 import { applyPlayerProcDamage } from '../src/systems/combat/damage/procDamage';
 import { applyPlayerAoe } from '../src/systems/combat/damage/aoeDamage';
 import { updateDotArchetype } from '../src/systems/classes/archetypes/dot/dotPrototype';
-import { updateReloadT3Ticks } from '../src/systems/classes/archetypes/reload/t3/ticks/laser';
+
 import { attachComponent } from '../src/ecs/markerHelpers';
 initCombatSystems();
 let serial = 0;
@@ -57,8 +57,8 @@ const attack = (world: World, player: ReturnType<typeof fixture>['player'], targ
   runPlayerAttack(world, player, target, 1000, { attackOrigin: player.hasPosition.current, aggroSource: { id: player.isPlayer.id, kind: 'player' } });
 
 
-for (const mode of ['direct', 'proc', 'aoe', 'dot', 'laser'] as const) {
-  const { world, player } = fixture(mode === 'dot' ? 'dot' : mode === 'laser' ? 'reload' : null);
+for (const mode of ['direct', 'proc', 'aoe', 'dot'] as const) {
+  const { world, player } = fixture(mode === 'dot' ? 'dot' : null);
   const target = targetFor(world);
   player.dealsDamage.attack = 100;
   player.dealsDamage.onHitDamage = 20;
@@ -71,10 +71,6 @@ for (const mode of ['direct', 'proc', 'aoe', 'dot', 'laser'] as const) {
   if (mode === 'direct') attack(world, player, target);
   if (mode === 'proc') applyPlayerProcDamage(world, player, target, 120);
   if (mode === 'aoe') applyPlayerAoe(world, player, target.hasPosition.current, 100, 120);
-  if (mode === 'laser') {
-    Object.assign(player.usesSkills.passives, { 'reload.laser': 1, 'reload.laser-damage-per-tick-pct': 1 });
-    updateReloadT3Ticks(world, 100, 1000);
-  }
   if (mode === 'dot') {
     applyStatusEffect(target.tracksCombat, { id: 'dot', sourceId: player.isPlayer.id, maxStacks: 1,
       remainingMs: 5000, data: { damagePerStack: 120, tickIntervalMs: 1000, nextTickIn: 0 } });

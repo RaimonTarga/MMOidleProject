@@ -50,5 +50,4 @@ export function suppressCinematicOverlays(scene: GameScene): void {
   scene.nodeBoundaryFrame.setVisible(false);
   scene.debugGraphics.setVisible(false);
   state.targetIndicator.graphics?.setVisible(false);
-  state.cannonCharge.graphics?.setVisible(false);
 }

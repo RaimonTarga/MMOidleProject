@@ -1,5 +1,4 @@
 import { resolveFinalDamageMultipliers } from '../systems/finalDamage';
-import { resolveLaserProfile } from '../systems/laserProfile';
 import type { EquipmentMap, EssenceType } from "../items";
 import type { HasAutoIntent, HasEmote, HasStatus, PartyMember, TargetStatusView } from "../components";
 import type { PassiveMap } from "../passives";
@@ -124,8 +123,6 @@ export interface PlayerView {
   /** The loaded clip type and the next one, for the ammo ring (kit piece ids). */
   reloadClip: string;
   reloadNextClip: string;
-  heatPct: number;
-  laserOverheated: boolean;
   executionReady: boolean;
   executionCooldownPct: number;
   /** The Squire's Resolve in pips (class-first build plan CQ.1), and the bar's size. */
@@ -144,8 +141,6 @@ export interface PlayerView {
   targetChillStacks: number;
   isChanneling: boolean;
   channelingPct: number;
-  /** Cannoneer: 0 when idle, else 0→100 as the mid-reload cannon charge fills. */
-  cannonChargePct: number;
   /**
    * Active transformation/state aura id (e.g. 'surge'), or null. Drives a persistent
    * tint + glow on the character for "state" classes. Client maps the id to a color.
@@ -379,8 +374,6 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     reloadDurationMs: entity.usesReload?.reloadDurationMs ?? 0,
     reloadClip: entity.usesReload?.clipId ?? '',
     reloadNextClip: entity.usesReload?.nextClipId ?? '',
-    heatPct: entity.usesReload ? Math.min(100, Math.round(entity.usesReload.laserHeat / resolveLaserProfile(entity.usesSkills?.passives ?? {}).heatMax * 100)) : 0,
-    laserOverheated: entity.usesReload?.laserOverheated ?? false,
     executionReady: entity.hasEmpoweredAttack !== undefined,
     executionCooldownPct: entity.usesCooldown?.executionCooldownPct ?? 0,
     resolve: entity.usesCooldown?.resolve ?? 0,
@@ -403,11 +396,6 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     targetChillStacks: entity.chillsTarget?.targetChillStacks ?? 0,
     isChanneling: entity.isChanneling !== undefined,
     channelingPct: entity.isChanneling?.pct ?? 0,
-    cannonChargePct: (() => {
-      const r = entity.usesReload;
-      if (!r || r.cannonFireMs <= 0 || r.cannonChargeTotalMs <= 0) return 0;
-      return Math.round((1 - r.cannonFireMs / r.cannonChargeTotalMs) * 100);
-    })(),
     // Transformation/state auras. Add future state classes here (each maps to a
     // client aura color). Surge/Overdrive glows yellow; Channeler glows light blue
     // in 3 stages by upkeep stacks.

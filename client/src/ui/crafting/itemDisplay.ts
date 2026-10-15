@@ -554,14 +554,6 @@ export function resolvedRelicProfileRows(profile: ResolvedRelicProfile): RelicPr
       pair('Execution cooldown', profile.cooldownMs, seconds);
       pair('Execution damage', profile.empoweredMultiplier, mult);
       break;
-    case 'reload':
-      pair('Reload time', profile.reloadMs, seconds);
-      pair('Maximum ammo', profile.ammoMax);
-      break;
-    case 'laser':
-      pair('Maximum heat', profile.heatMax);
-      pair('Full cooling time', profile.coolingMs, seconds);
-      break;
     case 'dot':
       pair('DoT tick interval', profile.tickIntervalMs, seconds);
       pair('Maximum DoT stacks', profile.maxStacks);

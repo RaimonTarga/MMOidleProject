@@ -16,8 +16,7 @@ import type { AttackTint } from './elementTint';
  * legibly than hue at these sizes, and a single Conduit red keeps the summons'
  * output tied to the deep-red robe rather than to their own bone bodies.
  *
- * Distinct from `fx/laser.ts`, which is the Slinger's PERSISTENT beam driven by
- * render state across snapshots. These are one-shot, fire-and-forget.
+ * These are one-shot, fire-and-forget.
  *
  * The Conduit red is overridable by an elemental `tint`, because the Conduit's
  * WEAPON is what sets its summons' damage and cadence — so a venom blade should

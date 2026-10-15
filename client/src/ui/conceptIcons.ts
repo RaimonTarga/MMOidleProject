@@ -138,12 +138,6 @@ const BUFF_IDS = new Set([
   'mob-sprint',
   'mob-suppress',
   'mob-volcanic',
-  'reload-cannon',
-  'reload-cover-fire',
-  'reload-frame-ramp',
-  'reload-hair-trigger',
-  'reload-momentum',
-  'reload-snipe-ready',
   'sunlight',
   'summoner-battle-bond',
   'summoner-colossus',
@@ -287,12 +281,10 @@ const BUFF_ICON_ALIASES: Record<string, string> = {
   'defense-recovery': 'defense-burst',
   // Frame loops (progression rework Phase 3) borrow the authored tile of the
   // mechanic they ARE, rather than shipping five 404s until the art pass reaches
-  // them: Artillerist's ramp is the Hair Trigger ramp re-homed onto the frame,
-  // Phantasm's bank is overcharge, Wraith's window is energy accruing faster,
+  // them: Phantasm's bank is overcharge, Wraith's window is energy accruing faster,
   // Splinter's frenzy is the formation cycle paying off, Effigy's pair spends its
   // bank as a linked strike, and Consort's held line is the formation standing as
   // one durable body.
-  'reload-frame-ramp': 'reload-hair-trigger',
   'energy-frame-overcharge': 'energy-overcharge',
   'energy-frame-surge': 'energy-ac-charge',
   'summoner-frame-frenzy': 'summoner-coordinated-hunt',
@@ -415,7 +407,6 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'dot-conf': 'dot-conflag',
   slow: 'debuff-slow',
   'plating-shred': 'debuff-plating-shred',
-  'reload-suppress-shred': 'debuff-plating-shred',
   'ability-slowed': 'hamstring',
   'ability-rooted': 'binding-strike',
   // Entangle (Bramble Guard's keystone) wears the Guard that laid it, as Bound wears Binding Strike.
@@ -439,7 +430,6 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'slinger-rot': 'debuff-poison',
   'energy-storm': 'energy-storm',
   'energy-ci-tag': 'energy-ac-charge',
-  'death-mark': 'reload-snipe-ready',
   brittle: 'dot-frostbite',
   'dr-shatter': 'shatter-vulnerable',
   'poison-dagger-burn': 'debuff-poison',

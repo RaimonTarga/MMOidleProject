@@ -57,13 +57,6 @@ import type { PlayerEntity } from "../../../ecs/entity";
 import type { World } from "../../../world/World";
 
 /**
- * Fallback fraction for a continuous channel whose authored damage-per-tick is
- * missing. Matches the laser's authored default; only reached if a channel
- * forgets to author its own share.
- */
-const DEFAULT_CHANNEL_TICK_FRACTION = 0.18;
-
-/**
  * How much of one logical basic attack this exchange delivered. 0 means it does
  * not qualify at all.
  */
@@ -72,14 +65,6 @@ export function basicAttackTempoContribution(ctx: CombatContext): number {
   // A dead swing delivers nothing — the same rule that stops it consuming an
   // armed Technique or spending ammo.
   if (ctx.metadata["chaoticMiss"]) return 0;
-
-  // Continuous channels (the Slinger laser, the heavy cooldown beam) are not
-  // discrete attack cycles: they tick at the server rate and would otherwise be
-  // worth ten attacks a second. Each tick is worth the fraction of an attack it
-  // actually deals, so a channel earns Tempo at the rate its own authored
-  // damage says it is worth — no new balance constant, and no dead build.
-  const channelFraction = channelTickFraction(ctx);
-  if (channelFraction !== null) return Math.max(0, Math.min(1, channelFraction));
 
   // Conduit: one complete formation's worth of delivery is one attack. The
   // weight is normalized over the AUTHORED formation, so more bodies means more
@@ -104,16 +89,6 @@ function reloadClipSize(ctx: CombatContext): number {
   return typeof value === "number" && Number.isFinite(value)
     ? Math.max(1, Math.round(value))
     : 1;
-}
-
-/** The authored attack-fraction of a continuous channel tick, or null. */
-function channelTickFraction(ctx: CombatContext): number | null {
-  if (ctx.attackerType !== "player") return null;
-  const passives = ctx.attacker.usesSkills.passives;
-  if (ctx.metadata["reloadLaser"] === true) {
-    return passives["reload.laser-damage-per-tick-pct"] ?? DEFAULT_CHANNEL_TICK_FRACTION;
-  }
-  return null;
 }
 
 /**

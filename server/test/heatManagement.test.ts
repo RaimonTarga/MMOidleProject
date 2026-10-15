@@ -120,7 +120,7 @@ import { saveCharacter, loadCharacter } from '../src/db/playerRepo';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
 import { driveMinion } from '../src/systems/classes/archetypes/summoner/ai';
-import { updateReloadT3Ticks } from '../src/systems/classes/archetypes/reload/t3/ticks/laser';
+
 async function main(){
 const mode:EquippedRule={conditionId:'always',actionId:'wait-it-out',waitOutMode:'heat-managed'};
 const node='node-t4-volcanic-01';
@@ -193,12 +193,6 @@ for(const nodeId of ['node-t4-tundra-01','node-t3-volcanic-dungeon']){
  const db:any={update:()=>({set:(values:any)=>({where:()=>{row={...row,...values};return {returning:async()=>[row]}}})})};
  await saveCharacter(db,'test',player);const loaded=await loadCharacter(db,'test','test');strict(loaded);strict.deepEqual(loaded.tracksProgression.runesEquipped,[mode]);
  const restored=new World().attachPlayerEntity(loaded,'restored');strict.deepEqual(restored.tracksProgression.runesEquipped,[mode]);
-}
-{
- const {world,player,effect}=scenario();effect.stacks=25;updateRuneDerivedConfig(world,1000);
- const fresh=world.createMonster(node,'plains-slime',{x:410,y:400})!;const hp=fresh.hasHealth.hp;
- player.usesSkills.combatArchetype='reload';syncArchetypeSlices(world,player);player.usesSkills.passives['reload.laser']=1;player.performsAttack.attackRange=500;
- updateReloadT3Ticks(world,100,1100);strict.equal(fresh.hasHealth.hp,hp);strict.equal(player.hasAttackTarget,undefined,'laser must not acquire fresh target');
 }
 // Phase receipts must preserve a hold decision when a threat arrives later.
 {

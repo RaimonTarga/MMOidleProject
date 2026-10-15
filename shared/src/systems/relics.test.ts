@@ -3,7 +3,6 @@ import {
   resolveCooldownRelicProfile,
   resolveDotRelicDeliveryProfile,
   resolveEnergyRelicProfile,
-  resolveReloadRelicProfile,
   resolveRelicBonusMultiplier,
   resolveRelicCount,
   resolveRelicGain,
@@ -49,12 +48,6 @@ eq(resolveRelicCount(10, 1, 1, 1, 12), 12, 'count respects cap');
   assert(p.cooldownMs.after < p.cooldownMs.before, 'cooldown frequency shortens cooldown');
   assert(p.empoweredMultiplier.after > p.empoweredMultiplier.before, 'cooldown potency raises execution');
   eq(resolveCooldownRelicProfile(7000, 2, zero).cooldownMs.after, 7000, 'zero cooldown profile is identity');
-}
-
-{
-  const p = resolveReloadRelicProfile(1600, 10, positive);
-  assert(p.reloadMs.after < 1600, 'reload frequency shortens reload');
-  eq(p.ammoMax.after, 14, 'reload potency increases magazine');
 }
 
 {

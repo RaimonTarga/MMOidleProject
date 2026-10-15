@@ -46,7 +46,6 @@ import type { PassiveMap } from '../passives';
 import { resolveEmpoweredMultiplier } from './empoweredMult';
 import { resolveRelicPreview } from './relicPreview';
 import { relicRatingsFromPassives, resolveRelicMagnitudeMultiplier } from './relics';
-import { resolveLaserProfile } from './laserProfile';
 import { resolveOnHitDamage, mitigateOnHitDamage } from './onHitDamage';
 import { resolveDotClassProfile } from './dotClassProfile';
 import { resolveSummonerProfile, type SummonerProfileInput } from './summonerProfile';
@@ -214,49 +213,13 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
       break;
     }
 
-    // A magazine fires at full rate, then the reload is dead time. Damage is the
-    // clip spread over the whole cycle including that downtime.
+    // A magazine fires at full rate, then the reload is dead time. Clip size and
+    // reload time are the gun's stats. The old empowered last shot is gone.
     case 'reload': {
-      if (relic?.archetype === 'laser') {
-        const laser = resolveLaserProfile(input.passives);
-        const firingTicks = Math.ceil(laser.heatMax / laser.heatPerTick);
-        const coolingTicks = Math.ceil(laser.heatMax / laser.coolPerTick);
-        const tickRate = firingTicks / ((firingTicks + coolingTicks) * 0.1);
-        const deadInterval = Math.round(input.passives['weapon.dead-swing-interval'] ?? 0);
-        const liveTickFraction = deadInterval > 0 ? 1 - 1 / deadInterval : 1;
-        const direct = attackDamage(input, input.attack * laser.damagePerTickPct);
-        const weaponDot = input.weaponId
-          ? weaponDotProfileForWeapon(input.weaponId)
-          : undefined;
-        parts.push({
-          label: 'Laser direct (including cooling)',
-          dps: (weaponDot
-            ? Math.max(1, Math.round(direct * (1 - weaponDot.convPct)))
-            : direct) * tickRate * liveTickFraction,
-        });
-        if (input.onHitDamage > 0) {
-          parts.push({ label: 'Flat on-hit', dps: onHitContribution(input, input.onHitDamage, input.attack * laser.damagePerTickPct) * tickRate * liveTickFraction });
-        }
-        if (weaponDot) {
-          parts.push({
-            label: 'Weapon damage over time',
-            dps: weaponDotBasisFromResolvedDirectDamage(
-              direct,
-              input.archetype,
-              input.passives,
-            ) * weaponDot.convPct * weaponDot.dotMultiplier * tickRate,
-          });
-          caveats.push('Weapon damage over time uses the post-mitigation laser tick as its reservoir basis, then drains without further plating or damage reduction.');
-        }
-        break;
-      }
-      const magazine = relic?.archetype === 'reload' ? relic.ammoMax.after : 10;
-      const reloadMs = relic?.archetype === 'reload' ? relic.reloadMs.after : 1600;
+      const magazine = Math.max(1, Math.round(input.passives['reload.max-ammo'] ?? 10));
+      const reloadMs = Math.max(100, Math.round(input.passives['reload.reload-time-ms'] ?? 1600));
       const cycleSec = magazine * cdSec + reloadMs / 1000;
-      const lastShotMult = empowered?.effective ?? 1;
-      const normalShots = Math.max(0, magazine - (empowered ? 1 : 0));
-      const baseDirect = attackDamage(input, input.attack, 0.5);
-      const lastDirect = attackDamage(input, input.attack * lastShotMult, 0.5);
+      const shot = attackDamage(input, input.attack);
       const weaponDot = input.weaponId
         ? weaponDotProfileForWeapon(input.weaponId)
         : undefined;
@@ -265,29 +228,23 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
         : damage;
       parts.push({
         label: 'Direct attacks',
-        dps: (
-          normalShots * directAfterConversion(baseDirect)
-          + (empowered ? directAfterConversion(lastDirect) : 0)
-        ) / cycleSec,
+        dps: magazine * directAfterConversion(shot) / cycleSec,
       });
       if (input.onHitDamage > 0) {
         parts.push({
           label: 'Flat on-hit',
-          dps: onHitContribution(input, input.onHitDamage, input.attack, 0.5) * magazine / cycleSec,
+          dps: onHitContribution(input, input.onHitDamage) * magazine / cycleSec,
         });
       }
       if (weaponDot) {
         const reservoirBasis = weaponDotBasisFromResolvedDirectDamage(
-          normalShots * baseDirect + (empowered ? lastDirect : 0),
+          magazine * shot,
           input.archetype,
           input.passives,
         );
         parts.push({
           label: 'Weapon damage over time',
-          dps: reservoirBasis
-            * weaponDot.convPct
-            * weaponDot.dotMultiplier
-            / cycleSec,
+          dps: reservoirBasis * weaponDot.convPct * weaponDot.dotMultiplier / cycleSec,
         });
         caveats.push('Weapon damage over time uses the post-mitigation hit as its reservoir basis, then drains without further plating or damage reduction.');
       }

@@ -857,10 +857,6 @@ function buffEffectText(buff: PlayerBuff): string {
       return "frozen solid; movement and attacks disabled";
     case "dot-frostbite":
       return "+DoT damage taken";
-    case "reload-snipe-ready":
-      return "next shot empowered";
-    case "reload-cover-fire":
-      return "damage reduction while reloading";
     case "debuff-slow":
       return "movement speed reduced";
     case "debuff-root":

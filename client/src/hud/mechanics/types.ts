@@ -34,11 +34,8 @@ export type EnergyMechanicModel = {
 
 export type ReloadMechanicModel = {
   kind: 'reload';
-  mode: 'ammo' | 'heat';
   ammo: number;
   ammoMax: number;
-  heatPct: number;
-  overheated: boolean;
 };
 
 export type SummonerMechanicModel = {

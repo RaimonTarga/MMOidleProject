@@ -88,32 +88,17 @@ export function useMechanicHelp(model: MechanicViewModel): ReactNode {
       );
 
     case 'reload':
-      return model.mode === 'ammo' ? (
+      return (
         <>
           <div>
             You fire from a magazine. Empty it and you reload, which takes time
-            you are not attacking for — the trade is that a full magazine fires
-            faster than a single continuous attacker.
+            you are not attacking for. Fire rate is the gun's own stat.
           </div>
           <div style={{ marginTop: 6 }}>
             {model.ammo} of {model.ammoMax} rounds loaded.
           </div>
           <div style={{ marginTop: 6 }}>
-            At this extreme cadence, weapon Attack damage retains 65% effectiveness.
-            Flat on-hit damage stays at full strength, and weapon damage converted
-            into damage over time retains 85% effectiveness.
-          </div>
-        </>
-      ) : (
-        <>
-          <div>
-            Sustained fire builds heat. Overheat and you stop firing until it
-            vents, so the skill is riding the gauge rather than emptying it.
-          </div>
-          <div style={{ marginTop: 6 }}>
-            {model.overheated
-              ? 'Overheated — venting before you can fire again.'
-              : `${Math.round(model.heatPct)}% heat.`}
+            Weapon damage converted into damage over time retains 85% effectiveness.
           </div>
         </>
       );

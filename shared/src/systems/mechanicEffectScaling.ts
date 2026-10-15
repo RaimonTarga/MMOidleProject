@@ -32,7 +32,7 @@ export const SCALABLE_MECHANIC_DEBUFFS: Readonly<Record<string, ScalableMechanic
   'brittle': { fields: { platingPerStack: 'fraction', drPerStack: 'fraction' } },
   'dot-chill': { fields: { moveSlowPerStack: 'fraction', attackSlowPerStack: 'fraction' } },
   'dot-frostbite': { fields: { dotTakenPerStack: 'fraction' } },
-  'reload-suppress-shred': { fields: { platingReduction: 'fraction' } },
+
   // Harrier Brood's per-mark damage-taken magnitude, read from specialization
   // tuning rather than status-effect data.
   'summoner-harrier-brood': { fields: { damageTakenPctPerSlot: 'fraction' } },

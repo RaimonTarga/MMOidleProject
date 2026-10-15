@@ -8,7 +8,7 @@
  * and the two cases the old auto-attack formula got outright wrong now behave.
  */
 
-import { SLINGER_DIRECT_ATTACK_EFFECTIVENESS } from './classSecondaryDamage';
+import { SLINGER_WEAPON_DOT_EFFECTIVENESS } from './classSecondaryDamage';
 import { estimatePlayerDps, type DpsEstimateInput } from './dpsEstimate';
 import type { PassiveMap } from '../passives';
 import { SUMMONER_CORE_TUNING, SUMMONER_FRAME_TUNING } from '../data/summoner';
@@ -206,14 +206,6 @@ function part(estimate: ReturnType<typeof estimatePlayerDps>, label: string): nu
 }
 
 function testSlingerSecondaryDamageBreakdown(): void {
-  const empoweredEstimate = estimatePlayerDps({
-    attack: 100, onHitDamage: 0, attackCooldownMs: 1_000,
-    weaponId: 'ashbrand-blade', archetype: 'reload',
-    passives: { 'reload.empowered-mult': 1.5 },
-  });
-  const empoweredDot = ((9 * 100 + 150) / SLINGER_DIRECT_ATTACK_EFFECTIVENESS * 0.85) * 0.5 * 1.5 / 11.6;
-  assert(Math.abs(part(empoweredEstimate, 'Weapon damage over time') - Math.round(empoweredDot * 10) / 10) < 1e-9,
-    'Slinger reservoir estimate includes the empowered last shot exactly once');
   const estimate = estimatePlayerDps({
     attack: 65,
     onHitDamage: 20,
@@ -225,36 +217,25 @@ function testSlingerSecondaryDamageBreakdown(): void {
   const cycleSec = 10 + 1.6;
   const expectedDirect = Math.round(65 * 0.5) * 10 / cycleSec;
   const expectedOnHit = 20 * 10 / cycleSec;
-  const expectedDot = (65 / SLINGER_DIRECT_ATTACK_EFFECTIVENESS * 0.85) * 0.5 * 1.5 * 10 / cycleSec;
+  const expectedDot = (65 * SLINGER_WEAPON_DOT_EFFECTIVENESS) * 0.5 * 1.5 * 10 / cycleSec;
   assert(Math.abs(part(estimate, 'Direct attacks') - Math.round(expectedDirect * 10) / 10) < 1e-9,
-    'Slinger direct estimate retains the resolved 65% Attack basis');
+    'Slinger direct estimate keeps the full Attack stat, then the weapon conversion');
   assert(Math.abs(part(estimate, 'Flat on-hit') - Math.round(expectedOnHit * 10) / 10) < 1e-9,
     'Slinger flat on-hit estimate remains unpenalized');
   assert(Math.abs(part(estimate, 'Weapon damage over time') - Math.round(expectedDot * 10) / 10) < 1e-9,
-    'Slinger weapon reservoir estimate replaces 65% with 85% exactly once');
-}
-
-function testLaserSecondaryDamageBreakdown(): void {
-  const estimate = estimatePlayerDps({
-    attack: 100,
-    onHitDamage: 20,
-    attackCooldownMs: 1_000,
-    weaponId: 'ashbrand-blade',
-    archetype: 'reload',
-    passives: {
-      'reload.laser': 1,
-      'reload.laser-damage-per-tick-pct': 0.18,
-      'reload.laser-heat-per-tick': 2,
-      'reload.laser-cool-per-tick': 2.5,
-    },
+    'Slinger weapon reservoir estimate applies the 85% layer once');
+  const empowered = estimatePlayerDps({
+    attack: 100, onHitDamage: 0, attackCooldownMs: 1_000,
+    weaponId: 'ashbrand-blade', archetype: 'reload',
+    passives: { 'reload.empowered-mult': 1.5 },
   });
-  const tickRate = 50 / ((50 + 40) * 0.1);
-  assert(Math.abs(part(estimate, 'Laser direct (including cooling)') - 9 * tickRate) < 0.051,
-    'Laser direct estimate retains its existing full Attack basis before weapon conversion');
-  assert(Math.abs(part(estimate, 'Flat on-hit') - 20 * tickRate) < 0.051,
-    'Laser flat on-hit estimate remains unpenalized');
-  assert(Math.abs(part(estimate, 'Weapon damage over time') - (18 * 0.85 * 0.5 * 1.5 * tickRate)) < 0.051,
-    'Laser weapon reservoir estimate uses the explicit 85% Slinger basis');
+  const plain = estimatePlayerDps({
+    attack: 100, onHitDamage: 0, attackCooldownMs: 1_000,
+    weaponId: 'ashbrand-blade', archetype: 'reload',
+    passives: {},
+  });
+  assert(part(empowered, 'Weapon damage over time') === part(plain, 'Weapon damage over time'),
+    'the retired empowered last shot does not change the magazine estimate');
 }
 
 function testConduitFormationSecondaryBudgets(): void {
@@ -296,7 +277,6 @@ testSummonerWithoutAttackingStillReports();
 testScalesWithAttack();
 testOptionalTargetMitigation();
 testSlingerSecondaryDamageBreakdown();
-testLaserSecondaryDamageBreakdown();
 testConduitFormationSecondaryBudgets();
 
 console.log('dpsEstimate: ok');

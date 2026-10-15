@@ -1,4 +1,3 @@
-import type { LaserRelicProfile } from './laserProfile';
 import type { PassiveMap } from '../passives';
 
 // The relic ITEMS and their T4 gate are gone (class-first build plan §3.4): the relic slot
@@ -192,33 +191,6 @@ export function resolveCooldownRelicProfile(
   };
 }
 
-export interface ReloadRelicProfile {
-  archetype: 'reload';
-  reloadMs: RelicValue<number>;
-  ammoMax: RelicValue<number>;
-}
-
-export function resolveReloadRelicProfile(
-  reloadMs: number,
-  ammoMax: number,
-  ratings: RelicRatings,
-): ReloadRelicProfile {
-  const c = RELIC_COEFFICIENTS.reload;
-  return {
-    archetype: 'reload',
-    reloadMs: {
-      before: reloadMs,
-      after: resolveRelicInterval(
-        reloadMs, ratings.frequency, c.frequency, RELIC_INTERVAL_FLOORS_MS.reload,
-      ),
-    },
-    ammoMax: {
-      before: ammoMax,
-      after: resolveRelicCount(ammoMax, ratings.potency, c.potency, 1),
-    },
-  };
-}
-
 export interface DotRelicProfile {
   archetype: 'dot';
   tickIntervalMs: RelicValue<number>;
@@ -311,10 +283,8 @@ export function resolveSummonerRelicProfile(
 }
 
 export type ResolvedRelicProfile = (
-  | LaserRelicProfile
   | CadenceRelicProfile
   | CooldownRelicProfile
-  | ReloadRelicProfile
   | DotRelicProfile
   | EnergyRelicProfile
   | SummonerRelicProfile) & { secondaryEffects?: import('./relicEffectPreview').RelicEffectPreview[]; secondaryNotes?: import('./relicEffectPreview').RelicEffectNote[] };

@@ -13,7 +13,6 @@ import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { equipItem } from '../src/systems/player/economy/inventory';
 import { runPlayerAttack } from '../src/systems/combat/engine/combat';
-import { updateReloadT3Ticks } from '../src/systems/classes/archetypes/reload/t3/ticks/laser';
 
 initCombatSystems();
 let serial = 0;

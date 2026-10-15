@@ -18,7 +18,7 @@ import {
   type PlayerView,
   type Vec2,
 } from "@mmo-idle/shared";
-import { activateLaserBeam } from "../fx/laser";
+
 import { fxConduitBeam, fxConduitBolt, fxConduitStrike } from "../fx/conduitSummon";
 import { fxCannonBlast } from "../fx/cannonFx";
 import { fxVoidDischarge } from "../fx/voidDischarge";
@@ -31,7 +31,7 @@ import {
 } from "../fx/particles";
 import { getDotPath, type DotPath } from "../fx/dot";
 import { fxDotTick } from "../fx/dotTick";
-import { fxHeavyShell } from "../fx/heavyShell";
+
 import { fxLightningDagger } from "../fx/lightningDagger";
 import { fxEquinoxArc } from "../fx/equinoxArc";
 import {
@@ -1758,8 +1758,7 @@ export function dispatchCombatEvent(
     const from = state.sprite.get(ev.playerId) ?? presentation?.from;
     const to = presentation?.to ?? state.sprite.get(ev.targetId);
     if (shouldRunClientFx() && player && from && to && drawsOwnHit(player, ev)) {
-      const usesLocalController = (player.combatArchetype === 'reload' && (player.passives['reload.laser'] ?? 0) > 0)
-        || ev.effects?.some(effect => effect === FLASH_CLIENT_EFFECT);
+      const usesLocalController = ev.effects?.some(effect => effect === FLASH_CLIENT_EFFECT);
       if (!usesLocalController) {
         runFxForAttackStyle(state, ev, scene, presentation);
         const gainMult = listenerGain(scene, from.x, from.y);
@@ -1884,14 +1883,6 @@ function runFxForAttackStyle(
       ? 1.33
       : 1;
   const targetEffectScale = 1.5 * bossScale;
-  const isLaser =
-    player.combatArchetype === "reload" &&
-    (player.passives["reload.laser"] ?? 0) > 0;
-  // Three paths whose ATTACK is wrong, all detectable from passives the client
-  // already has — the same shape as isLaser above, so no new protocol.
-  const isHeavyShell =
-    player.combatArchetype === "reload" &&
-    (player.passives["reload.snipe"] ?? 0) > 0;
   const isLightningDagger =
     player.combatArchetype === "energy" &&
     (player.passives["energy.flash"] ?? 0) > 0;
@@ -1918,7 +1909,6 @@ function runFxForAttackStyle(
   // server-side). Randomize each bullet's animation speed too so the burst
   // reads as a chaotic shotgun blast, not an ordered sweep.
   if (
-    !isLaser &&
     player.combatArchetype === "reload" &&
     ev.pelletIndex !== undefined
   ) {
@@ -1929,9 +1919,7 @@ function runFxForAttackStyle(
     return;
   }
 
-  if (isLaser) {
-    activateLaserBeam(state, scene, ev.targetId);
-  } else if (isAltShot) {
+  if (isAltShot) {
     // Dualslinger on-hit (odd) round: the spiralling arcane round, the opposite of
     // its gold kinetic round (fx/bespoke/slinger.ts).
     fxDualBlueRound(scene, from, to, flair.scale);
@@ -1944,9 +1932,6 @@ function runFxForAttackStyle(
   } else if (isVoidDischarge) {
     // Voidwalker singularity discharge: void implosion → detonation on the target.
     fxVoidDischarge(scene, to.x, to.y);
-  } else if (isHeavyShell) {
-    playEmpoweredRing(args);
-    fxHeavyShell(scene, from.x, from.y, to.x, to.y, ev.empowered, tint);
   } else if (isLightningDagger) {
     playEmpoweredRing(args);
     fxLightningDagger(
@@ -2054,7 +2039,6 @@ function runFxForAttackStyle(
   }
 
   if (
-    !isLaser &&
     !isFlashTeleport &&
     !isRangedPlayerView(player) &&
     lungeTarget

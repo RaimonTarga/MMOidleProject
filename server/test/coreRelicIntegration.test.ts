@@ -3,7 +3,7 @@ import { baseRecoveryForTier } from '@mmo-idle/shared';
 import {
   GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment, ITEM_DATABASE,
   relicRatingsFromEffects, resolveRelicPreview, resolveSummonerProfile,
-  estimatePlayerDps, applyStatusEffect, getStatusEffect, composePlayerView, resolveLaserProfile, resolveCadenceRelicProfile, ZERO_RELIC_RATINGS, previewEquipmentStats, resolveOnHitDamage, resolveRelicComparison,
+  estimatePlayerDps, applyStatusEffect, getStatusEffect, resolveCadenceRelicProfile, ZERO_RELIC_RATINGS, previewEquipmentStats, resolveOnHitDamage, resolveRelicComparison,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { World } from '../src/world/World';
@@ -12,7 +12,6 @@ import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { equipItem } from '../src/systems/player/economy/inventory';
 import { runPlayerAttack } from '../src/systems/combat/engine/combat';
-import { updateReloadT3Ticks } from '../src/systems/classes/archetypes/reload/t3/ticks/laser';
 
 import { formatResolvedRelicProfile } from '../../client/src/ui/crafting/itemDisplay';
 
@@ -83,7 +82,6 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy', 'summoner'
       // The runtime no longer stores an execution clock (CQ7). The preview still
       // quotes one from cooldown.empowered-cd-ms; that number is not on the slice.
       case 'cooldown': assert(preview.cooldownMs.after > 0, relic.id); break;
-      case 'reload': eq(player.usesReload!.ammoMax, preview.ammoMax.after, relic.id); break;
       case 'dot': {
         const dot = getStatusEffect(target.tracksCombat, 'dot');
         assert(dot, 'dot applied');
@@ -110,22 +108,7 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy', 'summoner'
   eq(after.slots[0].defenseWeight, before.slots[0].defenseWeight, 'extra bodies do not dilute health');
 }
 
-// Melter's magazine is heat; capacity must not implicitly extend the full reload.
-for (const potency of [-0.25, 0.4]) {
-  const { world, player } = fixture('reload');
-  targetFor(world);
-  Object.assign(player.usesSkills.passives, { 'reload.laser': 1, 'relic.mechanic-potency': potency, 'relic.mechanic-frequency': 0.35 });
-  const profile = resolveLaserProfile(player.usesSkills.passives);
-  eq(profile.heatMax, Math.round(100 * (1 + potency)), 'heat capacity');
-  for (let tick = 0; tick < Math.ceil(profile.heatMax / profile.heatPerTick); tick++) updateReloadT3Ticks(world, 100, tick * 100);
-  assert(player.usesReload!.laserOverheated, 'overheat at resolved capacity');
-  eq(player.usesReload!.laserHeat, profile.heatMax, 'heat stops at capacity');
-  const view = composePlayerView(player);
-  eq(view!.heatPct, 100, 'network view normalizes actual heat');
-  for (let tick = 0; tick < Math.ceil(profile.coolingMs / 100); tick++) updateReloadT3Ticks(world, 100, 10000 + tick * 100);
-  assert(!player.usesReload!.laserOverheated, 'full cooling ends overheat');
-}
-for (const root of ['cadence', 'reload', 'dot', 'energy'] as const) {
+for (const root of ['cadence', 'dot', 'energy'] as const) {
   const { player } = fixture(root);
   const input = { attack: 100, onHitDamage: 20, attackCooldownMs: 1000, archetype: root, passives: player.usesSkills.passives, selectedSubVariant: null, playerTier: 4 };
   const before = estimatePlayerDps(input).total;
@@ -141,6 +124,15 @@ for (const root of ['cadence', 'reload', 'dot', 'energy'] as const) {
   assert(before.caveats.some(line => line.includes('slam')), 'the estimate says the slam is omitted');
 }
 {
+  // The magazine is the gun's stats. The reload relic profile is gone.
+  const { player } = fixture('reload');
+  const input = { attack: 100, onHitDamage: 20, attackCooldownMs: 1000, archetype: 'reload' as const, passives: player.usesSkills.passives, selectedSubVariant: null, playerTier: 4 };
+  const before = estimatePlayerDps(input);
+  const after = estimatePlayerDps({ ...input, passives: { ...input.passives, 'relic.mechanic-frequency': 0.35 } });
+  eq(after.total, before.total, 'reload DPS does not follow the deleted profile');
+  assert(resolveRelicPreview('reload', player.usesSkills.passives, { ...ZERO_RELIC_RATINGS, frequency: 0.35 }) === null, 'reload has no relic profile');
+}
+{
   const p = { 'cadence.empowered-threshold': 4 };
   const comparison = resolveRelicComparison('cadence', p, { ...ZERO_RELIC_RATINGS, frequency: 0.35 }, ZERO_RELIC_RATINGS);
   assert(comparison?.archetype === 'cadence', 'cadence comparison');
@@ -152,9 +144,6 @@ for (const root of ['cadence', 'reload', 'dot', 'energy'] as const) {
   const ratings = { ...ZERO_RELIC_RATINGS, frequency: 0.1, potency: 0.4 };
   const cadence = formatResolvedRelicProfile(resolveRelicPreview('cadence', { 'cadence.empowered-threshold': 4 }, ratings));
   assert(cadence.some(line => line.includes('every 4 attacks') && line.includes('unchanged')), 'unchanged breakpoint is explicit');
-  const laser = formatResolvedRelicProfile(resolveRelicPreview('reload', { 'reload.laser': 1 }, ratings));
-  assert(laser.some(line => line.includes('Maximum heat') && line.includes('140')), 'Melter shows actual heat');
-  assert(!laser.some(line => /ammo|mechanic frequency|mechanic potency/i.test(line)), 'Melter hides generic and Slinger labels');
   const flash = resolveRelicPreview('energy', { 'energy.flash': 1 }, { ...ZERO_RELIC_RATINGS, frequency: 1 });
   assert(flash?.archetype === 'energy', 'Flash resolves energy');
   eq(flash.gainPerHit.after, 10, 'Flash uses its own five-energy base');

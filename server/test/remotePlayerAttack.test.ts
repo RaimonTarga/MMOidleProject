@@ -45,7 +45,6 @@ const hit = { kind: 'player-hit', playerId: 'friend', targetId: 'mob', damage: 1
 exports.dispatchCombatEvent(state, hit, scene);
 assert(calls.includes('fxSweep'), 'remote confirmed hit includes technique FX');
 assert(state.interpolation.get('friend')!.lungeOffset.x > 0, 'remote melee attack lunges toward target');
-assert(!calls.includes('activateLaserBeam'));
 
 // A delayed killing hit retains its captured target after removal.
 state.sprite.delete('mob');
@@ -58,18 +57,6 @@ state.sprite.set('mob', { x: 140, y: 100 } as never);
 calls.length = 0;
 exports.dispatchCombatEvent(state, { ...hit, effects: ['flash-teleport'] }, scene);
 assert(!calls.includes('snapPlayerToServerTarget'), 'remote teleport cannot run local prediction');
-state.view.set('friend', { ...player, combatArchetype: 'reload', passives: { 'reload.laser': 1 } } as never);
-calls.length = 0;
-exports.dispatchCombatEvent(state, hit, scene);
-assert(!calls.includes('activateLaserBeam'), 'remote laser cannot activate own beam');
-// The remote guard must not disable the actual owner's continuous beam.
-scene.myId = 'friend';
-state.ownId = 'friend';
-calls.length = 0;
-exports.dispatchCombatEvent(state, { ...hit, effects: [] }, scene);
-assert(calls.includes('activateLaserBeam'), 'own laser retains its continuous controller');
-scene.myId = 'self';
-state.ownId = 'self';
 state.view.set('friend', { ...player, combatArchetype: 'reload', selectedRange: 'reload-range-far' } as never);
 calls.length = 0;
 exports.dispatchCombatEvent(state, { ...hit, effects: [], pelletIndex: 0 }, scene);
