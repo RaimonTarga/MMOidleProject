@@ -18,7 +18,8 @@ import type { World } from '../../../world/World';
 import { playerDotAtMaxStacks } from '../damage/dotInventory';
 import { bossPatternEscaping } from '../ai/bossPatterns';
 import { isPlayerActivelyInCombat, isPlayerInCombat } from '../ai/engagement';
-import { isMonsterThreatening } from '../ai/guardableThreats';
+import { guardableThreatsFor, isMonsterThreatening } from '../ai/guardableThreats';
+import { castedBuffCastEndsAt, chargedCastEndsAt, monsterAbilityCastEndsAt } from '../engine/monsterMechanics';
 import { heatEngagementTargets, heatManagementState } from '../ai/heatManagement';
 import { telegraphsContainingPlayer } from '../ai/telegraphEvasion';
 import { isPlayerControlled } from '../status/playerHardControl';
@@ -47,6 +48,12 @@ export interface FightSnapshot {
   enemyInContact: boolean;
   /** An enemy fighting the player (or its summons) is winding up an answerable attack. */
   enemyCharging: boolean;
+  /** An enemy on the player is casting anything (an attack, a buff, an ability). */
+  enemyCasting: boolean;
+  /** An answerable wind-up is aimed at the player itself. */
+  windupAtMe: boolean;
+  /** An enemy on the player charges or runs at it and hasn't reached it yet. */
+  fastClosing: boolean;
   /** The hostile ground telegraphs the player stands in. */
   telegraphs: ReturnType<typeof telegraphsContainingPlayer>;
   empoweredImminent: boolean;
@@ -66,14 +73,20 @@ export interface FightSnapshot {
  * charged-attack state alone: a boss mid `MonsterAbility` area-hit is every bit the threat
  * a Power Shot is, and utility casts stay excluded.
  */
+/** A closing enemy this much faster than the player counts as fast. PLACEHOLDER. */
+const FAST_CLOSING_SPEED_RATIO = 1.25;
+
 function aggroStats(
   world: World,
   player: PlayerEntity,
   now: number,
-): { count: number; charging: boolean; contact: boolean } {
+): { count: number; charging: boolean; contact: boolean; casting: boolean; windupAtMe: boolean; fastClosing: boolean } {
   let count = 0;
   let charging = false;
   let contact = false;
+  let casting = false;
+  let windupAtMe = false;
+  let fastClosing = false;
   const playerBox = posHitboxFromEntity(player);
   for (const monster of world.aggroedMonsters) {
     if (
@@ -82,7 +95,16 @@ function aggroStats(
     ) {
       count++;
       if (!charging && isMonsterThreatening(world, monster, now)) charging = true;
-      if (!contact) contact = inMeleeContact(player, playerBox, monster);
+      if (!windupAtMe && guardableThreatsFor(world, monster, now).some((t) => t.targetId === player.isPlayer.id)) windupAtMe = true;
+      if (!casting) {
+        casting = chargedCastEndsAt(monster) > now || castedBuffCastEndsAt(monster) > now || monsterAbilityCastEndsAt(monster) > now;
+      }
+      const touching = inMeleeContact(player, playerBox, monster);
+      if (!contact) contact = touching;
+      if (!fastClosing && !touching && monster.isMoving !== undefined) {
+        fastClosing = (monster.controlsMonster.chargeRemainingMs ?? 0) > 0
+          || monster.hasPosition.speed >= player.hasPosition.speed * FAST_CLOSING_SPEED_RATIO;
+      }
     } else if (
       // A Conduit's formation is "you": a slam wound up on one of its summons is the
       // cast a rule is meant to answer.
@@ -94,7 +116,7 @@ function aggroStats(
       charging = true;
     }
   }
-  return { count, charging, contact };
+  return { count, charging, contact, casting, windupAtMe, fastClosing };
 }
 
 /**
@@ -147,7 +169,7 @@ function isElite(monster: MonsterEntity | undefined): boolean {
 }
 
 function computeFightSnapshot(world: World, player: PlayerEntity, now: number): FightSnapshot {
-  const { count, charging, contact } = aggroStats(world, player, now);
+  const { count, charging, contact, casting, windupAtMe, fastClosing } = aggroStats(world, player, now);
   const targetId = player.hasAttackTarget?.targetId;
   const target = targetId ? world.getMonsterEntity(targetId) : undefined;
   const heatHolding = heatManagementState(player) === 'requested' && heatEngagementTargets(world, player).size > 0;
@@ -173,6 +195,9 @@ function computeFightSnapshot(world: World, player: PlayerEntity, now: number): 
     controlled: isPlayerControlled(player),
     enemyInContact: contact,
     enemyCharging: charging,
+    enemyCasting: casting,
+    windupAtMe,
+    fastClosing,
     telegraphs: telegraphsContainingPlayer(world, player, now),
     // The shared empowered-attack flag is armed: the next attack is empowered.
     empoweredImminent: player.hasEmpoweredAttack !== undefined,

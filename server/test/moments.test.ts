@@ -8,6 +8,7 @@ import { emptyEquipment, MOMENTS, type MomentId } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { setAggroTarget, setAttackTarget } from '../src/systems/combat/ai/targeting';
 import { runMonsterAttack } from '../src/systems/combat/engine/combat';
+import { beginCharge } from '../src/systems/combat/engine/monsterMechanics';
 import {
   conditionsHold,
   momentActive,
@@ -96,10 +97,19 @@ assert(!conditionsHold(world, player, [{ id: 'resolve-at-least', param: 2 }], 10
 assert(conditionsHold(world, player, [{ id: 'resolve-at-least', param: 2 }], 1000, (c) => (c.param ?? 0) <= 3),
   'and the runtime answers it');
 
-// Coverage: the T1 moments still to build are the S2 fight events.
+// An enemy on you starts a cast: both a cast and (aimed at you) a telegraphed blow.
+{
+  const caster = world.createMonster(NODE, 'bone-crawler', { x: 420, y: 400 })!;
+  setAggroTarget(world, caster, { id: player.isPlayer.id, kind: 'player' }, 1000);
+  tick();
+  beginCharge(caster, 1000 + world.tickCounter * 100 + 100, 5000);
+  tick();
+  assert(active('enemy-casts'), 'an enemy starting a cast fires');
+}
+
+// Coverage: every T1 moment is implemented (S2).
 const missingT1 = (Object.keys(MOMENTS) as MomentId[])
   .filter((id) => MOMENTS[id].firstTier === 1 && !momentImplemented(id));
-assert.deepEqual(missingT1.sort(), ['enemy-casts', 'target-closing-fast', 'telegraph-at-me'],
-  `T1 moments not yet implemented: ${missingT1.join(', ')}`);
+assert.deepEqual(missingT1, [], `T1 moments not yet implemented: ${missingT1.join(', ')}`);
 
 console.log('moments.test.ts: ok');

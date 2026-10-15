@@ -47,6 +47,7 @@ const STATES: Partial<Record<MomentId, StatePredicate>> = {
   // A full bar of your marks: today the DoT inventory's own ceiling.
   'target-full': (s) => s.targetAtMaxDotStacks,
   'target-shielded': (s) => s.targetShielded,
+  'target-closing-fast': (s) => s.fastClosing,
   // Today only a boss getting away; ordinary fleeing and kiting arrive with T2.
   'target-flees': (s) => s.targetEscaping,
 };
@@ -54,6 +55,8 @@ const STATES: Partial<Record<MomentId, StatePredicate>> = {
 /** The events, recorded as they happen. A param, when the moment has one, is a floor on the recorded value. */
 const EVENTS: ReadonlySet<MomentId> = new Set<MomentId>([
   'enemy-winds-up',
+  'enemy-casts',
+  'telegraph-at-me',
   'control-on-me',
   'debuff-landed',
   'dot-landed',
@@ -136,6 +139,8 @@ export function conditionsHold(
 export function updatePlayerMoments(world: World, player: PlayerEntity, now: number): FightSnapshot {
   const { snapshot, previous } = refreshFightSnapshot(world, player, now);
   if (snapshot.enemyCharging && !previous?.enemyCharging) recordMoment(world, player, 'enemy-winds-up');
+  if (snapshot.enemyCasting && !previous?.enemyCasting) recordMoment(world, player, 'enemy-casts');
+  if (snapshot.windupAtMe && !previous?.windupAtMe) recordMoment(world, player, 'telegraph-at-me');
   if (snapshot.controlled && !previous?.controlled) recordMoment(world, player, 'control-on-me');
   if (snapshot.debuffCount > (previous?.debuffCount ?? 0)) recordMoment(world, player, 'debuff-landed');
   if (snapshot.dotStacks > (previous?.dotStacks ?? 0)) recordMoment(world, player, 'dot-landed');
