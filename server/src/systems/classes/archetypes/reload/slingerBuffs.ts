@@ -1,9 +1,10 @@
 import { getStatusEffect } from '@mmo-idle/shared';
 import { ATTACK_HASTE_PCT_KEY } from '../../../combat/engine/attackCadence';
 import { defineBuff } from '../../../combat/buffs/descriptor';
+import { DEBUFF_IMMUNE_EFFECT } from '../../../combat/status/debuffGuard';
 import { ENTRENCHED_EFFECT_ID, FAN_EFFECT_ID } from '../../slinger/t3';
 
-/** The Slinger's two T3 specialization buffs on the buff bar (T3-W2): Fan the Hammer and Entrenched. */
+/** The Slinger's two T3 specialization buffs on the buff bar (T3-W2): Fan the Hammer, Entrenched and the T4 Pressure Suit. */
 export const SLINGER_BUFFS = [
   defineBuff(
     FAN_EFFECT_ID,
@@ -45,5 +46,24 @@ export const SLINGER_BUFFS = [
       };
     },
     { label: 'Entrenched', color: '#b08a4a', category: 'weapon', shape: 'circle' },
+  ),
+  defineBuff(
+    DEBUFF_IMMUNE_EFFECT,
+    ({ player }) => {
+      const effect = getStatusEffect(player.tracksCombat, DEBUFF_IMMUNE_EFFECT);
+      if (!effect || effect.remainingMs === 0) return null;
+      return {
+        id: DEBUFF_IMMUNE_EFFECT,
+        label: 'Debuff-proof',
+        stacks: 1,
+        durationPct: -1,
+        remainingMs: effect.remainingMs,
+        color: '#7ea6c4',
+        logSourceName: 'Pressure Suit',
+        logDetail: 'no debuff lands while you reload',
+        values: [{ label: 'Debuffs', value: 'refused', good: true }],
+      };
+    },
+    { label: 'Debuff-proof', color: '#7ea6c4', category: 'weapon', shape: 'circle' },
   ),
 ];

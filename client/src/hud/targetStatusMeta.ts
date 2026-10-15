@@ -34,6 +34,7 @@ const STATUS_META: Record<string, StatusMeta> = {
   'slinger-burn':       { label: 'Burn', color: '#ff7a3c' },
   'slinger-deathmark':  { label: 'Deathmark', color: '#c41e1e' },
   'slinger-fan-the-hammer': { label: 'Fanning', color: '#e8c25a' },
+  'debuff-immune':      { label: 'Debuff-proof', color: '#7ea6c4' },
   'slinger-entrenched': { label: 'Entrenched', color: '#b08a4a' },
   'slinger-rot':        { label: 'Rot', color: '#7a8b2e' },
   'conduit-poison':     { label: 'Poison', color: '#88bb55' },

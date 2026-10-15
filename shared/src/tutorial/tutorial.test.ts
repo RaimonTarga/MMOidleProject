@@ -460,6 +460,12 @@ const SLINGER_TAIL = [
       const [biome, lesson] = pair.split(':');
       return [`t3:${biome}`, `slinger:${lesson}`, `boss:${biome}:3`];
     }),
+  // The T4 stretch: the leaf pick rides the first approach.
+  ...['mountain:shellbreaker-ii', 'tundra:frost-ii', 'jungle:tracer-iii', 'desert:hollow-point-ii', 'volcanic:thermite', 'graveyard:hallowed', 'trench:exploit']
+    .flatMap((pair) => {
+      const [biome, lesson] = pair.split(':');
+      return [`t4:${biome}`, `slinger:${lesson}`, `boss:${biome}:4`];
+    }),
 ];
 
 function assertSlingerTail(script: TutorialScript): void {
@@ -514,6 +520,22 @@ function assertSlingerTail(script: TutorialScript): void {
     if (!approachBeat || !clipBeat) throw new Error(`${approach} and ${clip} exist`);
     assert(farmGate(approachBeat, biome) === 2, `${approach} ends at the lesson`);
     assert(farmGate(clipBeat, biome) === biomeLevelCap(1, biome), `${clip} carries on to the tier cap`);
+  }
+  assert(say('t4:mountain').includes('leaf') && say('t4:mountain').includes('Passive Tree'), 'the first T4 beat points at the leaf pick');
+  for (const [biome, lesson, trophy] of [
+    ['mountain', 'shellbreaker-ii', 'Quake Round'], ['tundra', 'frost-ii', 'Rime Round'], ['jungle', 'tracer-iii', "Hunter's Round"],
+    ['desert', 'hollow-point-ii', 'Bounty Round'], ['volcanic', 'thermite', 'Cinder Round'],
+    ['graveyard', 'hallowed', 'Toll Round'], ['trench', 'exploit', 'Harpoon Round'],
+  ] as const) {
+    const boss = tail.find((beat) => beat.id === `boss:${biome}:4`);
+    const step = boss?.steps[0];
+    assert(step?.type === 'attemptBoss' && step.biomeGroup === biome && step.tier === 4, `boss:${biome}:4 fights the tier-4 boss`);
+    assert(!!boss?.say.includes(trophy), `boss:${biome}:4 names ${trophy}`);
+    const approach = tail.find((beat) => beat.id === `t4:${biome}`);
+    const clip = tail.find((beat) => beat.id === `slinger:${lesson}`);
+    assert(!!approach && !!clip, `${biome} has its T4 approach and lesson`);
+    assert((farmGate(approach!, biome) ?? 0) < (farmGate(clip!, biome) ?? 0), `${biome}: the T4 approach stops at the lesson`);
+    assert(farmGate(clip!, biome) === biomeLevelCap(4, biome), `${biome}: the T4 lesson beat runs to the tier-4 cap`);
   }
   const mountain = tail.find((beat) => beat.id === 'slinger:mountain');
   if (!mountain) throw new Error('the Mountain farm is missing');

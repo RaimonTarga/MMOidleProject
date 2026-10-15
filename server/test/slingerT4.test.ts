@@ -17,6 +17,7 @@ import {
   SLINGER_KIT,
   type LoadoutConfig,
 } from '@mmo-idle/shared';
+import { syncPlayerBuffs } from '../src/systems/combat/buffs/buffSync';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import type { MonsterEntity, PlayerEntity } from '../src/ecs/entity';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
@@ -549,6 +550,9 @@ function hitOnPlayer(s: Setup, from: MonsterEntity, damage = 1_000, metadata: Re
   reloading(s.player);
   updateSlinger(s.world, s.player, 100, clock);
   assert.ok(getStatusEffect(s.player.tracksCombat, DEBUFF_IMMUNE_EFFECT), 'Pressure Suit: while reloading, debuffs cannot land');
+  // T4-W2: the immunity wears a buff-bar tile.
+  syncPlayerBuffs(s.world, Date.now());
+  assert.ok(s.player.hasStatus.activeBuffs?.some((buff) => buff.id === DEBUFF_IMMUNE_EFFECT), 'Pressure Suit shows its tile');
 }
 
 console.log('slingerT4: ok');
