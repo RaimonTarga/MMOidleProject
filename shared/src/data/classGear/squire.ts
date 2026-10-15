@@ -106,7 +106,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { green: 55 }, stats: { attack: 24, onHitDamage: 23 }, attacksPerSecond: 1.55, tier: 2,
       icon: 'items/weapons/stinger-rapier.png',
       description: 'Longer reach, and the slam hooks fleeing enemies back into its ring.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-hook-px': 300 },
     },
     {
       id: 'squire-throwing-shield-t2', name: 'Throwing Shield',
@@ -114,7 +114,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { yellow: 70 }, stats: { attack: 65 }, attacksPerSecond: 0.80, tier: 2,
       icon: 'items/weapons/sunsteel-falchion.png',
       description: 'When your target is out of reach, your swing throws the shield instead, and the throw is lighter.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.throw-damage-pct': 0.5, 'squire.throw-range-px': 260 },
     },
     // ── T3 ──
     {
@@ -147,7 +147,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { green: 120 }, stats: { attack: 50, onHitDamage: 38 }, attacksPerSecond: 1.65, tier: 3,
       icon: 'items/weapons/venomthorn-rapier.png',
       description: 'Longer reach, and the slam hooks fleeing enemies back into its ring.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-hook-px': 375 },
     },
     // moved from the Forest
     {
@@ -164,7 +164,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { yellow: 116 }, stats: { attack: 112 }, attacksPerSecond: 0.80, tier: 3,
       icon: 'items/weapons/solar-falchion.png',
       description: 'When your target is out of reach, your swing throws the shield instead, and the throw is lighter.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.throw-damage-pct': 0.625, 'squire.throw-range-px': 260 },
     },
     {
       id: 'squire-glacier-mace-t3', name: 'Glacier Mace',
@@ -206,7 +206,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { green: 264 }, stats: { attack: 108, onHitDamage: 70 }, attacksPerSecond: 1.75, tier: 4,
       icon: 'items/weapons/deathfang-rapier.png',
       description: 'Longer reach, and the slam hooks fleeing enemies back into its ring.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-hook-px': 450 },
     },
     // moved from the Forest
     {
@@ -223,7 +223,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { yellow: 255 }, stats: { attack: 212 }, attacksPerSecond: 0.80, tier: 4,
       icon: 'items/weapons/zenith-falchion.png',
       description: 'When your target is out of reach, your swing throws the shield instead, and the throw is lighter.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.throw-damage-pct': 0.75, 'squire.throw-range-px': 260 },
     },
     {
       id: 'squire-glacier-mace-t4', name: 'Glacier Mace',
@@ -308,10 +308,10 @@ export const SQUIRE_GEAR: ClassGearDef = {
     'mountain-charm-t2': { name: 'Stone Patience', text: 'After a caught telegraph, Recovery triples for a few seconds.', effects: { 'squire.recovery-caught-x': 3 } },
     'cave-vest-t2': { name: 'Reforged', text: 'Stripped plating comes back faster, and each stack stripped fills Resolve.', effects: { 'squire.shred-regrow-ms': 3000, 'squire.shred-fill-pips': 0.312 } },
     'cave-charm-t2': { name: 'Old Guard', text: 'Part of your Recovery stays on in combat.', effects: { 'defense.recovery-active-pct': 0.125 } },
-    'jungle-vest-t2': { name: 'Unflinching', text: "An ambush can't stun or knock you down.", effects: {} },
-    'jungle-charm-t2': { name: "Watchman's Ease", text: 'An ambush Watchful catches heals you for the hit it stopped.', effects: {} },
-    'desert-vest-t2': { name: 'Arrow Catcher', text: 'Ranged hits on you fill double Resolve.', effects: {} },
-    'desert-charm-t2': { name: 'Called Out', text: 'Each enemy a Challenge pulls heals you a little.', effects: {} },
+    'jungle-vest-t2': { name: 'Unflinching', text: "An ambush can't stun or knock you down.", effects: { 'squire.ambush-steadfast': 1 } },
+    'jungle-charm-t2': { name: "Watchman's Ease", text: 'An ambush Watchful catches heals you for the hit it stopped.', effects: { 'squire.watchful-heal-pct': 1 } },
+    'desert-vest-t2': { name: 'Arrow Catcher', text: 'Ranged hits on you fill double Resolve.', effects: { 'squire.ranged-fill-x': 2 } },
+    'desert-charm-t2': { name: 'Called Out', text: 'Each enemy a Challenge pulls heals you a little.', effects: { 'squire.challenge-heal-pct': 0.01 } },
     // ── T3 ──
     'swamp-vest-t3': { name: 'Iron Gut', text: 'Steel Will costs half.', effects: { 'squire.steel-will-cost-cut-pct': 0.5 } },
     'swamp-charm-t3': { name: 'Purifying Breath', text: 'A poison or bleed you shake off heals you for part of the damage it had left.', effects: { 'squire.cleanse-heal-pct': 0.75 } },
@@ -319,10 +319,10 @@ export const SQUIRE_GEAR: ClassGearDef = {
     'mountain-charm-t3': { name: 'Stone Patience', text: 'After a caught telegraph, Recovery triples for a few seconds.', effects: { 'squire.recovery-caught-x': 3 } },
     'cave-vest-t3': { name: 'Reforged', text: 'Stripped plating comes back faster, and each stack stripped fills Resolve.', effects: { 'squire.shred-regrow-ms': 3000, 'squire.shred-fill-pips': 0.375 } },
     'cave-charm-t3': { name: 'Old Guard', text: 'Part of your Recovery stays on in combat.', effects: { 'defense.recovery-active-pct': 0.15 } },
-    'jungle-vest-t3': { name: 'Unflinching', text: "An ambush can't stun or knock you down.", effects: {} },
-    'jungle-charm-t3': { name: "Watchman's Ease", text: 'An ambush Watchful catches heals you for the hit it stopped.', effects: {} },
-    'desert-vest-t3': { name: 'Arrow Catcher', text: 'Ranged hits on you fill double Resolve.', effects: {} },
-    'desert-charm-t3': { name: 'Called Out', text: 'Each enemy a Challenge pulls heals you a little.', effects: {} },
+    'jungle-vest-t3': { name: 'Unflinching', text: "An ambush can't stun or knock you down.", effects: { 'squire.ambush-steadfast': 1 } },
+    'jungle-charm-t3': { name: "Watchman's Ease", text: 'An ambush Watchful catches heals you for the hit it stopped.', effects: { 'squire.watchful-heal-pct': 1 } },
+    'desert-vest-t3': { name: 'Arrow Catcher', text: 'Ranged hits on you fill double Resolve.', effects: { 'squire.ranged-fill-x': 2 } },
+    'desert-charm-t3': { name: 'Called Out', text: 'Each enemy a Challenge pulls heals you a little.', effects: { 'squire.challenge-heal-pct': 0.013 } },
     'tundra-vest-t3': { name: 'Frozen Resolve', text: 'The Chill building on you fills Resolve.', effects: {} },
     'tundra-charm-t3': { name: 'Hearth', text: 'While Frostward holds, you heal a little each second.', effects: {} },
     'volcanic-vest-t3': { name: 'Stoked', text: "The Heat's extra damage on you fills extra Resolve.", effects: {} },
@@ -330,10 +330,10 @@ export const SQUIRE_GEAR: ClassGearDef = {
     // ── T4 ──
     'mountain-vest-t4': { name: 'Planted', text: "While guarding you can't be knocked back or stunned.", effects: { 'squire.guard-steadfast': 1 } },
     'mountain-charm-t4': { name: 'Stone Patience', text: 'After a caught telegraph, Recovery triples for a few seconds.', effects: { 'squire.recovery-caught-x': 3 } },
-    'jungle-vest-t4': { name: 'Unflinching', text: "An ambush can't stun or knock you down.", effects: {} },
-    'jungle-charm-t4': { name: "Watchman's Ease", text: 'An ambush Watchful catches heals you for the hit it stopped.', effects: {} },
-    'desert-vest-t4': { name: 'Arrow Catcher', text: 'Ranged hits on you fill double Resolve.', effects: {} },
-    'desert-charm-t4': { name: 'Called Out', text: 'Each enemy a Challenge pulls heals you a little.', effects: {} },
+    'jungle-vest-t4': { name: 'Unflinching', text: "An ambush can't stun or knock you down.", effects: { 'squire.ambush-steadfast': 1 } },
+    'jungle-charm-t4': { name: "Watchman's Ease", text: 'An ambush Watchful catches heals you for the hit it stopped.', effects: { 'squire.watchful-heal-pct': 1 } },
+    'desert-vest-t4': { name: 'Arrow Catcher', text: 'Ranged hits on you fill double Resolve.', effects: { 'squire.ranged-fill-x': 2 } },
+    'desert-charm-t4': { name: 'Called Out', text: 'Each enemy a Challenge pulls heals you a little.', effects: { 'squire.challenge-heal-pct': 0.016 } },
     'tundra-vest-t4': { name: 'Frozen Resolve', text: 'The Chill building on you fills Resolve.', effects: {} },
     'tundra-charm-t4': { name: 'Hearth', text: 'While Frostward holds, you heal a little each second.', effects: {} },
     'volcanic-vest-t4': { name: 'Stoked', text: "The Heat's extra damage on you fills extra Resolve.", effects: {} },

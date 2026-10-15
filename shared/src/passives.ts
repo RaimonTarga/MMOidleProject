@@ -253,6 +253,14 @@ export const SQUIRE_KEYS = [
   'squire.shred-fill-pips',          // Reforged: each stack stripped from you fills this much Resolve
   'squire.shove-heal-pct',           // Breather: a landed Shove heals this share of max HP per enemy
   'squire.cleanse-heal-pct',         // Purifying Breath: a shaken-off DoT heals this share of what it had left
+  // T2 jobs (T2-SQUIRE)
+  'squire.slam-hook-px',             // Hooked Glaive: the slam hooks fleeing enemies within this many px back into its ring
+  'squire.throw-damage-pct',         // Throwing Shield: out of reach, your swing throws the shield for this share of a swing
+  'squire.throw-range-px',           // Throwing Shield: how far the shield flies
+  'squire.ambush-steadfast',         // Unflinching: an ambush can't stun or knock you down
+  'squire.watchful-heal-pct',        // Watchman's Ease: an ambush Watchful catches heals this share of the hit it stopped
+  'squire.ranged-fill-x',            // Arrow Catcher: ranged hits on you fill Resolve this many times over
+  'squire.challenge-heal-pct',       // Called Out: each enemy a Challenge pulls heals this share of max HP
 ] as const;
 
 export const CADENCE_KEYS = [
