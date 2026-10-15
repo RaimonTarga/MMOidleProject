@@ -112,6 +112,10 @@ const STATUS_HELP: Record<string, StatusHelp> = {
 const TARGET_HELP: Record<string, StatusHelp> = {
   dot: d('Damage over time', 'Your damage-over-time is working on this target. It bypasses plating entirely and only half the target’s damage reduction applies, so it is your answer to heavily armoured enemies.'),
   slow: d('Slow', 'The target’s movement speed is cut, so it closes on you and repositions more slowly.'),
+  // The Apprentice's T2 payoffs (bible §9.8, §9.16) and Frost's freeze.
+  'apprentice-held': d('Held', 'Petrify has this Seized target held: it takes more damage from your hits while the hold lasts.'),
+  'apprentice-withered': d('Withered', 'Wither has sapped the target: it deals less damage until this ends.'),
+  'dot-frozen': d('Frozen', 'The target is frozen solid and cannot move or attack. A Detonate on it shatters the ice for a heavy hit that chills its neighbours.'),
   'ability-slowed': d('Slowed', 'An ability has crippled the target’s stride: movement is reduced, but its attack cadence is unchanged. It can still attack and cast; this is soft control, not a root or stun.'),
   'ability-rooted': d('Bound', 'Binding Strike has pinned the target in place. It can still attack anything already in reach, but cannot reposition until the bind ends.'),
   // Bramble Guard's Entangle keystone (design §22.4): the slow on whatever hit a brambled player.

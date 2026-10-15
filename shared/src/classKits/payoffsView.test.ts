@@ -40,4 +40,20 @@ const cond = withPlacementConditions(config, 1, [{ id: 'target-elite' }]);
 assert(composePayoffsView({ ...input, classConfig: cond })!.moments.find((m) => m.moment === 'target-full')!.placements[1].conditions[0].includes('elite'), 'conditions can change');
 assert(composePayoffsView({ ...input, classConfig: withPlacement(config, 'target-full', 'apprentice-nope') })!.problems.length > 0, 'an unknown payoff is refused, with the reason');
 
+// T2: the pick shows its school and shifts the cap; the T2 payoffs sit on the moments they answer.
+const t2: ClassScreenInput = {
+  ...input,
+  biomeLevel: { ...input.biomeLevel, plains: 8, mountain: 8, jungle: 2 },
+  disciplineId: 'apprentice-poison',
+  playerTier: 2,
+};
+const t2Config = defaultClassConfig(classConfigContextFromState(t2)!);
+const t2View = composePayoffsView({ ...t2, classConfig: withPlacement(withPlacement(t2Config, 'charging-at-me', 'apprentice-blast-back'), 'target-flees', 'apprentice-snag') })!;
+assert(t2View.discipline?.school === 'poison' && t2View.discipline.pieceName === 'Wither', 'the pick names its school and piece');
+assert(t2View.sigils.cap === view.sigils.cap + 2, `Poison holds two more sigils (${t2View.sigils.cap})`);
+assert(t2View.available.some((p) => p.pieceId === 'apprentice-wither' && p.moment === 'target-full'), 'the discipline piece is on the full moment');
+assert(t2View.available.find((p) => p.pieceId === 'apprentice-sear')?.moment === 'target-shielded', 'Sear answers the shield');
+assert(t2View.moments.some((m) => m.moment === 'target-shielded'), 'a T2 lesson you own puts its moment on the card');
+assert(composePayoffsView({ ...input, classConfig: config })!.discipline === null, 'no pick, no discipline');
+
 console.log('payoffsView.test.ts: ok');

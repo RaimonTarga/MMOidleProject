@@ -7,7 +7,7 @@
 import { checkClassConfig, classConfigContextFromState } from './config';
 import type { ClassConfig, ConditionRef, PayoffPlacement, PayoffsConfig } from './configTypes';
 import { CLASS_STATE_CONDITIONS } from './configTypes';
-import { APPRENTICE_KIT, type ApprenticePiece, type ApprenticeTrophy } from './apprentice/kit';
+import { APPRENTICE_KIT, type ApprenticePiece, type ApprenticeSchool, type ApprenticeTrophy } from './apprentice/kit';
 import { MOMENTS, isMomentId, type MomentId } from './moments';
 import type { ClassScreenInput } from './view';
 
@@ -17,6 +17,8 @@ export interface PayoffView {
   family: ApprenticePiece['family'];
   rank: number;
   text: string;
+  /** The moment this payoff answers: its own, or the one it is usually placed on. */
+  moment: MomentId | null;
 }
 
 export interface PlacementView {
@@ -36,9 +38,22 @@ export interface MomentView {
   placements: PlacementView[];
 }
 
+/** The T2 pick as the Payoff rules show it: the sigils' school and what it changes. */
+export interface PayoffsDisciplineView {
+  id: string;
+  name: string;
+  school: ApprenticeSchool;
+  /** The discipline's rules, in words. */
+  text: string;
+  /** The discipline's own payoff, the piece it adds. */
+  pieceName: string;
+}
+
 export interface PayoffsView {
-  /** The sigil cap as the class budget ("Sigils 6"). */
+  /** The sigil cap as the class budget plus the discipline's shift ("Sigils 6"). */
   sigils: { cap: number };
+  /** Null until the T2 pick; the sigil colour follows its school. */
+  discipline: PayoffsDisciplineView | null;
   /** The moments you can place payoffs on: those with a placement, plus every one a lesson you own uses. */
   moments: MomentView[];
   /** Every payoff you know, to place. */
@@ -59,6 +74,10 @@ const NATURAL_MOMENT: Readonly<Record<string, MomentId>> = {
   'apprentice-siphon': 'hp-low',
   'apprentice-seize': 'enemy-winds-up',
   'apprentice-converge': 'target-full',
+  // The discipline pieces (§9.5) have no moment of their own: any moment will do, full is the usual one.
+  'apprentice-wither': 'target-full',
+  'apprentice-fuse': 'target-full',
+  'apprentice-cold-snap': 'target-full',
 };
 
 function conditionText(condition: ConditionRef): string {
@@ -70,7 +89,7 @@ function conditionText(condition: ConditionRef): string {
 
 function payoffView(piece: ApprenticePiece, rank: number): PayoffView {
   const lines = [piece.text, ...(piece.ranks ?? []).filter((entry) => entry.rank <= rank).map((entry) => entry.text)];
-  return { pieceId: piece.id, name: piece.name, family: piece.family, rank, text: lines.join(' ') };
+  return { pieceId: piece.id, name: piece.name, family: piece.family, rank, text: lines.join(' '), moment: piece.moment ?? NATURAL_MOMENT[piece.id] ?? null };
 }
 
 /** The Payoff rules editor for an Apprentice's screen, or null for anyone else. */
@@ -87,7 +106,8 @@ export function composePayoffsView(input: ClassScreenInput): PayoffsView | null 
   const momentIds: MomentId[] = [];
   const note = (moment: MomentId): void => { if (!momentIds.includes(moment)) momentIds.push(moment); };
   for (const entry of available) {
-    const natural = NATURAL_MOMENT[entry.pieceId];
+    // T2 payoffs bound to their own moment (Blast Back, Sear, Seep, Snag, Recoil) name it themselves.
+    const natural = entry.moment;
     if (natural) note(natural);
   }
   for (const placement of system.placements) note(placement.moment);
@@ -107,8 +127,14 @@ export function composePayoffsView(input: ClassScreenInput): PayoffsView | null 
 
   const trophy = config.relic[0] ? TROPHIES.get(config.relic[0]) : undefined;
   const check = checkClassConfig(config, ctx);
+  const picked = APPRENTICE_KIT.disciplines.find((entry) => entry.id === ctx.disciplineId);
+  const school = picked ? (picked.id.replace('apprentice-', '') as ApprenticeSchool) : null;
+  const capShift = Math.round(picked?.params['capShift'] ?? 0);
   return {
-    sigils: { cap: ctx.budget },
+    sigils: { cap: Math.max(1, ctx.budget + capShift) },
+    discipline: picked && school
+      ? { id: picked.id, name: picked.name, school, text: picked.text, pieceName: (picked.pieceId && PIECES.get(picked.pieceId)?.name) || picked.name }
+      : null,
     moments,
     available,
     relic: trophy

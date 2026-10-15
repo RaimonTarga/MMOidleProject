@@ -162,16 +162,15 @@ export function detonate(
 /** Frost's Seize: a real freeze, or a brittle boss when the target accepts no control. */
 export function freezeOrBrittle(world: World, player: PlayerEntity, p: Payoffs, target: MonsterEntity, holdMs: number): void {
   const dp = disciplineParamsOf(p.discipline);
-  const cs = target.tracksCombat;
   if (monsterIgnoresControl(target)) {
     const ms = dp['brittleMs'] ?? 4000;
-    applyStatusEffect(cs, {
+    applyStatusEffect(target.tracksCombat, {
       id: BRITTLE_EFFECT_ID, maxStacks: 1, remainingMs: ms, refreshable: true, sourceId: player.isPlayer.id,
       data: { totalMs: ms, apprenticeBrittle: 1, damageTakenPct: dp['brittlePct'] ?? 0.3 },
     });
     return;
   }
-  applyStatusEffect(cs, {
+  applyStatusEffect(target.tracksCombat, {
     id: FROZEN_EFFECT, maxStacks: 1, remainingMs: holdMs, refreshable: true, sourceId: player.isPlayer.id,
     data: { totalMs: holdMs, moveSlowPct: FREEZE_MOVE_SLOW, attackSlowPct: FREEZE_ATTACK_SLOW },
   });

@@ -399,6 +399,9 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'slinger-venom': 'debuff-poison',
   'slinger-rot': 'debuff-poison',
   brittle: 'dot-frostbite',
+  // The Apprentice's T2 statuses wear stand-in art; the designer swaps it later.
+  'apprentice-held': 'debuff-root',
+  'apprentice-withered': 'debuff-sundered',
   'dr-shatter': 'shatter-vulnerable',
   'poison-dagger-burn': 'debuff-poison',
   'swamp-mirebrand-burn': 'debuff-poison',

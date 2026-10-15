@@ -70,6 +70,10 @@
   font-size: 11px;
 }
 
+.payoffs-editor__discipline {
+  border-left: 2px solid var(--payoff-color);
+}
+
 .payoffs-editor__known {
   border-left: 2px solid var(--payoff-color);
 }

@@ -5,6 +5,10 @@
   color: #ae85f4;
 }
 
+.sigil-ring--poison { color: #7ac74f; }
+.sigil-ring--fire { color: #ff7953; }
+.sigil-ring--frost { color: #6fd0ff; }
+
 .sigil-ring__pip {
   fill: #271f36;
   stroke: currentColor;
@@ -26,6 +30,10 @@
   gap: 10px;
   color: #ae85f4;
 }
+
+.sigil-readout--poison { color: #7ac74f; }
+.sigil-readout--fire { color: #ff7953; }
+.sigil-readout--frost { color: #6fd0ff; }
 
 .sigil-readout .sigil-ring {
   width: 68px;
