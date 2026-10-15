@@ -57,6 +57,9 @@ const STATES: Partial<Record<MomentId, StatePredicate>> = {
   'target-frozen': (s) => s.targetFrozen,
   'target-out-of-reach': (s) => s.targetOutOfReach,
   'ally-threatened': (s) => s.allyThreatened,
+  // Tier 3
+  'chill-threshold': (s) => s.chillAtThreshold,
+  'fire-attack': (s) => s.fireAttackAtMe,
 };
 
 /** The events, recorded as they happen. A param, when the moment has one, is a floor on the recorded value. */
@@ -74,6 +77,7 @@ const EVENTS: ReadonlySet<MomentId> = new Set<MomentId>([
   'dodged',
   'ambush',
   'target-resurfaces',
+  'drag-or-push',
 ]);
 
 export function momentImplemented(id: MomentId): boolean {

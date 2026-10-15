@@ -20,6 +20,7 @@
 import type { Vec2 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
+import { recordMoment } from '../moments/moments';
 import { playerForcedMovementResistPct, repositionPlayer } from './knockback';
 
 /**
@@ -53,6 +54,8 @@ export function applyForcedMovement(
   reason: ForcedMovementReason,
 ): ForcedMovementResult | null {
   if (baseDistance <= 0) return null;
+  // Something drags or pushes you: the moment fires even when your resistance holds you in place.
+  recordMoment(world, player, 'drag-or-push');
 
   // ONE resistance for both directions. Splitting it would mean a player geared
   // against being shoved is still dragged at full strength, which reads as the stat

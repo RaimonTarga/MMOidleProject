@@ -80,6 +80,11 @@ export interface FightSnapshot {
   targetOutOfReach: boolean;
   /** A party ally in this node stands under a telegraph or is low on HP. */
   allyThreatened: boolean;
+  // ── Tier 3 ──
+  /** The Tundra's Chill on the player has reached its threshold stacks. */
+  chillAtThreshold: boolean;
+  /** An enemy on the player attacks with fire (a fire style or a burning hit). */
+  fireAttackAtMe: boolean;
 }
 
 /**
@@ -95,7 +100,7 @@ function aggroStats(
   world: World,
   player: PlayerEntity,
   now: number,
-): { count: number; charging: boolean; contact: boolean; casting: boolean; windupAtMe: boolean; fastClosing: boolean; chargingAtMe: boolean; burrowAtMe: boolean; rangedAttacker: boolean } {
+): { count: number; charging: boolean; contact: boolean; casting: boolean; windupAtMe: boolean; fastClosing: boolean; chargingAtMe: boolean; burrowAtMe: boolean; rangedAttacker: boolean; fireAttackAtMe: boolean } {
   let count = 0;
   let charging = false;
   let contact = false;
@@ -105,6 +110,7 @@ function aggroStats(
   let chargingAtMe = false;
   let burrowAtMe = false;
   let rangedAttacker = false;
+  let fireAttackAtMe = false;
   const playerBox = posHitboxFromEntity(player);
   for (const monster of world.aggroedMonsters) {
     if (
@@ -122,6 +128,7 @@ function aggroStats(
       if (!chargingAtMe && (monster.controlsMonster.chargeRemainingMs ?? 0) > 0) chargingAtMe = true;
       if (!burrowAtMe && monster.isConcealed !== undefined && monster.isMoving !== undefined) burrowAtMe = true;
       if (!rangedAttacker && !touching && (monster.performsAttack?.attackRange ?? 0) > MELEE_CONTACT_MAX_REACH) rangedAttacker = true;
+      if (!fireAttackAtMe && isFireAttacker(monster)) fireAttackAtMe = true;
       if (!fastClosing && !touching && monster.isMoving !== undefined) {
         fastClosing = (monster.controlsMonster.chargeRemainingMs ?? 0) > 0
           || monster.hasPosition.speed >= player.hasPosition.speed * FAST_CLOSING_SPEED_RATIO;
@@ -137,7 +144,7 @@ function aggroStats(
       charging = true;
     }
   }
-  return { count, charging, contact, casting, windupAtMe, fastClosing, chargingAtMe, burrowAtMe, rangedAttacker };
+  return { count, charging, contact, casting, windupAtMe, fastClosing, chargingAtMe, burrowAtMe, rangedAttacker, fireAttackAtMe };
 }
 
 /**
@@ -204,6 +211,22 @@ function allyThreatened(world: World, player: PlayerEntity, now: number): boolea
 /** An ally this low on HP counts as threatened. PLACEHOLDER. */
 const ALLY_LOW_HP = 0.3;
 
+/** Chill stacks on the player that count as the Chill's threshold. PLACEHOLDER (one below Deep Freeze). */
+const CHILL_THRESHOLD_STACKS = 3;
+const TUNDRA_CHILL_ID = 'tundra-chill';
+
+function chillStacks(player: PlayerEntity): number {
+  const chill = player.tracksCombat.statusEffects.find((e) => e.id === TUNDRA_CHILL_ID && e.remainingMs !== 0);
+  return chill?.stacks ?? 0;
+}
+
+/** A fire attack: a fire attack style or a burn applier. */
+function isFireAttacker(monster: MonsterEntity): boolean {
+  const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
+  if (!def) return false;
+  return (def.attackStyle ?? '').includes('fire') || (def.dotEffect?.debuffId ?? '').includes('burn');
+}
+
 function isElite(monster: MonsterEntity | undefined): boolean {
   if (!monster) return false;
   if (monster.isMonster.isBoss) return true;
@@ -211,7 +234,7 @@ function isElite(monster: MonsterEntity | undefined): boolean {
 }
 
 function computeFightSnapshot(world: World, player: PlayerEntity, now: number): FightSnapshot {
-  const { count, charging, contact, casting, windupAtMe, fastClosing, chargingAtMe, burrowAtMe, rangedAttacker } = aggroStats(world, player, now);
+  const { count, charging, contact, casting, windupAtMe, fastClosing, chargingAtMe, burrowAtMe, rangedAttacker, fireAttackAtMe } = aggroStats(world, player, now);
   const targetId = player.hasAttackTarget?.targetId;
   const target = targetId ? world.getMonsterEntity(targetId) : undefined;
   const heatHolding = heatManagementState(player) === 'requested' && heatEngagementTargets(world, player).size > 0;
@@ -256,6 +279,8 @@ function computeFightSnapshot(world: World, player: PlayerEntity, now: number): 
     targetFrozen: target ? hasFrozenOrBrittle(target) : false,
     targetOutOfReach: target ? isConcealedEntity(target) || isInvulnerableMonster(target) : false,
     allyThreatened: allyThreatened(world, player, now),
+    chillAtThreshold: chillStacks(player) >= CHILL_THRESHOLD_STACKS,
+    fireAttackAtMe,
     moving: player.isMoving !== undefined,
     traveling:
       player.hasAutoTraversePath !== undefined &&
