@@ -1,9 +1,8 @@
 import { defineMechanic } from '../../mechanicModule';
-import { initCadenceArchetype, updateCadenceArchetype } from './cadencePrototype';
-import { CADENCE_FRAME_BUFFS } from './frameLoop';
+import { updateHemorrhages } from '../../../combat/damage/bleedTicks';
+import { initCadenceArchetype } from './cadencePrototype';
 import { STRIKER_ORDER_BUFFS } from './order';
 import { updateStrikerGear } from './strikerGear';
-import { updateCadenceT3, CADENCE_T3_BUFFS } from './t3';
 
 const cadenceModule = defineMechanic({
   id: 'cadence',
@@ -11,11 +10,11 @@ const cadenceModule = defineMechanic({
     initCadenceArchetype();
   },
   tick: (world, dt, now) => {
-    updateCadenceT3(world, dt);
-    updateCadenceArchetype(world, dt);
+    // The bleed driver: Rend's bleed and Festering Cut's rot.
+    updateHemorrhages(world, dt);
     updateStrikerGear(world, dt, now);
   },
-  buffs: [...STRIKER_ORDER_BUFFS, ...CADENCE_FRAME_BUFFS, ...CADENCE_T3_BUFFS],
+  buffs: [...STRIKER_ORDER_BUFFS],
 });
 
 export default cadenceModule;

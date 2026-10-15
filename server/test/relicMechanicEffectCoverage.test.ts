@@ -1,7 +1,7 @@
-// Runtime regressions for the six ACTIVE mechanics that were missing Relic
+// Runtime regressions for the ACTIVE mechanics that were missing Relic
 // Buff/Debuff Effect coverage: Grand Ritual, Harrier Brood, Withering Chorus,
-// Tempest's Endless Storm, the Winter Warden Frozen payoff, and Berserker
-// Rampage. Each block compares an otherwise identical build at secondary
+// Tempest's Endless Storm and the Winter Warden Frozen payoff (Berserker
+// Rampage's block went with the cadence T3 paths, CS7). Each block compares an otherwise identical build at secondary
 // relic rating 0 vs +25%, using the real runtime call sites (not a
 // reimplementation of the formula).
 import { baseRecoveryForTier } from '@mmo-idle/shared';
@@ -32,13 +32,6 @@ import {
 } from '../src/systems/classes/archetypes/summoner/specs';
 import { FROZEN_EFFECT } from '../src/systems/classes/archetypes/dot/t3/core/constants';
 import { STORM_FX } from '../src/systems/classes/archetypes/energy/t3/core/constants';
-import {
-  RAMPAGE_APS_PER_STACK_MS, RAMPAGE_DECAY_INTERVAL_MS, RAMPAGE_MAX_STACKS, RAMPAGE_MULT_PER_STACK,
-} from '../src/systems/classes/archetypes/cadence/t3/core/constants';
-import { recomputeRampageStats } from '../src/systems/classes/archetypes/cadence/t3/core/rampage';
-import { CADENCE_T3_BUFFS } from '../src/systems/classes/archetypes/cadence/t3/core/buffs';
-import { updateCadenceState } from '../src/systems/classes/archetypes/cadence/t3/ticks/cadenceState';
-import { playerMechanicBuffMagnitude } from '../src/systems/classes/shared/applyPlayerMechanicBuff';
 
 initCombatSystems();
 
@@ -112,9 +105,9 @@ function minions(world: World, player: ReturnType<typeof attachSummoner>['player
   return player.summonsMinions!.minionIds.map((id) => world.getMinionEntity(id)!).filter(Boolean);
 }
 
-// ── Non-summoner (dot/energy/cadence) fixture (mirrors coreRelicIntegration.test.ts) ─
+// ── Non-summoner (dot/energy) fixture (mirrors coreRelicIntegration.test.ts) ─
 
-function fixture(archetype: 'dot' | 'energy' | 'cadence') {
+function fixture(archetype: 'dot' | 'energy') {
   const id = `mech-${serial++}`;
   const world = new World();
   const slices: PersistedPlayerSlices = {
@@ -389,151 +382,6 @@ const hit = (world: World, player: ReturnType<typeof fixture>['player'], target:
     SCALABLE_MECHANIC_DEBUFFS,
   );
   close(monsterSlow.data!.moveSlowPct, 0.5, 'a monster-applied slow must never be scaled by a player Relic rating');
-}
-
-// ── Berserker Rampage — buff effect scales only the two beneficial magnitudes ──
-{
-  const rampageMult = (b: ReturnType<typeof fixture>['player']) => playerMechanicBuffMagnitude(
-    b, 'cadence-rampage', 'multPerStack', b.usesSkills.passives['cadence.rampage-mult-per-stack'] ?? RAMPAGE_MULT_PER_STACK,
-  );
-  const rampageAps = (b: ReturnType<typeof fixture>['player']) => playerMechanicBuffMagnitude(
-    b, 'cadence-rampage', 'apsPerStackMs', b.usesSkills.passives['cadence.rampage-aps-per-stack-ms'] ?? RAMPAGE_APS_PER_STACK_MS,
-  );
-
-  // 1/2. Exact scalar checks: +25% Buff Effect scales both beneficial fields by ×1.25.
-  const base = fixture('cadence');
-  base.player.usesSkills.passives['cadence.rampage'] = 1;
-  const boosted = fixture('cadence');
-  boosted.player.usesSkills.passives['cadence.rampage'] = 1;
-  boosted.player.usesSkills.passives['relic.mechanic-buff-effect'] = 0.25;
-
-  close(rampageMult(base.player), RAMPAGE_MULT_PER_STACK, 'sanity: baseline finisher bonus per stack matches authored tuning');
-  close(rampageMult(boosted.player), RAMPAGE_MULT_PER_STACK * 1.25, '+25% Buff Effect scales Rampage finisher damage per stack by exactly ×1.25');
-  close(rampageAps(base.player), RAMPAGE_APS_PER_STACK_MS, 'sanity: baseline attack-cooldown reduction per stack matches authored tuning');
-  close(rampageAps(boosted.player), RAMPAGE_APS_PER_STACK_MS * 1.25, '+25% Buff Effect scales the per-stack reduction by 1.25');
-
-  // Runtime: a real empowered finisher must land the scaled multiplier, not the raw one.
-  for (const { world, player } of [base, boosted]) {
-    player.dealsDamage!.attack = 10_000; // swamps rounding noise from the base ×2 empowered mult
-    const target = nonSummonerTarget(world);
-    attachComponent(world, player, 'hasEmpoweredAttack', {});
-    const before = target.hasHealth.hp;
-    hit(world, player, target, 1_000);
-    (player as any)._finisherDamage = before - target.hasHealth.hp;
-  }
-  assert(base.player.usesCadence!.rampageStacks === 1 && boosted.player.usesCadence!.rampageStacks === 1,
-    'one finisher must grant exactly one Rampage stack regardless of the relic');
-  const baseFinisher = (base.player as any)._finisherDamage as number;
-  const boostedFinisher = (boosted.player as any)._finisherDamage as number;
-  close(boostedFinisher / baseFinisher, (1 + 1 * rampageMult(boosted.player)) / (1 + 1 * rampageMult(base.player)),
-    'the actual finisher damage calculation must reflect the scaled per-stack bonus', 1e-3);
-
-  // 3. HUD descriptor must report the scaled value.
-  const descriptor = CADENCE_T3_BUFFS.find((b) => b.id === 'cadence-rampage')!;
-  const baseBuff = descriptor.project({ player: base.player, world: base.world, now: 0 })!;
-  const boostedBuff = descriptor.project({ player: boosted.player, world: boosted.world, now: 0 })!;
-  const baseFinisherLine = baseBuff.values!.find((v) => v.label === 'Finisher damage')!.value;
-  const boostedFinisherLine = boostedBuff.values!.find((v) => v.label === 'Finisher damage')!.value;
-  assert(baseFinisherLine === '+15%', `HUD must show the unscaled per-stack bonus: got ${baseFinisherLine}`);
-  assert(boostedFinisherLine === '+19%', `HUD must show the Buff-Effect-scaled bonus (Math.round(18.75)): got ${boostedFinisherLine}`);
-
-  // 4. recomputeRampageStats: the cooldown reduction itself must use the scaled magnitude.
-  for (const { player } of [base, boosted]) {
-    player.performsAttack.attackCooldown = 2_000; // far from the 200ms floor, isolates the per-stack math
-    recomputeRampageStats(player);
-  }
-  close(base.player.usesCadence!.rampageCdReduction, RAMPAGE_APS_PER_STACK_MS, 'sanity: baseline cooldown reduction for one stack');
-  close(boosted.player.usesCadence!.rampageCdReduction, RAMPAGE_APS_PER_STACK_MS * 1.25, 'recomputeRampageStats must apply the Buff-Effect-scaled reduction');
-
-  // 5. Threshold reduction stays exactly −1 per stack, independent of Buff Effect.
-  {
-    const thresholdRig = (stacks: number) => {
-      const { player } = fixture('cadence');
-      player.usesSkills.passives['cadence.rampage'] = 1;
-      player.usesSkills.passives['relic.mechanic-buff-effect'] = 0.9;
-      player.usesCadence!.rampageStacks = stacks;
-      recomputeRampageStats(player);
-      return player.usesCadence!.threshold;
-    };
-    close(thresholdRig(1) - thresholdRig(2), 1, 'Rampage threshold reduction must stay exactly −1 per stack even at a large Buff Effect rating');
-  }
-
-  // 6. Max stacks (overload trigger) and out-of-combat decay timing are unaffected.
-  {
-    const overloadBase = fixture('cadence');
-    overloadBase.player.usesSkills.passives['cadence.rampage'] = 1;
-    const overloadBoosted = fixture('cadence');
-    overloadBoosted.player.usesSkills.passives['cadence.rampage'] = 1;
-    overloadBoosted.player.usesSkills.passives['relic.mechanic-buff-effect'] = 0.9;
-    for (const { world, player } of [overloadBase, overloadBoosted]) {
-      player.usesCadence!.rampageStacks = RAMPAGE_MAX_STACKS;
-      const target = nonSummonerTarget(world);
-      attachComponent(world, player, 'hasEmpoweredAttack', {});
-      hit(world, player, target, 1_000);
-    }
-    assert(overloadBase.player.usesCadence!.rampageStacks === 0 && overloadBoosted.player.usesCadence!.rampageStacks === 0,
-      'the overload trigger point (max stacks) must not move with Buff Effect');
-
-    const decayBase = fixture('cadence');
-    decayBase.player.usesSkills.passives['cadence.rampage'] = 1;
-    const decayBoosted = fixture('cadence');
-    decayBoosted.player.usesSkills.passives['cadence.rampage'] = 1;
-    decayBoosted.player.usesSkills.passives['relic.mechanic-buff-effect'] = 0.9;
-    for (const { player } of [decayBase, decayBoosted]) player.usesCadence!.rampageStacks = 3;
-    updateCadenceState(decayBase.world, RAMPAGE_DECAY_INTERVAL_MS);
-    updateCadenceState(decayBoosted.world, RAMPAGE_DECAY_INTERVAL_MS);
-    assert(decayBase.player.usesCadence!.rampageStacks === 2 && decayBoosted.player.usesCadence!.rampageStacks === 2,
-      'one decay interval must shed exactly one stack regardless of Buff Effect');
-  }
-
-  // 7. The regular-attack penalty (an authored downside) must never move.
-  {
-    const penBase = fixture('cadence');
-    penBase.player.usesSkills.passives['cadence.rampage'] = 1;
-    const penBoosted = fixture('cadence');
-    penBoosted.player.usesSkills.passives['cadence.rampage'] = 1;
-    penBoosted.player.usesSkills.passives['relic.mechanic-buff-effect'] = 0.9;
-    for (const { player } of [penBase, penBoosted]) player.usesCadence!.rampageStacks = 3;
-    const penFor = (p: typeof penBase.player) => {
-      const penPerStack = p.usesSkills.passives['cadence.rampage-atk-pen-per-stack'] ?? 0.08;
-      return Math.min(0.9, p.usesCadence!.rampageStacks * penPerStack);
-    };
-    close(penFor(penBase.player), penFor(penBoosted.player), 'the regular-attack penalty must be identical regardless of Buff Effect');
-  }
-
-  // 8. Relic Potency still independently scales the base empowered multiplier
-  // that Rampage's bonus then compounds on top of (separate, composing layers).
-  {
-    const potencyOff = fixture('cadence');
-    potencyOff.player.usesSkills.passives['cadence.rampage'] = 1;
-    potencyOff.player.usesSkills.passives['relic.mechanic-buff-effect'] = 0.25;
-    potencyOff.player.dealsDamage!.attack = 10_000;
-    const potencyOn = fixture('cadence');
-    potencyOn.player.usesSkills.passives['cadence.rampage'] = 1;
-    potencyOn.player.usesSkills.passives['relic.mechanic-buff-effect'] = 0.25;
-    potencyOn.player.usesSkills.passives['relic.mechanic-potency'] = 0.4;
-    potencyOn.player.dealsDamage!.attack = 10_000;
-    for (const { world, player } of [potencyOff, potencyOn]) {
-      const target = nonSummonerTarget(world);
-      attachComponent(world, player, 'hasEmpoweredAttack', {});
-      const before = target.hasHealth.hp;
-      hit(world, player, target, 1_000);
-      (player as any)._finisherDamage = before - target.hasHealth.hp;
-    }
-    assert((potencyOn.player as any)._finisherDamage > (potencyOff.player as any)._finisherDamage,
-      'Relic Potency must still independently raise finisher damage on top of an unchanged Rampage Buff Effect rating');
-  }
-
-  // Preview parity.
-  const preview = resolveRelicPreview('cadence', { 'cadence.rampage': 1 }, { ...ZERO_RELIC_RATINGS, buffEffect: 0.25 });
-  const finisherLine = preview?.secondaryEffects?.find((e) => e.label === 'Rampage finisher damage per stack');
-  const cooldownLine = preview?.secondaryEffects?.find((e) => e.label === 'Rampage attack cooldown reduction per stack');
-  assert(finisherLine !== undefined, 'preview must surface a Rampage finisher-damage buff line');
-  assert(cooldownLine !== undefined, 'preview must surface a Rampage cooldown-reduction buff line');
-  close(finisherLine!.before, RAMPAGE_MULT_PER_STACK, 'preview before must match authored tuning');
-  close(finisherLine!.after, RAMPAGE_MULT_PER_STACK * 1.25, 'preview after must match the runtime-scaled magnitude');
-  close(cooldownLine!.before, RAMPAGE_APS_PER_STACK_MS, 'preview before must match authored tuning');
-  close(cooldownLine!.after, RAMPAGE_APS_PER_STACK_MS * 1.25, 'preview after must match the runtime-scaled magnitude');
 }
 
 console.log('relicMechanicEffectCoverage.test.ts: ok');

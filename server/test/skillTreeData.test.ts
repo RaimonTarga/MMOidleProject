@@ -14,6 +14,4 @@ finalizePulse(pulses, mechanics);
 assert.equal(mechanics['defense.recovery-pulse-pct'], undefined);
 assert.equal(mechanics['defense.max-hit-mult'], undefined, 'Striker no longer carries a damage soft cap');
 
-assert.equal(formatPassiveValue('cadence.debuff-vuln-pct', 25, { signed: true }), '+25%');
-assert.equal(formatPassiveValue('cadence.debuff-vuln-pct', 25), '25%');
 console.log('skillTreeData: ok');

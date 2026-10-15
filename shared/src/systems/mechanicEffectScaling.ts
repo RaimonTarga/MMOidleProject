@@ -16,18 +16,12 @@ export interface ScalableMechanicEffect {
  * intentionally absent from v1.
  */
 export const SCALABLE_MECHANIC_BUFFS: Readonly<Record<string, ScalableMechanicEffect>> = {
-  'cadence-echo': { fields: { damageBonus: 'fraction' } },
   'cooldown-overdrive': { fields: { attackSpeedPct: 'fraction' } },
   'dot-frenzy': { fields: { attackSpeedPct: 'fraction', onHitPerTier: 'flat' } },
   'energy-overdrive': { fields: { attackDamagePct: 'fraction' } },
   // Grand Ritual's empowered-attack multiplier. 1.6 means the bonus is the
   // 0.6 above ×1, so the field kind is 'multiplier', not 'flat'.
   'summoner-grand-ritual': { fields: { damageMult: 'multiplier' } },
-  // Berserker Rampage's two beneficial per-stack magnitudes only. The regular-
-  // attack penalty (an authored downside) and the Cadence threshold reduction
-  // (delivery frequency, which overlaps Relic Mechanic Frequency) are both
-  // deliberately absent.
-  'cadence-rampage': { fields: { multPerStack: 'fraction', apsPerStackMs: 'flat' } },
 } as const;
 
 /** Explicit opt-in registry for harmful class-mechanic effects. */

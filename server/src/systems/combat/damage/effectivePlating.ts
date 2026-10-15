@@ -18,7 +18,7 @@ function brittleReduction(monsterState: TracksCombat): {
   };
 }
 
-/** Sum cadence/reload plating-shred and brittle plating-shred reductions. */
+/** Sum the shared plating-shred record, Suppressing Fire's and brittle's plating reductions. */
 export function effectivePlatingAfterShred(
   basePlating: number,
   monsterState: TracksCombat | undefined,

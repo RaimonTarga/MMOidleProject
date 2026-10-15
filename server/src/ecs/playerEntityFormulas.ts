@@ -32,14 +32,8 @@ export function recalculatePlayerEntityStats(world: World, entity: PlayerEntity)
     playerTier:      entity.tracksProgression?.playerTier,
     resetCadenceCounters: (threshold) => {
       if (!entity.usesCadence) return;
-      entity.usesCadence.speedStacks = 0;
-      entity.usesCadence.threshold   = threshold;
-      entity.usesCadence.count       = 0;
-      // Rampage mutates attackCooldown via a tracked reduction; recalc rebuilds
-      // the cooldown from base, so clear the rampage state to avoid re-adding a
-      // now-stale reduction on the next finisher.
-      entity.usesCadence.rampageStacks      = 0;
-      entity.usesCadence.rampageCdReduction = 0;
+      entity.usesCadence.threshold = threshold;
+      entity.usesCadence.count     = 0;
     },
   });
   markSliceDirty(world, entity, 'dealsDamage');
@@ -122,12 +116,6 @@ export function recalculatePlayerStatsPreservingCombatState(world: World, entity
   cs.statusEffects = combatSnapshot.statusEffects;
   if (entity.usesCadence && cadenceSnapshot) {
     Object.assign(entity.usesCadence, cadenceSnapshot);
-    if (cadenceSnapshot.rampageCdReduction > 0) {
-      entity.performsAttack.attackCooldown = Math.max(
-        100,
-        entity.performsAttack.attackCooldown - cadenceSnapshot.rampageCdReduction,
-      );
-    }
     markSliceDirty(world, entity, "usesCadence");
   }
   entity.hasHealth.hp = Math.max(1, Math.min(entity.hasHealth.maxHp, entity.hasHealth.maxHp * hpPct));

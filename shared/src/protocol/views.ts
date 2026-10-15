@@ -92,7 +92,6 @@ export interface PlayerView {
   skillPoints: number;
   unlockedSkills: string[];
   passives: PassiveMap;
-  cadenceSpeedStacks: number;
   selectedClass: string | null;
   selectedSubVariant: SubVariant | null;
   selectedRange: string | null;
@@ -350,7 +349,6 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     skillPoints: progression.skillPoints,
     unlockedSkills: skills.unlockedSkills,
     passives: skills.passives,
-    cadenceSpeedStacks: entity.usesCadence?.speedStacks ?? 0,
     selectedClass: skills.selectedClass,
     selectedSubVariant: skills.selectedSubVariant,
     selectedRange: skills.selectedRange,
@@ -409,16 +407,8 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     // client aura color). Surge/Overdrive glows yellow; Channeler glows light blue
     // in 3 stages by upkeep stacks.
     aura: (() => {
-      // Berserker: Rampage ramps in 3 stages by stack count, the same shape as
-      // the Channeler's upkeep stages. Auras are the right channel for STACKING
-      // COMBAT STATE — permanent identity lives in the body sprite and the head
-      // accent, so the two never compete.
-      const cad = entity.usesCadence;
-      if (cad && cad.rampageStacks > 0) {
-        const max = entity.usesSkills?.passives['cadence.rampage-max-stacks'] ?? 10;
-        const frac = cad.rampageStacks / Math.max(1, max);
-        return `rampage-${frac >= 0.7 ? 3 : frac >= 0.35 ? 2 : 1}`;
-      }
+      // Auras are the right channel for STACKING COMBAT STATE — permanent identity
+      // lives in the body sprite and the head accent, so the two never compete.
       const e = entity.usesEnergy;
       if (!e) return null;
       if (e.overdriveActive) return 'surge';

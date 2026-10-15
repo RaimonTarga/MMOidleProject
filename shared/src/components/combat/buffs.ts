@@ -3,14 +3,6 @@
  * Keep in sync with server/src/systems/buffSync.ts ALL_BUFFS.
  */
 export const BUFF_IDS = [
-  'cadence-accelerando',
-  'cadence-echo',
-  'cadence-resonance',
-  'cadence-verdict',
-  'cadence-aftershock',
-  'cadence-metronome',
-  'cadence-rampage',
-  'cadence-crescendo',
   'cooldown-overdrive',
   'cooldown-eternal-charge',
   'cooldown-temporal-ext',

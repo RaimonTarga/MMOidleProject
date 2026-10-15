@@ -1,10 +1,6 @@
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import { registerEmpoweredMultiplier, setEmpoweredAttack, isEmpoweredAttack, isMechanicProxy } from '../../../combat/engine/empoweredAttacks';
 import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
-import type { World } from '../../../../world/World';
-import { initCadenceFrameLoop } from './frameLoop';
-import { initCadenceT3 } from './t3';
-import { relicRatingsFromPassives, resolveCadenceRelicProfile } from '@mmo-idle/shared';
 import { advanceStrikerBeat, initStrikerOrder, runStrikerBeat } from './order';
 import { initStrikerGear } from './strikerGear';
 
@@ -12,8 +8,8 @@ const CADENCE_THRESHOLD_DEFAULT   = 5;   // cycle length: (N-1) normal hits + 1 
 const CADENCE_DAMAGE_MULT_DEFAULT = 2.0;
 
 export function initCadenceArchetype(): void {
-  // Register the empowered multiplier before T3 onHit hooks so finisher hooks
-  // observe ctx.metadata['empoweredAttack'] on the same attack.
+  // Register the empowered multiplier before the Order's onHit hooks so the finisher
+  // hooks observe ctx.metadata['empoweredAttack'] on the same attack.
   registerEmpoweredMultiplier(CADENCE_DAMAGE_MULT_DEFAULT, {
     attackerType:  'player',
     attackerSlice: 'usesCadence',
@@ -24,8 +20,8 @@ export function initCadenceArchetype(): void {
   // `mechanic-fired` (progression rework 1c): the finisher IS cadence's moment,
   // and `empoweredAttack` metadata is set by exactly the handler above that
   // consumed the flag — so this reads "the flag was just spent", not "a flag
-  // exists". Registered immediately after it, before the T3 hooks, so a card's
-  // payoff and a T3 rider see the same hit.
+  // exists". Registered immediately after it, before the Order's hooks, so the
+  // trophy and anything that reads the moment see the same hit.
   registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
     if (!ctx.metadata['empoweredAttack']) return;
@@ -38,8 +34,6 @@ export function initCadenceArchetype(): void {
   // empowered multiplier, so the finisher's trophy reads the multiplied hit.
   initStrikerOrder();
   initStrikerGear();
-
-  initCadenceT3();
 
   registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
@@ -55,31 +49,14 @@ export function initCadenceArchetype(): void {
     if (isEmpoweredAttack(entity)) return;
 
     const cadence = entity.usesCadence;
-    const passives = entity.usesSkills.passives;
 
-    // Lazily initialize threshold on first hit if still 0 (fallback path).
-    if (cadence.threshold === 0) {
-      const base = Math.round(passives['cadence.empowered-threshold'] ?? CADENCE_THRESHOLD_DEFAULT);
-      const mod  = Math.round(passives['cadence.threshold-mod'] ?? 0);
-      cadence.threshold = resolveCadenceRelicProfile(
-        Math.max(2, base + mod),
-        passives['cadence.empowered-mult'] ?? CADENCE_DAMAGE_MULT_DEFAULT,
-        relicRatingsFromPassives(passives),
-      ).threshold.after;
-    }
+    // Fallback only: the recalc sets the threshold, and the Order sets it to its combo
+    // length before every swing (`beforeStrikerSwing`).
+    if (cadence.threshold === 0) cadence.threshold = CADENCE_THRESHOLD_DEFAULT;
 
     // The beat's technique, price and spark (the Order), then count it. Threshold is the
     // full cycle length N: after (N-1) beats the counter arms the finisher.
     runStrikerBeat(world, ctx);
     advanceStrikerBeat(world, entity);
   });
-
-  // The frame loop (progression rework Phase 3) registers LAST: its finisher
-  // branch folds the Breaker bank into the multiplier the handler above resolved,
-  // and its window clamp reads the threshold the counting handler just settled.
-  initCadenceFrameLoop();
-}
-
-export function updateCadenceArchetype(_world: World, _dt: number): void {
-  // Cadence's current tick-driven effects live under t3/ and are called by the module.
 }

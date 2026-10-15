@@ -159,69 +159,13 @@ export const SQUIRE_KEYS = [
 ] as const;
 
 export const CADENCE_KEYS = [
+  // The finisher's base threshold and multiplier (the Order sets the live threshold).
+  // The frame-loop and T3 path keys were deleted with the frame loop and the paths
+  // (class-first build plan CS7).
   'cadence.empowered-threshold',
   'cadence.empowered-mult',
   'cadence.threshold-mod',
   'cadence.damage-mult-add',
-  'cadence.speed-stack',
-  'cadence.trigger-count',
-  'cadence.extra-trigger-damage-mult',
-  'cadence.debuff-vuln-pct',
-  'cadence.debuff-vuln-ms',
-  'cadence.debuff-plating-shred',
-  // Cursed Finale hard cap: max total flat plating this source can strip per target.
-  'cadence.debuff-shred-cap',
-  'cadence.momentum-buildup',
-  'cadence.momentum-echo',
-  'cadence.detonation',
-  'cadence.hemorrhage',
-  'cadence.charge-buildup',
-  // T4 specs ─────────────────────────────────────────────────────────────────
-  // Aftershock (light): after a finisher, the next N regular attacks fire on-hit twice.
-  'cadence.aftershock',
-  // Aftershock also grants flat on-hit damage scaling with player tier ((tier+1) × this).
-  'cadence.aftershock-onhit-per-tier',
-  // Metronome (balanced): each buildup attack adds flat damage to subsequent attacks + finisher.
-  'cadence.metronome',
-  'cadence.metronome-flat',
-  // Rampage (heavy): each finisher stacks threshold-down / APS-up / atk-down / mult-up.
-  'cadence.rampage',
-  // Crescendo (heavy): in-combat time ramps a finisher multiplier (resets out of combat).
-  'cadence.crescendo',
-  // ── T4 spec tuning knobs (node-authored; constants are fallback defaults) ────
-  // Shockblade: number of post-finisher regular attacks that fire on-hit twice.
-  'cadence.aftershock-attacks',
-  // Wavecrest: bonus damage fraction applied to each post-finisher echo hit.
-  'cadence.momentum-echo-bonus',
-  // Justicar: fraction of each finisher banked into the Verdict execution pool.
-  'cadence.verdict-bank-pct',
-  // Berserker rampage tuning: cap, threshold floor, per-stack APS/penalty/mult, OOC decay.
-  'cadence.rampage-max-stacks',
-  'cadence.rampage-threshold-floor',
-  'cadence.rampage-aps-per-stack-ms',
-  'cadence.rampage-atk-pen-per-stack',
-  'cadence.rampage-mult-per-stack',
-  'cadence.rampage-decay-interval-ms',
-  // Hemomancer bleed: total-damage multiplier, tick count, tick interval.
-  'cadence.hemorrhage-mult',
-  'cadence.hemorrhage-ticks',
-  'cadence.hemorrhage-tick-ms',
-  // Juggernaut crescendo: ramp window (s), bonus across the ramp, post-ramp tail per second.
-  'cadence.crescendo-ramp-seconds',
-  'cadence.crescendo-ramp-mult',
-  'cadence.crescendo-tail-per-sec',
-  // ── Striker frame loops (progression rework Phase 3) ────────────────────────
-  // Flurry/Skirmisher: the finisher opens a damage window. The duration is
-  // clamped to a share of the live cycle at runtime (design §10), so this is the
-  // authored ceiling, not a promise.
-  'cadence.frame-window-ms',
-  'cadence.frame-window-mult',
-  // Breaker/Skirmisher: multiplier points the finisher gains per banked charge.
-  // The bank itself is capped at threshold−1 by the mechanic, never authored.
-  'cadence.frame-charge-per-stack',
-  // Breaker's rider: the finisher staggers. Authored at the shortest rung of the
-  // existing stun ladder; `applyStun` owns resistance and the immunity window.
-  'cadence.frame-stagger-ms',
   // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
   // Lancer (mid): every hit on a target held AT BAY — inside the player's reach
   // and outside the target's own — applies a short movement slow.

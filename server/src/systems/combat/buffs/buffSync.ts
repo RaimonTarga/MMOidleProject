@@ -833,22 +833,6 @@ function buffSourceSide(buff: PlayerBuff): "ally" | "enemy" | "neutral" {
 
 function buffEffectText(buff: PlayerBuff): string {
   switch (buff.id) {
-    case "cadence-accelerando":
-      return "+attack speed";
-    case "cadence-echo":
-      return "echo hit stored";
-    case "cadence-resonance":
-      return "finisher amplified";
-    case "cadence-verdict":
-      return "banked execution power";
-    case "cadence-aftershock":
-      return "next attacks deal on-hit damage twice";
-    case "cadence-metronome":
-      return "+flat damage to subsequent hits";
-    case "cadence-rampage":
-      return "+attack speed, weaker regular hits, stronger finishers";
-    case "cadence-crescendo":
-      return "+finisher damage (ramps in combat)";
     case "cooldown-overdrive":
       return "+attack speed";
     case "cooldown-eternal-charge":

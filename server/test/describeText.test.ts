@@ -180,7 +180,7 @@ assert(
 );
 
 // A bare flag reads as a switch, not as the quantity "1".
-const flagRow = passiveLines({ "cadence.detonation": 1 });
+const flagRow = passiveLines({ "cooldown.overdrive": 1 });
 assert(flagRow[0].value === "Enabled", `flag should read as Enabled, got ${flagRow[0].value}`);
 
 // ── Stat effects ─────────────────────────────────────────────────────────────

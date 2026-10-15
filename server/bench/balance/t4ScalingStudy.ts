@@ -122,8 +122,8 @@ for(const [index,spec] of unique.entries()) {
   const bossType=spec.mode==='boss'?[...DUNGEON_DEFS.values()].find(d=>d.nodeId===cell.nodeId)?.boss.bossId:undefined;
   const bossId=spec.mode==='boss'?[...world.monsterEntitiesInNode(cell.nodeId)].find(m=>m.isMonster.monsterTypeId===bossType)?.isMonster.id:undefined;
   if(spec.mode==='boss')assert(bossId,'Actual dungeon boss must exist');
-  if(spec.arm==='speed30'||spec.arm==='speed30threshold3')bot.usesSkills.passives['cadence.rampage-aps-per-stack-ms']=30;
-  if(spec.arm==='threshold3'||spec.arm==='speed30threshold3')bot.usesSkills.passives['cadence.rampage-threshold-floor']=3;
+  // The Rampage arms (speed30, threshold3) and Crescendo's cap100 tuned the cadence T3
+  // paths, deleted in class-first CS7: they are inert labels now, and `rampage` reads null.
   if(spec.arm==='gain10')bot.usesSkills.passives['energy.critical-mass-gain-per-stack']=0.10;
   const laserScale=(ctx:CombatContext)=>{if(ctx.attacker===bot&&ctx.metadata['reloadLaser']) {
     if(spec.arm==='laserFlat25')ctx.metadata['onHitDamageMult']=0.25;
@@ -159,7 +159,6 @@ for(const [index,spec] of unique.entries()) {
       bot.hasHealth.hp=bot.hasHealth.maxHp;bot.hasPosition.current={...pos};target.hasPosition.current={x:pos.x+24,y:pos.y};
       target.performsAttack.lastAttackAt=now;setAttackTarget(world,bot,target.isMonster.id);
     }
-    if(spec.arm==='cap100'&&bot.usesCadence)bot.usesCadence.crescendoTimerMs=Math.min(bot.usesCadence.crescendoTimerMs,69900);
     world.tick(100,now);tickDamage=0;
     for(const e of world.worldLogJournal) {
       progress.ingest(e,elapsed+100);
@@ -170,8 +169,8 @@ for(const [index,spec] of unique.entries()) {
         const key=JSON.stringify((e as any).tags??(e as any).damageKind??'damage');sources[key]=(sources[key]??0)+e.hpDamage;
       }
     }
-    if(tickDamage)raw.push([elapsed+100,tickDamage,bot.usesCadence?.rampageStacks??null,bot.usesEnergy?.criticalMassStacks??null,bot.performsAttack.attackCooldown]);
-    minCd=Math.min(minCd,bot.performsAttack.attackCooldown);maxRampage=Math.max(maxRampage,bot.usesCadence?.rampageStacks??0);maxCritical=Math.max(maxCritical,bot.usesEnergy?.criticalMassStacks??0);
+    if(tickDamage)raw.push([elapsed+100,tickDamage,null,bot.usesEnergy?.criticalMassStacks??null,bot.performsAttack.attackCooldown]);
+    minCd=Math.min(minCd,bot.performsAttack.attackCooldown);maxCritical=Math.max(maxCritical,bot.usesEnergy?.criticalMassStacks??0);
     world.worldLogJournal=[];world.worldLogByPlayer.clear();world.takeNodeEvents(cell.nodeId);
     if([10000,30000,60000,120000,300000,600000].includes(elapsed+100))windows.push({atMs:elapsed+100,...progress.snapshot(elapsed+100)});
     if(bot.isDead||bot.hasHealth.hp<=0){outcome='player-died';elapsed+=100;break;}

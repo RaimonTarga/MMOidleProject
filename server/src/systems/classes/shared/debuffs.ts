@@ -7,7 +7,7 @@ import { getStatusEffect, type TracksCombat } from '@mmo-idle/shared';
  *
  * Current debuffs handled:
  *   'vulnerability' — increases damage taken by damageMultiplier (e.g. 1.25 = +25%).
- *                     Applied by Cursed Finale (cadence-light tier-3-b).
+ *                     Applied by the Striker's Sunder trophy (Expose) and a range node.
  */
 export function initDebuffMechanics(): void {
   registerCombatListener('onDamageTaken', (ctx, _world) => {

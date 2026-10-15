@@ -5,7 +5,7 @@
  * client as `ev.effects` and is dispatched by the effects loop in combatFx.
  *
  * These live in shared for the same reason the socket maps do: the string IS the
- * contract. The older archetype tags (`swiftblade`, `void-discharge`, …) predate
+ * contract. The older archetype tags (`void-discharge`, …) predate
  * this module and are still declared twice — once in the archetype's server-side
  * `core/constants.ts` and once as a literal in combatFx — which is exactly the
  * drift this file exists to prevent. Migrate them here when they are next
@@ -18,14 +18,8 @@
 export const DOT_RIMESHATTER_FX = 'dot-rimeshatter';
 /** Winter Warden: chill cap converts to Frozen — the shell closes inward. */
 export const DOT_FROZEN_FX = 'dot-frozen';
-/** Berserker: Rampage hits its cap and crashes to zero. */
-export const CADENCE_OVERLOAD_FX = 'cadence-overload';
-/** Scrapper: the Cursed Finale brands the target and permanently strips plating. */
-export const CADENCE_CURSED_FINALE_FX = 'cadence-cursed-finale';
 /** Sunderer: the execution shatters plating and opens the pierce window. */
 export const COOLDOWN_SUNDER_FX = 'cooldown-sunder';
-/** Justicar: the banked Verdict executes the target outright. */
-export const CADENCE_VERDICT_EXECUTE_FX = 'verdict-execute';
 
 /**
  * Reverb: this hit is the execution's ECHO (design §22.5), landing at half strength

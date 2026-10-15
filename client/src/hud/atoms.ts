@@ -162,7 +162,6 @@ export const autoIntentAtom = atom<HasAutoIntent | null>(null);
 export const cadenceCountAtom = atom<number>(0);
 export const cadenceThresholdAtom = atom<number>(0);
 export const cadenceEmpoweredArmedAtom = atom<boolean>(false);
-export const cadenceSpeedStacksAtom = atom<number>(0);
 
 export const executionReadyAtom = atom<boolean>(false);
 export const executionCooldownPctAtom = atom<number>(0);
@@ -663,7 +662,6 @@ function resetPlayerAtoms(): void {
   store.set(cadenceCountAtom, 0);
   store.set(cadenceThresholdAtom, 0);
   store.set(cadenceEmpoweredArmedAtom, false);
-  store.set(cadenceSpeedStacksAtom, 0);
   store.set(executionReadyAtom, false);
   store.set(executionCooldownPctAtom, 0);
   store.set(energyCountAtom, 0);
@@ -777,7 +775,6 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(cadenceCountAtom, player.cadenceCount);
   setIfChanged(cadenceThresholdAtom, player.cadenceThreshold);
   setIfChanged(cadenceEmpoweredArmedAtom, player.cadenceEmpoweredArmed);
-  setIfChanged(cadenceSpeedStacksAtom, player.cadenceSpeedStacks);
   setIfChanged(executionReadyAtom, player.executionReady);
   setIfChanged(executionCooldownPctAtom, player.executionCooldownPct);
   setIfChanged(energyCountAtom, player.energyCount);
