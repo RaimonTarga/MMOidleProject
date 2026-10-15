@@ -152,7 +152,7 @@ Formation) must be.
 | Slots | Five: weapon, relic, armor, charm, boots. The core slot is gone. | Decided |
 | Weapon | Class-specific. | Decided |
 | Relic: the boss trophy slot | Each boss drops your class's trophy, and the relic slot holds one. It is that class's boss piece and modifies its mechanic: Conduit, the Soul summon it fields; Striker, its empowered attack, made to do something special. Collected, swapped before a fight, upgraded by beating the same lineage's next-tier boss. Available from the first T1 boss kill. A specialization may grant a second relic slot (Conduit: Two Souls). | Decided (2026-10-13) |
-| Armor, charm | Shared bases, class lines. A base carries a defensive mechanic; its class line is fixed per recipe, so the same base does different things per class (Conduit armor shifts who tanks: the summons or the Conduit). Choosing a line at an upgrade step is a later option. **No shared base carries a recharging barrier:** a standing shield is the Spirit's storm (§11.10); timed wards stay (XC1, Spirit dive). | Decided (shared bases) / Tentative (fixed lines) / Decided (no barrier on bases, 2026-10-14) |
+| Armor, charm | Shared bases, class lines. A base carries a defensive mechanic; its class line is fixed per recipe, so the same base does different things per class (Conduit armor shifts who tanks: the summons or the Conduit). Choosing a line at an upgrade step is a later option. **No shared base carries a recharging barrier:** a standing shield is the Spirit's storm (§11.10); timed wards stay (XC1, Spirit dive). **The Mountain and Tundra charm bases carry a timed ward instead of their barrier** (after a hit over a quarter of your HP / when the Chill freezes you, a ward absorbs part of the next blow for a few seconds; build decision 2026-10-15). **A retired biome's armor and charm lines move with its jobs on second bases:** the receiving biome gets a second armor and charm recipe carrying the moved lines for every class (2026-10-15). | Decided (shared bases) / Tentative (fixed lines) / Decided (no barrier on bases, 2026-10-14) / Decided (timed ward on Mountain and Tundra charms, second bases for moved lines, 2026-10-15) |
 | Boots | Generic: mobility is universal. | Proposed |
 | Item structure | A recipe makes exactly what its card says: nothing on an item is rolled. Upgrading (+N, paid in the zone's essence, gated by the zone's level) adds a small stat step, and some steps open a **socket**. Sockets open slowly: one in all of T1 (the weapon), about four by T2, eight by T3. | Tentative (2026-10-13) |
 | Components | What fills a socket. Each one shows one visible effect, is typed by slot, and comes from one mob family: it **drops**, or you **craft** it from that family's material. Owned forever, moved between sockets for free, carried to later items, scaled by the tier of the item it sits in. Conduit components go into gear, not summons. **The least settled system: the designer is not yet sold on components or on which slots get sockets; to be scrutinised in its own session.** | Under review (2026-10-13) / Decided (Conduit: gear, not summons) |
@@ -176,7 +176,10 @@ and its runtime becomes the storm, XC1); Striker: §12.10
 (armor and charm lines plus T4 resilience leaves, nothing on finisher triggers; the brief's
 finisher shield/heal is dropped); Conduit: §7.10 (who tanks is the armor line; rebuilds
 cost HP; no default redirection). Flat
-Recovery stays as the baseline. Each class deep dive fills in its own row.
+Recovery stays as the baseline. **Every class has a small always-on in-combat Recovery share;**
+lines that say Recovery "doubles" or "triples" multiply it, and lines like the Squire's Old Guard
+add to it (*Decided, 2026-10-15, build decision S4; the share is a placeholder*). Each class deep
+dive fills in its own row.
 **How stats work per class** (today: percentage class affinities applied after gear) is a
 cross-class question, not yet reopened. *Open.* Cores are gone with the core slot (§4,
 Decided); reviving them would need new evidence.

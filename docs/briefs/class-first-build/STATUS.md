@@ -3,9 +3,22 @@
 Kept by the conductor. Plan: [class-first-build-plan-2026-10-14.md](../class-first-build-plan-2026-10-14.md).
 Integration branch `rework/class-first` (conductor worktree `../mmo-rework`).
 
-**Updated:** 2026-10-15 (morning): the Striker's and the Squire's T1 runtimes are in (CS.1–CS.4, CQ.1–CQ.4, with their editor view models); S1–S3 and F6 done; every overnight delegate task merged. Waiting on the designer: S4 (in-combat Recovery baseline), S7 (charm bases), moved gear lines.
+**Updated:** 2026-10-15 (morning): the Striker's and the Squire's T1 runtimes are in (CS.1–CS.4, CQ.1–CQ.4, with their editor view models); S1–S3 and F6 done; every overnight delegate task merged; the designer's open calls are answered (below).
 **Baseline:** `rework/class-first` at `b3ba6bef` (CS7 merged): full suite **338/338**, typecheck clean (verified in `../mmo-rw-verify2`).
 Codex hit rate limits on 2026-10-14, so D5, K1–K3, D1, T0 and D2 ran as Claude subagents of the conductor (same briefs, same worktrees).
+
+## Designer decisions (2026-10-15)
+
+Recorded in the bible (§4 Armor/charm row, §5) where they are design.
+
+| Call | Decision | Work it creates |
+|---|---|---|
+| S4: what "Recovery doubles/triples" multiplies | **A small always-on in-combat Recovery share for every class**; such lines multiply it; Old Guard-style lines add to it | S4 (conductor): the baseline (placeholder share) + Rhythm, Cairnstone, Counterbalance, Stone Patience |
+| S7: Mountain and Tundra charm bases without the barrier | **A timed ward**: Mountain after a hit over a quarter of your HP, Tundra when the Chill freezes you; it absorbs part of the next blow for a few seconds | S7 (conductor or Grok) |
+| Moved gear lines (12 per class) | **Second bases**: the receiving biome gets a second armor and charm recipe carrying the moved lines, for every class | G-GEAR-C (brief by the conductor; data for Grok) |
+| Art | **Redraw** the three Striker crests and the five flat T1 icons | ICONS-3 (Codex), ready |
+| Planted | **No knockback at all** while braced: lift the forced-movement cap for it | conductor, small |
+| The Striker's old special-move FX | **Delete** (`client/src/fx/bespoke/striker.ts` path entries, the Swiftblade branch; lower `attackProgression.test`'s count) | conductor or a delegate, small |
 
 ## Open tasks
 
@@ -15,6 +28,7 @@ Codex hit rate limits on 2026-10-14, so D5, K1–K3, D1, T0 and D2 ran as Claude
 | CS6-ROUTE | [The Striker's guided tutorial and bot route](CS6-striker-route.md) | Codex or Grok | `../mmo-rw-cs6-route` · `rw/cs6-route` | ready |
 | CQ6-ROUTE | [The Squire's guided tutorial and bot route](CQ-squire-delegates.md) | Codex or Grok | `../mmo-rw-cq6-route` · `rw/cq6-route` | ready |
 | CQ7-CLEANUP | [Delete the Squire's old frame and path content](CQ-squire-delegates.md) | Codex or Grok | `../mmo-rw-cq7-cleanup` · `rw/cq7-cleanup` | ready (its prompt fast-forwards to pick up CS7) |
+| ICONS-3 | [Redraw the three Striker crests and five flat T1 icons](ICONS-3.md) | Codex (image generation) | `../mmo-rw-icons-3` · `rw/icons-3` | ready |
 
 F7-PANEL, CS6-ROUTE and CQ6-ROUTE touch disjoint files and can run at once. CS5-UI and CQ5-UI
 (the two class editors and their HUD pieces) are briefed and wait for F7-PANEL: the conductor
@@ -65,6 +79,19 @@ in this folder; never run pnpm install. When you're done, commit on your branch,
 report where the brief says, and tell me.
 ```
 
+**ICONS-3 (Codex, image generation)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-icons-3`:
+
+```text
+You're making game icons for the MMO Idle class-first rework, in this folder, on branch
+rw/icons-3. First read docs/briefs/class-first-build/AGENT-RULES.md, then do the task in
+docs/briefs/class-first-build/ICONS-3.md with your built-in image generation, one image per
+call. The redrawn icons must match the set the game now ships: the T1-T4 class icons in
+client/public/assets/concept-icons/class-pieces/ and the discipline crests in .../disciplines/.
+Follow ICONS-T1.md and ICONS-2.md's style rules and attach the references the brief lists to
+every generation. Check every icon at its in-game size and regenerate any that don't read.
+When you're done, commit on your branch, write your report where the brief says, and tell me.
+```
+
 ## Queued (briefs written when their inputs land)
 
 | ID | Task | Agent | Waits for |
@@ -72,8 +99,9 @@ report where the brief says, and tell me.
 | CQ5-UI | [The Response rules editor, Resolve pips, callouts](CQ-squire-delegates.md) | Grok | F7-PANEL merged |
 | Next class | The Conduit (the old slice plan's map), then Slinger, Spirit, Apprentice | Conductor | — |
 | CS5-UI | [The Order editor and beat strip](CS5-striker-ui.md) | Grok | F7-PANEL merged |
-| S4 | Recovery and flow bound to a state (the charm-line mechanism) | Conductor | the designer: what in-combat Recovery a class has before its charm line (the Striker's pulse is gone; "Recovery doubles/triples" lines need a base to multiply) |
-| S7 | XC1: the recharging barrier leaves the shared charms | Grok | the designer: what the Mountain and Tundra charm bases carry instead |
+| S4 | The in-combat Recovery baseline for every class; the Recovery-multiplier lines (Rhythm, Cairnstone, Counterbalance, Stone Patience; later the other classes') | Conductor | — (decided) |
+| S7 | The timed ward on the Mountain and Tundra charm bases (replacing their barrier) | Conductor or Grok | — (decided) |
+| G-GEAR-C | Second armor and charm bases for moved lines (T3–T4), every class | Conductor brief, Grok data | — (decided) |
 
 ## Known follow-ups (not yet a task)
 
@@ -95,14 +123,9 @@ report where the brief says, and tell me.
   (`applyMechanicProxy`, the reload's "readied without a reload" path, `applyPlayerAoeTo`, the
   contagion copy's `stackFraction`); `'evolve'` / `'reconstruct'` in `gameplayRecorder.ts`'s
   kinds; living docs still describe lineages, shards and node rows (docs pass at M0 exit).
-- **Icons to review (designer):** five of the eight REUSED old icons are flatter than the new
-  set: `squire-shield-bash` (a yellow bolt), `striker-hamstring` (a flat green arc),
-  `apprentice-detonate`, `apprentice-spread`, `squire-slam`. Regenerating them in the new style
-  is a small Codex task if wanted.
-- **Gear (designer):** 12 moved armor/charm lines per class aren't on any base (a base holds one
-  line per class): second bases, or drop them? Lists in reports G-GEAR-A/B. Also: Clearing
-  starters are tier 1 over the tier-0 club; Jungle weapons copied the rapier's `onHitDamage`;
-  where a biome-tier had two generic weapons the first was copied.
+- **Gear:** Clearing starters are tier 1 over the tier-0 club; Jungle weapons copied the rapier's
+  `onHitDamage`; where a biome-tier had two generic weapons the first was copied. The moved
+  lines (listed in reports G-GEAR-A/B) get second bases (decided, G-GEAR-C).
 - **From D3:** nothing calls `fireTechnique` / `fireGuard` until the class runtimes do; nine
   rune conditions only Use Ability accepted now have no action (they seed the moments); the
   Auto Combat / Fight Back gate on ability firing went with the loop (class runtimes decide);
@@ -113,19 +136,6 @@ report where the brief says, and tell me.
   (`STRIKER_TECHNIQUE_SWING`). Mastery picks the first techniques in beat order (stand-in: the
   Order doesn't say which one a step masters; T1 never masters). Sunder II's plating loss has no
   number yet.
-- **Recovery lines (designer, S4):** Rhythm, Cairnstone (Striker), Counterbalance, Stone Patience
-  (Squire) say Recovery "doubles"/"triples", but a Striker or Squire has no in-combat Recovery
-  running before its charm line (the Striker's pulse is gone; the Squire's share moved to Old
-  Guard). What do they multiply? Their gear entries stay empty until then.
-- **Planted:** the brace resists knockback only up to the existing forced-movement cap (the
-  bible says "can't be knocked back"); stuns are refused outright.
-- **Striker crests:** the three Striker discipline crests are the old frame crests (shield on a
-  plate) and look different from the 15 new ones; redraw them in the new crest style?
-- **From CS7 (kept, unsure):** `client/src/fx/bespoke/striker.ts` and the Swiftblade FX branch
-  (keyed to T3 path ids nothing grants; bible §12.14 keeps "its bespoke effects"); the
-  `HasDetonation` marker (no writer); the range-node keys and `rangeMechanics.ts` (§12.14 lists
-  range nodes for removal); relic threshold math in `stats.ts`/`empoweredAttacks.ts` (inert, ratings
-  read zero); two frozen fixtures with `cadenceSpeedStacks`.
 - **From S1:** monster-ability effects (generic slow/antiheal/sunder) and ambient ramps still
   reach players only; summons show no statuses on the client yet (the Conduit HUD decides).
 - **From D2:** `CrestDiamond` (primitive + CSS) is unused; `resolveFinalDamageMultipliers`
