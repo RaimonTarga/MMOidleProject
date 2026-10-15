@@ -41,4 +41,13 @@ assert(edited.orders.attackFirst.value === 'weakest' && edited.orders.recallWhen
 const swarm = composeFormationView({ ...input, classConfig: config, budgetBonus: 2 })!;
 assert(swarm.command.total === 8, `a Swarm Staff adds its Command to the total (${swarm.command.total})`);
 
+// T2: the discipline's price shows on the cards, and the Soul shows its rank.
+const t2 = { ...input, biomeLevel: { ...input.biomeLevel, jungle: 6, desert: 6 }, bossesCleared: ['plains:1', 'plains:2'], playerTier: 2 };
+assert(view.discipline === null && view.soul.rank === 1 && view.soul.maxRank === 2, 'before the pick: no discipline, Soul rank 1 of 2');
+const swarmView = composeFormationView({ ...t2, disciplineId: 'conduit-swarm', classConfig: defaultClassConfig(classConfigContextFromState({ ...t2, disciplineId: 'conduit-swarm' })!) })!;
+assert(swarmView.discipline?.id === 'conduit-swarm', 'the picked discipline is named');
+assert(swarmView.available.find((p) => p.pieceId === 'conduit-thrall')!.command === 0.5, 'Swarm: a Thrall costs half a Command on its card');
+assert(swarmView.available.find((p) => p.pieceId === 'conduit-thrall')!.baseCommand === 1, 'and the base cost stays readable');
+assert(swarmView.soul.rank === 2, 'a second Plains boss clear ranks the Soul up');
+
 console.log('formationView.test.ts: ok');

@@ -269,6 +269,10 @@ const CONDUIT_TAIL = [
   'conduit:mountain',
   'boss:mountain',
   'farewell',
+  // Tier 2: the discipline pick, then three beats per zone (T2-W2).
+  ...['plains', 'forest', 'swamp', 'cave', 'mountain', 'jungle', 'desert']
+    .flatMap((biome) => [`t2:${biome}`, `t2:${biome}-lesson`, `t2:${biome}-boss`]),
+  't2:done',
 ];
 
 function assertConduitTail(script: TutorialScript): void {
@@ -291,7 +295,32 @@ function assertConduitTail(script: TutorialScript): void {
     'Thornrunner and Bile Spitter have their own beats');
   assert(say('conduit:cave-brute').includes('Cave Brute') && say('boss:mountain').includes('Ridge Marksman'),
     'Cave Brute and Ridge Marksman are named');
-  assert(tail[tail.length - 1].say === TUTORIAL_FAREWELL[0], 'the Conduit route still ends on the farewell line');
+  assert(tail.find((beat) => beat.id === 'farewell')?.say === TUTORIAL_FAREWELL[0], 'the Conduit Tier 1 part still ends on the farewell line');
+  const farewellAt = tail.findIndex((beat) => beat.id === 'farewell');
+  assert(tail.slice(0, farewellAt + 1).map((beat) => beat.id).join(',') === CONDUIT_TAIL.slice(0, farewellAt + 1).join(','), 'Tier 1 beats come first');
+  // Tier 2: the discipline pick, each T2 lesson, each Soul rank-up.
+  assert(say('t2:plains').includes('discipline') && say('t2:plains').includes('Passive Tree'), 'the first Tier 2 beat sends the player to pick a discipline');
+  for (const [id, name] of [
+    ['t2:plains-lesson', 'Ironhorn'], ['t2:forest-lesson', 'Barkward'], ['t2:swamp-lesson', 'Bog Leech'],
+    ['t2:cave-lesson', 'Bonecrusher'], ['t2:mountain-lesson', 'Rockhurler'], ['t2:jungle-lesson', 'Bloomtender'],
+    ['t2:desert-lesson', 'Executioner'],
+  ] as const) assert(say(id).includes(name), `${id} names ${name}`);
+  for (const [id, soul] of [
+    ['t2:forest', 'Razortusk'], ['t2:swamp', 'Timberclaw'], ['t2:cave', 'Mire Behemoth'], ['t2:mountain', 'Dreadbore'],
+    ['t2:jungle', 'Stoneplate'], ['t2:desert', 'Dread-Gorger'], ['t2:done', 'Dune-Stalker'],
+  ] as const) assert(say(id).includes(soul), `${id} announces the ${soul} Soul`);
+  for (const biome of ['plains', 'forest', 'swamp', 'cave', 'mountain', 'jungle', 'desert']) {
+    const lesson = tail.find((beat) => beat.id === `t2:${biome}`);
+    const cap = tail.find((beat) => beat.id === `t2:${biome}-lesson`);
+    const boss = tail.find((beat) => beat.id === `t2:${biome}-boss`);
+    const gate = (beat: TutorialBeat | undefined) => {
+      const step = beat?.steps[0];
+      return step?.type === 'farm' && step.until.type === 'biomeLevelAtLeast' && step.at.kind === 'biome' && step.at.tier === 2 ? step.until.level : -1;
+    };
+    assert(gate(lesson) > 0 && gate(cap) === biomeLevelCap(2, biome), `t2:${biome} farms Tier 2 to the lesson, then to the cap`);
+    const bossStep = boss?.steps[0];
+    assert(bossStep?.type === 'attemptBoss' && bossStep.tier === 2 && bossStep.biomeGroup === biome, `t2:${biome}-boss fights the Tier 2 boss`);
+  }
   const plainsBoss = tail.find((beat) => beat.id === 'boss:plains');
   const swamp = tail.find((beat) => beat.id === 'zone:swamp');
   const open = tail.find((beat) => beat.id === 'open:plains');

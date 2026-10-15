@@ -124,6 +124,8 @@ const TARGET_HELP: Record<string, StatusHelp> = {
   'slinger-venom': d('Venom', 'Venom rounds poisoned this enemy: it takes damage over time, and every round adds ticks.'),
   'slinger-rot': d('Rot', 'The last round’s wound is rotting: it deals part of the shot again over a few seconds.'),
   'conduit-poison': d('Poison', 'Your summons’ hits have poisoned this enemy: it takes damage over time, and every hit adds ticks.'),
+  'conduit-mark': d('Marked', 'An Executioner has marked this enemy. Once it is badly hurt, the Executioner’s shots hit much harder, and every kind of summon that hits it adds to the damage it takes.'),
+  'conduit-bark': b('Bark', 'A Barkward has coated this summon in bark: it absorbs the next stun, root or knockdown and some of the next hit, then falls away.'),
   'striker-rot': d('Rot', 'Your finisher’s wound is rotting: it deals part of the blow again over a few seconds.'),
   brittle: d('Brittle', 'Each Brittle stack can strip the target’s flat plating and damage reduction, so more of your hits get through.'),
   'dr-shatter': d('Shattered', 'Brittle has been stacked to its shatter threshold: the target’s damage reduction is stripped to nothing for the window. Plating still applies, but the percentage reduction is gone.'),

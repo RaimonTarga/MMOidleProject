@@ -9,8 +9,16 @@
  * lesson is added in front of that boss, and the Marksman's line is that boss
  * beat. The first Soul shares the Forest card, which is the one that comes up
  * when the Plains boss dies.
+ *
+ * Tier 2 (T2-W2, bible §7.5, §7.16) follows the farewell: the discipline pick, then each
+ * T2 zone in turn. Every zone is three beats (farm to the lesson, farm to the cap, the
+ * boss), and the line for a lesson or a Soul rank comes up in the beat after the thing
+ * that earns it, as in Tier 1. The first Jungle and Desert Souls arrive with their bosses.
  */
 import { LESSON_ZONE_LEVEL } from '../../classKits/kitHelpers';
+import { absoluteZoneLevel } from '../../classKits/registry';
+import type { KitBiome } from '../../classKits/types';
+import { biomeLevelCap } from '../../config/gameConfig';
 import type { TutorialBeat, TutorialCondition, TutorialNodeRef } from '../types';
 import { buildSealRouteBeats } from './sealRoute';
 
@@ -89,6 +97,116 @@ function mountainApproach(): TutorialBeat {
   };
 }
 
+/** One Tier 2 zone: its lesson, and the Soul its boss gives or ranks up. */
+interface T2Zone {
+  biome: KitBiome;
+  zone: string;
+  /** The new summon's line, said when its lesson comes up. */
+  lesson: string;
+  /** The Soul line, said right after the boss falls. */
+  soul: string;
+}
+
+/** In the order the guide walks them: Tier 1's order, then the two new zones. */
+const T2_ZONES: readonly T2Zone[] = [
+  {
+    biome: 'plains', zone: 'Plains',
+    lesson: 'Ironhorn is bound. It braces against a charge: a charger that hits it stops dead and is stunned.',
+    soul: 'The Plains boss fell. Your Razortusk Soul is rank 2, so it and its charge are stronger.',
+  },
+  {
+    biome: 'forest', zone: 'Forest',
+    lesson: 'Barkward is bound. It coats a summon in bark that absorbs the next stun and some damage.',
+    soul: 'The Forest boss fell. Your Timberclaw Soul is rank 2, so it heals more.',
+  },
+  {
+    biome: 'swamp', zone: 'Swamp',
+    lesson: 'Bog Leech is bound. It drains its target and shares what it drains with the most hurt summon.',
+    soul: 'The Swamp boss fell. Your Mire Behemoth Soul is rank 2, so its bile hits harder.',
+  },
+  {
+    biome: 'cave', zone: 'Cave',
+    lesson: 'Bonecrusher is bound. It costs two Command, and its blows grow with its own health.',
+    soul: 'The Cave boss fell. Your Dreadbore Soul is rank 2, so it comes more often.',
+  },
+  {
+    biome: 'mountain', zone: 'Mountain',
+    lesson: 'Rockhurler is bound. Its boulders hit a small area: your first real area damage.',
+    soul: 'The Mountain boss fell. Your Stoneplate Soul is rank 2, so the shield it gives is stronger.',
+  },
+  {
+    biome: 'jungle', zone: 'Jungle',
+    lesson: 'Bloomtender is bound. It heals the most hurt ally, and that can be you.',
+    soul: 'The Jungle boss fell. The Dread-Gorger Soul is yours: your summons never lose a fleeing enemy.',
+  },
+  {
+    biome: 'desert', zone: 'Desert',
+    lesson: 'Executioner is bound. It marks its target, and below a threshold its shots hit twice as hard.',
+    soul: 'The Desert boss fell. The Dune-Stalker Soul is yours: each kind of summon that hits the mark adds to it.',
+  },
+];
+
+const T2_DISCIPLINE_SAY =
+  'Tier 2 is open. Spend your skill point on a discipline in the Passive Tree: Swarm, Pack or Elite. It changes what Command costs.';
+
+/** A Tier 2 farm in a zone, to a biome level; `progress` shows it as a count. */
+function t2Farm(
+  id: string,
+  chapter: string,
+  say: string,
+  waiting: string,
+  biome: string,
+  level: number,
+): TutorialBeat {
+  return {
+    id,
+    chapter,
+    say,
+    waiting,
+    progress: [{ type: 'biomeLevel', biomeGroup: biome, level }],
+    steps: [{
+      type: 'farm',
+      at: { kind: 'biome', biomeGroup: biome, tier: 2 },
+      until: { type: 'biomeLevelAtLeast', biomeGroup: biome, level },
+    }],
+  };
+}
+
+/** The Tier 2 stretch after the farewell: the discipline pick, then every T2 zone (bible §7.5, §7.16). */
+export function buildConduitT2Beats(): TutorialBeat[] {
+  const beats: TutorialBeat[] = [];
+  let arrival = T2_DISCIPLINE_SAY;
+  for (const entry of T2_ZONES) {
+    const chapter = `Tier 2: ${entry.zone}`;
+    const lessonLevel = absoluteZoneLevel({ kind: 'zone', biome: entry.biome, tier: 2, level: LESSON_ZONE_LEVEL });
+    const cap = biomeLevelCap(2, entry.biome);
+    beats.push(
+      t2Farm(`t2:${entry.biome}`, chapter, arrival, `Fighting in the ${entry.zone}.`, entry.biome, lessonLevel),
+      t2Farm(`t2:${entry.biome}-lesson`, chapter, entry.lesson, `Fighting through the ${entry.zone}.`, entry.biome, cap),
+      {
+        id: `t2:${entry.biome}-boss`,
+        chapter,
+        say: `The ${entry.zone} boss is open again. Clear the guards and wake it: its Soul gets stronger, or joins you.`,
+        waiting: `Fighting for the ${entry.zone} Soul.`,
+        steps: [{ type: 'attemptBoss', biomeGroup: entry.biome, tier: 2 }],
+      },
+    );
+    arrival = entry.soul;
+  }
+  const last = T2_ZONES[T2_ZONES.length - 1];
+  beats.push({
+    id: 't2:done',
+    chapter: 'Tier 2',
+    say: `${arrival} That is every Tier 2 summon and Soul. Keep going forward.`,
+    steps: [{
+      type: 'farm',
+      at: { kind: 'biome', biomeGroup: last.biome, tier: 2 },
+      until: { type: 'bossCleared', biomeGroup: last.biome, tier: 2 },
+    }],
+  });
+  return beats;
+}
+
 /** Beats that follow the opening for a Conduit. */
 export function buildConduitBeats(): TutorialBeat[] {
   const seal = buildSealRouteBeats();
@@ -113,5 +231,6 @@ export function buildConduitBeats(): TutorialBeat[] {
     mountainApproach(),
     { ...sealBeat(seal, 'boss:mountain'), say: MARKSMAN_SAY },
     sealBeat(seal, 'farewell'),
+    ...buildConduitT2Beats(),
   ];
 }
