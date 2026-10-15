@@ -11,9 +11,17 @@
  * A line with no unfinished step never shows (resume skips a beat whose steps
  * are already true). The Toadeater line is therefore the say on that boss
  * fight: the guide says the three answers, then takes the fight.
+ *
+ * After the farewell beat comes the Tier-2 stretch (bible section 8.5, 8.16): the
+ * discipline pick, then each T2 zone in turn: an entry farm to the zone's lesson
+ * level, the lesson's line while the fight carries on to the tier cap, and the
+ * boss with the trophy it ranks up. The guide has no step for the discipline pick
+ * (it is made on the Passive Tree and no tutorial condition reads it), so that
+ * line rides on the first T2 farm and shows the moment Tier 2 lands.
  */
 import { biomeLevelCap } from '../../config/gameConfig';
 import { LESSON_ZONE_LEVEL } from '../../classKits/kitHelpers';
+import { absoluteZoneLevel } from '../../classKits/registry';
 import type { TutorialBeat, TutorialNodeRef } from '../types';
 import { TUTORIAL_SEALS, type T1Biome } from './plans';
 import { buildSealRouteBeats } from './sealRoute';
@@ -167,5 +175,173 @@ export function buildSquireBeats(): TutorialBeat[] {
     ),
   ]);
 
-  return beats;
+  return [...beats, ...buildSquireTierTwoBeats()];
+}
+
+type T2Biome = 'plains' | 'forest' | 'mountain' | 'swamp' | 'cave' | 'jungle' | 'desert';
+
+const T2_CHAPTER: Record<T2Biome, string> = {
+  plains: 'Tier 2: The Plains',
+  forest: 'Tier 2: The Forest',
+  mountain: 'Tier 2: The Mountain',
+  swamp: 'Tier 2: The Swamp',
+  cave: 'Tier 2: The Cave',
+  jungle: 'Tier 2: The Jungle',
+  desert: 'Tier 2: The Desert',
+};
+
+function t2Ref(biome: T2Biome): TutorialNodeRef {
+  return { kind: 'biome', biomeGroup: biome, tier: 2 };
+}
+
+/** The biome level (as the game counts it) where a T2 zone teaches its lesson. */
+function t2Lesson(biome: T2Biome): number {
+  return absoluteZoneLevel({ kind: 'zone', biome, tier: 2, level: LESSON_ZONE_LEVEL });
+}
+
+function t2Cap(biome: T2Biome): number {
+  return biomeLevelCap(2, biome);
+}
+
+function t2Farm(id: string, biome: T2Biome, level: number, say: string, waiting: string): TutorialBeat {
+  return {
+    id,
+    chapter: T2_CHAPTER[biome],
+    say,
+    waiting,
+    progress: [{ type: 'biomeLevel', biomeGroup: biome, level }],
+    steps: [{
+      type: 'farm',
+      at: t2Ref(biome),
+      until: { type: 'biomeLevelAtLeast', biomeGroup: biome, level },
+    }],
+  };
+}
+
+function t2Boss(biome: T2Biome, say: string): TutorialBeat {
+  return {
+    id: `squire2:boss-${biome}`,
+    chapter: T2_CHAPTER[biome],
+    say,
+    waiting: `Fighting the ${biome} boss.`,
+    steps: [{ type: 'attemptBoss', biomeGroup: biome, tier: 2 }],
+  };
+}
+
+/** The Tier-2 beats, after the farewell. Lines name the piece and say what it does; no numbers. */
+export function buildSquireTierTwoBeats(): TutorialBeat[] {
+  return [
+    t2Farm(
+      'squire2:discipline',
+      'plains',
+      t2Lesson('plains') - 1,
+      'Tier 2 is open. Pick a discipline in the Passive Tree: Avenger answers every blow, Bulwark holds the crowd on you, Juggernaut turns armor into a huge slam.',
+      'Fighting in the Plains while you choose.',
+    ),
+    t2Farm(
+      'squire2:plains',
+      'plains',
+      t2Lesson('plains'),
+      'The Plains now stampede. Fight on until the zone teaches its answer.',
+      'Fighting through the Plains.',
+    ),
+    t2Farm(
+      'squire2:stand-fast',
+      'plains',
+      t2Cap('plains'),
+      'Stand Fast is on: a charge comes at you and you plant your feet to stop it.',
+      'Fighting through the Plains.',
+    ),
+    t2Boss('plains', 'The Plains boss ranks your Muster up: a whole wave rallying to the fight fills twice as much Resolve.'),
+    t2Farm(
+      'squire2:forest',
+      'forest',
+      t2Lesson('forest'),
+      'The Forest now stuns. Fight on until the zone teaches its answer.',
+      'Fighting through the Forest.',
+    ),
+    t2Farm(
+      'squire2:unshaken',
+      'forest',
+      t2Cap('forest'),
+      'Unshaken is on: a stun or a root lands and you throw it off.',
+      'Fighting through the Forest.',
+    ),
+    t2Boss('forest', 'The Forest boss ranks your Relentless up: your slams chain into one another.'),
+    t2Farm(
+      'squire2:mountain',
+      'mountain',
+      t2Lesson('mountain'),
+      'The Mountain now raises barriers and charges. Fight on.',
+      'Fighting up the Mountain.',
+    ),
+    t2Farm(
+      'squire2:splitting-blow',
+      'mountain',
+      t2Cap('mountain'),
+      'Splitting Blow is on: a counter that breaks a raised barrier.',
+      'Fighting up the Mountain.',
+    ),
+    t2Boss('mountain', 'The Mountain boss ranks your Faultline up: your slam hits a barrier harder.'),
+    t2Farm(
+      'squire2:swamp',
+      'swamp',
+      t2Lesson('swamp'),
+      'The Swamp now corrodes. Fight on until Steel Will grows.',
+      'Fighting through the Swamp.',
+    ),
+    t2Farm(
+      'squire2:steel-will',
+      'swamp',
+      t2Cap('swamp'),
+      'Steel Will is stronger: it now shakes off corrosion and slows too.',
+      'Fighting through the Swamp.',
+    ),
+    t2Boss('swamp', 'The Swamp boss ranks your Rot-Eater up: every ailment that lands on you fills Resolve.'),
+    t2Farm(
+      'squire2:cave',
+      'cave',
+      t2Lesson('cave'),
+      'The Cave now erupts from below. Fight on.',
+      'Fighting through the Cave.',
+    ),
+    t2Farm(
+      'squire2:earthstamp',
+      'cave',
+      t2Cap('cave'),
+      'Earthstamp is on: a burrowed enemy is pulled out at your feet and staggered.',
+      'Fighting through the Cave.',
+    ),
+    t2Boss('cave', 'The Cave boss ranks your Corrode up: your hits strip plating from more stacks.'),
+    t2Farm(
+      'squire2:jungle',
+      'jungle',
+      t2Lesson('jungle'),
+      'The Jungle is new: its enemies ambush from cover and flee. Fight on.',
+      'Fighting through the Jungle.',
+    ),
+    t2Farm(
+      'squire2:watchful',
+      'jungle',
+      t2Cap('jungle'),
+      'Watchful is on: the first blow of an ambush is caught on your shield.',
+      'Fighting through the Jungle.',
+    ),
+    t2Boss('jungle', 'The Jungle boss gives you the Strangler Vine: your slam pulls enemies in before it lands.'),
+    t2Farm(
+      'squire2:desert',
+      'desert',
+      t2Lesson('desert'),
+      'The Desert is new: its archers keep their distance. Fight on.',
+      'Fighting through the Desert.',
+    ),
+    t2Farm(
+      'squire2:challenge',
+      'desert',
+      t2Cap('desert'),
+      'Challenge is on: ranged enemies are pulled in to fight you.',
+      'Fighting through the Desert.',
+    ),
+    t2Boss('desert', "The Desert boss gives you the Executioner's Oath: your slam comes early on a nearly dead enemy."),
+  ];
 }

@@ -70,6 +70,7 @@ export const BUFF_IDS = [
   // roots wear their own frame buff ids.
   'striker-focus',  // the opener's haste, until the finisher
   'squire-guard',   // the Squire's brace, until the telegraphed blow lands
+  'squire-parry',   // the Avenger's Parry brace: the blow is negated and countered
 ] as const;
 
 export type BuffId = typeof BUFF_IDS[number];

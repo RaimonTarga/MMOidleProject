@@ -330,6 +330,8 @@ const BOSS_DEBUFF_ICON_ALIASES: Record<string, string> = {
 const CLASS_PIECE_STATUS_ICONS: Record<string, string> = {
   'striker-focus': 'striker-focus',
   'squire-guard': 'squire-guard',
+  // Parry has no art of its own yet: it wears the Guard icon until the designer swaps it.
+  'squire-parry': 'squire-guard',
 };
 
 export function statusIconSource(id: string, instanceKey?: string): AssetIconSource | null {

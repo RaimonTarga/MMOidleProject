@@ -24,6 +24,7 @@ function tutorialFarmLevel(biome: T1Biome): number {
           step.type === "farm" &&
           step.at.kind === "biome" &&
           step.at.biomeGroup === biome &&
+          step.at.tier === 1 &&
           step.until.type === "biomeLevelAtLeast"
         ) {
           level = step.until.level;

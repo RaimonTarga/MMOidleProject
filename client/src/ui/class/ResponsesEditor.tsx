@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import {
+  classKitFor,
   composeResponsesView,
   withGroundTelegraphs,
   withRule,
@@ -20,6 +21,10 @@ import { GameIcon } from '../GameIcon';
 import { classPieceIconSource, trophyIconSource } from '../conceptIcons';
 import { rankMark } from './format';
 import './responsesEditor.css';
+
+const DISCIPLINES = classKitFor('cooldown').disciplines;
+/** The piece each discipline's pick unlocks (Parry, Intercept, Unbowed). */
+const DISCIPLINE_PIECE_IDS = new Set(DISCIPLINES.flatMap((d) => (d.pieceId ? [d.pieceId] : [])));
 
 function words(id: string): string {
   return id.split('-').join(' ');
@@ -91,8 +96,28 @@ export function ResponsesEditor({ view }: { view: ClassScreenView }) {
     send(withGroundTelegraphs(config as ClassConfig, choice));
   }
 
+  const picked = DISCIPLINES.find((d) => d.id === disciplineId);
+
   return (
     <div className="responses-editor">
+      {picked ? (
+        <section className="responses-editor__discipline" aria-label="Discipline">
+          <h4 className="class-panel__subheading">{`Discipline: ${picked.name}`}</h4>
+          <p className="class-panel__line">{picked.text}</p>
+        </section>
+      ) : playerTier >= 2 && (
+        <section className="responses-editor__discipline" aria-label="Discipline">
+          <h4 className="class-panel__subheading">Pick a discipline</h4>
+          <p className="class-panel__line">
+            Tier 2 lets you choose how your Resolve works. Choose one in the Passive Tree.
+          </p>
+          <ul className="responses-editor__hold">
+            {DISCIPLINES.map((d) => (
+              <li key={d.id}>{`${d.name}: ${d.fantasy}`}</li>
+            ))}
+          </ul>
+        </section>
+      )}
       <div className="class-panel__cards">
         {responses.rules.map((rule) => (
           <article
@@ -110,6 +135,9 @@ export function ResponsesEditor({ view }: { view: ClassScreenView }) {
                 <span className="class-panel__name">{rule.name}</span>
                 <span className="class-panel__rank">{rankMark(rule.rank)}</span>
                 <span className="class-panel__family">{words(rule.family)}</span>
+                {DISCIPLINE_PIECE_IDS.has(rule.pieceId) && (
+                  <span className="class-panel__family">discipline</span>
+                )}
               </div>
               {rule.answers.length > 0 && (
                 <p className="class-panel__line">{`when ${rule.answers}`}</p>
@@ -118,7 +146,9 @@ export function ResponsesEditor({ view }: { view: ClassScreenView }) {
                 <p key={index} className="class-panel__line">{line}</p>
               ))}
               <p className="responses-editor__cost">
-                {`${formatPips(rule.cost)} → ${formatPips(rule.refund)} pips`}
+                {rule.family === 'emergency'
+                  ? 'Spends the whole bar'
+                  : `${formatPips(rule.cost)} → ${formatPips(rule.refund)} pips`}
               </p>
               {rule.conditions.length > 0 && (
                 <ul className="responses-editor__conditions">
