@@ -1,4 +1,5 @@
 import type { World } from '../../../world/World';
+import { groundedResist } from '../../classes/archetypes/energy/spirit';
 import { NODE_REGISTRY } from '../../../world/nodeRegistry';
 import {
   navigationBodyHalfExtents,
@@ -207,7 +208,9 @@ export function updateKnockback(world: World, dt: number): void {
  * immovable outright, because immunity to a boss's repositioning is immunity to the
  * mechanic it sets up.
  */
-export function playerForcedMovementResistPct(player: PlayerEntity): number {
+export function playerForcedMovementResistPct(player: PlayerEntity, world?: World): number {
+  // The Spirit's Grounded line: no forced movement while the storm is at or above the floor.
+  if (world && groundedResist(world, player)) return 1;
   let best = 0;
   for (const effectId of ABILITY_GUARD_EFFECT_IDS) {
     const guard = getStatusEffect(player.tracksCombat, effectId);

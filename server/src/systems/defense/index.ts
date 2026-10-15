@@ -1,3 +1,4 @@
+import { registerStormAbsorb } from '../classes/archetypes/energy/spirit';
 import { withCombatRegistrationLabel } from '../combat/engine/combatPipeline';
 import { runDotCleanse } from './mitigation/dotCleanse';
 import { getResource, setResource } from "@mmo-idle/shared";
@@ -44,7 +45,8 @@ export function initDefenseSystems(): void {
   withCombatRegistrationLabel('registerEngagementDr', registerEngagementDr);
   withCombatRegistrationLabel('registerEvasion', registerEvasion);
   withCombatRegistrationLabel('registerDamageCap', registerDamageCap);
-  withCombatRegistrationLabel('registerWardAbsorb', registerWardAbsorb);      // before the barrier — wards are use-it-or-lose-it
+  withCombatRegistrationLabel('registerWardAbsorb', registerWardAbsorb);
+  withCombatRegistrationLabel('registerStormAbsorb', registerStormAbsorb); // the Spirit's storm: after wards, before the barrier      // before the barrier — wards are use-it-or-lose-it
   withCombatRegistrationLabel('registerBarrierAbsorb', registerBarrierAbsorb);
   withCombatRegistrationLabel('registerBarrierBreakHeal', registerBarrierBreakHeal); // after both absorbs — reads their emptied-pool metadata
   withCombatRegistrationLabel('registerSummonerDamageSponge', registerSummonerDamageSponge);

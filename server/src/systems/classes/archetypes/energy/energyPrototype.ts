@@ -86,6 +86,8 @@ export function initEnergyArchetype(): void {
     // Query by component presence, not by combatArchetype string.
     const entity = ctx.attacker;
     if (!entity?.usesEnergy) return;
+    // The storm fills from a constant flow, never from hits (bible §11.2): the old per-hit gain is inert for it.
+    if (entity.configuresClass?.config.system.kind === 'thresholds') return;
 
     // Empowered hits never generate energy — but a `mechanic-proxy` hit spent no
     // charge (design §24.2), so it builds energy like the ordinary hit it was.

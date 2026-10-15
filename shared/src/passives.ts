@@ -137,6 +137,21 @@ export const DEFENSE_KEYS = [
   'slinger.last-vs-poisoned-pct',  // Snakebite Pistol: the last round hits a poisoned target this much harder
   'slinger.last-round-pct',  // Hand Cannon: the last round hits this much harder
   'slinger.ramp-pct',  // Drum Gun: each round of a clip hits this much harder than the last
+  'spirit.area-extra',  // Forked Rod: area spends reach this many more enemies
+  'spirit.cost-mult',  // Weapon: spends cost this much (1 = normal)
+  'spirit.damage-mult',  // Weapon: spends hit this much (1 = normal)
+  'spirit.single-pct',  // Lodestone Orb: single-target spends hit this much harder
+  'spirit.area-pct',  // Lodestone Orb: area spends hit this much harder (negative: softer)
+  'spirit.soak-pct',  // Drenching Staff: spends soak the target; spends on a soaked target hit this much harder
+  'spirit.ooc-flow-pct',  // Still Air: the storm gathers this much faster out of combat
+  'spirit.clear-sky-pct',  // Clear Sky: the storm gathers this much faster while no enemy touches you
+  'spirit.static-skin',  // Static Skin: an enemy that strikes your storm is charged; your next spend on it hits this much harder
+  'spirit.sealed-vessel',  // Sealed Vessel: damage over time drains the storm at this share of cost
+  'spirit.petrichor-pct',  // Petrichor: a Downpour heals you this share of max HP
+  'spirit.grounded',  // Grounded: no knockback while the storm is at or above your floor
+  'spirit.afterstorm-x',  // Afterstorm: after a big hit the storm gathers this many times as fast for a few seconds
+  'spirit.ironbound',  // Ironbound: plating multiplied while your storm is empty
+  'spirit.capacitor',  // Capacitor: the flow wasted at a full storm heals you (this share)
   'defense.recovery-hit-pct',         // Cairnstone: a hit over this share of max HP...
   'defense.recovery-hit-x',           // ...multiplies the Recovery share by this for a few seconds
   'squire.recovery-riposte-x',        // Counterbalance: after a Riposte, the Recovery share is multiplied by this

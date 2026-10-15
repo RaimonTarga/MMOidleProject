@@ -41,12 +41,12 @@ export type SpiritPiece = PieceDef<SpiritFamily, SpiritPieceExtra>;
 export type SpiritTrophyKind = 'spend' | 'storm';
 export type SpiritTrophy = TrophyDef<SpiritTrophyKind>;
 
-export function spiritPiece(piece: Omit<SpiritPiece, 'classId' | 'params'>): SpiritPiece {
-  return { classId: 'energy', params: {}, ...piece };
+export function spiritPiece(piece: Omit<SpiritPiece, 'classId' | 'params'> & { params?: SpiritPiece['params'] }): SpiritPiece {
+  return { classId: 'energy', ...piece, params: piece.params ?? {} };
 }
 
-export function spiritTrophy(entry: Omit<SpiritTrophy, 'classId' | 'params'>): SpiritTrophy {
-  return { classId: 'energy', params: {}, ...entry };
+export function spiritTrophy(entry: Omit<SpiritTrophy, 'classId' | 'params'> & { params?: SpiritTrophy['params'] }): SpiritTrophy {
+  return { classId: 'energy', ...entry, params: entry.params ?? {} };
 }
 
 function spiritDiscipline(entry: Omit<DisciplineDef, 'classId' | 'params'>): DisciplineDef {
@@ -64,6 +64,7 @@ function spiritLeaf(entry: Omit<LeafDef, 'classId' | 'params' | 'tier'>): LeafDe
 const PIECES: readonly SpiritPiece[] = [
   spiritPiece({
     id: 'spirit-bolt',
+    params: { costPips: 0.5, mult: 1 },
     name: 'Bolt',
     family: 'strike',
     text: 'Spends part of your storm on one bolt of lightning at the target.',
@@ -71,12 +72,14 @@ const PIECES: readonly SpiritPiece[] = [
   // ── T1 (§11.4) ──
   spiritPiece({
     id: 'spirit-chain-lightning',
+    params: { costPips: 1, mult: 1.6, leaps: 3, leapPct: 0.6, radius: 160 },
     name: 'Chain Lightning',
     family: 'strike',
     text: 'Leaps from the target to the three nearest enemies.',
   }),
   spiritPiece({
     id: 'spirit-thunderclap',
+    params: { costPips: 0.75, radius: 120, staggerMs: 700 },
     name: 'Thunderclap',
     family: 'squall',
     waitsFor: 'touched',
@@ -85,6 +88,7 @@ const PIECES: readonly SpiritPiece[] = [
   }),
   spiritPiece({
     id: 'spirit-downpour',
+    params: { costPips: 0.5 },
     name: 'Downpour',
     family: 'calm',
     waitsFor: 'carrying-dot',
@@ -93,6 +97,7 @@ const PIECES: readonly SpiritPiece[] = [
   }),
   spiritPiece({
     id: 'spirit-eye-of-the-storm',
+    params: { costMult: 0.5 },
     name: 'Eye of the Storm',
     family: 'calm',
     atFloor: true,
@@ -100,6 +105,7 @@ const PIECES: readonly SpiritPiece[] = [
   }),
   spiritPiece({
     id: 'spirit-thunderbolt',
+    params: { costPips: 2, mult: 4.5, staggerMs: 900 },
     name: 'Thunderbolt',
     family: 'strike',
     text: 'A costly bolt at one target. It hits very hard and staggers.',
@@ -277,6 +283,7 @@ const LESSONS = [
 const TROPHIES: readonly SpiritTrophy[] = [
   spiritTrophy({
     id: 'spirit-relic-plains',
+    params: { extra: 2, pct: 0.4 },
     lineage: 'plains',
     name: 'Crosswind',
     kind: 'spend',
@@ -285,6 +292,7 @@ const TROPHIES: readonly SpiritTrophy[] = [
   }),
   spiritTrophy({
     id: 'spirit-relic-forest',
+    params: { discount: 0.2, windowMs: 3000 },
     lineage: 'forest',
     name: 'Squall',
     kind: 'spend',
@@ -293,6 +301,7 @@ const TROPHIES: readonly SpiritTrophy[] = [
   }),
   spiritTrophy({
     id: 'spirit-relic-swamp',
+    params: { radius: 140, mult: 3 },
     lineage: 'swamp',
     name: 'Marsh Fire',
     kind: 'storm',
@@ -304,6 +313,7 @@ const TROPHIES: readonly SpiritTrophy[] = [
   }),
   spiritTrophy({
     id: 'spirit-relic-mountain',
+    params: { mult: 2 },
     lineage: 'mountain',
     name: 'Thunderhead',
     kind: 'storm',
@@ -316,6 +326,7 @@ const TROPHIES: readonly SpiritTrophy[] = [
   }),
   spiritTrophy({
     id: 'spirit-relic-cave',
+    params: { durationMs: 4000, zapMult: 2 },
     lineage: 'cave',
     name: 'Static Web',
     kind: 'spend',

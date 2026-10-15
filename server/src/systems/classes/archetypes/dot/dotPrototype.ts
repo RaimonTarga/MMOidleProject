@@ -1,3 +1,4 @@
+import { drainStorm } from '../energy/spirit';
 import { incomingFinalDamage } from '../../../combat/damage/finalDamage';
 import { GAME_CONFIG, resolveDotStackCap } from '@mmo-idle/shared';
 import {
@@ -341,6 +342,10 @@ export function updateDotArchetype(world: World, dt: number, now = Date.now()): 
       const pool = drainBarrier(world, entity, ward.damage);
       hpDamage = pool.damage;
       absorbed = ward.absorbed + pool.absorbed;
+      // The Spirit's storm eats damage over time like any hit (bible §11.2).
+      const storm = drainStorm(world, entity, hpDamage, 'dot');
+      hpDamage = storm.damage;
+      absorbed += storm.absorbed;
     }
 
     const killer = effect.damageSource?.killer ?? buildKillerFromSourceId(

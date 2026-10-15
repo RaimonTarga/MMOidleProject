@@ -57,7 +57,7 @@ export function applyForcedMovement(
   // ONE resistance for both directions. Splitting it would mean a player geared
   // against being shoved is still dragged at full strength, which reads as the stat
   // being broken rather than as a different mechanic.
-  const resist = playerForcedMovementResistPct(player);
+  const resist = playerForcedMovementResistPct(player, world);
   let distance = Math.max(0, Math.round(baseDistance * (1 - resist)));
 
   if (toward) {
