@@ -24,6 +24,7 @@ import {
   type SpiritTrophy,
   type ThresholdsConfig,
 } from '@mmo-idle/shared';
+import { mutateSlice } from '../../../../ecs/dirtyHelpers';
 import type { MonsterEntity, PlayerEntity } from '../../../../ecs/entity';
 import type { World } from '../../../../world/World';
 import { isPlayerInCombat } from '../../../combat/ai/engagement';
@@ -349,6 +350,16 @@ function bankKills(player: PlayerEntity, target: MonsterEntity, spent: number): 
   return pips >= (piece.params['minPips'] ?? 1) && estimate >= target.hasHealth.hp;
 }
 
+/** Tide's phase for the HUD: networked only for a Tide Spirit (absent for every other discipline). */
+function publishTide(world: World, player: PlayerEntity, tide: boolean, surging: boolean): void {
+  const want = tide ? (surging ? 'surge' : 'ebb') : undefined;
+  if (player.usesEnergy?.tide === want) return;
+  mutateSlice(world, player, 'usesEnergy', (slice) => {
+    if (want) slice.tide = want;
+    else delete slice.tide;
+  });
+}
+
 /** Per-tick storm: size, flow, and the spends the bands allow. */
 export function updateSpirit(world: World, player: PlayerEntity, dt: number, now: number): void {
   const t = thresholdsOf(world, player);
@@ -385,6 +396,7 @@ export function updateSpirit(world: World, player: PlayerEntity, dt: number, now
   // Tide: the flow runs fast in the ebb and stops in the surge (you cannot gather while you break).
   let surging = tide && getResource(cs, TIDE_SURGE) > 0;
   if (tide) flow = surging ? 0 : flow * TIDE_EBB_FLOW_X;
+  publishTide(world, player, tide, surging);
   const room = cap - energy.energy;
   energy.energy += Math.min(flow, room);
   // At full the flow is wasted; Capacitor turns it into healing (Overflow wastes nothing until its room is full).
@@ -414,6 +426,7 @@ export function updateSpirit(world: World, player: PlayerEntity, dt: number, now
       surging = false;
       setResource(cs, TIDE_SURGE, 0);
     }
+    publishTide(world, player, tide, surging);
     // In the ebb you cannot spend.
     if (!surging) return;
   }

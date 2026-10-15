@@ -38,4 +38,12 @@ assert(composeThresholdsView({ ...input, classConfig: withBand(config, 'spirit-c
 assert(composeThresholdsView({ ...input, classConfig: withPhase(config, 'hover') })!.phase === 'hover', 'the phase reads back');
 assert(composeThresholdsView({ ...input, classConfig: withFloor(config, 120) })!.problems.length > 0, 'a floor past its limit is refused, with the reason');
 
+// T2: the discipline reads back, and Storm Surge is automatic (no band).
+const tide: ClassScreenInput = { ...input, disciplineId: 'spirit-tide', bossesCleared: ['plains:1', 'plains:2'], playerTier: 2 };
+const tideView = composeThresholdsView({ ...tide, classConfig: defaultClassConfig(classConfigContextFromState(tide)!) })!;
+assert(view.discipline === null, 'no discipline before T2');
+assert(tideView.discipline?.id === 'spirit-tide' && tideView.discipline.name === 'Tide', 'the picked discipline reads back');
+assert(tideView.pieces.find((p) => p.pieceId === 'spirit-storm-surge')?.automatic === true, 'Storm Surge is automatic');
+assert(view.pieces.every((p) => !p.automatic), 'no T1 piece is automatic');
+
 console.log('thresholdsView.test.ts: ok');

@@ -136,6 +136,7 @@ const maxOf = (p: PlayerEntity): number => p.usesEnergy!.energyMax;
   run(world, player, 2_000);
   assert.ok(near.hasHealth.hp < nearHp, 'the spill arcs off you into the nearby enemy');
   assert.equal(far.hasHealth.hp, 1_000_000, 'and reaches only enemies near you');
+  assert.equal(player.usesEnergy!.tide, undefined, 'only Tide has a phase to network');
 }
 
 // ── Tide: no spends in the ebb, no gathering in the surge ────────────────────
@@ -157,6 +158,7 @@ const maxOf = (p: PlayerEntity): number => p.usesEnergy!.energyMax;
     else if (surged) ebbedAgain = true;
   }
   assert.ok(surged && ebbedAgain, 'the storm comes in waves: ebb, surge, ebb');
+  assert.ok(player.usesEnergy!.tide === 'ebb' || player.usesEnergy!.tide === 'surge', 'a Tide Spirit networks its phase for the HUD');
 }
 {
   // Storm Surge opens the surge with a wave through the enemies in front.

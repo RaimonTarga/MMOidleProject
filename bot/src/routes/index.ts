@@ -7,6 +7,7 @@ import { SQUIRE_T1_ID, squireT1Route } from "./squireT1";
 import { DEFAULT_SMOKE_CLASS, SMOKE_T1_ID, smokeT1Route } from "./smokeT1";
 import { STRIKER_T1_ID, strikerT1Route } from "./strikerT1";
 import { SPIRIT_T1_ID, spiritT1Route } from "./spiritT1";
+import { spiritT2Route } from "./spiritT2";
 
 /**
  * The route registry.
@@ -31,6 +32,7 @@ const SQUIRE_ROUTE = squireT1Route();
 const CONDUIT_ROUTE = conduitT1Route();
 const SLINGER_ROUTE = slingerT1Route();
 const SPIRIT_ROUTE = spiritT1Route();
+const SPIRIT_T2_ROUTE = spiritT2Route();
 const APPRENTICE_ROUTE = apprenticeT1Route();
 export const ROUTES = new Map<string, Route>([
   [SMOKE_ROUTE.id, SMOKE_ROUTE],
@@ -39,6 +41,7 @@ export const ROUTES = new Map<string, Route>([
   [CONDUIT_ROUTE.id, CONDUIT_ROUTE],
   [SLINGER_ROUTE.id, SLINGER_ROUTE],
   [SPIRIT_ROUTE.id, SPIRIT_ROUTE],
+  [SPIRIT_T2_ROUTE.id, SPIRIT_T2_ROUTE],
   [APPRENTICE_ROUTE.id, APPRENTICE_ROUTE],
 ]);
 

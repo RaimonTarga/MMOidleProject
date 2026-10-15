@@ -129,6 +129,8 @@ export interface PlayerView {
   resolveMax: number;
   energyCount: number;
   energyMax: number;
+  /** Tide's phase, or '' when the Spirit has no tide. */
+  tidePhase: '' | 'ebb' | 'surge';
   empoweredReady: boolean;
   targetDotStacks: number;
   /** Server-authored progress toward the current target's next primary DoT tick. */
@@ -368,6 +370,7 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     resolveMax: entity.usesCooldown?.resolveMax ?? 0,
     energyCount: entity.usesEnergy?.energy ?? 0,
     energyMax: entity.usesEnergy?.energyMax ?? 100,
+    tidePhase: entity.usesEnergy?.tide ?? '',
     empoweredReady: entity.hasEmpoweredAttack !== undefined,
     targetDotStacks: entity.appliesDots?.targetDotStacks ?? 0,
     targetDotTickPct: entity.appliesDots?.targetDotTickPct ?? 0,

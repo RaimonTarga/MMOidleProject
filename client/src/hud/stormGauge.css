@@ -111,3 +111,32 @@
   color: var(--hud-text);
   font-size: 11px;
 }
+
+.storm-gauge__tide {
+  color: var(--hud-primary-strong, #aabbff);
+  font-weight: bold;
+}
+
+.storm-gauge[data-tide='ebb'] .storm-gauge__tide { color: var(--hud-text-muted); }
+
+.storm-gauge__brim {
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  width: 2px;
+  background: #ffffff;
+  opacity: 0.85;
+  transform: translateX(-1px);
+}
+
+.storm-gauge[data-overflow] .gradient-conduit__fill {
+  filter: brightness(1.35);
+}
+
+.storm-bottle--overflow .storm-bottle__fill {
+  background: linear-gradient(0deg, #5566cc, #aabbff, #ffffff);
+}
+
+.storm-bottle--overflow .storm-bottle__track {
+  box-shadow: 0 0 8px #aabbff;
+}

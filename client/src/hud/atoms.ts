@@ -171,6 +171,8 @@ export const executionCooldownPctAtom = atom<number>(0);
 
 export const energyCountAtom = atom<number>(0);
 export const energyMaxAtom = atom<number>(100);
+/** Tide's phase ('' when the Spirit has no tide). */
+export const tidePhaseAtom = atom<'' | 'ebb' | 'surge'>('');
 export const empoweredReadyAtom = atom<boolean>(false);
 
 export const ammoCountAtom = atom<number>(0);
@@ -672,6 +674,7 @@ function resetPlayerAtoms(): void {
   store.set(executionCooldownPctAtom, 0);
   store.set(energyCountAtom, 0);
   store.set(energyMaxAtom, 100);
+  store.set(tidePhaseAtom, '');
   store.set(empoweredReadyAtom, false);
   store.set(ammoCountAtom, 0);
   store.set(ammoMaxAtom, 0);
@@ -779,6 +782,7 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(executionCooldownPctAtom, player.executionCooldownPct);
   setIfChanged(energyCountAtom, player.energyCount);
   setIfChanged(energyMaxAtom, player.energyMax);
+  setIfChanged(tidePhaseAtom, player.tidePhase);
   setIfChanged(empoweredReadyAtom, player.empoweredReady);
   setIfChanged(ammoCountAtom, player.ammoCount);
   setIfChanged(ammoMaxAtom, player.ammoMax);
