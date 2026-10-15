@@ -19,24 +19,34 @@ const isElite = (monster: MonsterEntity): boolean =>
 
 const hpShare = (monster: MonsterEntity): number => monster.hasHealth.hp / Math.max(1, monster.hasHealth.maxHp);
 
-/** The monster the called shot should fly to, or null when no rule finds one in reach. */
+/** Everything the called shot could fly to: alive, in reach, targetable. */
+function candidatesFor(world: World, player: PlayerEntity, exclude?: ReadonlySet<string>): MonsterEntity[] {
+  const reach = player.performsAttack.attackRange;
+  const candidates: MonsterEntity[] = [];
+  for (const monster of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
+    if (monster.hasHealth.hp <= 0 || isConcealedEntity(monster) || isInvulnerableMonster(monster)) continue;
+    if (exclude?.has(monster.isMonster.id)) continue;
+    if (!world.collision.canReach(player, monster, reach)) continue;
+    candidates.push(monster);
+  }
+  return candidates;
+}
+
+const orderOf = (rule: readonly ConditionRef[] | undefined): readonly string[] =>
+  rule && rule.length > 0 ? rule.filter((ref) => !ref.not).map((ref) => ref.id as string) : DEFAULT_ORDER;
+
+/** The monster the called shot should fly to, or null when no rule finds one in reach. `exclude`: bodies already hit (Ricochet). */
 export function pickCalledTarget(
   world: World,
   player: PlayerEntity,
   rule: readonly ConditionRef[] | undefined,
   now: number,
+  exclude?: ReadonlySet<string>,
 ): MonsterEntity | null {
-  const reach = player.performsAttack.attackRange;
-  const candidates: MonsterEntity[] = [];
-  for (const monster of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
-    if (monster.hasHealth.hp <= 0 || isConcealedEntity(monster) || isInvulnerableMonster(monster)) continue;
-    if (!world.collision.canReach(player, monster, reach)) continue;
-    candidates.push(monster);
-  }
+  const candidates = candidatesFor(world, player, exclude);
   if (candidates.length === 0) return null;
 
-  const order = rule && rule.length > 0 ? rule.filter((ref) => !ref.not).map((ref) => ref.id as string) : DEFAULT_ORDER;
-  for (const id of order) {
+  for (const id of orderOf(rule)) {
     if (id === 'enemy-winds-up') {
       const winding = candidates.find((monster) => isMonsterThreatening(world, monster, now));
       if (winding) return winding;
@@ -48,4 +58,25 @@ export function pickCalledTarget(
     }
   }
   return null;
+}
+
+/**
+ * Deadeye's moment (bible §10.6): the rule's moment has come for the last round. An enemy winds up, an
+ * elite is in reach, or the attack target has dropped below a third of its health (`lowHp`).
+ */
+export function calledMomentHolds(
+  world: World,
+  player: PlayerEntity,
+  rule: readonly ConditionRef[] | undefined,
+  lowHp: number,
+  now: number,
+): boolean {
+  const candidates = candidatesFor(world, player);
+  const current = player.hasAttackTarget ? world.getMonsterEntity(player.hasAttackTarget.targetId) : undefined;
+  for (const id of orderOf(rule)) {
+    if (id === 'enemy-winds-up' && candidates.some((monster) => isMonsterThreatening(world, monster, now))) return true;
+    if (id === 'target-elite' && candidates.some(isElite)) return true;
+    if (id === 'target-low' && current && hpShare(current) < lowHp) return true;
+  }
+  return false;
 }
