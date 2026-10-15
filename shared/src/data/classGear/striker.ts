@@ -3,7 +3,7 @@
  * bases, from bible §12.4 (T1) and §12.16 (T2–T4). Stats are copied from the biome's first
  * generic weapon at that tier. The T1 jobs and lines carry their `striker.*` / `defense.*` keys
  * (CS.4: placeholders, a little stronger each tier the job recurs); the T2+ jobs and the two
- * Recovery lines (Rhythm, Cairnstone) stay empty until their runtime.
+ * Recovery lines multiply the always-on share (`defense/regen/recovery.ts`).
  */
 import type { ClassGearDef } from './types';
 
@@ -290,22 +290,22 @@ export const STRIKER_GEAR: ClassGearDef = {
     'plains-vest-t1': { name: 'Shoulder Through', text: 'Each extra enemy around you adds a little plating.', effects: { 'striker.plating-per-enemy': 1 } },
     'plains-charm-t1': { name: 'Grit', text: 'Part of every hit you take heals back over a few seconds while you keep attacking; stop and it is lost.', effects: { 'striker.grit-pct': 0.15, 'striker.grit-ms': 3000 } },
     'forest-vest-t1': { name: 'Unbroken', text: 'Stuns, knockdowns and slows are shorter and never break your resource.', effects: { 'defense.control-duration-cut-pct': 0.25 } },
-    'forest-charm-t1': { name: 'Rhythm', text: 'Recovery rises the longer you fight without a break, up to double.', effects: {} },
+    'forest-charm-t1': { name: 'Rhythm', text: 'Recovery rises the longer you fight without a break, up to double.', effects: { 'defense.recovery-rhythm-max': 2, 'defense.recovery-rhythm-ms': 20000 } },
     'swamp-vest-t1': { name: 'Bloodless', text: "While you keep attacking, damage over time can't take you below a quarter of your HP.", effects: { 'striker.dot-floor-pct': 0.25 } },
     'swamp-charm-t1': { name: 'Antidote', text: 'Every few seconds, the poison or bleed on you with the most time left ends.', effects: { 'defense.dot-cleanse-interval-ms': 6000 } },
     'mountain-vest-t1': { name: 'Braced Cast', text: 'Nothing interrupts your casts, and the cap is lower while you cast.', effects: { 'striker.cast-unbreakable': 1, 'striker.cast-cap-cut-pct': 0.25 } },
-    'mountain-charm-t1': { name: 'Cairnstone', text: 'After a hit over a quarter of your HP, Recovery triples for a few seconds.', effects: {} },
+    'mountain-charm-t1': { name: 'Cairnstone', text: 'After a hit over a quarter of your HP, Recovery triples for a few seconds.', effects: { 'defense.recovery-hit-pct': 0.25, 'defense.recovery-hit-x': 3 } },
     'cave-vest-t1': { name: 'Weighty', text: 'More bulk, and slower beats.', effects: { 'striker.bulk-pct': 0.1, 'striker.beat-slow-pct': 0.1 } },
     'cave-charm-t1': { name: 'Deep Breath', text: 'Out-of-combat Recovery is much faster.', effects: { 'defense.ooc-recovery-pct': 1 } },
     // ── T2 ──
     'plains-vest-t2': { name: 'Shoulder Through', text: 'Each extra enemy around you adds a little plating.', effects: { 'striker.plating-per-enemy': 2.6 } },
     'plains-charm-t2': { name: 'Grit', text: 'Part of every hit you take heals back over a few seconds while you keep attacking; stop and it is lost.', effects: { 'striker.grit-pct': 0.188, 'striker.grit-ms': 3000 } },
     'forest-vest-t2': { name: 'Unbroken', text: 'Stuns, knockdowns and slows are shorter and never break your resource.', effects: { 'defense.control-duration-cut-pct': 0.312 } },
-    'forest-charm-t2': { name: 'Rhythm', text: 'Recovery rises the longer you fight without a break, up to double.', effects: {} },
+    'forest-charm-t2': { name: 'Rhythm', text: 'Recovery rises the longer you fight without a break, up to double.', effects: { 'defense.recovery-rhythm-max': 2, 'defense.recovery-rhythm-ms': 20000 } },
     'swamp-vest-t2': { name: 'Bloodless', text: "While you keep attacking, damage over time can't take you below a quarter of your HP.", effects: { 'striker.dot-floor-pct': 0.25 } },
     'swamp-charm-t2': { name: 'Antidote', text: 'Every few seconds, the poison or bleed on you with the most time left ends.', effects: { 'defense.dot-cleanse-interval-ms': 5000 } },
     'mountain-vest-t2': { name: 'Braced Cast', text: 'Nothing interrupts your casts, and the cap is lower while you cast.', effects: { 'striker.cast-unbreakable': 1, 'striker.cast-cap-cut-pct': 0.25 } },
-    'mountain-charm-t2': { name: 'Cairnstone', text: 'After a hit over a quarter of your HP, Recovery triples for a few seconds.', effects: {} },
+    'mountain-charm-t2': { name: 'Cairnstone', text: 'After a hit over a quarter of your HP, Recovery triples for a few seconds.', effects: { 'defense.recovery-hit-pct': 0.25, 'defense.recovery-hit-x': 3 } },
     'cave-vest-t2': { name: 'Weighty', text: 'More bulk, and slower beats.', effects: { 'striker.bulk-pct': 0.125, 'striker.beat-slow-pct': 0.1 } },
     'cave-charm-t2': { name: 'Deep Breath', text: 'Out-of-combat Recovery is much faster.', effects: { 'defense.ooc-recovery-pct': 1.25 } },
     'jungle-vest-t2': { name: 'Watchful', text: "An ambush can't interrupt a cast or break your combo.", effects: {} },
@@ -316,7 +316,7 @@ export const STRIKER_GEAR: ClassGearDef = {
     'swamp-vest-t3': { name: 'Bloodless', text: "While you keep attacking, damage over time can't take you below a quarter of your HP.", effects: { 'striker.dot-floor-pct': 0.25 } },
     'swamp-charm-t3': { name: 'Antidote', text: 'Every few seconds, the poison or bleed on you with the most time left ends.', effects: { 'defense.dot-cleanse-interval-ms': 4000 } },
     'mountain-vest-t3': { name: 'Braced Cast', text: 'Nothing interrupts your casts, and the cap is lower while you cast.', effects: { 'striker.cast-unbreakable': 1, 'striker.cast-cap-cut-pct': 0.25 } },
-    'mountain-charm-t3': { name: 'Cairnstone', text: 'After a hit over a quarter of your HP, Recovery triples for a few seconds.', effects: {} },
+    'mountain-charm-t3': { name: 'Cairnstone', text: 'After a hit over a quarter of your HP, Recovery triples for a few seconds.', effects: { 'defense.recovery-hit-pct': 0.25, 'defense.recovery-hit-x': 3 } },
     'cave-vest-t3': { name: 'Weighty', text: 'More bulk, and slower beats.', effects: { 'striker.bulk-pct': 0.15, 'striker.beat-slow-pct': 0.1 } },
     'cave-charm-t3': { name: 'Deep Breath', text: 'Out-of-combat Recovery is much faster.', effects: { 'defense.ooc-recovery-pct': 1.5 } },
     'jungle-vest-t3': { name: 'Watchful', text: "An ambush can't interrupt a cast or break your combo.", effects: {} },
@@ -329,7 +329,7 @@ export const STRIKER_GEAR: ClassGearDef = {
     'volcanic-charm-t3': { name: 'Fuel', text: 'Your Recovery rises with the Heat.', effects: {} },
     // ── T4 ──
     'mountain-vest-t4': { name: 'Braced Cast', text: 'Nothing interrupts your casts, and the cap is lower while you cast.', effects: { 'striker.cast-unbreakable': 1, 'striker.cast-cap-cut-pct': 0.25 } },
-    'mountain-charm-t4': { name: 'Cairnstone', text: 'After a hit over a quarter of your HP, Recovery triples for a few seconds.', effects: {} },
+    'mountain-charm-t4': { name: 'Cairnstone', text: 'After a hit over a quarter of your HP, Recovery triples for a few seconds.', effects: { 'defense.recovery-hit-pct': 0.25, 'defense.recovery-hit-x': 3 } },
     'jungle-vest-t4': { name: 'Watchful', text: "An ambush can't interrupt a cast or break your combo.", effects: {} },
     'jungle-charm-t4': { name: 'Chase', text: 'Recovery doubles while you close on a target.', effects: {} },
     'desert-vest-t4': { name: 'Close In', text: 'While a ranged enemy hits you, you move faster toward it.', effects: {} },

@@ -102,6 +102,12 @@ export const DEFENSE_KEYS = [
   // ── Class lines' generic defenses (class-first build plan CS.4) ─────────────
   // Out-of-combat healing runs this much faster (a Striker's Deep Breath).
   'defense.ooc-recovery-pct',
+  'defense.recovery-rhythm-max',      // Rhythm: the longer the fight, the more the Recovery share is multiplied, up to this
+  'defense.recovery-rhythm-ms',       // Rhythm: the fight length that reaches the maximum
+  'defense.recovery-hit-pct',         // Cairnstone: a hit over this share of max HP...
+  'defense.recovery-hit-x',           // ...multiplies the Recovery share by this for a few seconds
+  'squire.recovery-riposte-x',        // Counterbalance: after a Riposte, the Recovery share is multiplied by this
+  'squire.recovery-caught-x',         // Stone Patience: after a caught telegraph, by this
   // Stuns, roots, knockdowns and slows on you are this much shorter (Unbroken).
   'defense.control-duration-cut-pct',
   // Every `interval-ms`, the poison or bleed on you with the most time left ends (Antidote).

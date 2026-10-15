@@ -105,6 +105,14 @@ export const GAME_CONFIG = {
   // Default durations for the timed Recovery sources, used when an item or node
   // does not author its own companion duration key. All are "how long a fraction
   // of the Recovery rate stays switched on", never a heal amount.
+  /**
+   * The always-on in-combat Recovery share every class has (class-first build S4):
+   * the fraction of the Recovery rate paid while fighting. Lines that say Recovery
+   * "doubles" or "triples" multiply it; Old Guard-style lines add to it. PLACEHOLDER.
+   */
+  RECOVERY_COMBAT_BASE_SHARE: 0.05,
+  /** Default window for a Recovery multiplier line ("for a few seconds", ms). PLACEHOLDER. */
+  RECOVERY_BOOST_MS: 4000,
   /** Default window for `defense.recovery-pulse-pct` (ms). */
   RECOVERY_PULSE_MS: 4000,
   /** Default window for `defense.recovery-on-kill-pct` (ms). Kills refresh it. */

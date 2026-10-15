@@ -69,6 +69,12 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   'defense.barrier-stationary-recharge-pct': { label: 'Barrier recharge while holding' },
   'defense.dot-resistance':               { label: 'DoT resist' },
   'defense.ooc-recovery-pct':             { label: 'Out-of-combat healing' },
+  'defense.recovery-rhythm-max':          { label: 'Rhythm' },
+  'defense.recovery-rhythm-ms':           { label: 'Rhythm build-up', companion: true },
+  'defense.recovery-hit-x':               { label: 'Recovery after a big hit' },
+  'defense.recovery-hit-pct':             { label: 'Big hit threshold', companion: true },
+  'squire.recovery-riposte-x':            { label: 'Recovery after a Riposte' },
+  'squire.recovery-caught-x':             { label: 'Recovery after a caught telegraph' },
   'defense.control-duration-cut-pct':     { label: 'Shorter control' },
   'defense.dot-cleanse-interval-ms':      { label: 'Poison and bleed cleanse' },
   // ── The Striker's weapon jobs and lines (class-first build plan CS.4) ──────

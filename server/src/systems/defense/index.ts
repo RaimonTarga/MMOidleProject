@@ -10,7 +10,7 @@ import { registerBarrierBreakHeal } from "./barrier/barrierBreakHeal";
 import { registerHitToDot, runDebtDrain } from "./mitigation/hitToDot";
 import { registerDamageAbsorb, runAbsorbDrain } from "./regen/damageAbsorb";
 import { registerRecoveryOnKill } from "./regen/recoveryOnKill";
-import { runRecovery, resetRecoveryRamp } from "./regen/recovery";
+import { runRecovery, resetRecoveryRamp, registerRecoveryBoostOnBigHit } from "./regen/recovery";
 import { registerStationaryDr, runStationaryDr } from "./mitigation/stationaryDr";
 import { registerReactivePlating, runReactivePlating } from "./mitigation/reactivePlating";
 import {
@@ -53,6 +53,7 @@ export function initDefenseSystems(): void {
   withCombatRegistrationLabel('registerReactivePlating', registerReactivePlating);
   withCombatRegistrationLabel('registerStationaryDr', registerStationaryDr);
   withCombatRegistrationLabel('registerBrambleReflect', registerBrambleReflect);
+  withCombatRegistrationLabel('registerRecoveryBoostOnBigHit', registerRecoveryBoostOnBigHit);
 }
 
 /**

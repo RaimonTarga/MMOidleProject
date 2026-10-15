@@ -49,6 +49,7 @@ import { classConfigContextOf } from '../../../player/progression/classConfig';
 import { applyPlayerDebuff } from '../../shared/applyPlayerDebuff';
 import { CADENCE_BLEED_ID } from '../../../combat/damage/bleedIds';
 import { applyHealToPlayer } from '../../../defense/regen/healing';
+import { activateRecoveryBoost } from '../../../defense/regen/recovery';
 import { EXECUTION_MULTIPLIER } from './cooldownPrototype';
 
 /** The brace a Guard puts up, until the blow it was raised for lands. */
@@ -170,6 +171,8 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
     const attacker = world.getMonsterEntity(getString(cs, REPEAT_BY_KEY) ?? '');
     setCounter(cs, REPEAT_COUNT_KEY, 0);
     if (!attacker || attacker.hasHealth.hp <= 0) return 'none';
+    // Counterbalance: after a Riposte, Recovery is multiplied for a few seconds.
+    activateRecoveryBoost(cs, player.usesSkills.passives['squire.recovery-riposte-x'] ?? 0);
     const counter = 1 + (player.usesSkills.passives['squire.counter-damage-pct'] ?? 0);
     applyPlayerAoeTo(world, player, [attacker], player.dealsDamage.attack * p.damagePct * counter, 'player', {}, { feedsWeaponReservoir: true });
     return 'landed';
@@ -427,6 +430,8 @@ export function initSquire(): void {
     removeStatusEffect(player.tracksCombat, SQUIRE_GUARD_EFFECT_ID);
     if ((brace.data['knockbackResistPct'] ?? 0) > 0) removeStatusEffect(player.tracksCombat, ABILITY_UNYIELDING_EFFECT_ID);
     setCounter(player.tracksCombat, LAST_CAUGHT_TICK, world.tickCounter + 1);
+    // Stone Patience: after a caught telegraph, Recovery is multiplied for a few seconds.
+    activateRecoveryBoost(player.tracksCombat, player.usesSkills.passives['squire.recovery-caught-x'] ?? 0);
     addResolve(world, player, brace.data['refund'] ?? 0);
   });
 

@@ -3,7 +3,7 @@
  * bases, from bible §8.4 (T1) and §8.16 (T2–T4). Stats are copied from the biome's first
  * generic weapon at that tier. The T1 jobs and lines carry their `squire.*` / `defense.*` keys
  * (CQ.4: placeholders, a little stronger each tier the job recurs); the T2+ jobs and the two
- * Recovery lines (Counterbalance, Stone Patience) stay empty until their runtime.
+ * Recovery lines multiply the always-on share (`defense/regen/recovery.ts`).
  */
 import type { ClassGearDef } from './types';
 
@@ -290,22 +290,22 @@ export const SQUIRE_GEAR: ClassGearDef = {
     'plains-vest-t1': { name: 'Rampart', text: 'Enemies you shoved deal less damage for a few seconds.', effects: { 'squire.shove-weaken-pct': 0.2, 'squire.shove-weaken-ms': 4000 } },
     'plains-charm-t1': { name: 'Breather', text: 'Each Shove that lands heals a little per enemy shoved.', effects: { 'squire.shove-heal-pct': 0.01 } },
     'forest-vest-t1': { name: 'Turn Aside', text: 'A dodged hit fills Resolve as if it had landed.', effects: { 'squire.dodge-fills': 1 } },
-    'forest-charm-t1': { name: 'Counterbalance', text: 'After a Riposte, Recovery doubles for a few seconds.', effects: {} },
+    'forest-charm-t1': { name: 'Counterbalance', text: 'After a Riposte, Recovery doubles for a few seconds.', effects: { 'squire.recovery-riposte-x': 2 } },
     'swamp-vest-t1': { name: 'Iron Gut', text: 'Steel Will costs half.', effects: { 'squire.steel-will-cost-cut-pct': 0.5 } },
     'swamp-charm-t1': { name: 'Purifying Breath', text: 'A poison or bleed you shake off heals you for part of the damage it had left.', effects: { 'squire.cleanse-heal-pct': 0.5 } },
     'mountain-vest-t1': { name: 'Planted', text: "While guarding you can't be knocked back or stunned.", effects: { 'squire.guard-steadfast': 1 } },
-    'mountain-charm-t1': { name: 'Stone Patience', text: 'After a caught telegraph, Recovery triples for a few seconds.', effects: {} },
+    'mountain-charm-t1': { name: 'Stone Patience', text: 'After a caught telegraph, Recovery triples for a few seconds.', effects: { 'squire.recovery-caught-x': 3 } },
     'cave-vest-t1': { name: 'Reforged', text: 'Stripped plating comes back faster, and each stack stripped fills Resolve.', effects: { 'squire.shred-regrow-ms': 3000, 'squire.shred-fill-pips': 0.25 } },
     'cave-charm-t1': { name: 'Old Guard', text: 'Part of your Recovery stays on in combat.', effects: { 'defense.recovery-active-pct': 0.1 } },
     // ── T2 ──
     'plains-vest-t2': { name: 'Rampart', text: 'Enemies you shoved deal less damage for a few seconds.', effects: { 'squire.shove-weaken-pct': 0.25, 'squire.shove-weaken-ms': 4000 } },
     'plains-charm-t2': { name: 'Breather', text: 'Each Shove that lands heals a little per enemy shoved.', effects: { 'squire.shove-heal-pct': 0.013 } },
     'forest-vest-t2': { name: 'Turn Aside', text: 'A dodged hit fills Resolve as if it had landed.', effects: { 'squire.dodge-fills': 1 } },
-    'forest-charm-t2': { name: 'Counterbalance', text: 'After a Riposte, Recovery doubles for a few seconds.', effects: {} },
+    'forest-charm-t2': { name: 'Counterbalance', text: 'After a Riposte, Recovery doubles for a few seconds.', effects: { 'squire.recovery-riposte-x': 2 } },
     'swamp-vest-t2': { name: 'Iron Gut', text: 'Steel Will costs half.', effects: { 'squire.steel-will-cost-cut-pct': 0.5 } },
     'swamp-charm-t2': { name: 'Purifying Breath', text: 'A poison or bleed you shake off heals you for part of the damage it had left.', effects: { 'squire.cleanse-heal-pct': 0.625 } },
     'mountain-vest-t2': { name: 'Planted', text: "While guarding you can't be knocked back or stunned.", effects: { 'squire.guard-steadfast': 1 } },
-    'mountain-charm-t2': { name: 'Stone Patience', text: 'After a caught telegraph, Recovery triples for a few seconds.', effects: {} },
+    'mountain-charm-t2': { name: 'Stone Patience', text: 'After a caught telegraph, Recovery triples for a few seconds.', effects: { 'squire.recovery-caught-x': 3 } },
     'cave-vest-t2': { name: 'Reforged', text: 'Stripped plating comes back faster, and each stack stripped fills Resolve.', effects: { 'squire.shred-regrow-ms': 3000, 'squire.shred-fill-pips': 0.312 } },
     'cave-charm-t2': { name: 'Old Guard', text: 'Part of your Recovery stays on in combat.', effects: { 'defense.recovery-active-pct': 0.125 } },
     'jungle-vest-t2': { name: 'Unflinching', text: "An ambush can't stun or knock you down.", effects: {} },
@@ -316,7 +316,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
     'swamp-vest-t3': { name: 'Iron Gut', text: 'Steel Will costs half.', effects: { 'squire.steel-will-cost-cut-pct': 0.5 } },
     'swamp-charm-t3': { name: 'Purifying Breath', text: 'A poison or bleed you shake off heals you for part of the damage it had left.', effects: { 'squire.cleanse-heal-pct': 0.75 } },
     'mountain-vest-t3': { name: 'Planted', text: "While guarding you can't be knocked back or stunned.", effects: { 'squire.guard-steadfast': 1 } },
-    'mountain-charm-t3': { name: 'Stone Patience', text: 'After a caught telegraph, Recovery triples for a few seconds.', effects: {} },
+    'mountain-charm-t3': { name: 'Stone Patience', text: 'After a caught telegraph, Recovery triples for a few seconds.', effects: { 'squire.recovery-caught-x': 3 } },
     'cave-vest-t3': { name: 'Reforged', text: 'Stripped plating comes back faster, and each stack stripped fills Resolve.', effects: { 'squire.shred-regrow-ms': 3000, 'squire.shred-fill-pips': 0.375 } },
     'cave-charm-t3': { name: 'Old Guard', text: 'Part of your Recovery stays on in combat.', effects: { 'defense.recovery-active-pct': 0.15 } },
     'jungle-vest-t3': { name: 'Unflinching', text: "An ambush can't stun or knock you down.", effects: {} },
@@ -329,7 +329,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
     'volcanic-charm-t3': { name: 'Cooling Breath', text: 'Each Backdraft that lands heals you a little.', effects: {} },
     // ── T4 ──
     'mountain-vest-t4': { name: 'Planted', text: "While guarding you can't be knocked back or stunned.", effects: { 'squire.guard-steadfast': 1 } },
-    'mountain-charm-t4': { name: 'Stone Patience', text: 'After a caught telegraph, Recovery triples for a few seconds.', effects: {} },
+    'mountain-charm-t4': { name: 'Stone Patience', text: 'After a caught telegraph, Recovery triples for a few seconds.', effects: { 'squire.recovery-caught-x': 3 } },
     'jungle-vest-t4': { name: 'Unflinching', text: "An ambush can't stun or knock you down.", effects: {} },
     'jungle-charm-t4': { name: "Watchman's Ease", text: 'An ambush Watchful catches heals you for the hit it stopped.', effects: {} },
     'desert-vest-t4': { name: 'Arrow Catcher', text: 'Ranged hits on you fill double Resolve.', effects: {} },

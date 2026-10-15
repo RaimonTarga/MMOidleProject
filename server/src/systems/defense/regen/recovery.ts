@@ -8,6 +8,8 @@ import {
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
+import { COMBAT_ELAPSED_KEY } from '../core/pools';
+import { registerCombatListener } from '../../combat/engine/combatPipeline';
 import { applyHealToPlayer } from './healing';
 
 /**
@@ -73,6 +75,13 @@ const TIMED_SOURCES: Record<RecoverySourceId, TimedSource> = {
 
 const TIMED_SOURCE_IDS = Object.keys(TIMED_SOURCES) as RecoverySourceId[];
 
+/**
+ * The multiplier lines (Cairnstone, Counterbalance, Stone Patience): a timed factor on the
+ * always-on share. Own resources, one window; the larger factor wins while it is live.
+ */
+const BOOST_MS_KEY = 'recovery.boostMs';
+const BOOST_X_KEY = 'recovery.boostX';
+
 /** Cooldown key gating the periodic pulse's cadence. */
 const PULSE_CD = 'recoveryPulse';
 
@@ -102,6 +111,37 @@ export function activateRecovery(
 }
 
 /**
+ * Multiply the always-on in-combat share for a window (Recovery "doubles" or "triples").
+ * Refreshes its own window; a weaker factor never downgrades a live stronger one.
+ */
+export function activateRecoveryBoost(
+  cs: TracksCombat,
+  factor: number,
+  durationMs: number = GAME_CONFIG.RECOVERY_BOOST_MS,
+): void {
+  if (factor <= 1 || durationMs <= 0) return;
+  const liveMs = getResource(cs, BOOST_MS_KEY);
+  const liveX = liveMs > 0 ? getResource(cs, BOOST_X_KEY) : 1;
+  setResource(cs, BOOST_MS_KEY, Math.max(liveMs, durationMs));
+  setResource(cs, BOOST_X_KEY, Math.max(liveX, factor));
+}
+
+/** The factor on the always-on share right now: the live boost times Rhythm's build-up. */
+function shareMultiplier(player: PlayerEntity): number {
+  const cs = player.tracksCombat;
+  let factor = getResource(cs, BOOST_MS_KEY) > 0 ? getResource(cs, BOOST_X_KEY) : 1;
+  // Rhythm: rises with the length of the fight, up to its maximum.
+  const passives = player.usesSkills.passives;
+  const rhythmMax = passives['defense.recovery-rhythm-max'] ?? 0;
+  if (rhythmMax > 1) {
+    const rampMs = Math.max(1, passives['defense.recovery-rhythm-ms'] ?? 20000);
+    const t = Math.min(1, getResource(cs, COMBAT_ELAPSED_KEY) / rampMs);
+    factor *= 1 + (rhythmMax - 1) * t;
+  }
+  return factor;
+}
+
+/**
  * Clear every timed Recovery source and the ramp.
  *
  * Death and node teardown do NOT need this — `resetTracksCombat` wipes all
@@ -116,6 +156,8 @@ export function resetRecoverySources(cs: TracksCombat): void {
     if (getResource(cs, pctKey) !== 0) setResource(cs, pctKey, 0);
   }
   if (getResource(cs, RAMP_TIMER_KEY) !== 0) setResource(cs, RAMP_TIMER_KEY, 0);
+  if (getResource(cs, BOOST_MS_KEY) !== 0) setResource(cs, BOOST_MS_KEY, 0);
+  if (getResource(cs, BOOST_X_KEY) !== 0) setResource(cs, BOOST_X_KEY, 0);
 }
 
 /**
@@ -133,8 +175,10 @@ export function activeRecoveryFraction(
   const cs = player.tracksCombat;
   const passives = player.usesSkills.passives;
 
-  // Permanent-while-in-combat access (Squire root).
-  let fraction = passives['defense.recovery-active-pct'] ?? 0;
+  // The always-on share every class has, plus lines that add to it (Old Guard), times
+  // the multiplier lines. The other sources below are separate and are not multiplied.
+  let fraction = (GAME_CONFIG.RECOVERY_COMBAT_BASE_SHARE + (passives['defense.recovery-active-pct'] ?? 0))
+    * shareMultiplier(player);
 
   // Ramping access: interpolated from start→max over the ramp window.
   fraction += rampFraction(player);
@@ -228,6 +272,16 @@ export function runRecovery(
     }
   }
 
+  const boostLeft = getResource(cs, BOOST_MS_KEY);
+  if (boostLeft > 0) {
+    if (boostLeft - dt <= 0) {
+      setResource(cs, BOOST_MS_KEY, 0);
+      setResource(cs, BOOST_X_KEY, 0);
+    } else {
+      setResource(cs, BOOST_MS_KEY, boostLeft - dt);
+    }
+  }
+
   if (perSecond <= 0) return;
   applyHealToPlayer(player, cs, perSecond * (dt / 1000), world);
 }
@@ -265,4 +319,20 @@ export function advanceRecoveryRamp(player: PlayerEntity, ms: number): void {
 export function resetRecoveryRamp(player: PlayerEntity): void {
   if ((player.usesSkills.passives['defense.recovery-ramp-start-pct'] ?? 0) <= 0) return;
   setResource(player.tracksCombat, RAMP_TIMER_KEY, 0);
+}
+
+/**
+ * Cairnstone: a hit over a share of your max HP multiplies the always-on Recovery share
+ * for a few seconds. Reads the final damage, so the cap, plating and shields have landed.
+ */
+export function registerRecoveryBoostOnBigHit(): void {
+  registerCombatListener('afterHit', (ctx) => {
+    if (ctx.attackerType !== 'monster' || ctx.defenderType !== 'player' || ctx.damage <= 0) return;
+    const player = ctx.defender;
+    const passives = player.usesSkills.passives;
+    const factor = passives['defense.recovery-hit-x'] ?? 0;
+    if (factor <= 1) return;
+    if (ctx.damage < player.hasHealth.maxHp * (passives['defense.recovery-hit-pct'] ?? 0.25)) return;
+    activateRecoveryBoost(player.tracksCombat, factor);
+  });
 }

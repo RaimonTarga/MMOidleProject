@@ -59,6 +59,11 @@ function advanceTicks(player: PlayerEntity, ms: number, inCombat: boolean): void
   for (let elapsed = 0; elapsed < ms; elapsed += 100) advance(player, 100, inCombat);
 }
 
+/** The active fraction without the always-on share every class has. */
+function sourcesFraction(player: PlayerEntity): number {
+  return activeRecoveryFraction(player, true) - GAME_CONFIG.RECOVERY_COMBAT_BASE_SHARE;
+}
+
 function makePlayerSlices(id: string): PersistedPlayerSlices {
   return {
     isPlayer: { id, name: "Recovery Tester" },
@@ -109,8 +114,8 @@ const world = new World();
     "out of combat no Recovery FRACTION is active — OOC healing is its own fixed rate",
   );
   assert(
-    activeRecoveryFraction(player, true) === 0,
-    "with no sources, a naked player recovers nothing while fighting",
+    activeRecoveryFraction(player, true) === GAME_CONFIG.RECOVERY_COMBAT_BASE_SHARE,
+    "with no sources, a naked player recovers only the always-on share while fighting",
   );
 
   // A node hazard suppresses the OOC rate without touching in-combat access.
@@ -156,8 +161,8 @@ const world = new World();
 
   const fraction = activeRecoveryFraction(player, true);
   assert(
-    Math.abs(fraction - 0.9) < 1e-9,
-    `10% + 30% + 50% should add to 90%, got ${fraction * 100}%`,
+    Math.abs(fraction - (0.9 + GAME_CONFIG.RECOVERY_COMBAT_BASE_SHARE)) < 1e-9,
+    `10% + 30% + 50% should add to 90% over the always-on share, got ${fraction * 100}%`,
   );
 
   // Deliberately uncapped — extreme stacking is a balance question, not a bug.
@@ -170,7 +175,7 @@ const world = new World();
   resetRecoverySources(cs);
   player.usesSkills.passives["defense.recovery-active-pct"] = 0;
   assert(
-    activeRecoveryFraction(player, true) === 0,
+    activeRecoveryFraction(player, true) === GAME_CONFIG.RECOVERY_COMBAT_BASE_SHARE,
     "resetRecoverySources clears every timed source",
   );
 }
@@ -197,14 +202,14 @@ const world = new World();
     "a further kill should refresh the window",
   );
   assert(
-    Math.abs(activeRecoveryFraction(player, true) - 0.2) < 1e-9,
+    Math.abs(sourcesFraction(player) - 0.2) < 1e-9,
     "a further kill must not stack a second copy of the fraction",
   );
 
   // Run the window out and confirm the access lapses.
   advance(player, 4_000, true);
   assert(
-    activeRecoveryFraction(player, true) === 0,
+    sourcesFraction(player) === 0,
     "the on-kill access should lapse when its window expires",
   );
   assert(getResource(cs, "recovery.killPct") === 0, "the lapsed fraction is cleared");
@@ -220,7 +225,7 @@ const world = new World();
 
   const atBase = recoveryPerSecond(player, activeRecoveryFraction(player, true));
   assert(
-    Math.abs(atBase - (player.hasHealth.recovery ?? 0) * 0.5) < 1e-9,
+    Math.abs(atBase - (player.hasHealth.recovery ?? 0) * (0.5 + GAME_CONFIG.RECOVERY_COMBAT_BASE_SHARE)) < 1e-9,
     `50% of a ${player.hasHealth.recovery} HP/s rate should heal ${(player.hasHealth.recovery ?? 0) * 0.5} HP/s, got ${atBase}`,
   );
   player.hasHealth.maxHp *= 4;
@@ -279,7 +284,7 @@ const world = new World();
 
   advance(player, 100, true);
   assert(
-    Math.abs(activeRecoveryFraction(player, true) - 0.2) < 1e-9,
+    Math.abs(sourcesFraction(player) - 0.2) < 1e-9,
     "the pulse should switch on immediately on the first in-combat tick",
   );
 
@@ -287,14 +292,14 @@ const world = new World();
   // has not come back — the gap between pulses is real, not a rounding artifact.
   advanceTicks(player, 4_000, true);
   assert(
-    activeRecoveryFraction(player, true) === 0,
+    sourcesFraction(player) === 0,
     "between pulses the player has no Recovery access",
   );
 
   // Past the interval: it fires again.
   advanceTicks(player, 4_000, true);
   assert(
-    Math.abs(activeRecoveryFraction(player, true) - 0.2) < 1e-9,
+    Math.abs(sourcesFraction(player) - 0.2) < 1e-9,
     "the pulse should fire again once its interval elapses",
   );
 
@@ -329,7 +334,7 @@ const world = new World();
     "recalc should carry the root's Recovery access onto the passive map",
   );
   assert(
-    Math.abs(activeRecoveryFraction(player, true) - authored) < 1e-9,
+    Math.abs(sourcesFraction(player) - authored) < 1e-9,
     "a Squire keeps part of its Recovery running through a whole fight",
   );
 }

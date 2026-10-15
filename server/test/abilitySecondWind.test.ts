@@ -99,7 +99,7 @@ assert(
   "Second Wind activation should reach bot-visible telemetry",
 );
 assert(
-  Math.abs(activeRecoveryFraction(player, true) - 0.5) < 1e-9,
+  Math.abs(activeRecoveryFraction(player, true) - GAME_CONFIG.RECOVERY_COMBAT_BASE_SHARE - 0.5) < 1e-9,
   "Second Wind should switch on 50% of the player's Recovery",
 );
 assert(
