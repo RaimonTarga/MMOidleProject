@@ -126,6 +126,9 @@ export interface PlayerView {
   laserOverheated: boolean;
   executionReady: boolean;
   executionCooldownPct: number;
+  /** The Squire's Resolve in pips (class-first build plan CQ.1), and the bar's size. */
+  resolve: number;
+  resolveMax: number;
   energyCount: number;
   energyMax: number;
   flashShiftPct: number;
@@ -377,6 +380,8 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     laserOverheated: entity.usesReload?.laserOverheated ?? false,
     executionReady: entity.hasEmpoweredAttack !== undefined,
     executionCooldownPct: entity.usesCooldown?.executionCooldownPct ?? 0,
+    resolve: entity.usesCooldown?.resolve ?? 0,
+    resolveMax: entity.usesCooldown?.resolveMax ?? 0,
     energyCount: entity.usesEnergy?.energy ?? 0,
     energyMax: entity.usesEnergy?.energyMax ?? 100,
     flashShiftPct,
