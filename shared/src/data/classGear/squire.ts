@@ -343,4 +343,24 @@ export const SQUIRE_GEAR: ClassGearDef = {
     'trench-vest-t4': { name: 'Abyssal Plate', text: 'While you carry three or more debuffs, guards cost nothing.', effects: {} },
     'trench-charm-t4': { name: 'Brine Will', text: 'Each debuff you shake off raises Recovery for a few seconds, stacking.', effects: {} },
   },
+  // Retired-biome lines on the receiving biome's second base (`<id>-b`).
+  // Copied from the origin's last tier: Forest and Plains at T2, Swamp and Cave at T3.
+  movedLines: {
+    // Forest → Jungle
+    'jungle-vest-t3': { name: 'Turn Aside', text: 'A dodged hit fills Resolve as if it had landed.', effects: { 'squire.dodge-fills': 1 } },
+    'jungle-vest-t4': { name: 'Turn Aside', text: 'A dodged hit fills Resolve as if it had landed.', effects: { 'squire.dodge-fills': 1 } },
+    'jungle-charm-t3': { name: 'Counterbalance', text: 'After a Riposte, Recovery doubles for a few seconds.', effects: { 'squire.recovery-riposte-x': 2 } },
+    'jungle-charm-t4': { name: 'Counterbalance', text: 'After a Riposte, Recovery doubles for a few seconds.', effects: { 'squire.recovery-riposte-x': 2 } },
+    // Plains → Volcanic
+    'volcanic-vest-t3': { name: 'Rampart', text: 'Enemies you shoved deal less damage for a few seconds.', effects: { 'squire.shove-weaken-pct': 0.25, 'squire.shove-weaken-ms': 4000 } },
+    'volcanic-vest-t4': { name: 'Rampart', text: 'Enemies you shoved deal less damage for a few seconds.', effects: { 'squire.shove-weaken-pct': 0.25, 'squire.shove-weaken-ms': 4000 } },
+    'volcanic-charm-t3': { name: 'Breather', text: 'Each Shove that lands heals a little per enemy shoved.', effects: { 'squire.shove-heal-pct': 0.013 } },
+    'volcanic-charm-t4': { name: 'Breather', text: 'Each Shove that lands heals a little per enemy shoved.', effects: { 'squire.shove-heal-pct': 0.013 } },
+    // Swamp → Graveyard
+    'graveyard-vest-t4': { name: 'Iron Gut', text: 'Steel Will costs half.', effects: { 'squire.steel-will-cost-cut-pct': 0.5 } },
+    'graveyard-charm-t4': { name: 'Purifying Breath', text: 'A poison or bleed you shake off heals you for part of the damage it had left.', effects: { 'squire.cleanse-heal-pct': 0.75 } },
+    // Cave → Trench
+    'trench-vest-t4': { name: 'Reforged', text: 'Stripped plating comes back faster, and each stack stripped fills Resolve.', effects: { 'squire.shred-regrow-ms': 3000, 'squire.shred-fill-pips': 0.375 } },
+    'trench-charm-t4': { name: 'Old Guard', text: 'Part of your Recovery stays on in combat.', effects: { 'defense.recovery-active-pct': 0.15 } },
+  },
 };

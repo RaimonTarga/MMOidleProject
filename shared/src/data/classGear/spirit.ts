@@ -340,4 +340,24 @@ export const SPIRIT_GEAR: ClassGearDef = {
     'trench-vest-t4': { name: 'Deep Seal', text: 'While you carry three or more debuffs, hits drain the storm a third less.', effects: {} },
     'trench-charm-t4': { name: 'Abyssal Calm', text: 'Each debuff on you makes the storm gather a little faster.', effects: {} },
   },
+  // Retired-biome lines on the receiving biome's second base (`<id>-b`).
+  // Copied from the origin's last tier: Forest and Plains at T2, Swamp and Cave at T3.
+  movedLines: {
+    // Forest → Jungle
+    'jungle-vest-t3': { name: 'Slipstream', text: 'After a dodge you glide a step away from the attacker.', effects: {} },
+    'jungle-vest-t4': { name: 'Slipstream', text: 'After a dodge you glide a step away from the attacker.', effects: {} },
+    'jungle-charm-t3': { name: 'Clear Sky', text: 'While no enemy touches you, the storm gathers faster.', effects: {} },
+    'jungle-charm-t4': { name: 'Clear Sky', text: 'While no enemy touches you, the storm gathers faster.', effects: {} },
+    // Plains → Volcanic
+    'volcanic-vest-t3': { name: 'Static Skin', text: 'An enemy that strikes your storm is charged. Your next spend on it hits harder.', effects: {} },
+    'volcanic-vest-t4': { name: 'Static Skin', text: 'An enemy that strikes your storm is charged. Your next spend on it hits harder.', effects: {} },
+    'volcanic-charm-t3': { name: 'Still Air', text: 'The storm gathers much faster out of combat.', effects: {} },
+    'volcanic-charm-t4': { name: 'Still Air', text: 'The storm gathers much faster out of combat.', effects: {} },
+    // Swamp → Graveyard
+    'graveyard-vest-t4': { name: 'Sealed Vessel', text: 'Poison and bleed ticks drain the storm at half cost.', effects: {} },
+    'graveyard-charm-t4': { name: 'Petrichor', text: 'A Downpour heals you for part of what it washed off.', effects: {} },
+    // Cave → Trench
+    'trench-vest-t4': { name: 'Ironbound', text: 'While your storm is empty, your plating doubles.', effects: {} },
+    'trench-charm-t4': { name: 'Capacitor', text: 'While the storm is full, the flow that would be wasted heals you.', effects: {} },
+  },
 };
