@@ -256,7 +256,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { purple: 270 }, stats: { attack: 258 }, attacksPerSecond: 1.10, tier: 4,
       icon: 'items/weapons/plague-axe.png',
       description: 'Every beat splashes part of its damage to the enemies around the target.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.splash-pct': 0.3 },
     },
     // moved from the Swamp
     {
@@ -273,7 +273,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { green: 270 }, stats: { attack: 257 }, attacksPerSecond: 1.15, tier: 4,
       icon: 'items/weapons/abyssal-axe.png',
       description: 'Beats hit harder for each different debuff on the target.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.debuff-pct': 0.1 },
     },
     // moved from the Cave
     {
@@ -338,10 +338,10 @@ export const STRIKER_GEAR: ClassGearDef = {
     'tundra-charm-t4': { name: 'Frostbite Mend', text: 'Recovery doubles while you are chilled or slowed.', effects: { 'striker.chilled-recovery-x': 2 } },
     'volcanic-vest-t4': { name: 'Cinderskin', text: "The Heat's extra damage taken doesn't apply to you while you keep attacking.", effects: { 'striker.heat-ward': 1 } },
     'volcanic-charm-t4': { name: 'Fuel', text: 'Your Recovery rises with the Heat.', effects: { 'striker.heat-recovery-pct': 0.0625 } },
-    'graveyard-vest-t4': { name: 'Deathward', text: 'Below a quarter of your HP, you take a third less damage.', effects: {} },
-    'graveyard-charm-t4': { name: 'Requiem', text: 'Recovery rises with the number of enemies around you.', effects: {} },
-    'trench-vest-t4': { name: 'Clear Mind', text: "Debuffs can't break your combo or interrupt your casts.", effects: {} },
-    'trench-charm-t4': { name: 'Brine Mend', text: 'Each debuff on you raises your Recovery a little.', effects: {} },
+    'graveyard-vest-t4': { name: 'Deathward', text: 'Below a quarter of your HP, you take a third less damage.', effects: { 'striker.deathward-pct': 0.333 } },
+    'graveyard-charm-t4': { name: 'Requiem', text: 'Recovery rises with the number of enemies around you.', effects: { 'striker.crowd-recovery-pct': 0.1 } },
+    'trench-vest-t4': { name: 'Clear Mind', text: "Debuffs can't break your combo or interrupt your casts.", effects: { 'striker.clear-mind': 1 } },
+    'trench-charm-t4': { name: 'Brine Mend', text: 'Each debuff on you raises your Recovery a little.', effects: { 'striker.debuff-recovery-pct': 0.1 } },
   },
   // Retired-biome lines on the receiving biome's second base (`<id>-b`).
   // Copied from the origin's last tier: Forest and Plains at T2, Swamp and Cave at T3.

@@ -77,6 +77,7 @@ import {
   SUBJUGATOR,
   SUBJUGATOR_FINISHER_PCT,
   THOUSAND_CUTS,
+  enemiesOnPlayer,
   isShelledTarget,
   strikerGearBeatMult,
   strikerSpecOf,
@@ -224,14 +225,16 @@ const BEATS: Readonly<Record<string, BeatHandler>> = {
   },
   // The target moves and attacks slower for a moment (the strongest slow wins). A setup:
   // Bastard Sword makes it wear off sooner.
-  'striker-hamstring': (world, player, target, p) => {
+  'striker-hamstring': (world, player, target, p, _swing, ctx) => {
+    if (evadeBlocksDebuffs(ctx)) return;
     const cut = player.usesSkills.passives['striker.setup-duration-cut-pct'] ?? 0;
     applyMonsterSlow(world, target, p.moveSlowPct, p.durationMs * Math.max(0.1, 1 - cut), player.isPlayer.id);
     const slow = getStatusEffect(target.tracksCombat, ABILITY_SLOW_EFFECT_ID);
     if (slow) slow.data['attackSlowPct'] = Math.max(slow.data['attackSlowPct'] ?? 0, p.attackSlowPct);
   },
   // A bleed, a share of the swing per tick (Hooked Sickle: more ticks).
-  'striker-rend': (world, player, target, p, swing) => {
+  'striker-rend': (world, player, target, p, swing, ctx) => {
+    if (evadeBlocksDebuffs(ctx)) return;
     applyBleed(world, player, target, CADENCE_BLEED_ID, swing * p.tickPct, p.ticks * dotDurationMult(player), p.tickMs);
   },
   // ── Tier 2 (§12.16) ──
@@ -247,17 +250,18 @@ const BEATS: Readonly<Record<string, BeatHandler>> = {
     strikerT2(player).critMult = p.critMult;
   },
   // The target's plating cracks for a few seconds.
-  'striker-armor-break': (_world, player, target, p) => {
+  'striker-armor-break': (_world, player, target, p, _swing, ctx) => {
+    if (evadeBlocksDebuffs(ctx)) return;
     crackPlating(player, target, p.crackPct, setupDuration(player, p.durationMs));
   },
   // A brief stun (control-immune bosses refuse it).
-  'striker-concuss': (_world, player, target, p) => {
-    if (target.hasHealth.hp <= 0 || monsterIgnoresControl(target)) return;
+  'striker-concuss': (_world, player, target, p, _swing, ctx) => {
+    if (evadeBlocksDebuffs(ctx) || target.hasHealth.hp <= 0 || monsterIgnoresControl(target)) return;
     applyStun(target.tracksCombat, setupDuration(player, p.stunMs), player.isPlayer.id);
   },
   // A root: the target can't kite away.
-  'striker-pin': (world, player, target, p) => {
-    if (target.hasHealth.hp <= 0) return;
+  'striker-pin': (world, player, target, p, _swing, ctx) => {
+    if (evadeBlocksDebuffs(ctx) || target.hasHealth.hp <= 0) return;
     applyMonsterRoot(world, target, setupDuration(player, p.rootMs), player.isPlayer.id);
   },
   // The opener's strike: the dash happened on the cast; the beat pays the price like any technique.
@@ -291,21 +295,54 @@ const BEATS: Readonly<Record<string, BeatHandler>> = {
   'striker-icebreaker': (_world, _player, target, p, _swing, ctx) => {
     if (isShelledTarget(target, attackNow(ctx))) ctx.damage = Math.max(1, Math.round(ctx.damage * (1 + p.shellBonusPct)));
   },
+  // ── Tier 4 (§12.16) ──
+  // Ice roots the target and everything around it (control-immune bosses refuse it).
+  'striker-frostbind': (world, player, target, p, _swing, ctx) => {
+    if (evadeBlocksDebuffs(ctx) || target.hasHealth.hp <= 0) return;
+    const ms = setupDuration(player, p.rootMs);
+    const around = playerAoeTargets(world, player, target.hasPosition.current, p.radius, target.isMonster.id);
+    for (const monster of [target, ...around]) {
+      if (monster.hasHealth.hp > 0 && !monsterIgnoresControl(monster)) applyMonsterRoot(world, monster, ms, player.isPlayer.id);
+    }
+  },
+  // Focus without the cast: the combo's haste, until the finisher (one copy; the stronger stays).
+  'striker-bloodrush': (_world, player, _target, p) => {
+    const live = getStatusEffect(player.tracksCombat, STRIKER_FOCUS_EFFECT_ID);
+    if (live && live.remainingMs !== 0 && (live.data[ATTACK_HASTE_PCT_KEY] ?? 0) >= p.attackSpeedPct) return;
+    applyFocusHaste(player, p.attackSpeedPct, p.maxMs);
+  },
+  // Much harder against a target low on HP.
+  'striker-coup-de-grace': (_world, _player, target, p, _swing, ctx) => {
+    const { hp, maxHp } = target.hasHealth;
+    if (hp > 0 && hp / Math.max(1, maxHp) <= p.belowPct) ctx.damage = Math.max(1, Math.round(ctx.damage * (1 + p.bonusPct)));
+  },
+  // A wide cut through every enemy around you (Sweep, wider and deeper).
+  'striker-reaping-arc': (world, player, target, p, swing) => {
+    applyPlayerAoe(world, player, player.hasPosition.current, p.radius, swing * p.splashPct,
+      target.isMonster.id, 'player', {}, { feedsWeaponReservoir: true });
+  },
+  // No damage of its own: the next finisher on this target hits much harder.
+  'striker-pressure-point': (_world, player, target, p) => {
+    strikerT2(player).pressure = { targetId: target.isMonster.id, pct: p.finisherBonusPct };
+  },
 };
 
+/** Focus's haste on the player: every beat swings faster until the finisher (self only; one copy). */
+function applyFocusHaste(player: PlayerEntity, attackSpeedPct: number, maxMs: number): void {
+  applyStatusEffect(player.tracksCombat, {
+    id: STRIKER_FOCUS_EFFECT_ID,
+    maxStacks: 1,
+    remainingMs: maxMs,
+    refreshable: true,
+    sourceId: player.isPlayer.id,
+    data: { [ATTACK_HASTE_PCT_KEY]: attackSpeedPct, totalMs: maxMs },
+  });
+}
+
 /** The casts, resolved on the player cast machine; each counts its beat when it lands. */
-const CASTS: Readonly<Record<string, (world: World, player: PlayerEntity, o: Order, params: Record<string, number>) => void>> = {
+const CASTS: Readonly<Record<string, (world: World, player: PlayerEntity, o: Order, params: Record<string, number>, now: number) => void>> = {
   // The opener: every beat after it swings faster, until the finisher.
-  'striker-focus': (_world, player, _o, p) => {
-    applyStatusEffect(player.tracksCombat, {
-      id: STRIKER_FOCUS_EFFECT_ID,
-      maxStacks: 1,
-      remainingMs: p.maxMs,
-      refreshable: true,
-      sourceId: player.isPlayer.id,
-      data: { [ATTACK_HASTE_PCT_KEY]: p.attackSpeedPct, totalMs: p.maxMs },
-    });
-  },
+  'striker-focus': (_world, player, _o, p) => applyFocusHaste(player, p.attackSpeedPct, p.maxMs),
   // The opener that dashes: nothing to apply on the cast itself; `chargeAndStrike` does the rest.
   'striker-charge': () => {},
   // The wind-up: the finisher hits much harder.
@@ -317,6 +354,11 @@ const CASTS: Readonly<Record<string, (world: World, player: PlayerEntity, o: Ord
   // ── Tier 3 (§12.16) ──
   // The wind-up that slams down a line of enemies through the target.
   'striker-earthsplitter': (world, player, o, p) => slamLine(world, player, o, p),
+  // ── Tier 4 ──
+  // The wind-up that charges through a line of enemies and knocks them all down.
+  'striker-avalanche': (world, player, _o, p) => avalancheCharge(world, player, p),
+  // The wind-up that strikes the target and everything around it, harder against a shell.
+  'striker-magma-breaker': (world, player, o, p, now) => magmaBlow(world, player, o, p, now),
   // The opener that steps behind the target: the next beat is a sure critical hit.
   'striker-shadowstep': (world, player, _o, p) => {
     const target = currentTarget(world, player);
@@ -366,7 +408,6 @@ function slamLine(world: World, player: PlayerEntity, o: Order, p: Record<string
   const cadence = player.usesCadence;
   const target = currentTarget(world, player);
   if (!cadence || !target) return;
-  const index = cadence.count;
   const from = player.hasPosition.current;
   const to = target.hasPosition.current;
   const reach = Math.max(1, Math.hypot(to.x - from.x, to.y - from.y));
@@ -380,13 +421,62 @@ function slamLine(world: World, player: PlayerEntity, o: Order, p: Record<string
     return along >= 0 && along <= p.lengthPx && Math.abs(dx * uy - dy * ux) <= p.widthPx;
   });
   if (!victims.includes(target)) victims.push(target);
+  applyPlayerAoeTo(world, player, victims, castBlowBase(player, o, target, p.slamMult), 'player', {}, { feedsWeaponReservoir: true });
+}
+
+/**
+ * What a damage cast's blow starts from: a multiple of the attack stat with the beat's own layers
+ * (the technique's price, the discipline, the weapon). A cast beat does not swing, so it builds
+ * its damage here.
+ */
+function castBlowBase(player: PlayerEntity, o: Order, target: MonsterEntity, mult: number): number {
+  const index = player.usesCadence?.count ?? 0;
   const { mastered } = strikerSlots(o.ctx.budget, o.order.beats.length);
   const price = strikerMasteredBeats(o.order.beats, mastered).has(index) ? 1 : STRIKER_TECHNIQUE_SWING;
-  const base = player.dealsDamage.attack * p.slamMult * price
+  return player.dealsDamage.attack * mult * price
     * disciplineBeatMult(player, o.ctx.disciplineId, true, true)
     * strikerWeaponDamageMult(player, target, { finisher: false, damageTechnique: true })
     * strikerGearBeatMult(player, target);
-  applyPlayerAoeTo(world, player, victims, base, 'player', {}, { feedsWeaponReservoir: true });
+}
+
+/**
+ * Avalanche: charge through a line of enemies, knocking each down (a short stun; control-immune
+ * bosses refuse it). The line runs from you through the target, then you end up beside it.
+ */
+function avalancheCharge(world: World, player: PlayerEntity, p: Record<string, number>): void {
+  const target = currentTarget(world, player);
+  if (!target) return;
+  const from = { ...player.hasPosition.current };
+  const to = target.hasPosition.current;
+  const reach = Math.max(1, Math.hypot(to.x - from.x, to.y - from.y));
+  const ux = (to.x - from.x) / reach;
+  const uy = (to.y - from.y) / reach;
+  const ms = setupDuration(player, p.knockdownMs);
+  const line = [...world.monsterEntitiesInNode(player.hasPosition.nodeId)].filter((m) => {
+    if (m.hasHealth.hp <= 0) return false;
+    const dx = m.hasPosition.current.x - from.x;
+    const dy = m.hasPosition.current.y - from.y;
+    const along = dx * ux + dy * uy;
+    return along >= 0 && along <= p.lengthPx && Math.abs(dx * uy - dy * ux) <= p.widthPx;
+  });
+  if (!line.includes(target)) line.push(target);
+  for (const monster of line) {
+    if (!monsterIgnoresControl(monster)) applyStun(monster.tracksCombat, ms, player.isPlayer.id);
+  }
+  leapToward(world, player, target, p.lengthPx);
+}
+
+/** Magma Breaker: the target and everything within `radius` of it take the blow, a shelled one more. */
+function magmaBlow(world: World, player: PlayerEntity, o: Order, p: Record<string, number>, now: number): void {
+  const target = currentTarget(world, player);
+  if (!target) return;
+  const around = playerAoeTargets(world, player, target.hasPosition.current, p.radius, target.isMonster.id);
+  for (const victim of [target, ...around]) {
+    if (victim.hasHealth.hp <= 0) continue;
+    const shell = isShelledTarget(victim, now) ? 1 + p.shellBonusPct : 1;
+    applyPlayerAoeTo(world, player, [victim], castBlowBase(player, o, target, p.blowMult) * shell,
+      'player', {}, { feedsWeaponReservoir: true });
+  }
 }
 
 // ── Trophies (CS.2: T1) ──────────────────────────────────────────────────────
@@ -431,6 +521,11 @@ const WEIGHTS: Readonly<Record<string, (world: World, player: PlayerEntity, targ
     applyPlayerAoe(world, player, target.hasPosition.current, p.radius, ctx.damage * p.splashPct,
       target.isMonster.id, 'player', {}, { feedsWeaponReservoir: true });
   },
+  // Deep Pressure: the finisher deals more the more HP the target has left.
+  'striker-relic-trench': (_world, _player, target, ctx, p) => {
+    const { hp, maxHp } = target.hasHealth;
+    ctx.damage = Math.max(1, Math.round(ctx.damage * (1 + p.maxBonusPct * Math.max(0, Math.min(1, hp / Math.max(1, maxHp))))));
+  },
   // Verdict: the finisher kills a target at or below the threshold outright.
   'striker-relic-desert': (_world, _player, target, ctx, p) => {
     const { hp, maxHp } = target.hasHealth;
@@ -447,6 +542,11 @@ const SPARKS: Readonly<Record<string, (world: World, player: PlayerEntity, targe
       .sort((a, b) => dist2(a, at) - dist2(b, at))
       .slice(0, Math.max(0, Math.round(p.extraTargets)));
     if (beside.length > 0) applyPlayerAoeTo(world, player, beside, ctx.damage * p.damagePct, 'player', {}, { feedsWeaponReservoir: true });
+  },
+  // Grave Toll: every beat hits harder for each enemy in the fight.
+  'striker-relic-graveyard': (world, player, _target, ctx, p) => {
+    const enemies = Math.min(p.maxEnemies, enemiesOnPlayer(world, player));
+    if (enemies > 0) ctx.damage = Math.max(1, Math.round(ctx.damage * (1 + p.perEnemyPct * enemies)));
   },
   // Hoarfrost: each beat slows the target a little more (bosses that accept no control ignore it).
   'striker-relic-tundra': (world, player, target, ctx, p) => {
@@ -475,8 +575,10 @@ function castMsFor(player: PlayerEntity, authoredMs: number, windup: boolean): n
 
 /** Braced Cast: nothing interrupts your casts. */
 function castUnbreakable(player: PlayerEntity): boolean {
-  // Watchful: an ambush landing now can't interrupt a cast either.
-  return (player.usesSkills.passives['striker.cast-unbreakable'] ?? 0) > 0 || strikerAmbushGuard(player);
+  // Watchful: an ambush landing now can't interrupt a cast either; Clear Mind: no debuff does.
+  return (player.usesSkills.passives['striker.cast-unbreakable'] ?? 0) > 0
+    || (player.usesSkills.passives['striker.clear-mind'] ?? 0) > 0
+    || strikerAmbushGuard(player);
 }
 
 function dist2(m: MonsterEntity, at: { x: number; y: number }): number {
@@ -774,6 +876,11 @@ function onStrikerFinisher(ctx: CombatContext, world: World): void {
   }
   // The discipline (the edge, Momentum), and a Feint left on the beat before.
   const t2 = strikerT2(player);
+  // Pressure Point: the finisher it was set up for hits this target much harder (any finisher spends it).
+  if (t2.pressure) {
+    if (t2.pressure.targetId === ctx.defender.isMonster.id) ctx.damage = Math.round(ctx.damage * (1 + t2.pressure.pct));
+    t2.pressure = null;
+  }
   ctx.damage = Math.round(ctx.damage * disciplineFinisherMult(player, o.ctx.disciplineId));
   if (t2.critMult > 0) { ctx.damage = Math.round(ctx.damage * t2.critMult); t2.critMult = 0; }
   // Maul, Bastard Sword and Hooked Sickle on the finisher; Rimeblade and Bloodfire Axe on every blow.
@@ -831,7 +938,7 @@ export function initStrikerOrder(): void {
         const o = strikerOrderOf(world, player);
         const piece = PIECES.get(id);
         if (!o || !piece) return;
-        apply(world, player, o, pieceParams(o, piece));
+        apply(world, player, o, pieceParams(o, piece), now);
         // Charge: the cast was the wind-up; the dash and its strike are the beat, and count
         // through the ordinary hit.
         if (id === CHARGE_ID) {

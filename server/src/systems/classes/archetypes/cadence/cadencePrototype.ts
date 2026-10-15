@@ -3,6 +3,7 @@ import { registerEmpoweredMultiplier, setEmpoweredAttack, isEmpoweredAttack, isM
 import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
 import { advanceStrikerBeat, initStrikerOrder, runStrikerBeat } from './order';
 import { initStrikerGear } from './strikerGear';
+import { initStrikerT4 } from './strikerT4';
 
 const CADENCE_THRESHOLD_DEFAULT   = 5;   // cycle length: (N-1) normal hits + 1 empowered
 const CADENCE_DAMAGE_MULT_DEFAULT = 2.0;
@@ -34,6 +35,7 @@ export function initCadenceArchetype(): void {
   // empowered multiplier, so the finisher's trophy reads the multiplied hit.
   initStrikerOrder();
   initStrikerGear();
+  initStrikerT4();
 
   registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;

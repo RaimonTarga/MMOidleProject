@@ -21,6 +21,8 @@ import {
 import type { MonsterEntity, PlayerEntity } from '../../../../ecs/entity';
 import type { World } from '../../../../world/World';
 import { isShelled } from '../../../combat/ai/shellUp';
+import { BLEED_EFFECT_IDS } from '../../../combat/damage/bleedIds';
+import { DOT_EFFECT_ID } from '../dot/constants';
 import { STUN_EFFECT } from '../../../combat/status/stun';
 import { activateRecoveryBoost } from '../../../defense/regen/recovery';
 import { strikerIsAttacking } from './strikerGear';
@@ -70,6 +72,15 @@ export const FRENZY_SECOND_PCT = 0.6;
 
 // ── Targets ──────────────────────────────────────────────────────────────────
 
+/** Enemies whose aggro is on the player right now (Grave Toll, Requiem, Slip Through, Centered). */
+export function enemiesOnPlayer(world: World, player: PlayerEntity): number {
+  let count = 0;
+  for (const monster of world.aggroedMonsters) {
+    if (monster.hasAggroTarget.targetKind === 'player' && monster.hasAggroTarget.targetId === player.isPlayer.id) count++;
+  }
+  return count;
+}
+
 /** A shield, a barrier or a shell is up on the target (Icebreaker, Eruption). */
 export function isShelledTarget(monster: MonsterEntity, now: number): boolean {
   return (monster.hasStatus?.enemyBarrier?.amount ?? 0) > 0 || isShelled(monster, now);
@@ -83,7 +94,23 @@ function coldHeld(monster: MonsterEntity): boolean {
   });
 }
 
-/** Rimeblade and Bloodfire Axe: what the weapon adds to every beat and the finisher. */
+/** Ailments on a monster that are not holds or bleeds (Exploit counts them). */
+const OTHER_DEBUFF_IDS: ReadonlySet<string> = new Set([DOT_EFFECT_ID, 'vulnerability', 'plating-shred']);
+
+/** How many different debuffs are on the monster: holds, bleeds, DoTs, exposure, cracked plating (Exploit). */
+export function monsterDebuffCount(monster: MonsterEntity): number {
+  const ids = new Set<string>();
+  for (const effect of monster.tracksCombat.statusEffects) {
+    if (effect.remainingMs === 0 || effect.stacks <= 0) continue;
+    if (
+      holdKindOfStatusId(effect.id) !== undefined || BLEED_EFFECT_IDS.includes(effect.id)
+      || OTHER_DEBUFF_IDS.has(effect.id) || (effect.data['isDot'] ?? 0) !== 0
+    ) ids.add(effect.id);
+  }
+  return ids.size;
+}
+
+/** Rimeblade, Bloodfire Axe and Exploit: what the weapon adds to every beat and the finisher. */
 export function strikerGearBeatMult(player: PlayerEntity, target: MonsterEntity): number {
   const p = player.usesSkills.passives;
   let mult = 1;
@@ -94,6 +121,9 @@ export function strikerGearBeatMult(player: PlayerEntity, target: MonsterEntity)
     const { hp, maxHp } = player.hasHealth;
     mult *= 1 + low * Math.max(0, Math.min(1, 1 - hp / Math.max(1, maxHp)));
   }
+  // Exploit: each different debuff on the target adds a share.
+  const exploit = p['striker.debuff-pct'] ?? 0;
+  if (exploit > 0) mult *= 1 + exploit * monsterDebuffCount(target);
   return mult;
 }
 

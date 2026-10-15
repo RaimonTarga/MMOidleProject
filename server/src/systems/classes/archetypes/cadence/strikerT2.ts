@@ -83,6 +83,8 @@ export interface StrikerT2State {
   fightFinishers: number;
   /** Frenzy: the finisher that is armed now is the second, lighter one. */
   secondFinisher: boolean;
+  /** Pressure Point: the next finisher on this target hits harder by this share. */
+  pressure: { targetId: string; pct: number } | null;
   /** Hunter's Blade: the target the last swing was on. */
   lastTargetId: string | null;
   /** Watchful: an ambush landed on this tick or the last. */
@@ -96,7 +98,7 @@ export function strikerT2(player: PlayerEntity): StrikerT2State {
   if (!state) {
     state = {
       critMult: 0, lit: false, edge: 0, momentum: 0, fading: false, held: [], fightFinishers: 0,
-      secondFinisher: false, lastTargetId: null, ambushGuard: false,
+      secondFinisher: false, pressure: null, lastTargetId: null, ambushGuard: false,
     };
     states.set(player, state);
   }
@@ -207,10 +209,11 @@ export function strikerAmbushGuard(player: PlayerEntity): boolean {
   return strikerT2(player).ambushGuard;
 }
 
-/** Whether the player's Unbroken or Watchful says this hard control doesn't break the resource. */
+/** Whether the player's Unbroken, Clear Mind or Watchful says this hard control doesn't break the resource. */
 function controlDoesNotBreak(player: PlayerEntity): boolean {
   const p = player.usesSkills.passives;
-  return (p['defense.control-duration-cut-pct'] ?? 0) > 0 || strikerAmbushGuard(player);
+  // Clear Mind: no debuff breaks your combo.
+  return (p['defense.control-duration-cut-pct'] ?? 0) > 0 || (p['striker.clear-mind'] ?? 0) > 0 || strikerAmbushGuard(player);
 }
 
 /**
