@@ -17,7 +17,6 @@ export interface ScalableMechanicEffect {
  */
 export const SCALABLE_MECHANIC_BUFFS: Readonly<Record<string, ScalableMechanicEffect>> = {
   'dot-frenzy': { fields: { attackSpeedPct: 'fraction', onHitPerTier: 'flat' } },
-  'energy-overdrive': { fields: { attackDamagePct: 'fraction' } },
   // Grand Ritual's empowered-attack multiplier. 1.6 means the bonus is the
   // 0.6 above ×1, so the field kind is 'multiplier', not 'flat'.
   'summoner-grand-ritual': { fields: { damageMult: 'multiplier' } },
@@ -38,8 +37,6 @@ export const SCALABLE_MECHANIC_DEBUFFS: Readonly<Record<string, ScalableMechanic
   'summoner-harrier-brood': { fields: { damageTakenPctPerSlot: 'fraction' } },
   // Withering Chorus's per-voice proc-damage magnitude.
   'summoner-withering-chorus': { fields: { damagePctPerSlot: 'fraction' } },
-  // Endless Storm (Tempest) tick damage, captured at cast time in status data.
-  'energy-storm': { fields: { damagePerTick: 'flat' } },
   // Winter Warden's Frozen payoff: only the damage-taken magnitude, not the
   // freeze trigger, duration, or Chill threshold that produces it.
   'dot-frozen': { fields: { damageTakenPct: 'fraction' } },

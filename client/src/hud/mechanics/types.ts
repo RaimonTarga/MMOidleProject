@@ -26,10 +26,6 @@ export type EnergyMechanicModel = {
   value: number;
   max: number;
   pct: number;
-  empowered: boolean;
-  isFlash: boolean;
-  shiftLabel: string;
-  shiftColor: string;
 };
 
 export type ReloadMechanicModel = {

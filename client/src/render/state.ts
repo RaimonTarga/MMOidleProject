@@ -192,7 +192,6 @@ export interface RenderState {
   frameChargeGlow: Map<NetworkId, FrameChargeGlowState>;
   /** Per-player identity accent overlays (see client/src/fx/identityAccent.ts). */
   identityAccents: Map<string, Phaser.GameObjects.Image>;
-  movementEffectNextAt: Map<string, number>;
   ledgeHopNextAt: Map<string, number>;
   knownUnlockedRecipes: Set<string>;
   knownUnlockedRecipesInitialized: boolean;
@@ -266,7 +265,6 @@ export function createRenderState(): RenderState {
     auras: new Map(),
     frameChargeGlow: new Map(),
     identityAccents: new Map(),
-    movementEffectNextAt: new Map(),
     ledgeHopNextAt: new Map(),
     knownUnlockedRecipes: new Set(),
     knownUnlockedRecipesInitialized: false,

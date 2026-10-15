@@ -40,8 +40,6 @@ const base = { selectedSubVariant: null, selectedRange: null, unlockedSkills: []
 // Paths that REPLACE their basic attack wholesale in combatFx (and so never reach
 // the signature layer). Keep this list short and named: anything else needs a row.
 const REPLACES_ATTACK = new Set([
-  'energy-balanced-t3-a', // Equinox: charge / discharge arc
-  'energy-light-t3-a', // Stormdancer: lightning dagger
   'reload-heavy-t3-a', // Melter: laser
   'reload-light-t3-c', // Sniper: heavy shell
   'reload-balanced-t3-b', // Blunderbuss: pellet volley
@@ -69,7 +67,7 @@ for (const node of (SKILL_TREE as Map<string, { id: string; tier: number; name: 
 }
 assert(missing.length === 0, `specializations with no bespoke attack: ${missing.join(', ')}`);
 const covered = REPLACES_ATTACK.size + bespoke.size;
-assert(covered === 36, `expected 36 combat specializations, got ${covered}`);
+assert(covered === 27, `expected 27 retained combat specializations, got ${covered}`);
 
 const combatFx = readFileSync(join(__dirname, '../../client/src/render/combatFx.ts'), 'utf8');
 assert(combatFx.includes('bespoke.payoff(hit)') && combatFx.includes('bespoke?.hit?.(hit)'),

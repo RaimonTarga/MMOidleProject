@@ -12,14 +12,11 @@ import {
   ITEM_DATABASE,
   MONSTER_DATABASE,
   recalculatePlayerStats,
-  resolveUpkeepConfig,
   resolveDotClassProfile,
   resolveEmpoweredMultiplier,
-  resolveEnergyMax,
   resolveSummonerProfile,
   SUMMONER_SPECIALIZATION_TUNING,
   SKILL_TREE,
-  upkeepOnHitBonus,
   weaponDotProfileForWeapon,
   weaponDotBasisFromResolvedDirectDamage,
   type CombatArchetype,
@@ -597,30 +594,6 @@ function applyEncounterAverages(
   return { directPerHit, weaponProcPerHit, notes };
 }
 
-function hitsToEnergyCap(
-  energyMax: number,
-  perHit: number,
-  gainMult = 1,
-  accelerationScale = 0,
-): number {
-  let energy = 0;
-  let hits = 0;
-  while (energy < energyMax && hits < 10_000) {
-    const fillPct = energyMax > 0 ? energy / energyMax : 0;
-    const gain = Math.max(1, Math.round(perHit * gainMult * (1 + fillPct * accelerationScale)));
-    energy = Math.min(energyMax, energy + gain);
-    hits++;
-  }
-  return Math.max(1, hits);
-}
-
-function chargeStateMultiplier(fillPct: number, minMult: number, maxMult: number): number {
-  const fill = Math.max(0, Math.min(1, fillPct));
-  return fill <= 0.5
-    ? minMult + (1 - minMult) * fill * 2
-    : 1 + (maxMult - 1) * (fill - 0.5) * 2;
-}
-
 function averageScaledDotTick(observedStacks: number, damagePerStack: number, effectMaxStacks = observedStacks): number {
   let total = 0;
   for (let stacks = 1; stacks <= observedStacks; stacks++) {
@@ -674,143 +647,8 @@ function estimateClassDamage(
     // rate is not modeled here.
     notes.push('slam (Resolve) is not modeled');
   } else if (archetype === 'energy') {
-    const maxEnergy = resolveEnergyMax(p, stats.playerTier ?? 0);
-    const perHit = Math.max(1, Math.round(p['energy.per-hit'] ?? 14));
-    const mult = empowered?.effective ?? p['energy.empowered-mult'] ?? 2;
-    const genericEmpoweredHit = directNoOnHit(stats.dealsDamage.attack * mult, targetWithDebuffs, platingMult) + stats.dealsDamage.onHitDamage;
-    let modeledCycle = false;
-
-    if ((p['energy.flash'] ?? 0) > 0) {
-      const damageShift = Math.max(0, p['energy.flash-max-damage-shift-pct'] ?? 0.45);
-      const speedBonus = Math.min(0.95, Math.max(0, p['energy.flash-max-speed-bonus-pct'] ?? 0.45));
-      directPerHit = directHit(
-        stats.dealsDamage.attack * (1 - damageShift),
-        stats.dealsDamage.onHitDamage,
-        targetWithDebuffs,
-        platingMult,
-      );
-      effectiveHitRate = hitRate / (1 - speedBonus);
-      modeledCycle = true;
-      notes.push(`flash modeled at full red shift: ${Math.round(damageShift * 100)}% attack loss, ${Math.round(speedBonus * 100)}% cooldown reduction`);
-    } else if ((p['energy.overdrive'] ?? 0) > 0) {
-      const normalHits = hitsToEnergyCap(maxEnergy, perHit);
-      const attackBonus = Math.max(0, p['energy.overdrive-attack-damage-pct'] ?? 0.40);
-      const decayPerSec = Math.max(0.01, p['energy.overdrive-decay-per-sec'] ?? 18);
-      const buildSec = normalHits / hitRate;
-      const activeSec = maxEnergy / decayPerSec;
-      const uptime = activeSec / (buildSec + activeSec);
-      classMechanicPerSec += directNoOnHit(stats.dealsDamage.attack * attackBonus, targetWithDebuffs, platingMult) * hitRate * uptime;
-      modeledCycle = true;
-      notes.push(`surge ${Math.round(attackBonus * 100)}% attack bonus averaged at ${Math.round(uptime * 100)}% uptime`);
-    } else if ((p['energy.upkeep'] ?? 0) > 0) {
-      const upkeep = resolveUpkeepConfig(p);
-      const decayBase = Math.max(0, p['energy.upkeep-decay-base'] ?? 12);
-      const decayRamp = Math.max(0, p['energy.upkeep-decay-ramp-per-sec'] ?? 1.5);
-      const gainPerSec = perHit * hitRate;
-      let sustainSec = REPORT_HORIZON_SEC;
-      if (decayRamp > 0) {
-        const peakSec = Math.max(0, (gainPerSec - decayBase) / decayRamp);
-        const peakEnergy = Math.min(maxEnergy, perHit + 0.5 * Math.max(0, gainPerSec - decayBase) * peakSec);
-        sustainSec = Math.min(REPORT_HORIZON_SEC, peakSec + Math.sqrt(2 * peakEnergy / decayRamp));
-      } else if (gainPerSec <= decayBase) {
-        sustainSec = Math.min(REPORT_HORIZON_SEC, perHit / Math.max(0.01, decayBase - gainPerSec));
-      }
-      const averageStacks = Math.max(0, Math.floor((sustainSec * 1000 / upkeep.stackIntervalMs) / 2));
-      const tier = (stats.playerTier ?? 3) + 1;
-      const flowOnHit = upkeepOnHitBonus(averageStacks, tier, upkeep);
-      classMechanicPerSec += flowOnHit * hitRate;
-      modeledCycle = true;
-      notes.push(`flow averaged at ${averageStacks} stacks over a ${asNumber(sustainSec)}s sustain window`);
-    } else if ((p['energy.binary-cycle'] ?? 0) > 0) {
-      const chargeGain = Math.max(0.01, p['energy.binary-charge-gain-mult'] ?? 0.6);
-      const dischargeGain = Math.max(0.01, p['energy.binary-discharge-gain-mult'] ?? 1.5);
-      const chargeSpeed = Math.max(0.01, p['energy.binary-charge-speed-factor'] ?? 1.25);
-      const dischargeSpeed = Math.max(0.01, p['energy.binary-discharge-speed-factor'] ?? 0.75);
-      const chargeHits = hitsToEnergyCap(maxEnergy, perHit, chargeGain);
-      const dischargeHits = hitsToEnergyCap(maxEnergy, perHit, dischargeGain);
-      const chargeOnHitBonus = Math.max(0, p['energy.binary-charge-onhit-bonus'] ?? 0.30);
-      const chargeOnHitPerTier = Math.max(0, p['energy.binary-charge-onhit-per-tier'] ?? 6);
-      const dischargeAttackBonus = Math.max(0, p['energy.binary-discharge-attack-bonus'] ?? 0.30);
-      const chargeDischargeMult = Math.max(0, p['energy.binary-charge-discharge-mult'] ?? 0.8);
-      const dischargeDischargeMult = Math.max(0, p['energy.binary-discharge-discharge-mult'] ?? 1.3);
-      const tierMult = Math.max(1, (stats.playerTier ?? 3) - 3 + 1);
-      const chargeHit = directHit(stats.dealsDamage.attack, stats.dealsDamage.onHitDamage * (1 + chargeOnHitBonus), targetWithDebuffs, platingMult)
-        + chargeOnHitPerTier * tierMult;
-      const dischargeHit = directHit(stats.dealsDamage.attack * (1 + dischargeAttackBonus), stats.dealsDamage.onHitDamage, targetWithDebuffs, platingMult);
-      const weakDischarge = directNoOnHit(stats.dealsDamage.attack * mult * chargeDischargeMult, targetWithDebuffs, platingMult) + stats.dealsDamage.onHitDamage;
-      const strongDischarge = directNoOnHit(stats.dealsDamage.attack * mult * dischargeDischargeMult, targetWithDebuffs, platingMult) + stats.dealsDamage.onHitDamage;
-      const chargeRate = hitRate / chargeSpeed;
-      const dischargeRate = hitRate / dischargeSpeed;
-      const cycleSec = (chargeHits + 1) / chargeRate + (dischargeHits + 1) / dischargeRate;
-      const cycleDamage = chargeHits * chargeHit + weakDischarge + dischargeHits * dischargeHit + strongDischarge;
-      classMechanicPerSec += cycleDamage / cycleSec - baseWithOnHit * hitRate;
-      modeledCycle = true;
-      notes.push(`binary cycle uses ${chargeHits} charge-state and ${dischargeHits} discharge-state builders`);
-    } else if ((p['energy.awakened-lightning'] ?? 0) > 0) {
-      const normalHits = hitsToEnergyCap(maxEnergy, perHit);
-      const strikeCount = Math.max(1, Math.round(p['energy.awakened-strike-count'] ?? 4));
-      const damageMult = Math.max(0, p['energy.awakened-damage-mult'] ?? 1.5);
-      const strike = directNoOnHit(stats.dealsDamage.attack * damageMult, targetWithDebuffs, platingMult) + stats.dealsDamage.onHitDamage;
-      const cycleAverage = (normalHits * baseWithOnHit + strikeCount * strike) / (normalHits + strikeCount);
-      classMechanicPerSec += (cycleAverage - baseWithOnHit) * hitRate;
-      modeledCycle = true;
-      notes.push(`${strikeCount} awakened strikes at ${damageMult}x per discharge cycle`);
-    } else if ((p['energy.charge-state'] ?? 0) > 0) {
-      const normalHits = hitsToEnergyCap(maxEnergy, perHit);
-      const minMult = Math.max(0, p['energy.charge-state-min-mult'] ?? 0.5);
-      const maxMult = Math.max(0, p['energy.charge-state-max-mult'] ?? 2.0);
-      let cycleDamage = genericEmpoweredHit;
-      let energy = 0;
-      for (let i = 0; i < normalHits; i++) {
-        const attackMult = chargeStateMultiplier(energy / maxEnergy, minMult, maxMult);
-        cycleDamage += directHit(stats.dealsDamage.attack * attackMult, stats.dealsDamage.onHitDamage, targetWithDebuffs, platingMult);
-        energy = Math.min(maxEnergy, energy + perHit);
-      }
-      const cycleAverage = cycleDamage / (normalHits + 1);
-      classMechanicPerSec += (cycleAverage - baseWithOnHit) * hitRate;
-      modeledCycle = true;
-      notes.push(`aether oscillation sampled across ${normalHits} energy-building hits`);
-    } else if ((p['energy.singularity-execute'] ?? 0) > 0) {
-      const accelScale = Math.max(0, p['energy.singularity-gain-accel-scale'] ?? 0.5);
-      const normalHits = hitsToEnergyCap(maxEnergy, perHit, 1, accelScale);
-      const dischargeScale = maxEnergy / 100;
-      const discharge = directNoOnHit(stats.dealsDamage.attack * mult * dischargeScale, targetWithDebuffs, platingMult)
-        + stats.dealsDamage.onHitDamage;
-      const cycleAverage = (normalHits * baseWithOnHit + discharge) / (normalHits + 1);
-      classMechanicPerSec += (cycleAverage - baseWithOnHit) * hitRate;
-      modeledCycle = true;
-      notes.push(`singularity accelerated gain reaches ${maxEnergy} energy in ${normalHits} hits; early execute averaged separately`);
-    } else if ((p['energy.critical-mass'] ?? 0) > 0) {
-      const stacks = Math.max(1, Math.round(p['energy.critical-mass-max-stacks'] ?? 3));
-      const gainPerStack = Math.max(0, p['energy.critical-mass-gain-per-stack'] ?? 0.20);
-      const damagePerStack = Math.max(0, p['energy.critical-mass-discharge-per-stack'] ?? 0.20);
-      const normalHits = hitsToEnergyCap(maxEnergy, perHit, 1 + stacks * gainPerStack);
-      const discharge = genericEmpoweredHit * (1 + stacks * damagePerStack);
-      const cycleAverage = (normalHits * baseWithOnHit + discharge) / (normalHits + 1);
-      classMechanicPerSec += (cycleAverage - baseWithOnHit) * hitRate;
-      modeledCycle = true;
-      notes.push(`critical mass assumes sustained ${stacks}-stack uptime`);
-    } else if ((p['energy.endless-storm'] ?? 0) > 0) {
-      const normalHits = hitsToEnergyCap(maxEnergy, perHit);
-      const totalMult = Math.max(0, p['energy.endless-storm-total-mult'] ?? 8);
-      const durationSec = Math.max(0.1, (p['energy.endless-storm-duration-ms'] ?? 4500) / 1000);
-      const extendSec = Math.max(0, (p['energy.endless-storm-extend-ms'] ?? 1000) / 1000);
-      const maxSec = Math.max(durationSec, (p['energy.endless-storm-max-ms'] ?? 7500) / 1000);
-      const cycleSec = (normalHits + 1) / hitRate;
-      const stormLifeSec = Math.min(maxSec, durationSec + normalHits * extendSec);
-      const uptime = Math.min(1, stormLifeSec / cycleSec);
-      dotPerSec += stats.dealsDamage.attack * totalMult / durationSec * uptime;
-      const cycleAverage = (normalHits * baseWithOnHit + baseWithOnHit) / (normalHits + 1);
-      classMechanicPerSec += (cycleAverage - baseWithOnHit) * hitRate;
-      modeledCycle = true;
-      notes.push(`endless storm ${totalMult}x budget at ${Math.round(uptime * 100)}% uptime after extensions`);
-    }
-
-    if (!modeledCycle) {
-      const normalHits = hitsToEnergyCap(maxEnergy, perHit);
-      const energyAveragePerHit = (normalHits * baseWithOnHit + genericEmpoweredHit) / (normalHits + 1);
-      classMechanicPerSec += (energyAveragePerHit - baseWithOnHit) * hitRate;
-    }
+    // The storm fills from flow; Threshold bands and their conditions choose the spends.
+    notes.push('storm spends (flow, floor and bands) are not modeled');
   } else if (archetype === 'dot') {
     const profile = resolveDotClassProfile(p, stats.usesSkills.selectedSubVariant);
     const dmgPerStack = computeDotClassDamagePerStack(stats.dealsDamage.attack, profile);
@@ -1504,30 +1342,7 @@ function mechanicFrequency(stats: PlayerStatsTarget): string {
     return 'slam on a full Resolve bar (fill rate not modeled)';
   }
   if (archetype === 'energy') {
-    const maxEnergy = resolveEnergyMax(p, stats.playerTier ?? 0);
-    const perHit = Math.max(1, Math.round(p['energy.per-hit'] ?? 14));
-    if ((p['energy.flash'] ?? 0) > 0) {
-      return `no discharge; +${asNumber(p['energy.flash-energy-per-hit'] ?? 5)} energy/hit toward shift`;
-    }
-    if ((p['energy.upkeep'] ?? 0) > 0) {
-      return `no discharge; 1 Flow stack/${asNumber(p['energy.upkeep-stack-interval-ms'] ?? 1000)}ms while sustained`;
-    }
-    const accel = (p['energy.singularity-execute'] ?? 0) > 0
-      ? Math.max(0, p['energy.singularity-gain-accel-scale'] ?? 0.5)
-      : 0;
-    const gainMult = (p['energy.critical-mass'] ?? 0) > 0
-      ? 1 + Math.max(1, p['energy.critical-mass-max-stacks'] ?? 3) * Math.max(0, p['energy.critical-mass-gain-per-stack'] ?? 0.2)
-      : 1;
-    const normalHits = hitsToEnergyCap(maxEnergy, perHit, gainMult, accel);
-    if ((p['energy.awakened-lightning'] ?? 0) > 0) {
-      const strikes = Math.max(1, Math.round(p['energy.awakened-strike-count'] ?? 4));
-      return `${strikes} empowered strikes every ${normalHits + strikes} total attacks`;
-    }
-    if ((p['energy.overdrive'] ?? 0) > 0) {
-      const activeSec = maxEnergy / Math.max(0.01, p['energy.overdrive-decay-per-sec'] ?? 18);
-      return `Overdrive after ${normalHits} builders; active ${asNumber(activeSec)}s`;
-    }
-    return `discharge every ${normalHits + 1} hits (${asNumber(hitRate / (normalHits + 1))}/s)`;
+    return 'Threshold spends from a constant flow (bands and conditions not modeled)';
   }
   if (archetype === 'dot') {
     const profile = resolveDotClassProfile(p, stats.usesSkills.selectedSubVariant);
@@ -2125,10 +1940,10 @@ function classMechanicFormulaRows(): Array<Array<string | number>> {
     ],
     [
       'Spirit',
-      'Energy',
-      'Normal non-empowered hits gain energy.per-hit. On reaching energyMax, energy resets to 0 and the next real hit is empowered.',
-      'Energy max = 100, plus energy.max-bonus * max(1, playerTier - 4 + 1) for Voidwalker-style scaling. Discharge multiplier uses energy.empowered-mult plus shared/weapon empowered bonuses.',
-      'Normal hits to charge = ceil(energyMax / energy.per-hit); full cycle = normalHits + 1 empowered hit. Seconds depend on final hit rate.',
+      'Storm / Thresholds',
+      'The storm fills from a constant flow; hits never add energy. Hits and damage over time drain the storm before HP.',
+      'Storm size comes from class-budget pips and tier. Gear never grows the pool.',
+      'The floor, bands, phase and spend conditions decide timing. Threshold spends are not modeled here.',
     ],
     [
       'Slinger',
@@ -2184,15 +1999,14 @@ ${mdTable(['Class', 'Mechanic', 'Passive formulas', 'Final damage multipliers', 
 - Plating compensation/bypass: live reload \`beforeAttack\` sets \`ctx.platingMult = 0.5\`; damage formula receives effective target plating multiplied by 0.5. The report mirrors this with \`platingMult = 0.5\` for reload.
 - Reload time: \`reload.reload-time-ms ?? 1600\`, multiplied by \`reload.reload-time-mult\` when present, minimum 100 ms. Momentum reduces reload time by \`1 - stacks * reload.momentum-reload-reduction\`, floored by the runtime constant.
 
-## Energy Exact Notes
+## Storm / Thresholds Notes
 
-- Root Spirit stats: attack +11, maxHp +10, attackSpeedPct +0.25, attackRange +130, speed +15.
-- Frame energy rules: Spark gains 20 energy/hit and has 1.5x empowered; Wraith gains 14 energy/hit and has 2.0x empowered; Phantasm gains 10 energy/hit and has 6.0x empowered.
-- Energy has no special hidden APS bonus beyond normal \`attackSpeedPct\` stat effects from root/frame/range/spec. Attack-speed stats feed the shared cooldown formula above.
-- Energy max defaults to 100. If \`energy.max-bonus\` exists, \`energyMax = 100 + round(energy.max-bonus * max(1, playerTier - 4 + 1))\`.
-- After a non-empowered hit, if no T3 handler consumed the event, energy gains \`round(energy.per-hit ?? 14)\`. Empowered hits do not generate energy.
-- When energy reaches max, energy resets to 0 and the next real hit is empowered. Therefore discharge timing is hit-count based, not seconds-based: \`normalHits = ceil(energyMax / energy.per-hit)\`, then the next hit discharges. Seconds = \`(normalHits + 1) / finalHitsPerSecond\`.
-- Discharge damage is an empowered hit using \`energy.empowered-mult\`, plus shared/weapon empowered multiplier modifiers. T3 specs may replace or augment this with their own handlers, as listed in the spec table.
+- The Spirit's storm is both spending resource and shield. It fills from a constant flow, never from hits.
+- Hits and damage over time drain it before HP. Spending also drains it; the floor reserves energy against spending, not incoming damage.
+- The bottle is sized by class-budget pips and tier in the storm runtime; gear never grows it.
+- Thresholds configure the floor, spend bands and gather/hover phase. Spends wait for their conditions.
+- The report omits Threshold spends: there is no per-hit charge/discharge cycle to average.
+
 `;
 }
 

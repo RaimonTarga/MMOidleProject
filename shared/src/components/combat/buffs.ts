@@ -3,23 +3,8 @@
  * Keep in sync with server/src/systems/buffSync.ts ALL_BUFFS.
  */
 export const BUFF_IDS = [
-  'energy-overcharge',
-  'energy-overdrive',
-  'energy-channel',
-  'energy-binary-charge',
-  'energy-binary-discharge',
-  'energy-storm',
-  'energy-aether',
-  'energy-critical-mass',
-  'energy-ac-charge',
-  'energy-ac-discharge',
-  'energy-reservoir',
-  'energy-equilibrium',
-  'energy-sm-pool',
   // Spirit frame loops (progression rework Phase 3): Wraith's gain window and
   // Phantasm's overcharge bank.
-  'energy-frame-surge',
-  'energy-frame-overcharge',
   'dot-vigor',
   'dot-conflag',
   'dot-chill',

@@ -9,7 +9,6 @@ import { destroyCastBar } from './castBars';
 import { destroySkillCallout } from './skillCallouts';
 import { destroyEffectOverlays } from './effectOverlays';
 import { destroyThoughtBubble } from './thoughtBubbles';
-import { clearMovementEffectsForEntity } from './movementEffects';
 import { endDetonateWindup } from '../fx/detonateWindup';
 import { endAllyAoeFootprint } from '../fx/allyAoeFootprint';
 import { clearBodyPose } from '../fx/bodyPose';
@@ -63,5 +62,4 @@ export function destroyEntity(
   const frameCharge = state.frameChargeGlow.get(id);
   if (frameCharge?.graphics) frameCharge.graphics.destroy();
   state.frameChargeGlow.delete(id);
-  clearMovementEffectsForEntity(state, id);
 }

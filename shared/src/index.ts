@@ -22,8 +22,6 @@ export * from './systems/dpsEstimate';
 export * from './systems/balanceLab';
 export * from './data/balanceProgression';
 export * from './systems/empoweredMult';
-export * from './systems/energyUpkeep';
-export * from './systems/energyMax';
 export * from './systems/spatial';
 export * from './collision';
 export * from './systems/biomeProgress';

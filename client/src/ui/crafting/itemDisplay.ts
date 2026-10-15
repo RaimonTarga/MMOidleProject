@@ -566,11 +566,6 @@ export function resolvedRelicProfileRows(profile: ResolvedRelicProfile): RelicPr
       pair('DoT tick interval', profile.tickIntervalMs, seconds);
       pair('Maximum DoT stacks', profile.maxStacks);
       break;
-    case 'energy':
-      pair(profile.gainPerHitLabel ?? 'Energy gained per hit', profile.gainPerHit);
-      pair('Maximum energy', profile.maxEnergy);
-      if (!profile.dischargeSuppressed) pair('Discharge damage', profile.dischargeMultiplier, mult);
-      break;
     case 'summoner':
       pair('Reconstruction time', profile.respawnMs, seconds);
       if (profile.summonPower) pair('Companion damage and health', profile.summonPower, mult);

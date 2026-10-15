@@ -833,18 +833,6 @@ function buffSourceSide(buff: PlayerBuff): "ally" | "enemy" | "neutral" {
 
 function buffEffectText(buff: PlayerBuff): string {
   switch (buff.id) {
-    case "energy-overcharge":
-      return "+discharge damage";
-    case "energy-ac-charge":
-      return "charging phase";
-    case "energy-ac-discharge":
-      return "discharge phase damage ticks";
-    case "energy-reservoir":
-      return "+discharge reservoir";
-    case "energy-equilibrium":
-      return "+damage";
-    case "energy-sm-pool":
-      return "stored true damage";
     case "dot-vigor":
       return "+attack and attack speed";
     case "dot-conflag":

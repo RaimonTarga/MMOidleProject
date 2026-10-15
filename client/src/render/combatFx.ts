@@ -32,8 +32,6 @@ import {
 import { getDotPath, type DotPath } from "../fx/dot";
 import { fxDotTick } from "../fx/dotTick";
 import { fxHeavyShell } from "../fx/heavyShell";
-import { fxLightningDagger } from "../fx/lightningDagger";
-import { fxEquinoxArc } from "../fx/equinoxArc";
 import {
   fxRimeshatter,
   fxFrozenShatter,
@@ -1892,15 +1890,6 @@ function runFxForAttackStyle(
   const isHeavyShell =
     player.combatArchetype === "reload" &&
     (player.passives["reload.snipe"] ?? 0) > 0;
-  const isLightningDagger =
-    player.combatArchetype === "energy" &&
-    (player.passives["energy.flash"] ?? 0) > 0;
-  // Equinox: the phase is already on the wire as the aura id, so the attack can
-  // match the glow without a protocol change of its own.
-  const isEquinox =
-    player.combatArchetype === "energy" &&
-    (player.passives["energy.binary-cycle"] ?? 0) > 0;
-
   const from = actorSprite ? { x: actorSprite.x, y: actorSprite.y } : presentation!.from;
   const to = presentation?.to ?? (ev.targetPos
     ? nodeToScene(ev.targetPos.x, ev.targetPos.y)
@@ -1947,30 +1936,6 @@ function runFxForAttackStyle(
   } else if (isHeavyShell) {
     playEmpoweredRing(args);
     fxHeavyShell(scene, from.x, from.y, to.x, to.y, ev.empowered, tint);
-  } else if (isLightningDagger) {
-    playEmpoweredRing(args);
-    fxLightningDagger(
-      scene,
-      from.x,
-      from.y,
-      to.x,
-      to.y,
-      player.flashShiftPct ?? 0,
-      ev.empowered,
-      tint,
-    );
-  } else if (isEquinox) {
-    playEmpoweredRing(args);
-    fxEquinoxArc(
-      scene,
-      from.x,
-      from.y,
-      to.x,
-      to.y,
-      player.aura === "equinox-discharge",
-      ev.empowered,
-      tint,
-    );
   } else {
     playEmpoweredRing(args);
     // Stage 3: the specialization's bespoke attack (fx/bespokePaths.ts) replaces the

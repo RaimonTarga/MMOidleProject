@@ -45,13 +45,6 @@ export function relicEffectPreview(
   if (archetype === 'reload') {
     if ((p['reload.suppressing-fire'] ?? 0) > 0) add('debuff', 'reload-suppress-shred', 'platingReduction', 'Suppressing Fire plating removed per stack', p['reload.suppress-shred'] ?? 4, 'flat');
   }
-  if (archetype === 'energy') {
-    if ((p['energy.overdrive'] ?? 0) > 0) add('buff', 'energy-overdrive', 'attackDamagePct', 'Surge attack-damage bonus', p['energy.overdrive-attack-damage-pct'] ?? 0.4, 'percent');
-    // damagePerTick is captured from `attack` at cast time, unavailable here;
-    // totalMult scales identically (damagePerTick is linear in it), so it
-    // stands in as a truthful, attack-independent preview of the same ratio.
-    if ((p['energy.endless-storm'] ?? 0) > 0) add('debuff', 'energy-storm', 'damagePerTick', 'Storm damage multiplier', p['energy.endless-storm-total-mult'] ?? 8.0, 'multiplier');
-  }
   if (archetype === 'dot') {
     add('debuff', 'dot', 'damagePerStack', 'DoT damage per stack', 1, 'multiplier');
     if ((p['dot.frenzy'] ?? 0) > 0) {

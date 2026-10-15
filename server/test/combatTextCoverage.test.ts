@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {
   ABILITY_DATABASE, MONSTER_DATABASE, RESOLVED_NODE_FEATURES,
-  applyStatusEffect, emptyEquipment, setCooldown, initUsesEnergy,
+  applyStatusEffect, emptyEquipment, setCooldown,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import type { PlayerEntity, MonsterEntity, MinionEntity } from '../src/ecs/entity';
@@ -19,7 +19,6 @@ import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
 import { updateNodeFeatures } from '../src/systems/world/nodeFeatures';
-import { updateAlternatingCurrents } from '../src/systems/classes/archetypes/energy/t3/ticks/alternatingCurrents';
 import { updateDotArchetype } from '../src/systems/classes/archetypes/dot/dotPrototype';
 import { attachComponent, attachMarker } from '../src/ecs/markerHelpers';
 import { applyWard } from '../src/systems/defense/barrier/wards';
@@ -192,17 +191,6 @@ for (const effectId of ['combat-text-environment', 'swamp-rot']) {
     const { entries } = probe(world, [player, target], () => updateNodeFeatures(world, 1000));
     assert(entries.every(e => e.hint.isDot));
   } finally { RESOLVED_NODE_FEATURES[NODE] = saved; }
-}
-// Audit finding: Alternating Currents damage was logged but had no text event.
-{
-  const { world, player } = setup();
-  const target = monster(world);
-  attachComponent(world, player, 'usesEnergy', initUsesEnergy());
-  attachComponent(world, player, 'inAcDischarge', { remainingMs: 5000, tickNext: 0, baseCd: 1000 });
-  player.usesSkills.passives['energy.alternating-currents'] = 1;
-  player.hasAttackTarget = { targetId: target.isMonster.id };
-  const { entries } = probe(world, [target], () => updateAlternatingCurrents(world, 100));
-  assert.equal(entries[0].hint.dotElement, 'lightning');
 }
 // A fully absorbed monster DoT still has a shield number, without false HP loss.
 {

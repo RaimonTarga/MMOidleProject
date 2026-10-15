@@ -7,10 +7,6 @@
  *
  * `usesEnergy.energy` is the storm in HP-like units and `energyMax` its size: `pips` (the class
  * budget) times `STORM_PIP` times the tier scale. Gear never grows the pool (bible §11.2).
- *
- * The old energy machinery (per-hit gain, the empowered discharge, the frame loop, the T3 paths)
- * is inert for a character with Thresholds: `energyPrototype`'s hit listener returns early for
- * them. It goes in the Spirit's cleanup task.
  */
 import {
   SPIRIT_KIT,
@@ -68,7 +64,7 @@ interface Thresholds {
 
 const cache = new WeakMap<PlayerEntity, { tick: number; value: Thresholds | null }>();
 
-/** The Spirit's Thresholds, or null for a character without them (the old energy path then applies). */
+/** The Spirit's Thresholds, or null for a character without them. */
 export function thresholdsOf(world: World, player: PlayerEntity): Thresholds | null {
   const hit = cache.get(player);
   if (hit && hit.tick === world.tickCounter) return hit.value;

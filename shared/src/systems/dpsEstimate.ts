@@ -317,27 +317,10 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
       break;
     }
 
-    // Hits charge the reservoir; a discharge fires at the empowered multiplier
-    // once it fills. Averaged over the charge cycle.
+    // Threshold spends depend on the flow, floor and bands; there is no per-hit discharge.
     case 'energy': {
-      if (relic?.archetype === 'energy' && relic.dischargeSuppressed) {
-        parts.push({ label: 'Regular attacks (current bonuses)', dps: hitDamage(input, input.attack, input.onHitDamage) / cdSec });
-        break;
-      }
-      const perHit = relic?.archetype === 'energy' ? relic.gainPerHit.after : 14;
-      const maxEnergy = relic?.archetype === 'energy' ? relic.maxEnergy.after : 100;
-      // Charging hits arm the NEXT attack; the discharge itself grants no energy.
-      const hitsPerDischarge = Math.ceil(maxEnergy / perHit) + 1;
-      const mult = empowered?.effective ?? 1;
-      const cycleSec = hitsPerDischarge * cdSec;
-      parts.push({
-        label: 'Regular attacks',
-        dps: ((hitsPerDischarge - 1) * hitDamage(input, input.attack, input.onHitDamage)) / cycleSec,
-      });
-      parts.push({
-        label: `Discharge (every ${hitsPerDischarge})`,
-        dps: hitDamage(input, input.attack * mult, input.onHitDamage) / cycleSec,
-      });
+      parts.push({ label: 'Regular attacks', dps: hitDamage(input, input.attack, input.onHitDamage) / cdSec });
+      caveats.push('Storm spends are not included; their timing depends on the flow, floor and bands.');
       break;
     }
 

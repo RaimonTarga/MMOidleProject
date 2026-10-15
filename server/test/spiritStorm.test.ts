@@ -11,14 +11,18 @@ import {
   getResource,
   MONSTER_DATABASE,
   applyStatusEffect,
+  resolveEmpoweredMultiplier,
+  resolveRelicPreview,
+  ZERO_RELIC_RATINGS,
   type ThresholdsConfig,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import type { MonsterEntity, PlayerEntity } from '../src/ecs/entity';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
-import { attachComponent } from '../src/ecs/markerHelpers';
+import { attachComponent, detachComponent } from '../src/ecs/markerHelpers';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
 import { drainStorm, stormMaxFor, thresholdsOf, updateSpirit } from '../src/systems/classes/archetypes/energy/spirit';
+import { proxyEmpoweredMultiplier } from '../src/systems/combat/engine/empoweredAttacks';
 import { setAggroTarget, setAttackTarget } from '../src/systems/combat/ai/targeting';
 import { runPlayerAttack } from '../src/systems/combat/engine/combat';
 import { emitCombatEvent, makeCombatContext } from '../src/systems/combat/engine/combatPipeline';
@@ -105,6 +109,25 @@ function hit(world: World, player: PlayerEntity, monster: MonsterEntity, damage:
   setAttackTarget(world, player, target.isMonster.id);
   runPlayerAttack(world, player, target, clock, { attackOrigin: player.hasPosition.current, aggroSource: { id: 'spirit', kind: 'player' } });
   assert.equal(player.usesEnergy!.energy, before, 'hitting adds nothing to the storm');
+}
+
+// ── Legacy energy never comes back without a Thresholds config ────────────────
+{
+  const { world, player, spawn } = setup();
+  run(world, player, 1_000);
+  const pool = { ...player.usesEnergy! };
+  recalculatePlayerEntityStats(world, player);
+  assert.deepEqual(player.usesEnergy, pool, 'recalc leaves storm sizing and the live pool to the storm runtime');
+  detachComponent(world, player, 'configuresClass');
+  const target = spawn(430, 400);
+  for (let i = 0; i < 12; i++) {
+    runPlayerAttack(world, player, target, clock + i * 1_000, { attackOrigin: player.hasPosition.current, aggroSource: { id: 'spirit', kind: 'player' } });
+  }
+  assert.deepEqual(player.usesEnergy, pool, 'hits cannot fill or discharge energy even without Thresholds');
+  assert.equal(player.hasEmpoweredAttack, undefined, 'hits cannot arm an old energy discharge');
+  assert.equal(proxyEmpoweredMultiplier(world, player), undefined, 'Spirit has no empowered multiplier registration');
+  assert.equal(resolveEmpoweredMultiplier({}, 'energy'), null, 'the shared readout has no discharge multiplier');
+  assert.equal(resolveRelicPreview('energy', {}, ZERO_RELIC_RATINGS), null, 'Spirit has no legacy relic profile');
 }
 
 // ── Hits drain the storm before HP; Eye of the Storm halves the cost at the floor ─

@@ -68,7 +68,7 @@ for (const [frequency, expected] of [[0.1, 4], [0.2, 3], [0.35, 3], [1, 2], [-0.
 }
 
 // All authored relics reach the runtime, rather than only testing the pure resolver.
-for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy', 'summoner'] as const) {
+for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'summoner'] as const) {
   for (const relic of [...ITEM_DATABASE.values()].filter(item => item.slot === 'relic')) {
     const { world, player } = fixture(root);
     player.holdsInventory.inventory = [relic.id];
@@ -90,9 +90,6 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy', 'summoner'
         eq(dot.maxStacks, preview.maxStacks.after, relic.id);
         eq(dot.data.tickIntervalMs, preview.tickIntervalMs.after, relic.id); break;
       }
-      case 'energy':
-        eq(player.usesEnergy!.energyMax, preview.maxEnergy.after, relic.id);
-        eq(player.usesEnergy!.energy, preview.gainPerHit.after, relic.id); break;
       case 'summoner':
         eq(player.summonsMinions!.targetCount, preview.summonCount.after, relic.id);
         eq(resolveSummonerProfile({ ...player.usesSkills }).reconstructionIntervalMs, preview.respawnMs.after, relic.id); break;
@@ -125,7 +122,7 @@ for (const potency of [-0.25, 0.4]) {
   for (let tick = 0; tick < Math.ceil(profile.coolingMs / 100); tick++) updateReloadT3Ticks(world, 100, 10000 + tick * 100);
   assert(!player.usesReload!.laserOverheated, 'full cooling ends overheat');
 }
-for (const root of ['cadence', 'reload', 'dot', 'energy'] as const) {
+for (const root of ['cadence', 'reload', 'dot'] as const) {
   const { player } = fixture(root);
   const input = { attack: 100, onHitDamage: 20, attackCooldownMs: 1000, archetype: root, passives: player.usesSkills.passives, selectedSubVariant: null, playerTier: 4 };
   const before = estimatePlayerDps(input).total;
@@ -155,10 +152,6 @@ for (const root of ['cadence', 'reload', 'dot', 'energy'] as const) {
   const laser = formatResolvedRelicProfile(resolveRelicPreview('reload', { 'reload.laser': 1 }, ratings));
   assert(laser.some(line => line.includes('Maximum heat') && line.includes('140')), 'Melter shows actual heat');
   assert(!laser.some(line => /ammo|mechanic frequency|mechanic potency/i.test(line)), 'Melter hides generic and Slinger labels');
-  const flash = resolveRelicPreview('energy', { 'energy.flash': 1 }, { ...ZERO_RELIC_RATINGS, frequency: 1 });
-  assert(flash?.archetype === 'energy', 'Flash resolves energy');
-  eq(flash.gainPerHit.after, 10, 'Flash uses its own five-energy base');
-  assert(!formatResolvedRelicProfile(flash).some(line => line.includes('Discharge')), 'Flash has no fictitious discharge');
   for (const [passive, cap] of [['dot.poison-explosion', 10], ['dot.eternal-doom', 50]] as const) {
     const profile = resolveRelicPreview('dot', { [passive]: 1 }, { ...ZERO_RELIC_RATINGS, potency: 0.4 });
     assert(profile?.archetype === 'dot', 'special DoT preview');
@@ -166,14 +159,8 @@ for (const root of ['cadence', 'reload', 'dot', 'energy'] as const) {
     eq(profile.maxStacks.after, Math.round(cap * 1.4), 'special DoT cap after relic');
   }
 }
-// A secondary line must say which rating produced it; "Surge attack-damage bonus"
-// reads exactly like a Frequency/Potency line otherwise.
+// Secondary lines must say which rating produced them.
 {
-  const buffOnly = { ...ZERO_RELIC_RATINGS, buffEffect: 0.25 };
-  const surge = formatResolvedRelicProfile(resolveRelicPreview('energy', { 'energy.overdrive': 1, 'energy.overdrive-attack-damage-pct': 0.4 }, buffOnly));
-  assert(surge.includes('Buff effect · Surge attack-damage bonus: 40% → 50%'), 'buff effect is attributed with real values');
-  assert(!surge.some(line => line.startsWith('Debuff effect')), 'a buff-only relic claims no debuff');
-
   const debuffOnly = { ...ZERO_RELIC_RATINGS, debuffEffect: 0.25 };
   const chill = formatResolvedRelicProfile(resolveRelicPreview('dot', { 'dot.freezing-cold': 1 }, debuffOnly));
   assert(chill.includes('Debuff effect · Chill movement slow per stack: 5% → 6.25%'), 'debuff effect is attributed');
@@ -192,7 +179,7 @@ for (const root of ['cadence', 'reload', 'dot', 'energy'] as const) {
   assert(inert.includes('Debuff effect · No eligible mechanic debuff in this build'), 'inert debuff rating is explicit');
 
   // An unrated relic earns no secondary headings even where effects are registered.
-  const unrated = formatResolvedRelicProfile(resolveRelicPreview('energy', { 'energy.overdrive': 1 }, { ...ZERO_RELIC_RATINGS, frequency: 0.2 }));
+  const unrated = formatResolvedRelicProfile(resolveRelicPreview('dot', { 'dot.frenzy': 1 }, { ...ZERO_RELIC_RATINGS, frequency: 0.2 }));
   assert(!unrated.some(line => /^(Buff|Debuff) effect/.test(line)), 'no secondary rating, no secondary lines');
   assert(!unrated.some(line => line.includes('relic.mechanic')), 'raw relic keys stay hidden');
 }

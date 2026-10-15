@@ -3,9 +3,8 @@ import type { PassiveMap } from '../passives';
 import type { SubVariant } from '../data/skillTree';
 import { resolveDotClassProfile, resolveDotStackCap } from './dotClassProfile';
 import { resolveSummonerProfile } from './summonerProfile';
-import { resolveEnergyMaxBeforeRelic } from './energyMax';
 import { resolveLaserRelicProfile } from './laserProfile';
-import { ZERO_RELIC_RATINGS, resolveCadenceRelicProfile, resolveCooldownRelicProfile, resolveReloadRelicProfile, resolveDotRelicDeliveryProfile, resolveEnergyRelicProfile, type RelicRatings, type ResolvedRelicProfile } from './relics';
+import { ZERO_RELIC_RATINGS, resolveCadenceRelicProfile, resolveCooldownRelicProfile, resolveReloadRelicProfile, resolveDotRelicDeliveryProfile, type RelicRatings, type ResolvedRelicProfile } from './relics';
 
 /** Character-specific preview authority used by inventory and Forge. */
 function resolvePrimaryRelicPreview(
@@ -44,20 +43,6 @@ function resolvePrimaryRelicPreview(
     case 'dot': {
       const profile = resolveDotClassProfile(passives, options.subVariant);
       return resolveDotRelicDeliveryProfile(profile.tickIntervalMs, resolveDotStackCap(passives, profile.maxStacks), ratings);
-    }
-    case 'energy': {
-      const flash = (passives['energy.flash'] ?? 0) > 0;
-      const perHit = flash ? Math.max(0, passives['energy.flash-energy-per-hit'] ?? 5) : Math.max(1, Math.round(passives['energy.per-hit'] ?? 14));
-      const max = resolveEnergyMaxBeforeRelic(passives, options.playerTier ?? 0);
-      const mult = ((passives['energy.empowered-mult'] ?? 2)
-        + (passives['shared.empowered-mult-add'] ?? 0))
-        * (1 + (passives['weapon.empowered-mult-bonus'] ?? 0));
-      return {
-        ...resolveEnergyRelicProfile(perHit, max, mult, ratings),
-        gainPerHitLabel: (['energy.alternating-currents', 'energy.capacitor-shunt', 'energy.binary-cycle', 'energy.critical-mass', 'energy.singularity-execute'] as const).some(key => (passives[key] ?? 0) > 0)
-          ? 'Energy gain per hit before phase bonuses or splitting' : undefined,
-        dischargeSuppressed: (['energy.flash', 'energy.micro-venting', 'energy.alternating-currents', 'energy.overdrive', 'energy.upkeep'] as const).some(key => (passives[key] ?? 0) > 0),
-      };
     }
     case 'summoner': {
       const input = { selectedSubVariant: options.subVariant ?? null, selectedRange: options.selectedRange ?? null, unlockedSkills: options.unlockedSkills ?? [], passives };

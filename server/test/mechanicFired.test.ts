@@ -242,23 +242,6 @@ function exchange(player: PlayerEntity, defender: ReturnType<typeof monster>, me
   );
 }
 
-// ── energy: the burst ────────────────────────────────────────────────────────
-
-{
-  const player = spawn('mf-energy', 'energy');
-  assert(player.usesEnergy !== undefined, 'the energy slice should be attached');
-  const target = monster(600);
-
-  emitCombatEvent('onHit', exchange(player, target, {}), world);
-  assert(countFor('mf-energy') === 0, 'building energy is not the mechanic firing');
-
-  emitCombatEvent('onHit', exchange(player, target, { empoweredAttack: true, mechanicConsumed: true }), world);
-  assert(
-    countFor('mf-energy') === 1,
-    `the discharge should fire exactly once, got ${countFor('mf-energy')}`,
-  );
-}
-
 // ── summoner: the formation cycle, never the click command ───────────────────
 //
 // Phase 3 moved this moment. 1c hung it on `applySummonerCommand`, but a command

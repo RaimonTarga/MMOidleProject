@@ -30,14 +30,13 @@ import {
   clearOwnMovePath,
   reconcileOwnPathFromServer,
 } from "../input/pathPrediction";
-import { flashShiftTint, spawnFlashAttackAfterimage } from "./movementEffects";
 import { auraTint } from "../fx/aura";
 import { ambientStackFlashTint } from './ambientStackFlash';
 import { shouldRunClientFx } from '../fx/guard';
 import { resetPlayerNodePosition } from './playerNodePosition';
 
 function playerTint(state: RenderState, player: PlayerView): number | null {
-  const base = flashShiftTint(player) ?? auraTint(player);
+  const base = auraTint(player);
   const flash = state.ambientStackFlash.get(player.id);
   if (!flash) return base;
   if (!player.isDead && flash.nodeId === player.nodeId && shouldRunClientFx()) {
@@ -206,7 +205,6 @@ export function upsertPlayer(
   // Rebase every changed player, not just the local camera/input owner.
   const wasDead = prev?.isDead ?? false;
   resetPlayerNodePosition(state, prev?.nodeId, player, resetPosition || wasDead !== player.isDead);
-  const prevAttackAt = prev?.lastAttackAt ?? 0;
 
   if (player.isDead) {
     const transform = state.transform.get(player.id);
@@ -300,8 +298,7 @@ export function upsertPlayer(
     isPlayer: true,
   });
   const sprite = state.sprite.get(player.id);
-  // Flash shift tint takes priority; otherwise a transformation aura (e.g. Surge)
-  // tints the sprite to match its glow.
+  // Match the sprite tint to its aura and current ambient feedback.
   const tint = playerTint(state, player);
   if (sprite) {
     if (tint !== null) {
@@ -310,14 +307,6 @@ export function upsertPlayer(
       resetSpriteTint(sprite, color);
     }
     syncTierOutline(state, player);
-    if (
-      isOwn &&
-      (flashShiftTint(player) ?? auraTint(player)) !== null &&
-      player.lastAttackAt > prevAttackAt &&
-      (player.summonsMinions ?? 0) === 0
-    ) {
-      spawnFlashAttackAfterimage(state, player, scene);
-    }
   }
 
   state.view.set(player.id, player);

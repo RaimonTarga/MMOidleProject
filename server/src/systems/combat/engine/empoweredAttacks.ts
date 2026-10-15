@@ -2,8 +2,6 @@ import {
   relicRatingsFromPassives,
   resolveCadenceRelicProfile,
   resolveCooldownRelicProfile,
-  resolveEnergyMaxBeforeRelic,
-  resolveEnergyRelicProfile,
   type PassiveKey,
 } from '@mmo-idle/shared';
 import { registerCombatListener, type CombatContext } from './combatPipeline';
@@ -174,13 +172,6 @@ function resolveEffectiveMultiplier(
     effectiveMult = resolveCadenceRelicProfile(5, effectiveMult, ratings).empoweredMultiplier.after;
   } else if (options.attackerSlice === 'usesCooldown') {
     effectiveMult = resolveCooldownRelicProfile(7000, effectiveMult, ratings).empoweredMultiplier.after;
-  } else if (options.attackerSlice === 'usesEnergy') {
-    effectiveMult = resolveEnergyRelicProfile(
-      passives['energy.per-hit'] ?? 14,
-      resolveEnergyMaxBeforeRelic(passives, player.tracksProgression.playerTier),
-      effectiveMult,
-      ratings,
-    ).dischargeMultiplier.after;
   }
   return effectiveMult;
 }

@@ -10,12 +10,10 @@ import {
   channelingPctAtom,
   classConfigAtom,
   combatArchetypeAtom,
-  empoweredReadyAtom,
   energyCountAtom,
   energyMaxAtom,
   executionCooldownPctAtom,
   executionReadyAtom,
-  flashShiftPctAtom,
   heatPctAtom,
   isChannelingAtom,
   laserOverheatedAtom,
@@ -68,8 +66,6 @@ export function useMechanicViewModel(): MechanicViewModel | null {
   const executionPct = useAtomValue(executionCooldownPctAtom);
   const energy = useAtomValue(energyCountAtom);
   const energyMax = useAtomValue(energyMaxAtom);
-  const empowered = useAtomValue(empoweredReadyAtom);
-  const flashShiftPct = useAtomValue(flashShiftPctAtom);
   const targetId = useAtomValue(attackTargetIdAtom);
   const dotStacks = useAtomValue(targetDotStacksAtom);
   const dotTickPct = useAtomValue(targetDotTickPctAtom);
@@ -97,22 +93,13 @@ export function useMechanicViewModel(): MechanicViewModel | null {
         resolveMax: Math.max(0, playerView?.resolveMax ?? 0),
       };
 
-    case 'energy': {
-      const isFlash = (passives['energy.flash'] ?? 0) > 0;
-      const pct = isFlash
-        ? clampPct(flashShiftPct)
-        : clampPct(energyMax > 0 ? (energy / energyMax) * 100 : 0);
+    case 'energy':
       return {
         kind: 'energy',
         value: Math.round(energy),
         max: Math.max(0, energyMax),
-        pct,
-        empowered,
-        isFlash,
-        shiftLabel: flashShiftPct >= 50 ? 'Red Shift' : 'Blue Shift',
-        shiftColor: `rgb(${Math.round(70 + flashShiftPct * 1.85)}, ${Math.round(130 - flashShiftPct * 0.65)}, ${Math.round(255 - flashShiftPct * 1.95)})`,
+        pct: clampPct(energyMax > 0 ? (energy / energyMax) * 100 : 0),
       };
-    }
 
     case 'reload':
       return {
