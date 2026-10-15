@@ -4,6 +4,10 @@
   gap: 8px;
 }
 
+.responses-editor__discipline {
+  margin: 0 0 4px;
+}
+
 .responses-editor__rule {
   grid-template-columns: 36px minmax(0, 1fr) auto;
   align-items: start;

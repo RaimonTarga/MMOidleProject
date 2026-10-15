@@ -1,4 +1,6 @@
 import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { useAtomValue } from 'jotai';
+import { classConfigAtom } from '../atoms';
 import { MechanicFrame } from './MechanicFrame';
 import type { CooldownMechanicModel } from './types';
 
@@ -14,6 +16,7 @@ function resolveHelp(
   resolveMax: number,
   ready: boolean,
   channeling: boolean,
+  lastBreath: boolean,
 ): ReactNode {
   const shown = formatPips(resolve);
   const max = formatPips(resolveMax);
@@ -23,6 +26,11 @@ function resolveHelp(
         Resolve fills when you are hit, from each enemy on you, and when an
         answer lands. Responses spend it. A full bar arms the slam.
       </div>
+      {lastBreath && (
+        <div style={{ marginTop: 6 }}>
+          Last Breath: when your HP runs low it spends the whole bar to heal you.
+        </div>
+      )}
       <div style={{ marginTop: 6 }}>
         {ready
           ? `Full — ${shown} of ${max}. Your next attack is the slam.`
@@ -42,6 +50,9 @@ export function ResolvePips({ model }: { model: CooldownMechanicModel }) {
   const resolve = model.resolve;
   const resolveMax = model.resolveMax;
   const pipCount = Math.max(0, Math.round(resolveMax));
+  const config = useAtomValue(classConfigAtom);
+  const lastBreath = config?.system.kind === 'responses'
+    && config.system.rules.some((rule) => rule.pieceId === 'squire-last-breath' && rule.enabled);
   const previous = useRef(resolve);
   const pulseTimer = useRef<number | null>(null);
   const [pulse, setPulse] = useState(false);
@@ -80,7 +91,7 @@ export function ResolvePips({ model }: { model: CooldownMechanicModel }) {
   return (
     <MechanicFrame
       kind="cooldown"
-      help={resolveHelp(resolve, resolveMax, model.executionReady, model.isChanneling)}
+      help={resolveHelp(resolve, resolveMax, model.executionReady, model.isChanneling, lastBreath)}
       title="Resolve"
       status={status}
       state={pulse ? 'fired' : model.isChanneling ? 'channeling' : model.executionReady ? 'ready' : undefined}
