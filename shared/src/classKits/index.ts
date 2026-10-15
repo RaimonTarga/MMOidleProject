@@ -10,6 +10,7 @@ export * from './registry';
 export * from './configTypes';
 export * from './config';
 export * from './view';
+export * from './orderView';
 export { STRIKER_COMBO_LENGTH, STRIKER_TECHNIQUE_SWING, strikerComboLength, strikerMasteredBeats, strikerSlots } from './configs/striker';
 export { CONDUIT_ROSTER_BODY_CAP, DEFAULT_FORMATION_ORDERS, rosterCommand } from './configs/conduit';
 export { STRIKER_KIT, type StrikerFamily, type StrikerPiece, type StrikerPieceExtra, type StrikerTrophy, type StrikerTrophyKind } from './striker/kit';
