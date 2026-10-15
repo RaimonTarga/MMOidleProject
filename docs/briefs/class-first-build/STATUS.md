@@ -68,7 +68,7 @@ where the brief says, and tell me.
 
 | ID | Task | Agent | Waits for |
 |---|---|---|---|
-| Next class | The Conduit (the old slice plan's map), then Slinger, Spirit, Apprentice | Conductor | — |
+| Next class | The Conduit ([C-conduit](C-conduit.md), plan written 2026-10-15; CD.1 next), then Slinger, Spirit, Apprentice | Conductor | — |
 
 ## Known follow-ups (not yet a task)
 
