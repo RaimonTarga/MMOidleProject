@@ -1,74 +1,50 @@
 # Tier 3 (M3) plan: make every class playable through T3
 
-Written 2026-10-15, after T2 (waves 1 and 2) merged. Goal: a player of any of the six classes can go T1 → T2 on the class-first
-framework, with every T2 lesson, discipline, trophy rank-up and gear job doing what the bible
-says. No T1 polish and no playtest before all tiers exist (designer, 2026-10-15).
+Written 2026-10-15, after T2 (wave 1 runtimes, wave 2 UI/tutorial/routes) merged. Same shape as
+`T2-plan.md` and `T2-wave2.md`; read both for the pattern and for what a good report looks like
+(`reports/T2-*.md`, `reports/T2W2-*.md`).
 
-## What already exists
+## What T3 adds
 
-- The kits (`shared/src/classKits/<class>/kit.ts`) are **data-complete through T4**: lessons,
-  trophies, disciplines, specializations and leaves.
-- The T2 *moments* the classes react to (charging, burrowing, ranged attacker, frozen target,
-  out of reach and back, ambush, ally threatened) are in (`1247353b`).
-- The T2 monsters, zone modifiers, tiers and map stay as they are.
+- The **specializations** (bible §N.6): the second Passive Tree choice, built on the discipline.
+- The **T3 lessons, trophy rank-ups and new trophies** (bible §N.16, the T3 table), including the
+  two new biomes, **Tundra** and **Volcanic** (new lineages, new gear jobs), and the jobs that
+  **move** when the Plains and Forest retire.
+- The T3 gear effect keys (weapon / armor / charm per new biome and moved job).
 
-## What T2 still needs (per class, "T3-RT")
+The kits are data-complete through T4 already; the work is runtime, as in T2.
 
-For every T3 item in the class's bible sections (§N.6 specializations, §N.8 pieces, §N.16 T2
-table): check whether the **runtime does it**. If the kit names it but nothing executes it,
-implement it, following the pattern of the T1 runtime of the same class. Cover:
+## Task 1: T3-<CLASS> (runtime, data, tests)
 
-1. T3 lessons (techniques, pieces, clips, responses, sigil/payoff rules...).
-2. The three disciplines: the mechanic each one adds and the rule it changes.
-3. T3 trophy rank-ups and the new T2 trophies (Jungle, Desert).
-4. T3 gear jobs (weapon / armor / charm effect keys): passives, labels, gear file entries.
-5. A wiring smoke test per item group: attach, tick, assert observable state.
+IDs: T3-STRIKER, T3-SQUIRE, T3-CONDUIT, T3-SLINGER, T3-SPIRIT, T3-APPRENTICE.
 
-Out of scope for every T3-RT: client UI, art and icons (the designer owns art), bot routes,
-balance numbers (copy the bible's; mark placeholders), T3/T4 content, deleting anything.
+For every T3 item in §N.6, §N.8 and the T3 table of §N.16 (N = 12 Striker, 8 Squire, 7 Conduit,
+10 Slinger, 11 Spirit, 9 Apprentice): check whether the runtime does it; implement what is
+missing, following the same class's T1/T2 runtime. Wire the specialization's rule, each T3 lesson,
+trophy ranks and the new Tundra/Volcanic trophies, and the gear jobs. **Fill the T3/T4 copies of
+the gear jobs T2 left empty `{}`** (Conduit, Slinger rifles) so no item is dead. One wiring test
+file `server/test/<class>T3*.test.ts`. Put a status table (`wired | missing | stand-in`) in the
+report.
 
-## Waves
+Allowed paths: as in `T2-plan.md` (your class's kit, gear file, your passives/labels block, your
+class's runtime folder, new tests, the class's `*View.ts` data). A new moment or a core combat
+hook: stop and put it in the report (the conductor owns `moments/` and the pipeline). Out of
+scope: UI, art and icons, bot routes, balance numbers (copy the bible; placeholders marked), T4.
 
-| Wave | Who | What |
-|---|---|---|
-| 1 | six agents in parallel, one per class | T3-RT (below) |
-| 1 | conductor | Conduit bandwidth diet and summon cap, merge, suite |
-| 2 | agents | T2 UI/tutorial pieces and the six T2 bot routes (after Wave 1 merges) |
-| 3 | the same for T3, then T4 | |
+Worktree `../mmo-rw-t3-<class>` · branch `rw/t3-<class>`. Report `reports/T3-<CLASS>.md`.
 
-## Collision rules
+## Task 2: T3-W2-<CLASS> (visible, teachable, testable), after Task 1 merges
 
-All six touch `shared/src/passives.ts`, `mechanicLabels.ts` and the kit files. Each agent
-adds only its own class's keys, in a block named for the class, and never reformats shared
-files. The conductor resolves merge conflicts by keeping both sides.
+As `T2-wave2.md`: the T3 state in the class's editor and HUD (every new status gets its client
+entries with an existing icon id; never generate art), the tutorial's T3 stretch (appended after
+the T2 stretch; existing step types only), and the `<class>-t3` bot route (the T2 route, then the
+specialization unlock via `unlockSkill`, then the T3 zones to their caps and bosses; register it,
+leave it out of `CONTROLLED_ROUTE_IDS` until it has run live). Worktree
+`../mmo-rw-t3w2-<class>` · branch `rw/t3w2-<class>`. Report `reports/T3W2-<CLASS>.md`.
 
-## The six tasks
+## Carry-overs the agents should handle
 
-| ID | Class | Bible sections | Worktree · branch |
-|---|---|---|---|
-| T3-STRIKER | Striker | §12.6, §12.8, §12.16 (T3) | `../mmo-rw-t3-striker` · `rw/t3-striker` |
-| T3-SQUIRE | Squire | §8.6, §8.8, §8.16 (T3) | `../mmo-rw-t3-squire` · `rw/t3-squire` |
-| T3-CONDUIT | Conduit | §7.6, §7.8, §7.16 (T3) | `../mmo-rw-t3-conduit` · `rw/t3-conduit` |
-| T3-SLINGER | Slinger | §10.6, §10.8, §10.16 (T3) | `../mmo-rw-t3-slinger` · `rw/t3-slinger` |
-| T3-SPIRIT | Spirit | §11.6, §11.8, §11.16 (T3) | `../mmo-rw-t3-spirit` · `rw/t3-spirit` |
-| T3-APPRENTICE | Apprentice | §9.6, §9.8, §9.16 (T3) | `../mmo-rw-t3-apprentice` · `rw/t3-apprentice` |
-
-## Shared brief (each task)
-
-**Allowed paths:** `shared/src/classKits/<class>/**`, `shared/src/data/classGear/<class>.ts`,
-your class's block in `shared/src/passives.ts` and `mechanicLabels.ts`, the class's runtime
-under `server/src/systems/classes/archetypes/**` (only your class's folder), new files under
-`server/src/systems/classes/<class>/`, new tests `server/test/<class>T2*.test.ts`,
-`shared/src/classKits/*View.ts` only to add the T2 data a view already composes.
-For a mechanic that truly needs a new moment or a core combat hook, **stop and put it in the
-report** (the conductor owns `moments/` and the combat pipeline).
-
-**Steps:**
-1. Read the bible's sections above and the class's T1 runtime and tests.
-2. Write a table in your report: every T3 item, status `wired | missing | stand-in`.
-3. Implement the missing ones, smallest change first, T1 pattern of the same class.
-4. One wiring test file per class. `pnpm typecheck` clean; `pnpm test -- <class>` green.
-5. Anything the bible leaves open: pick the simplest reading, mark it PLACEHOLDER, list it.
-
-**Report:** `docs/briefs/class-first-build/reports/T3-<CLASS>.md` (shape in AGENT-RULES.md),
-including the status table and every stand-in.
+- `TutorialPanel` shows the farewell only when the script runs out; do not touch it (conductor).
+- Network a HUD field the minimal way: add it to the existing slice, `mutateSlice`, one test.
+- Keep edits to shared files (`passives.ts`, `mechanicLabels.ts`, tutorial index, routes index)
+  to your own block; the conductor resolves merge conflicts keeping both sides.
