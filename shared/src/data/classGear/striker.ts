@@ -343,8 +343,24 @@ export const STRIKER_GEAR: ClassGearDef = {
     'trench-vest-t4': { name: 'Clear Mind', text: "Debuffs can't break your combo or interrupt your casts.", effects: {} },
     'trench-charm-t4': { name: 'Brine Mend', text: 'Each debuff on you raises your Recovery a little.', effects: {} },
   },
-  // Lines that moved here when a biome retired ride a second base (`<base>-b`); G-GEAR-C enters the rest.
+  // Retired-biome lines on the receiving biome's second base (`<id>-b`).
+  // Copied from the origin's last tier: Forest and Plains at T2, Swamp and Cave at T3.
   movedLines: {
-    'jungle-vest-t3': { name: 'Unbroken', text: 'Stuns, knockdowns and slows are shorter and never break your resource.', effects: { 'defense.control-duration-cut-pct': 0.25 } },
+    // Forest → Jungle
+    'jungle-vest-t3': { name: 'Unbroken', text: 'Stuns, knockdowns and slows are shorter and never break your resource.', effects: { 'defense.control-duration-cut-pct': 0.312 } },
+    'jungle-vest-t4': { name: 'Unbroken', text: 'Stuns, knockdowns and slows are shorter and never break your resource.', effects: { 'defense.control-duration-cut-pct': 0.312 } },
+    'jungle-charm-t3': { name: 'Rhythm', text: 'Recovery rises the longer you fight without a break, up to double.', effects: { 'defense.recovery-rhythm-max': 2, 'defense.recovery-rhythm-ms': 20000 } },
+    'jungle-charm-t4': { name: 'Rhythm', text: 'Recovery rises the longer you fight without a break, up to double.', effects: { 'defense.recovery-rhythm-max': 2, 'defense.recovery-rhythm-ms': 20000 } },
+    // Plains → Volcanic
+    'volcanic-vest-t3': { name: 'Shoulder Through', text: 'Each extra enemy around you adds a little plating.', effects: { 'striker.plating-per-enemy': 2.6 } },
+    'volcanic-vest-t4': { name: 'Shoulder Through', text: 'Each extra enemy around you adds a little plating.', effects: { 'striker.plating-per-enemy': 2.6 } },
+    'volcanic-charm-t3': { name: 'Grit', text: 'Part of every hit you take heals back over a few seconds while you keep attacking; stop and it is lost.', effects: { 'striker.grit-pct': 0.188, 'striker.grit-ms': 3000 } },
+    'volcanic-charm-t4': { name: 'Grit', text: 'Part of every hit you take heals back over a few seconds while you keep attacking; stop and it is lost.', effects: { 'striker.grit-pct': 0.188, 'striker.grit-ms': 3000 } },
+    // Swamp → Graveyard
+    'graveyard-vest-t4': { name: 'Bloodless', text: "While you keep attacking, damage over time can't take you below a quarter of your HP.", effects: { 'striker.dot-floor-pct': 0.25 } },
+    'graveyard-charm-t4': { name: 'Antidote', text: 'Every few seconds, the poison or bleed on you with the most time left ends.', effects: { 'defense.dot-cleanse-interval-ms': 4000 } },
+    // Cave → Trench
+    'trench-vest-t4': { name: 'Weighty', text: 'More bulk, and slower beats.', effects: { 'striker.bulk-pct': 0.15, 'striker.beat-slow-pct': 0.1 } },
+    'trench-charm-t4': { name: 'Deep Breath', text: 'Out-of-combat Recovery is much faster.', effects: { 'defense.ooc-recovery-pct': 1.5 } },
   },
 };

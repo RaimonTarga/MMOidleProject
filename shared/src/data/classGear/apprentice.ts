@@ -341,4 +341,24 @@ export const APPRENTICE_GEAR: ClassGearDef = {
     'trench-vest-t4': { name: 'Deep Ward', text: 'While you carry three or more debuffs, each enemy carrying a full bar deals less damage to you.', effects: {} },
     'trench-charm-t4': { name: 'Tidal Draw', text: 'Each debuff you move or wash off heals you a little.', effects: {} },
   },
+  // Retired-biome lines on the receiving biome's second base (`<id>-b`).
+  // Copied from the origin's last tier: Forest and Plains at T2, Swamp and Cave at T3.
+  movedLines: {
+    // Forest → Jungle
+    'jungle-vest-t3': { name: 'Give Ground', text: 'While an enemy carrying your sigils is in melee reach, you move faster.', effects: {} },
+    'jungle-vest-t4': { name: 'Give Ground', text: 'While an enemy carrying your sigils is in melee reach, you move faster.', effects: {} },
+    'jungle-charm-t3': { name: 'Numbing Calm', text: 'While two or more enemies near you are numbed, Recovery doubles.', effects: {} },
+    'jungle-charm-t4': { name: 'Numbing Calm', text: 'While two or more enemies near you are numbed, Recovery doubles.', effects: {} },
+    // Plains → Volcanic
+    'volcanic-vest-t3': { name: 'Warding Sigils', text: 'Each enemy carrying your sigils deals a little less damage to you (capped).', effects: {} },
+    'volcanic-vest-t4': { name: 'Warding Sigils', text: 'Each enemy carrying your sigils deals a little less damage to you (capped).', effects: {} },
+    'volcanic-charm-t3': { name: 'Feeding Swarm', text: 'Recovery rises a little for each enemy carrying your sigils (capped).', effects: {} },
+    'volcanic-charm-t4': { name: 'Feeding Swarm', text: 'Recovery rises a little for each enemy carrying your sigils (capped).', effects: {} },
+    // Swamp → Graveyard
+    'graveyard-vest-t4': { name: 'Bitter Blood', text: 'Poison and bleed on you tick slower.', effects: {} },
+    'graveyard-charm-t4': { name: 'Bitter Tonic', text: 'Siphon heals more and comes back sooner.', effects: {} },
+    // Cave → Trench
+    'trench-vest-t4': { name: 'Sigil Weight', text: "A winding-up enemy's blow is weaker for each sigil it carries, up to a third.", effects: {} },
+    'trench-charm-t4': { name: 'Long Draw', text: 'While an elite or boss carries a full bar of your sigils, Recovery rises.', effects: {} },
+  },
 };

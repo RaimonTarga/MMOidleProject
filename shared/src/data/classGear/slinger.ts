@@ -340,4 +340,24 @@ export const SLINGER_GEAR: ClassGearDef = {
     'trench-vest-t4': { name: 'Pressure Suit', text: 'Debuffs cannot land on you while you reload.', effects: {} },
     'trench-charm-t4': { name: 'Ballast', text: 'Recovery rises for each debuff on you.', effects: {} },
   },
+  // Retired-biome lines on the receiving biome's second base (`<id>-b`).
+  // Copied from the origin's last tier: Forest and Plains at T2, Swamp and Cave at T3.
+  movedLines: {
+    // Forest → Jungle
+    'jungle-vest-t3': { name: 'Quickdraw', text: 'You can walk at half speed while reloading.', effects: {} },
+    'jungle-vest-t4': { name: 'Quickdraw', text: 'You can walk at half speed while reloading.', effects: {} },
+    'jungle-charm-t3': { name: 'Fleet', text: 'Recovery doubles while you move.', effects: {} },
+    'jungle-charm-t4': { name: 'Fleet', text: 'Recovery doubles while you move.', effects: {} },
+    // Plains → Volcanic
+    'volcanic-vest-t3': { name: 'Elbow Room', text: 'While three or more enemies are near you, you reload faster.', effects: {} },
+    'volcanic-vest-t4': { name: 'Elbow Room', text: 'While three or more enemies are near you, you reload faster.', effects: {} },
+    'volcanic-charm-t3': { name: 'Breathing Room', text: 'Recovery rises with the distance to the nearest enemy.', effects: {} },
+    'volcanic-charm-t4': { name: 'Breathing Room', text: 'Recovery rises with the distance to the nearest enemy.', effects: {} },
+    // Swamp → Graveyard
+    'graveyard-vest-t4': { name: 'Oilskin', text: 'Damage over time on you is halved while you reload.', effects: {} },
+    'graveyard-charm-t4': { name: 'Snake Oil', text: 'Recovery doubles while you carry poison or bleed and no enemy is near you.', effects: {} },
+    // Cave → Trench
+    'trench-vest-t4': { name: 'Hunker', text: 'Your plating doubles while you reload.', effects: {} },
+    'trench-charm-t4': { name: 'Bivouac', text: 'Out-of-combat Recovery is much faster.', effects: {} },
+  },
 };

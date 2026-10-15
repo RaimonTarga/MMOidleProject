@@ -340,4 +340,24 @@ export const CONDUIT_GEAR: ClassGearDef = {
     'trench-vest-t4': { name: 'Pressure Seal', text: 'Every few seconds, each body, a summon or you, ignores the next debuff it would receive.', effects: {} },
     'trench-charm-t4': { name: 'Tidewater', text: 'Your Recovery doubles while you carry three or more debuffs.', effects: {} },
   },
+  // Retired-biome lines on the receiving biome's second base (`<id>-b`).
+  // Copied from the origin's last tier: Forest and Plains at T2, Swamp and Cave at T3.
+  movedLines: {
+    // Forest → Jungle
+    'jungle-vest-t3': { name: 'Bramble', text: 'Summons hit back a flat amount for every hit they take, so fast attackers hurt themselves.', effects: {} },
+    'jungle-vest-t4': { name: 'Bramble', text: 'Summons hit back a flat amount for every hit they take, so fast attackers hurt themselves.', effects: {} },
+    'jungle-charm-t3': { name: 'Sapbark', text: 'Summons regenerate HP after a few seconds without being hit.', effects: {} },
+    'jungle-charm-t4': { name: 'Sapbark', text: 'Summons regenerate HP after a few seconds without being hit.', effects: {} },
+    // Plains → Volcanic
+    'volcanic-vest-t3': { name: 'Shared Plating', text: 'Plating for the summons, and some for you.', effects: {} },
+    'volcanic-vest-t4': { name: 'Shared Plating', text: 'Plating for the summons, and some for you.', effects: {} },
+    'volcanic-charm-t3': { name: 'Herd', text: 'Fallen summons rebuild faster out of combat.', effects: {} },
+    'volcanic-charm-t4': { name: 'Herd', text: 'Fallen summons rebuild faster out of combat.', effects: {} },
+    // Swamp → Graveyard
+    'graveyard-vest-t4': { name: 'Poison Shift', text: 'Poison on you moves to a summon.', effects: {} },
+    'graveyard-charm-t4': { name: 'Bloodtithe', text: 'When a summon dies, you get back part of the HP you paid to build it.', effects: {} },
+    // Cave → Trench
+    'trench-vest-t4': { name: 'You Tank', text: 'You tank, with your own health and damage reduction, so the summons can all deal damage.', effects: {} },
+    'trench-charm-t4': { name: 'Deep Reserve', text: 'The rebuild queue works on two summons at once.', effects: {} },
+  },
 };
