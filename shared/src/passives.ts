@@ -94,6 +94,10 @@ export const DEFENSE_KEYS = [
   'defense.max-hit-refills-barrier',
   // Fraction of healing past max HP converted into a temporary ward.
   'defense.overheal-ward-pct',
+  // Charm wards (S7): a ward of this share of max HP for GAME_CONFIG.CHARM_WARD_MS, raised by a
+  // hit over a quarter of max HP (Mountain) or when the Chill freezes you (Tundra).
+  'defense.ward-hit-pct',
+  'defense.ward-freeze-pct',
   // Reactive plating: each hit taken adds a +`per-stack` plating stack up to
   // `max-stacks`; stacks hold for `duration-ms` after the last hit, then fade singly.
   'defense.hit-plating-per-stack',

@@ -82,6 +82,9 @@ assert(player.hasBarrier === undefined, "no barrier-pct means no HasBarrier comp
 const CHARM = "mountain-charm-t1";
 const ARMOR = "mountain-vest-t1";
 const charm = ITEM_DATABASE.get(CHARM);
+// The shared Mountain charm trades its barrier for a timed ward (S7); the barrier engine
+// stays for the Spirit, so this test lends the charm a barrier to exercise it.
+if (charm) charm.mechanicEffects = { "defense.barrier-pct": 0.18 };
 const armor = ITEM_DATABASE.get(ARMOR);
 assert(charm !== undefined, `test needs '${CHARM}' in the item database`);
 assert(armor !== undefined, `test needs '${ARMOR}' in the item database`);

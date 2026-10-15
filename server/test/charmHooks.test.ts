@@ -4,7 +4,7 @@
 import { baseRecoveryForTier } from "@mmo-idle/shared";
 import assert from "node:assert/strict";
 import {
-  ABILITY_DATABASE, GAME_CONFIG, STARTER_RUNE_IDS, applyStatusEffect, emptyEquipment,
+  ABILITY_DATABASE, ITEM_DATABASE, GAME_CONFIG, STARTER_RUNE_IDS, applyStatusEffect, emptyEquipment,
   getResource, abilityCooldownMs, modifiedAbilityCooldownMs,
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
@@ -34,6 +34,13 @@ function slices(id: string): PersistedPlayerSlices {
     usesSkills: { unlockedSkills: [], passives: {}, selectedClass: null, selectedSubVariant: null, selectedRange: null, combatArchetype: null },
   };
 }
+
+// The shared Mountain / Tundra charms trade their barrier for a timed ward (S7); the barrier
+// engine and its Guard hooks stay for the Spirit, so lend the T4 charms the old barrier lines.
+ITEM_DATABASE.get("mountain-charm-t4")!.mechanicEffects = { "defense.barrier-pct": 0.42, "guard.barrier-refill-pct": 0.3 };
+ITEM_DATABASE.get("tundra-charm-t4")!.mechanicEffects = {
+  "defense.barrier-pct": 0.37, "defense.barrier-stationary-recharge-pct": 0.025, "guard.barrier-refill-on-control-pct": 1,
+};
 
 initCombatSystems();
 const world = new World();

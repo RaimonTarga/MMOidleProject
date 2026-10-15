@@ -113,6 +113,12 @@ export const GAME_CONFIG = {
   RECOVERY_COMBAT_BASE_SHARE: 0.05,
   /** Default window for a Recovery multiplier line ("for a few seconds", ms). PLACEHOLDER. */
   RECOVERY_BOOST_MS: 4000,
+  /** How long a charm ward (S7: Mountain big hit, Tundra freeze) lasts (ms). PLACEHOLDER. */
+  CHARM_WARD_MS: 5000,
+  /** A charm ward's re-trigger gap (ms). PLACEHOLDER. */
+  CHARM_WARD_COOLDOWN_MS: 10000,
+  /** A "big hit" for the Mountain charm ward: this share of max HP. PLACEHOLDER. */
+  CHARM_WARD_BIG_HIT_PCT: 0.25,
   /** Default window for `defense.recovery-pulse-pct` (ms). */
   RECOVERY_PULSE_MS: 4000,
   /** Default window for `defense.recovery-on-kill-pct` (ms). Kills refresh it. */

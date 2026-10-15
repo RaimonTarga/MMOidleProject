@@ -50,15 +50,15 @@ export const tundraRecipeEntries = [
     description: "Build damage reduction over 4 seconds while holding position under attack. Moving sheds it over 1 second; once the attacks stop it fades over 2 seconds.",
   }],
 
-  // Charm: recovery flat; upgrades ramp barrier 0.12 -> 0.18 AND absorb 0.08 -> 0.14.
+  // Charm: a timed ward when the Chill freezes you (S7).
   ['tundra-charm-t3', {
     id: 'tundra-charm-t3', name: 'Frostward Charm',
     recipeGroup: 'tundra', requiredBiomeLevel: 3, slot: 'recovery',
-    cost: { blue: 75, purple: 25 }, stats: { "recovery": 68.3 }, // family-tag: barrier charm (anti-spike) → Heavy
-    mechanicEffects: { "defense.barrier-pct": 0.28, "defense.barrier-stationary-recharge-pct": 0.02, "guard.barrier-refill-on-control-pct": 0.5 },
+    cost: { blue: 75, purple: 25 }, stats: { "recovery": 68.3 }, // family-tag: timed ward charm (anti-spike) → Heavy
+    mechanicEffects: { "defense.ward-freeze-pct": 0.2 },
     tier: 3,
     icon: 'items/charms/frostward-charm.png',
-    description: 'A rime-cold ward that thickens while you hold your ground, and shatters back into place when you break free.',
+    description: 'A rime-cold ward: when the Chill freezes you, it takes part of the next blow.',
   }],
 
   ['tundra-boots-t3', {
@@ -122,11 +122,11 @@ export const tundraRecipeEntries = [
   ['tundra-charm-t4', {
     id: 'tundra-charm-t4', name: 'Glacial Ward',
     recipeGroup: 'tundra', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { blue: 220, purple: 30 }, stats: { "recovery": 168.2 }, // family-tag: barrier charm (anti-spike) → Heavy
-    mechanicEffects: { "defense.barrier-pct": 0.37, "defense.barrier-stationary-recharge-pct": 0.025, "guard.barrier-refill-on-control-pct": 1 },
+    cost: { blue: 220, purple: 30 }, stats: { "recovery": 168.2 }, // family-tag: timed ward charm (anti-spike) → Heavy
+    mechanicEffects: { "defense.ward-freeze-pct": 0.3 },
     tier: 4,
     icon: 'items/charms/glacial-ward.png',
-    description: 'A glacier in miniature: it never stops growing while you stand, and breaking free raises it whole again.',
+    description: 'A glacier in miniature: when the Chill freezes you, it raises a ward that takes part of the next blow.',
   }],
 
   ['tundra-charm-t4-deepfreeze', {

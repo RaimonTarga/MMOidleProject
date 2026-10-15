@@ -10,6 +10,7 @@ import { registerBarrierBreakHeal } from "./barrier/barrierBreakHeal";
 import { registerHitToDot, runDebtDrain } from "./mitigation/hitToDot";
 import { registerDamageAbsorb, runAbsorbDrain } from "./regen/damageAbsorb";
 import { registerRecoveryOnKill } from "./regen/recoveryOnKill";
+import { registerCharmWardOnBigHit, updateCharmFreezeWard } from "./barrier/charmWards";
 import { runRecovery, resetRecoveryRamp, registerRecoveryBoostOnBigHit } from "./regen/recovery";
 import { registerStationaryDr, runStationaryDr } from "./mitigation/stationaryDr";
 import { registerReactivePlating, runReactivePlating } from "./mitigation/reactivePlating";
@@ -54,6 +55,7 @@ export function initDefenseSystems(): void {
   withCombatRegistrationLabel('registerStationaryDr', registerStationaryDr);
   withCombatRegistrationLabel('registerBrambleReflect', registerBrambleReflect);
   withCombatRegistrationLabel('registerRecoveryBoostOnBigHit', registerRecoveryBoostOnBigHit);
+  withCombatRegistrationLabel('registerCharmWardOnBigHit', registerCharmWardOnBigHit);
 }
 
 /**
@@ -88,6 +90,7 @@ export function updateDefensiveSystems(
 
     if (runDebtDrain(world, player)) continue; // player died → skip remaining
 
+    updateCharmFreezeWard(world, player);
     runAbsorbDrain(world, player, dt);
     runBarrierRecharge(world, player, dt);
     // One Recovery pass covers OOC regen AND every in-combat regen effect: they

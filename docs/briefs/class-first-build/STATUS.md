@@ -99,10 +99,11 @@ When you're done, commit on your branch, write your report where the brief says,
 | CQ5-UI | [The Response rules editor, Resolve pips, callouts](CQ-squire-delegates.md) | Grok | F7-PANEL merged |
 | Next class | The Conduit (the old slice plan's map), then Slinger, Spirit, Apprentice | Conductor | — |
 | CS5-UI | [The Order editor and beat strip](CS5-striker-ui.md) | Grok | F7-PANEL merged |
-| S7 | The timed ward on the Mountain and Tundra charm bases (replacing their barrier) | Conductor or Grok | — (decided) |
 | G-GEAR-C | Second armor and charm bases for moved lines (T3–T4), every class | Conductor brief, Grok data | — (decided) |
 
 ## Known follow-ups (not yet a task)
+
+- **S7 follow-ups:** the ward is `defense.ward-hit-pct` (Mountain, a hit over `CHARM_WARD_BIG_HIT_PCT` of max HP) and `defense.ward-freeze-pct` (Tundra, the rising edge of the Frozen status on you, whoever applied it); size, 5 s window and 10 s gap between raises are placeholders (`GAME_CONFIG.CHARM_WARD_*`). The barrier engine, its Guard hooks and the Mountain armor-branch barrier recipes stay for the Spirit (XC1). `barrier.test` and `charmHooks.test` lend the T4/T1 charms the old barrier lines in-test. The 6 charm entries in `nonWeaponLadders.fixture.ts` were repointed to the ward values.
 
 - **S4 follow-ups:** the always-on share (`RECOVERY_COMBAT_BASE_SHARE` 0.05), the boost window (`RECOVERY_BOOST_MS` 4 s), Rhythm's 20 s build-up and the x2/x3 factors are placeholders. Multipliers apply to the always-on share only (base + Old Guard), not to pulse/kill/skill sources. Conduit's Cairnstone carries the same big-hit keys (threshold a quarter of max HP). The other classes' Recovery lines are wired when their gear lines land.
 
@@ -151,6 +152,7 @@ When you're done, commit on your branch, write your report where the brief says,
 
 | ID | Task | Merged |
 |---|---|---|
+| S7 | The timed ward on the Mountain (big hit) and Tundra (frozen) charm bases, replacing their barrier; `charmWards.test.ts` | next commit |
 | S4 | The always-on in-combat Recovery share for every class; Recovery-multiplier lines (Rhythm, Cairnstone, Counterbalance, Stone Patience); `recoveryBoost.test.ts` | `76ae8143` + test fix |
 | Planted, Striker FX | Braced Squire takes no forced movement at all; Striker special-move FX and Swiftblade branch deleted (`attackProgression` count 36) | `bb1a196e` |
 | I1 | Agent worktree script | `c363ff18` |

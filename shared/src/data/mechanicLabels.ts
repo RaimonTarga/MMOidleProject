@@ -68,6 +68,8 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   'defense.barrier-delay-ms':             { label: 'Barrier delay', companion: true },
   'defense.barrier-stationary-recharge-pct': { label: 'Barrier recharge while holding' },
   'defense.dot-resistance':               { label: 'DoT resist' },
+  'defense.ward-hit-pct':                 { label: 'Ward after a big hit' },
+  'defense.ward-freeze-pct':              { label: 'Ward when frozen' },
   'defense.ooc-recovery-pct':             { label: 'Out-of-combat healing' },
   'defense.recovery-rhythm-max':          { label: 'Rhythm' },
   'defense.recovery-rhythm-ms':           { label: 'Rhythm build-up', companion: true },

@@ -77,14 +77,14 @@ export const mountainRecipeEntries = [
     // Heavy").
   }],
 
-  // CHARM — Barrier. Capacity is the only axis that grows at T1 on purpose:
+  // CHARM — a timed ward after a big hit (S7; the barrier left the shared bases). Size is the only axis that grows at T1 on purpose:
   // recharge rate and delay are held at their engine defaults so future items
   // have those axes free to specialise (baseline §9.5).
   ['mountain-charm-t1', {
     id: 'mountain-charm-t1', name: 'Granite Barrier',
     recipeGroup: 'mountain', requiredBiomeLevel: 3, slot: 'recovery',
     cost: { blue: 18 }, stats: { "recovery": 4.5 },
-    mechanicEffects: { "defense.barrier-pct": 0.18 },
+    mechanicEffects: { "defense.ward-hit-pct": 0.12 },
     tier: 1,
     icon: 'items/charms/granite-barrier.png',
     description: 'A palm of carved granite, cold and patient as the peak it came from.',
@@ -137,8 +137,8 @@ export const mountainRecipeEntries = [
   ['mountain-charm-t2', {
     id: 'mountain-charm-t2', name: 'Iron Bulwark',
     recipeGroup: 'mountain', requiredBiomeLevel: 9, slot: 'recovery',
-    cost: { blue: 42 }, stats: { "recovery": 8.7 }, // family-tag: barrier pool (anti-spike) → Heavy
-    mechanicEffects: { "defense.barrier-pct": 0.26, "guard.barrier-refill-pct": 0.15 },
+    cost: { blue: 42 }, stats: { "recovery": 8.7 }, // family-tag: timed ward (anti-spike) → Heavy
+    mechanicEffects: { "defense.ward-hit-pct": 0.16 },
     tier: 2,
     icon: 'items/charms/iron-bulwark.png',
     description: 'A ward-stone the mountainfolk pass down, hand to weathered hand.',
@@ -186,11 +186,11 @@ export const mountainRecipeEntries = [
   ['mountain-charm-t3', {
     id: 'mountain-charm-t3', name: 'Bastion Heart',
     recipeGroup: 'mountain', requiredBiomeLevel: 15, slot: 'recovery',
-    cost: { blue: 100, red: 25 }, stats: { "recovery": 28.2 }, // family-tag: barrier pool (anti-spike) → Heavy
-    mechanicEffects: { "defense.barrier-pct": 0.34, "guard.barrier-refill-pct": 0.2 },
+    cost: { blue: 100, red: 25 }, stats: { "recovery": 28.2 }, // family-tag: timed ward (anti-spike) → Heavy
+    mechanicEffects: { "defense.ward-hit-pct": 0.2 },
     tier: 3,
     icon: 'items/charms/bastion-heart.png',
-    description: 'A core of mountain-heart stone that raises a wall of itself, over and over.',
+    description: 'A core of mountain-heart stone: after a heavy blow it raises a ward that swallows part of the next.',
   }],
 
   ['mountain-boots-t3', {
@@ -262,11 +262,11 @@ export const mountainRecipeEntries = [
   ['mountain-charm-t4', {
     id: 'mountain-charm-t4', name: 'Fortress Heart',
     recipeGroup: 'mountain', requiredBiomeLevel: 21, slot: 'recovery',
-    cost: { blue: 220, red: 30 }, stats: { "recovery": 77.8 }, // family-tag: barrier pool (anti-spike) → Heavy
-    mechanicEffects: { "defense.barrier-pct": 0.42, "guard.barrier-refill-pct": 0.3 },
+    cost: { blue: 220, red: 30 }, stats: { "recovery": 77.8 }, // family-tag: timed ward (anti-spike) → Heavy
+    mechanicEffects: { "defense.ward-hit-pct": 0.25 },
     tier: 4,
     icon: 'items/charms/fortress-heart.png',
-    description: 'A keep in miniature: it throws up a wall, lets it fall, and throws up another, tireless as siegework.',
+    description: 'A keep in miniature: a hard blow raises a ward that swallows part of the next one.',
   }],
 
   // Branch: a smaller pool that pays out when it breaks.
