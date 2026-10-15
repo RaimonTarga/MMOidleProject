@@ -3,6 +3,7 @@ import { FormationEditor } from './FormationEditor';
 import { LoadoutEditor } from './LoadoutEditor';
 import { OrderEditor } from './OrderEditor';
 import { ResponsesEditor } from './ResponsesEditor';
+import { ThresholdsEditor } from './ThresholdsEditor';
 
 /**
  * The class's own editor: the Striker's Order, the Squire's Response rules, the Conduit's
@@ -13,6 +14,7 @@ export function ClassSystemEditor({ view }: { view: ClassScreenView }) {
   if (view.systemKind === 'responses') return <ResponsesEditor view={view} />;
   if (view.systemKind === 'formation') return <FormationEditor view={view} />;
   if (view.systemKind === 'loadout') return <LoadoutEditor view={view} />;
+  if (view.systemKind === 'thresholds') return <ThresholdsEditor view={view} />;
   return (
     <p className="class-panel__editor">
       {`The ${view.systemName} editor arrives with this class's track.`}

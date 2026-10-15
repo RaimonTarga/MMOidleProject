@@ -1,0 +1,113 @@
+.storm-gauge {
+  margin: 3px 0;
+  min-width: 0;
+}
+
+.storm-gauge__readout {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 3px;
+  color: var(--hud-text-muted);
+  font: 10px/1.3 monospace;
+}
+
+.storm-gauge__mark {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--hud-primary-strong, #aabbff);
+  transform: translateX(-1px);
+}
+
+.storm-gauge__mark--floor {
+  width: 3px;
+  background: var(--hud-warning, #f5c542);
+}
+
+.storm-bottle {
+  position: relative;
+  height: 270px;
+  margin: 24px 0;
+}
+
+.storm-bottle__track {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 40px;
+  overflow: hidden;
+  border: 1px solid var(--hud-edge-medium);
+  border-radius: 5px;
+  background: var(--hud-material-inset);
+}
+
+.storm-bottle__fill {
+  position: absolute;
+  inset: auto 0 0;
+  background: linear-gradient(0deg, #3344aa, #7766ee, #aabbff);
+}
+
+.storm-bottle__full,
+.storm-bottle__empty {
+  position: absolute;
+  left: 0;
+  color: var(--hud-text-dim);
+  font: 10px/1.3 monospace;
+}
+
+.storm-bottle__full { bottom: calc(100% + 6px); }
+.storm-bottle__empty { top: calc(100% + 6px); }
+
+.storm-bottle__mark {
+  position: absolute;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 0;
+  padding-left: 46px;
+}
+
+.storm-bottle__line {
+  position: absolute;
+  left: 0;
+  width: 40px;
+  border-top: 2px solid var(--hud-primary-strong, #aabbff);
+}
+
+.storm-bottle__mark--floor .storm-bottle__line {
+  border-top-color: var(--hud-warning, #f5c542);
+}
+
+.storm-bottle__height {
+  width: 60px;
+  flex-shrink: 0;
+  color: var(--hud-text-muted);
+  font: 11px/1.3 monospace;
+}
+
+.storm-bottle__mark--floor .storm-bottle__height {
+  color: var(--hud-warning, #f5c542);
+}
+
+.storm-bottle__chips {
+  display: flex;
+  gap: 4px;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.storm-bottle__chip {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 4px;
+  padding: 2px 4px;
+  border: 1px solid var(--hud-edge-divider);
+  border-radius: 2px;
+  background: var(--hud-material-inset);
+  color: var(--hud-text);
+  font-size: 11px;
+}

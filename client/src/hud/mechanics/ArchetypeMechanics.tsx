@@ -8,6 +8,7 @@ import { ReloadMechanic } from './ReloadMechanic';
 import { ResolvePips } from './ResolvePips';
 import { SummonerMechanic } from './SummonerMechanic';
 import { useMechanicViewModel } from './useMechanicViewModel';
+import { useThresholdsView } from '../../ui/class/useThresholdsView';
 import './mechanics.css';
 
 function ClassMechanic({ model }: { model: NonNullable<ReturnType<typeof useMechanicViewModel>> }) {
@@ -24,16 +25,19 @@ function ClassMechanic({ model }: { model: NonNullable<ReturnType<typeof useMech
 
 export function ArchetypeMechanics({ compact = false }: { compact?: boolean }) {
   const model = useMechanicViewModel();
+  const thresholds = useThresholdsView();
+  // The Spirit's storm already occupies the shield conduit beside HP.
+  const shownModel = model?.kind === 'energy' && thresholds ? null : model;
 
   // Evasion is not a class mechanic, so it renders on its own presence rather
   // than the archetype — including for a player with no class selected yet. The
   // compact mobile strip deliberately does not take it: that renderer exists to
   // stay dense, and a second frame there would defeat it.
-  if (compact) return model ? <CompactMechanic model={model} /> : null;
+  if (compact) return shownModel ? <CompactMechanic model={shownModel} /> : null;
 
   return (
     <>
-      {model && <ClassMechanic model={model} />}
+      {shownModel && <ClassMechanic model={shownModel} />}
       <EvasionInstrument />
     </>
   );

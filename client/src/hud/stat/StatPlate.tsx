@@ -5,6 +5,8 @@ import { useChangeFlash } from '../primitives/useChangeFlash';
 import { GradientConduit } from '../primitives/GradientConduit';
 import { ReadoutBar } from '../ReadoutBar';
 import { FRAME_TOKENS } from '../../render/readoutTokens';
+import { StormGauge } from '../StormGauge';
+import { useThresholdsView } from '../../ui/class/useThresholdsView';
 import './statPlate.css';
 
 /**
@@ -46,6 +48,7 @@ export interface PlateCrown {
 }
 
 function Crown({ crown }: { crown: PlateCrown }) {
+  const thresholds = useThresholdsView();
   const max = Math.max(0, crown.maxHp);
   const pct = (value: number) => (max > 0 ? Math.min(100, Math.max(0, (value / max) * 100)) : 0);
 
@@ -71,9 +74,9 @@ function Crown({ crown }: { crown: PlateCrown }) {
           <span className={`status-dot ${crown.status}`} title={crown.status} />
         </div>
 
-        {(crown.barrierMax > 0 || crown.ward > 0) && (
+        {((!thresholds && crown.barrierMax > 0) || crown.ward > 0) && (
           <div className="stat-crown__readout">
-            {crown.barrierMax > 0 && (
+            {!thresholds && crown.barrierMax > 0 && (
               <span className="stat-crown__barrier-read" title="Barrier — absorbed before health">
                 {Math.ceil(crown.barrier)}<span className="stat-crown__max"> / {crown.barrierMax}</span>
               </span>
@@ -120,7 +123,7 @@ function Crown({ crown }: { crown: PlateCrown }) {
           {crown.hpTip?.node}
         </div>
 
-        {crown.barrierMax > 0 && (
+        {thresholds ? <StormGauge view={thresholds} /> : crown.barrierMax > 0 && (
           <GradientConduit
             className={`stat-crown__barrier${crown.barrierRecharging ? ' is-recharging' : ''}`}
             fraction={barrierFill}
