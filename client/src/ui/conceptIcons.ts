@@ -332,6 +332,9 @@ const CLASS_PIECE_STATUS_ICONS: Record<string, string> = {
   'squire-guard': 'squire-guard',
   // Parry has no art of its own yet: it wears the Guard icon until the designer swaps it.
   'squire-parry': 'squire-guard',
+  // Frostward and Rampage wear the Guard icon until the designer swaps in their own.
+  'squire-frostward': 'squire-guard',
+  'squire-rampage': 'squire-guard',
 };
 
 export function statusIconSource(id: string, instanceKey?: string): AssetIconSource | null {

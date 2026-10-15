@@ -22,6 +22,8 @@ export type CooldownMechanicModel = {
   /** Pip fill and bar size. Meaningful when `responses` is set. */
   resolve: number;
   resolveMax: number;
+  /** The pips that arm the slam; the bar can be longer than this. */
+  resolveBudget: number;
 };
 
 export type EnergyMechanicModel = {

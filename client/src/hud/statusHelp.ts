@@ -60,6 +60,8 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   // -- The Striker's Order (class-first build plan CS.1) ------------------------
   'squire-guard': b('Braced', 'You raised your shield against the telegraphed blow aimed at you: when it lands it deals much less, and catching it refunds Resolve.'),
   'squire-parry': b('Parrying', 'You set yourself against the telegraphed melee blow aimed at you: it is negated and you counter at once. Ground telegraphs and ranged shots are not parried and fall to your Guard instead.'),
+  'squire-frostward': b('Frostward', 'You held the Tundra Chill below the freeze: it cannot climb past the hold while this lasts. Hearth heals you each second it stands.'),
+  'squire-rampage': b('Rampage', 'Your slam set you swinging faster: attack speed is raised for a short burst, and each new slam starts it again.'),
   'striker-focus': b('Focus', 'Your opener focused you: every beat of this combo swings faster, until its finisher.'),
   // -- Abilities -------------------------------------------------------------
   'ability-guard': b('Guard', 'Your Guard is up: incoming damage is reduced for the window. Guard potency deepens the reduction and Guard duration lengthens the window.'),

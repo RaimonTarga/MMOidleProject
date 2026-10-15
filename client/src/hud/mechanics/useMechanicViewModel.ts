@@ -92,6 +92,7 @@ export function useMechanicViewModel(): MechanicViewModel | null {
         responses: classConfig?.system.kind === 'responses',
         resolve: Math.max(0, playerView?.resolve ?? 0),
         resolveMax: Math.max(0, playerView?.resolveMax ?? 0),
+        resolveBudget: Math.max(0, playerView?.resolveBudget ?? 0),
       };
 
     case 'energy':

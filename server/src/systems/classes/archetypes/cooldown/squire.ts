@@ -17,8 +17,9 @@
  * Tier 3 (T3-SQUIRE, §8.6, §8.16): Anchor, Chain Hook, Frostward and Backdraft; Guard II's
  * second catch; the nine specializations (read from `usesSkills.specializationId`); Deep
  * Winter and Kindling; and the Tundra and Volcanic gear jobs. The three T3 moments the
- * registry does not record yet (`drag-or-push`, `chill-threshold`, ordinary `target-flees`) are
- * read here, in `LOCAL_MOMENTS`, until the conductor adds them to `moments/`.
+ * registry has the real `chill-threshold` and `fire-attack`; two reads stay local, in
+ * `LOCAL_MOMENTS`: `drag-or-push` (the registry's event fires as the push happens, too late to
+ * plant, so Anchor looks ahead at the wind-up) and ordinary kiters for `target-flees`.
  */
 import {
   ABILITY_UNYIELDING_EFFECT_ID,
@@ -746,7 +747,6 @@ function pushOrPullEndsAt(world: World, player: PlayerEntity, now: number): numb
  */
 const LOCAL_MOMENTS: Partial<Record<MomentId, (world: World, player: PlayerEntity, now: number, p: Record<string, number>) => boolean>> = {
   'drag-or-push': (world, player, now) => pushOrPullEndsAt(world, player, now) !== undefined,
-  'chill-threshold': (_world, player, _now, p) => (getStatusEffect(player.tracksCombat, TUNDRA_CHILL_EFFECT_ID)?.stacks ?? 0) >= (p['thresholdStacks'] ?? 3),
   // The registry's `target-flees` only knows a boss getting away.
   'target-flees': (world, player) => {
     const target = attackTargetOf(world, player);
@@ -1205,7 +1205,7 @@ export function initSquire(): void {
   });
 
   // Backdraft (T3, a counter): a fire attack or burning shot is thrown back at its source.
-  // STAND-IN for the `fire-attack` moment: read when the blow lands, from the attacker's style.
+  // Answers the `fire-attack` moment, thrown back at the attacker whose style is fire.
   registerCombatListener('onDamageTaken', (ctx, world) => {
     if (ctx.attackerType !== 'monster' || ctx.defenderType !== 'player' || ctx.metadata['evadeFull'] === true) return;
     const player = ctx.defender;
@@ -1213,6 +1213,7 @@ export function initSquire(): void {
     if (!r || !MONSTER_DATABASE.get(ctx.attacker.isMonster.monsterTypeId)?.attackStyle.includes('fire')) return;
     const piece = PIECES.get('squire-backdraft')!;
     const now = attackNow(ctx);
+    if (!momentActive(world, player, 'fire-attack', undefined, now)) return;
     const cs = player.tracksCombat;
     const p = pieceParams(r, piece);
     const cost = answersFree(player, now) ? 0 : p.cost;
@@ -1313,6 +1314,10 @@ export function updateSquire(world: World, dt: number, now: number): boolean {
     const cd = player.usesCooldown;
     // The bar's size: the budget, wider with Deep Winter or Bastion.
     const cap = resolveCap(world, player, r);
+    if (cd.resolveBudget !== r.ctx.budget) {
+      cd.resolveBudget = r.ctx.budget;
+      markSliceDirty(world, player, 'usesCooldown');
+    }
     if (cd.resolveMax !== cap) {
       cd.resolveMax = cap;
       addResolve(world, player, 0);

@@ -6,6 +6,8 @@ export interface UsesCooldown {
   resolve: number;
   /** The bar's size in pips: the class budget. */
   resolveMax: number;
+  /** The pips that arm the slam. The bar can grow past it (Deep Winter, Bastion); the HUD marks it. */
+  resolveBudget: number;
 }
 
 export function initUsesCooldown(): UsesCooldown {
@@ -13,5 +15,6 @@ export function initUsesCooldown(): UsesCooldown {
     executionCooldownPct: 0,
     resolve:              0,
     resolveMax:           0,
+    resolveBudget:        0,
   };
 }

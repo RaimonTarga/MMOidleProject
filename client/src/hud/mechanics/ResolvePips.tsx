@@ -17,6 +17,7 @@ function resolveHelp(
   ready: boolean,
   channeling: boolean,
   lastBreath: boolean,
+  budget: number,
 ): ReactNode {
   const shown = formatPips(resolve);
   const max = formatPips(resolveMax);
@@ -26,6 +27,12 @@ function resolveHelp(
         Resolve fills when you are hit, from each enemy on you, and when an
         answer lands. Responses spend it. A full bar arms the slam.
       </div>
+      {budget > 0 && resolveMax > budget + 1e-6 && (
+        <div style={{ marginTop: 6 }}>
+          Your bar is wider than the {formatPips(budget)} pips that arm the slam (dashed pips). The slam
+          hits harder the fuller the bar is when it lands.
+        </div>
+      )}
       {lastBreath && (
         <div style={{ marginTop: 6 }}>
           Last Breath: when your HP runs low it spends the whole bar to heal you.
@@ -50,6 +57,9 @@ export function ResolvePips({ model }: { model: CooldownMechanicModel }) {
   const resolve = model.resolve;
   const resolveMax = model.resolveMax;
   const pipCount = Math.max(0, Math.round(resolveMax));
+  const budget = model.resolveBudget;
+  // Pips past the slam budget (Deep Winter, Bastion) are drawn dashed.
+  const armPips = budget > 0 ? Math.round(budget) : pipCount;
   const config = useAtomValue(classConfigAtom);
   const lastBreath = config?.system.kind === 'responses'
     && config.system.rules.some((rule) => rule.pieceId === 'squire-last-breath' && rule.enabled);
@@ -91,7 +101,7 @@ export function ResolvePips({ model }: { model: CooldownMechanicModel }) {
   return (
     <MechanicFrame
       kind="cooldown"
-      help={resolveHelp(resolve, resolveMax, model.executionReady, model.isChanneling, lastBreath)}
+      help={resolveHelp(resolve, resolveMax, model.executionReady, model.isChanneling, lastBreath, budget)}
       title="Resolve"
       status={status}
       state={pulse ? 'fired' : model.isChanneling ? 'channeling' : model.executionReady ? 'ready' : undefined}
@@ -109,7 +119,7 @@ export function ResolvePips({ model }: { model: CooldownMechanicModel }) {
         {Array.from({ length: pipCount }, (_, index) => {
           const amount = Math.max(0, Math.min(1, resolve - index));
           return (
-            <span key={index} className="mechanic-resolve__pip" aria-hidden="true">
+            <span key={index} className={`mechanic-resolve__pip${index >= armPips ? ' mechanic-resolve__pip--extra' : ''}`} aria-hidden="true">
               <i
                 className="mechanic-resolve__fill"
                 style={{ height: `${amount * 100}%` }}

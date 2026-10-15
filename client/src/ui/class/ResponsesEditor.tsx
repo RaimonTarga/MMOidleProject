@@ -16,6 +16,7 @@ import {
   combatArchetypeAtom,
   disciplineIdAtom,
   playerTierAtom,
+  specializationIdAtom,
 } from '../../hud/atoms';
 import { GameIcon } from '../GameIcon';
 import { classPieceIconSource, trophyIconSource } from '../conceptIcons';
@@ -23,6 +24,7 @@ import { rankMark } from './format';
 import './responsesEditor.css';
 
 const DISCIPLINES = classKitFor('cooldown').disciplines;
+const SPECIALIZATIONS = classKitFor('cooldown').specializations;
 /** The piece each discipline's pick unlocks (Parry, Intercept, Unbowed). */
 const DISCIPLINE_PIECE_IDS = new Set(DISCIPLINES.flatMap((d) => (d.pieceId ? [d.pieceId] : [])));
 
@@ -46,6 +48,7 @@ export function ResponsesEditor({ view }: { view: ClassScreenView }) {
   const biomeLevel = useAtomValue(biomeLevelAtom);
   const bossesCleared = useAtomValue(bossesClearedAtom);
   const disciplineId = useAtomValue(disciplineIdAtom);
+  const specializationId = useAtomValue(specializationIdAtom);
   const playerTier = useAtomValue(playerTierAtom);
 
   const responses = useMemo(() => composeResponsesView({
@@ -97,6 +100,8 @@ export function ResponsesEditor({ view }: { view: ClassScreenView }) {
   }
 
   const picked = DISCIPLINES.find((d) => d.id === disciplineId);
+  const pickedSpec = SPECIALIZATIONS.find((s) => s.id === specializationId && s.disciplineId === disciplineId);
+  const specOptions = SPECIALIZATIONS.filter((s) => s.disciplineId === disciplineId);
 
   return (
     <div className="responses-editor">
@@ -114,6 +119,24 @@ export function ResponsesEditor({ view }: { view: ClassScreenView }) {
           <ul className="responses-editor__hold">
             {DISCIPLINES.map((d) => (
               <li key={d.id}>{`${d.name}: ${d.fantasy}`}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {pickedSpec ? (
+        <section className="responses-editor__discipline" aria-label="Specialization">
+          <h4 className="class-panel__subheading">{`Specialization: ${pickedSpec.name}`}</h4>
+          <p className="class-panel__line">{pickedSpec.text}</p>
+        </section>
+      ) : picked && playerTier >= 3 && (
+        <section className="responses-editor__discipline" aria-label="Specialization">
+          <h4 className="class-panel__subheading">Pick a specialization</h4>
+          <p className="class-panel__line">
+            Tier 3 lets you bend your Resolve or your slam. Choose one in the Passive Tree.
+          </p>
+          <ul className="responses-editor__hold">
+            {specOptions.map((s) => (
+              <li key={s.id}>{`${s.name}: ${s.text}`}</li>
             ))}
           </ul>
         </section>

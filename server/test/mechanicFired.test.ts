@@ -159,7 +159,7 @@ function exchange(player: PlayerEntity, defender: ReturnType<typeof monster>, me
   // Hand-attach the second root's slice rather than going through the sync, which
   // is deliberately exclusive.
   (player as { usesCooldown?: unknown }).usesCooldown =
-    { executionCooldownPct: 0, resolve: 0, resolveMax: 0 };
+    { executionCooldownPct: 0, resolve: 0, resolveMax: 0, resolveBudget: 0 };
   const target = monster(540);
 
   emitCombatEvent('onHit', exchange(player, target, { empoweredAttack: true, mechanicConsumed: true }), world);

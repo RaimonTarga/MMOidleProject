@@ -135,6 +135,8 @@ export interface PlayerView {
   /** The Squire's Resolve in pips (class-first build plan CQ.1), and the bar's size. */
   resolve: number;
   resolveMax: number;
+  /** The pips that arm the slam; below `resolveMax` when Deep Winter or Bastion widen the bar. */
+  resolveBudget: number;
   energyCount: number;
   energyMax: number;
   /** Tide's phase, or '' when the Spirit has no tide. */
@@ -381,6 +383,7 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     executionCooldownPct: entity.usesCooldown?.executionCooldownPct ?? 0,
     resolve: entity.usesCooldown?.resolve ?? 0,
     resolveMax: entity.usesCooldown?.resolveMax ?? 0,
+    resolveBudget: entity.usesCooldown?.resolveBudget ?? 0,
     energyCount: entity.usesEnergy?.energy ?? 0,
     energyMax: entity.usesEnergy?.energyMax ?? 100,
     tidePhase: entity.usesEnergy?.tide ?? '',

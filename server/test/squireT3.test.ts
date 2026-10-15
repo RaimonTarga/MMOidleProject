@@ -249,6 +249,7 @@ function swing(world: World, player: PlayerEntity, target: MonsterEntity): void 
   const imp = spawnType('test-squire-t3-fire', 600, 400);
   imp.dealsDamage.attack = 100;
   engage(world, player, imp);
+  step(world, player); // the real `fire-attack` moment reads this tick's fight snapshot
   addResolve(world, player, 2);
   player.hasHealth.hp = 5000;
   const hp = imp.hasHealth.hp;
@@ -262,6 +263,7 @@ function swing(world: World, player: PlayerEntity, target: MonsterEntity): void 
   const plain = setup({ rules: ['squire-backdraft'] });
   const rat = plain.spawn(430, 420);
   engage(plain.world, plain.player, rat);
+  step(plain.world, plain.player);
   addResolve(plain.world, plain.player, 2);
   const ratHp = rat.hasHealth.hp;
   runMonsterAttack(plain.world, rat, plain.player, clock);

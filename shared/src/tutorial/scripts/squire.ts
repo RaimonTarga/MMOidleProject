@@ -18,6 +18,9 @@
  * boss with the trophy it ranks up. The guide has no step for the discipline pick
  * (it is made on the Passive Tree and no tutorial condition reads it), so that
  * line rides on the first T2 farm and shows the moment Tier 2 lands.
+ *
+ * The Tier-3 stretch (bible 8.6, 8.16) follows the same shape: the specialization line, then
+ * each T3 zone (Tundra and Volcanic are new) with its lesson line and its boss.
  */
 import { biomeLevelCap } from '../../config/gameConfig';
 import { LESSON_ZONE_LEVEL } from '../../classKits/kitHelpers';
@@ -175,7 +178,7 @@ export function buildSquireBeats(): TutorialBeat[] {
     ),
   ]);
 
-  return [...beats, ...buildSquireTierTwoBeats()];
+  return [...beats, ...buildSquireTierTwoBeats(), ...buildSquireTierThreeBeats()];
 }
 
 type T2Biome = 'plains' | 'forest' | 'mountain' | 'swamp' | 'cave' | 'jungle' | 'desert';
@@ -343,5 +346,153 @@ export function buildSquireTierTwoBeats(): TutorialBeat[] {
       'Fighting through the Desert.',
     ),
     t2Boss('desert', "The Desert boss gives you the Executioner's Oath: your slam comes early on a nearly dead enemy."),
+  ];
+}
+
+type T3Biome = T2Biome | 'tundra' | 'volcanic';
+
+const T3_CHAPTER: Record<T3Biome, string> = {
+  plains: 'Tier 3: The Plains',
+  forest: 'Tier 3: The Forest',
+  mountain: 'Tier 3: The Mountain',
+  swamp: 'Tier 3: The Swamp',
+  cave: 'Tier 3: The Cave',
+  jungle: 'Tier 3: The Jungle',
+  desert: 'Tier 3: The Desert',
+  tundra: 'Tier 3: The Tundra',
+  volcanic: 'Tier 3: The Volcanic',
+};
+
+function t3Ref(biome: T3Biome): TutorialNodeRef {
+  return { kind: 'biome', biomeGroup: biome, tier: 3 };
+}
+
+function t3Lesson(biome: T3Biome): number {
+  return absoluteZoneLevel({ kind: 'zone', biome, tier: 3, level: LESSON_ZONE_LEVEL });
+}
+
+function t3Cap(biome: T3Biome): number {
+  return biomeLevelCap(3, biome);
+}
+
+function t3Farm(id: string, biome: T3Biome, level: number, say: string, waiting: string): TutorialBeat {
+  return {
+    id,
+    chapter: T3_CHAPTER[biome],
+    say,
+    waiting,
+    progress: [{ type: 'biomeLevel', biomeGroup: biome, level }],
+    steps: [{
+      type: 'farm',
+      at: t3Ref(biome),
+      until: { type: 'biomeLevelAtLeast', biomeGroup: biome, level },
+    }],
+  };
+}
+
+function t3Boss(biome: T3Biome, say: string): TutorialBeat {
+  return {
+    id: `squire3:boss-${biome}`,
+    chapter: T3_CHAPTER[biome],
+    say,
+    waiting: `Fighting the ${biome} boss.`,
+    steps: [{ type: 'attemptBoss', biomeGroup: biome, tier: 3 }],
+  };
+}
+
+/** The Tier-3 beats, after the Tier-2 stretch. Lines name the piece and say what it does; no numbers. */
+export function buildSquireTierThreeBeats(): TutorialBeat[] {
+  return [
+    t3Farm(
+      'squire3:specialization',
+      'mountain',
+      t3Lesson('mountain') - 1,
+      'Tier 3 is open. Pick a specialization in the Passive Tree: three choices, all under your discipline, each bending your Resolve or your slam.',
+      'Fighting on the Mountain while you choose.',
+    ),
+    t3Farm(
+      'squire3:guard-two',
+      'mountain',
+      t3Cap('mountain'),
+      'Guard is stronger: after it catches a blow, your shield stays up for a second one.',
+      'Fighting up the Mountain.',
+    ),
+    t3Boss('mountain', 'The Mountain boss ranks your Faultline up: the slam line reaches further.'),
+    t3Farm(
+      'squire3:earthstamp-two',
+      'cave',
+      t3Cap('cave'),
+      'Earthstamp is stronger: it knocks down everything around you, not only the one that burrowed.',
+      'Fighting through the Cave.',
+    ),
+    t3Boss('cave', 'The Cave boss ranks your Corrode up: each slam strips plating from more stacks.'),
+    t3Farm(
+      'squire3:swamp',
+      'swamp',
+      t3Lesson('swamp'),
+      'The Swamp now drags and pushes. Fight on until you learn to stand against it.',
+      'Fighting through the Swamp.',
+    ),
+    t3Farm(
+      'squire3:anchor',
+      'swamp',
+      t3Cap('swamp'),
+      'Anchor is on: when something drags or pushes you, you plant your feet and it fills your Resolve.',
+      'Fighting through the Swamp.',
+    ),
+    t3Boss('swamp', 'The Swamp boss ranks your Rot-Eater up: ailments fill more Resolve still.'),
+    t3Farm(
+      'squire3:jungle',
+      'jungle',
+      t3Lesson('jungle'),
+      'The Jungle now hunts and flees. Fight on.',
+      'Fighting through the Jungle.',
+    ),
+    t3Farm(
+      'squire3:chain-hook',
+      'jungle',
+      t3Cap('jungle'),
+      'Chain Hook is on: an enemy that flees is hooked and dragged back to you.',
+      'Fighting through the Jungle.',
+    ),
+    t3Boss('jungle', 'The Jungle boss ranks your Strangler Vine up.'),
+    t3Farm(
+      'squire3:challenge-two',
+      'desert',
+      t3Cap('desert'),
+      'Challenge is stronger: the enemies you pull in cannot move away for a moment.',
+      'Fighting through the Desert.',
+    ),
+    t3Boss('desert', "The Desert boss ranks your Executioner's Oath up."),
+    t3Farm(
+      'squire3:tundra',
+      'tundra',
+      t3Lesson('tundra'),
+      'The Tundra is new: its Chill builds on you until you freeze. Fight on.',
+      'Fighting through the Tundra.',
+    ),
+    t3Farm(
+      'squire3:frostward',
+      'tundra',
+      t3Cap('tundra'),
+      'Frostward is on: when the Chill on you is about to freeze you, you hold it there for a few seconds.',
+      'Fighting through the Tundra.',
+    ),
+    t3Boss('tundra', 'The Tundra boss gives you Deep Winter: your Resolve bar can fill past full, and the slam grows with it.'),
+    t3Farm(
+      'squire3:volcanic',
+      'volcanic',
+      t3Lesson('volcanic'),
+      'The Volcanic is new: its Heat builds and its gunners burn you. Fight on.',
+      'Fighting through the Volcanic.',
+    ),
+    t3Farm(
+      'squire3:backdraft',
+      'volcanic',
+      t3Cap('volcanic'),
+      'Backdraft is on: a fire attack or burning shot is thrown back at whoever fired it.',
+      'Fighting through the Volcanic.',
+    ),
+    t3Boss('volcanic', 'The Volcanic boss gives you Kindling: the longer a fight lasts, the more every gain of Resolve is worth.'),
   ];
 }

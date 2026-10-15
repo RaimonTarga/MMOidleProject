@@ -1134,6 +1134,11 @@
   height: 28px;
 }
 
+.mechanic-resolve__pip--extra {
+  border-color: #6f8fb0;
+  border-style: dashed;
+}
+
 .mechanic-resolve__fill {
   position: absolute;
   right: 0;
