@@ -1,7 +1,7 @@
-import type { PlayerView, Vec2 } from '@mmo-idle/shared';
+import type { Vec2 } from '@mmo-idle/shared';
 import { isDeathOverlayActive, setAutoPath } from '../hud/atoms';
 import { GAME_CONFIG } from '@mmo-idle/shared';
-import { sendCommandSummons, sendMoveToNeighbor } from '../net/intents';
+import { sendMoveToNeighbor } from '../net/intents';
 import type { GameScene } from '../scenes/GameScene';
 import { cancelAutoPath, setAutoMode } from './autoPath';
 import { hasKeyboardMoveIntent, isHoldStill, sendClampedMove } from './movement';
@@ -11,10 +11,6 @@ import type { MoveMarkerKind } from '../render/moveMarker';
 import { neighborDestination } from './neighborDestination';
 import { clearOwnMovePath } from './pathPrediction';
 import { setManualActive } from './moveOwnership';
-
-function isSummoner(player: PlayerView | undefined): boolean {
-  return player?.combatArchetype === 'summoner' && (player.summonsMinions ?? 0) > 0;
-}
 
 function showTargetMarker(
   scene: GameScene,
@@ -34,19 +30,12 @@ export function attachClickToMove(scene: GameScene): () => void {
     const outside = dest.x < 0 || dest.y < 0 || dest.x > GAME_CONFIG.NODE_WIDTH || dest.y > GAME_CONFIG.NODE_HEIGHT;
     const neighbor = outside ? neighborDestination(scene.state.ownNodeId, dest) : null;
     if (outside && (!neighbor || isHoldStill())) return;
-    const player = scene.state.ownId
-      ? scene.state.view.get(scene.state.ownId) as PlayerView | undefined
-      : undefined;
 
     if (isHoldStill()) {
       if (scene.autoMode) setAutoMode(scene, false);
       cancelAutoPath();
-      // Hold-still turns the click into a summon order rather than a move, so
-      // the mark wears the summon palette — the player is not going there.
-      showTargetMarker(scene, dest, isSummoner(player) ? 'summon' : 'move');
-      if (isSummoner(player)) {
-        sendCommandSummons(scene.socket, dest);
-      }
+      // Hold still marks the point and does not walk. Recall stays on R.
+      showTargetMarker(scene, dest);
       return;
     }
 

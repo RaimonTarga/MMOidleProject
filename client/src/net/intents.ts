@@ -15,10 +15,6 @@ export function sendMove(socket: GameSocket, pos: Vec2, opts?: PlayerMoveOptions
   else socket.emit('player:move', pos, opts);
 }
 
-export function sendCommandSummons(socket: GameSocket, pos: Vec2): void {
-  socket.emit('player:commandSummons', pos);
-}
-
 export function sendRecallSummons(socket: GameSocket): void {
   socket.emit('player:recallSummons');
 }
