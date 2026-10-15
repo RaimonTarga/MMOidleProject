@@ -526,12 +526,18 @@ const WEIGHTS: Readonly<Record<string, (world: World, player: PlayerEntity, targ
     const { hp, maxHp } = target.hasHealth;
     ctx.damage = Math.max(1, Math.round(ctx.damage * (1 + p.maxBonusPct * Math.max(0, Math.min(1, hp / Math.max(1, maxHp))))));
   },
-  // Verdict: the finisher kills a target at or below the threshold outright.
+  // Verdict: the finisher kills a target at or below the threshold outright. A boss is not executed
+  // (designer's call, 2026-10-16): it takes a heavy blow instead (VERDICT_BOSS_MULT, PLACEHOLDER).
   'striker-relic-desert': (_world, _player, target, ctx, p) => {
     const { hp, maxHp } = target.hasHealth;
-    if (hp > 0 && hp / Math.max(1, maxHp) <= p.thresholdPct) ctx.damage = Math.max(ctx.damage, hp);
+    if (hp <= 0 || hp / Math.max(1, maxHp) > p.thresholdPct) return;
+    if (target.isMonster.isBoss) ctx.damage = Math.round(ctx.damage * VERDICT_BOSS_MULT);
+    else ctx.damage = Math.max(ctx.damage, hp);
   },
 };
+
+/** What Verdict does to a boss below the threshold, in place of an execute. PLACEHOLDER. */
+const VERDICT_BOSS_MULT = 2;
 
 /** Spark trophies: what they add to every beat of the combo they ride. */
 const SPARKS: Readonly<Record<string, (world: World, player: PlayerEntity, target: MonsterEntity, ctx: CombatContext, p: Record<string, number>) => void>> = {

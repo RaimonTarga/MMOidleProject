@@ -265,6 +265,17 @@ const PLAIN4: (string | null)[] = [null, null, null, null];
   assert(target.hasHealth.hp > 0, 'and leaves a healthy target alive');
 }
 
+{
+  // A boss below the threshold is not executed (designer, 2026-10-16): it takes a heavy blow instead.
+  const { world, player, target } = setup({ beats: PLAIN4, relic: ['striker-relic-desert'], bossesCleared: ['desert:2'] });
+  target.isMonster.isBoss = true;
+  target.hasHealth.maxHp = 1_000_000;
+  swings(world, player, target, 4);
+  target.hasHealth.hp = 100_000;
+  swing(world, player, target);
+  assert(target.hasHealth.hp > 0, 'Verdict does not execute a boss');
+}
+
 // ── Disciplines (§12.5) ──────────────────────────────────────────────────────
 
 // 10. Light: the finisher lights the next combo, whose beats hit harder; a break puts the shine out.
