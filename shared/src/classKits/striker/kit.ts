@@ -226,6 +226,9 @@ const PIECES: readonly StrikerPiece[] = [
     cast: 'windup',
     sidegradeOf: 'striker-earthsplitter',
     text: 'You wind up before the finisher, then charge through a line of enemies and knock them all down.',
+    // PLACEHOLDERS. The charge covers up to `lengthPx` along a line through the target; everything within
+    // `widthPx` of it is knocked down (a short stun). Control-immune bosses refuse it.
+    params: { castMs: 900, knockdownMs: 1000, lengthPx: 300, widthPx: 70 },
   }),
   technique({
     id: 'striker-frostbind',
@@ -234,6 +237,8 @@ const PIECES: readonly StrikerPiece[] = [
     control: true,
     sidegradeOf: 'striker-pin',
     text: 'Ice roots everything around the target for a moment. Bosses immune to roots ignore it.',
+    // PLACEHOLDERS. The target and every enemy within `radius` of it are rooted for `rootMs`.
+    params: { rootMs: 1500, radius: 100 },
   }),
   technique({
     id: 'striker-bloodrush',
@@ -241,12 +246,16 @@ const PIECES: readonly StrikerPiece[] = [
     family: 'attack-setup',
     sidegradeOf: 'striker-focus',
     text: 'Without a cast, your beats come faster for the rest of the combo.',
+    // PLACEHOLDERS. Focus's haste with no cast, a little weaker; rides the Focus status (one copy).
+    params: { attackSpeedPct: 0.2, maxMs: 15000 },
   }),
   technique({
     id: 'striker-coup-de-grace',
     name: 'Coup de Grâce',
     family: 'damage',
     text: 'You hit much harder against a target low on HP.',
+    // PLACEHOLDERS. +`bonusPct` against a target at or below `belowPct` of its HP.
+    params: { belowPct: 0.333, bonusPct: 1 },
   }),
   technique({
     id: 'striker-magma-breaker',
@@ -254,18 +263,25 @@ const PIECES: readonly StrikerPiece[] = [
     family: 'damage',
     cast: 'windup',
     text: 'You wind up before the finisher, then strike the target and everything around it, harder against a shell.',
+    // PLACEHOLDERS. The blow is `blowMult` times the beat's full swing on the target and everything within
+    // `radius` of it, `shellBonusPct` bigger against a shell.
+    params: { castMs: 900, blowMult: 1.5, radius: 120, shellBonusPct: 0.5 },
   }),
   technique({
     id: 'striker-reaping-arc',
     name: 'Reaping Arc',
     family: 'damage',
     text: 'You cut a wide arc through every enemy around you.',
+    // PLACEHOLDERS. Like Sweep, wider and deeper: every other enemy within `radius` takes `splashPct` of the swing.
+    params: { radius: 170, splashPct: 0.8 },
   }),
   technique({
     id: 'striker-pressure-point',
     name: 'Pressure Point',
     family: 'finisher-setup',
     text: 'Your next finisher hits this target much harder.',
+    // PLACEHOLDER. Armed on the target; the next finisher on it is `finisherBonusPct` bigger.
+    params: { finisherBonusPct: 0.75 },
   }),
 ];
 
@@ -377,7 +393,8 @@ const TROPHIES: readonly StrikerTrophy[] = [
     ranks: [
       // PLACEHOLDERS. The landing strikes everything within `landingRadius` for `landingPct` of the finisher.
       { rank: 2, bossTier: 3, text: 'The landing also hits the enemies around it.', params: { landingRadius: 110, landingPct: 0.5 } },
-      { rank: 3, bossTier: 4, text: 'Pounce grows stronger.' },
+      // PLACEHOLDERS: a longer leap bonus and a stronger landing.
+      { rank: 3, bossTier: 4, text: 'Pounce grows stronger.', params: { bonusPct: 0.75, landingPct: 0.75 } },
     ],
   }),
   strikerTrophy({
@@ -389,7 +406,8 @@ const TROPHIES: readonly StrikerTrophy[] = [
     params: { thresholdPct: 0.15 }, // PLACEHOLDER: the target's HP share at or below which it dies.
     ranks: [
       { rank: 2, bossTier: 3, text: "It kills outright with more of the target's HP left.", params: { thresholdPct: 0.25 } },
-      { rank: 3, bossTier: 4, text: 'Verdict grows stronger.' },
+      // PLACEHOLDER: kills outright at a still higher threshold.
+      { rank: 3, bossTier: 4, text: 'Verdict grows stronger.', params: { thresholdPct: 0.35 } },
     ],
   }),
   strikerTrophy({
@@ -400,7 +418,8 @@ const TROPHIES: readonly StrikerTrophy[] = [
     text: 'Every beat of your next combo slows the target a little more. Bosses immune to slows ignore it.',
     // PLACEHOLDERS. Each beat adds `stepPct` to the target's slow, up to `maxPct`, for `durationMs`.
     params: { stepPct: 0.1, maxPct: 0.5, durationMs: 3000 },
-    ranks: [{ rank: 2, bossTier: 4, text: 'Hoarfrost grows stronger.' }],
+    // PLACEHOLDERS: a bigger step and a deeper slow.
+    ranks: [{ rank: 2, bossTier: 4, text: 'Hoarfrost grows stronger.', params: { stepPct: 0.15, maxPct: 0.6 } }],
   }),
   strikerTrophy({
     id: 'striker-relic-volcanic',
@@ -411,7 +430,8 @@ const TROPHIES: readonly StrikerTrophy[] = [
     // PLACEHOLDERS. The blow is `shellBonusPct` bigger against a shell; everything within `radius` of the
     // target takes `splashPct` of it.
     params: { radius: 120, splashPct: 0.8, shellBonusPct: 0.5 },
-    ranks: [{ rank: 2, bossTier: 4, text: 'Eruption grows stronger.' }],
+    // PLACEHOLDERS: a wider, fuller blast, bigger against a shell.
+    ranks: [{ rank: 2, bossTier: 4, text: 'Eruption grows stronger.', params: { radius: 140, splashPct: 1, shellBonusPct: 0.75 } }],
   }),
   strikerTrophy({
     id: 'striker-relic-graveyard',
@@ -419,6 +439,8 @@ const TROPHIES: readonly StrikerTrophy[] = [
     name: 'Grave Toll',
     kind: 'spark',
     text: "Your next combo's beats hit harder for every enemy in the fight.",
+    // PLACEHOLDERS. Each enemy on you adds `perEnemyPct` to a beat, up to `maxEnemies` of them.
+    params: { perEnemyPct: 0.1, maxEnemies: 8 },
     ranks: [],
   }),
   strikerTrophy({
@@ -427,6 +449,8 @@ const TROPHIES: readonly StrikerTrophy[] = [
     name: 'Deep Pressure',
     kind: 'weight',
     text: 'Your finisher deals more damage the more HP the target has left.',
+    // PLACEHOLDER. Up to +`maxBonusPct` against a target at full HP, falling to nothing as it dies.
+    params: { maxBonusPct: 1 },
     ranks: [],
   }),
 ];

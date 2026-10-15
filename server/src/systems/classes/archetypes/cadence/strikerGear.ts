@@ -12,14 +12,17 @@
 import { getResource, setResource } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../../ecs/entity';
 import type { World } from '../../../../world/World';
-import { applyPlayerAoeTo, playerAoeTargets } from '../../../combat/damage/aoeDamage';
+import { applyPlayerAoe, applyPlayerAoeTo, playerAoeTargets } from '../../../combat/damage/aoeDamage';
 import { BLEED_EFFECT_IDS } from '../../../combat/damage/bleedIds';
 import { attackNow, registerCombatListener, type CombatContext } from '../../../combat/engine/combatPipeline';
 import { fightSnapshotFor } from '../../../combat/moments/fightSnapshot';
 import { applyHealToPlayer } from '../../../defense/regen/healing';
+import { strikerLeafDotDamage } from './strikerLeaves';
 
 /** "While you keep attacking": a swing within this long. PLACEHOLDER. */
 export const STRIKER_ATTACKING_MS = 2500;
+/** Reaper's Scythe splashes to enemies this close to the target (px). PLACEHOLDER. */
+const SPLASH_RADIUS = 100;
 /** Broadblade's nick reaches enemies this close to the target (px). PLACEHOLDER. */
 const NICK_RADIUS = 90;
 /** Shoulder Through counts at most this many extra enemies. PLACEHOLDER. */
@@ -71,6 +74,12 @@ export function runStrikerWeaponStrikes(world: World, player: PlayerEntity, ctx:
   }
   const extra = p['striker.extra-strike-pct'] ?? 0;
   if (extra > 0) applyPlayerAoeTo(world, player, [target], ctx.damage * extra, 'player', {}, { feedsWeaponReservoir: true });
+  // Reaper's Scythe: every beat splashes part of its damage to the enemies around the target.
+  const splash = p['striker.splash-pct'] ?? 0;
+  if (splash > 0) {
+    applyPlayerAoe(world, player, target.hasPosition.current, SPLASH_RADIUS, ctx.damage * splash,
+      target.isMonster.id, 'player', {}, { feedsWeaponReservoir: true });
+  }
 }
 
 function dist2(m: MonsterEntity, at: { x: number; y: number }): number {
@@ -80,10 +89,12 @@ function dist2(m: MonsterEntity, at: { x: number; y: number }): number {
 }
 
 /**
- * Bloodless: while you keep attacking, damage over time can't take you below this share of
- * your HP. Called by the monster-DoT tick on a player; returns the HP the tick may take.
+ * What a monster damage-over-time tick may take from a Striker (called by the DoT tick on a
+ * player): the T4 leaves' share first (Unbreakable's window, Thick Blood), then Bloodless —
+ * while you keep attacking, damage over time can't take you below a share of your HP.
  */
 export function strikerDotFloor(player: PlayerEntity, hpDamage: number, now: number): number {
+  hpDamage = strikerLeafDotDamage(player, hpDamage);
   const floorPct = player.usesSkills.passives['striker.dot-floor-pct'] ?? 0;
   if (floorPct <= 0 || !strikerIsAttacking(player, now)) return hpDamage;
   const floor = player.hasHealth.maxHp * floorPct;

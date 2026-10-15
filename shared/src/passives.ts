@@ -277,6 +277,13 @@ export const STRIKER_KEYS = [
   'striker.chilled-recovery-x',    // Frostbite Mend: Recovery is multiplied by this while you are chilled or slowed
   'striker.heat-ward',             // Cinderskin: the Heat's extra damage taken is off while you keep attacking
   'striker.heat-recovery-pct',     // Fuel: Recovery rises this much per stack of Heat
+  // ── Tier 4 jobs and lines (§12.16) ──
+  'striker.splash-pct',            // Reaper's Scythe: every beat splashes this share of its damage to the enemies around the target
+  'striker.deathward-pct',         // Deathward: below a quarter of your HP, you take this much less damage
+  'striker.crowd-recovery-pct',    // Requiem: Recovery rises this much per enemy on you
+  'striker.debuff-pct',            // Exploit: beats hit this much harder for each different debuff on the target
+  'striker.clear-mind',            // Clear Mind: debuffs can't break your combo or interrupt your casts
+  'striker.debuff-recovery-pct',   // Brine Mend: Recovery rises this much per debuff on you
 ] as const;
 
 /**
