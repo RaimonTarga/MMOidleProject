@@ -42,7 +42,8 @@ for (const piece of kit.pieces) {
   } else {
     assert(piece.answers !== undefined && piece.answers in MOMENTS, `${piece.id} answers a known moment`);
   }
-  assert(Object.keys(piece.params).length === 0, `${piece.id}: params stay empty until the runtime`);
+  // Placeholders for the designer; the runtime reads them (C-squire CQ.1–CQ.2).
+  assert(Object.values(piece.params).every((v) => Number.isFinite(v) && v >= 0), `${piece.id}: finite params`);
 }
 
 // Lessons: 16 new, 2 sidegrades, 8 rank-ups, 4 from the discipline pick, the starter slam.

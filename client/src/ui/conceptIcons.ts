@@ -374,6 +374,7 @@ const BOSS_DEBUFF_ICON_ALIASES: Record<string, string> = {
 /** Statuses a class piece puts on its caster wear that piece's icon (class-first build plan CS.1). */
 const CLASS_PIECE_STATUS_ICONS: Record<string, string> = {
   'striker-focus': 'striker-focus',
+  'squire-guard': 'squire-guard',
 };
 
 export function statusIconSource(id: string, instanceKey?: string): AssetIconSource | null {

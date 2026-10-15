@@ -84,6 +84,11 @@ export function recordMoment(world: World, player: PlayerEntity, id: MomentId, v
   setCounter(cs, valueKey(id), sameTick ? Math.max(getCounter(cs, valueKey(id)), value) : value);
 }
 
+/** The value this event last recorded (its largest in that tick): hits in a row, enemies that joined. */
+export function momentValue(player: PlayerEntity, id: MomentId): number {
+  return getCounter(player.tracksCombat, valueKey(id));
+}
+
 /** The world tick this event last fired on, if it ever did. */
 export function momentTick(player: PlayerEntity, id: MomentId): number | undefined {
   const stamp = getCounter(player.tracksCombat, tickKey(id));
@@ -144,7 +149,9 @@ export function updatePlayerMoments(world: World, player: PlayerEntity, now: num
   if (snapshot.controlled && !previous?.controlled) recordMoment(world, player, 'control-on-me');
   if (snapshot.debuffCount > (previous?.debuffCount ?? 0)) recordMoment(world, player, 'debuff-landed');
   if (snapshot.dotStacks > (previous?.dotStacks ?? 0)) recordMoment(world, player, 'dot-landed');
-  if (snapshot.aggroCount > (previous?.aggroCount ?? 0)) recordMoment(world, player, 'enemy-joins');
+  if (snapshot.aggroCount > (previous?.aggroCount ?? 0)) {
+    recordMoment(world, player, 'enemy-joins', snapshot.aggroCount - (previous?.aggroCount ?? 0));
+  }
   if (previous?.targetId && monsterGone(world, previous.targetId)) recordMoment(world, player, 'target-dies');
   return snapshot;
 }

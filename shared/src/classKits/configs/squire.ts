@@ -17,6 +17,19 @@ import {
 
 const ANSWERS = new Set(['guard', 'counter', 'hold', 'emergency']);
 
+/**
+ * How Resolve fills (§8.2). PLACEHOLDERS for the designer and the bots.
+ * - `rawHitPipsPerMaxHp`: a landed hit's raw size (before armor) as a share of max HP, times
+ *   this, in pips (4: a raw hit of a quarter of your HP fills one pip).
+ * - `trickleEnemyPipsPerSec`: pips per second for each enemy engaged with you, hit or not.
+ * - `bossCountsAs`: a boss feeds the trickle as this many enemies.
+ */
+export const SQUIRE_RESOLVE = {
+  rawHitPipsPerMaxHp: 4,
+  trickleEnemyPipsPerSec: 0.08,
+  bossCountsAs: 3,
+} as const;
+
 export const SQUIRE_SYSTEM: ClassSystemSpec<ResponsesConfig> = {
   kind: 'responses',
 

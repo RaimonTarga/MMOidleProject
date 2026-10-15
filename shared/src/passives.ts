@@ -134,6 +134,19 @@ export const STRIKER_KEYS = [
   'striker.grit-ms',               // Grit: over this long
 ] as const;
 
+/**
+ * The Squire's weapon jobs and lines (class-first build plan CQ.4, bible §8.4), read by its
+ * runtime (`classes/archetypes/cooldown/squire.ts`). Numbers are placeholders.
+ */
+export const SQUIRE_KEYS = [
+  'squire.slam-damage-pct',          // Warhammer: a bigger slam
+  'squire.slam-radius-pct',          // Flanged Mace: the slam's circle is wider
+  'squire.counter-damage-pct',       // Arming Sword: counters hit harder
+  'squire.bash-stun-pct',            // Tower Shield: Shield Bash stuns longer
+  'squire.bash-cost-cut-pct',        // Tower Shield: Shield Bash costs less
+  'squire.steel-will-cost-cut-pct',  // Iron Gut: Steel Will costs less
+] as const;
+
 export const CADENCE_KEYS = [
   'cadence.empowered-threshold',
   'cadence.empowered-mult',
@@ -787,13 +800,14 @@ export type TechniquePassiveKey = typeof TECHNIQUE_KEYS[number];
 export type GuardPassiveKey    = typeof GUARD_KEYS[number];
 export type RelicPassiveKey    = typeof RELIC_KEYS[number];
 export type StrikerPassiveKey  = typeof STRIKER_KEYS[number];
+export type SquirePassiveKey   = typeof SQUIRE_KEYS[number];
 
 export type PassiveKey =
   | DefensePassiveKey | CadencePassiveKey | CooldownPassiveKey
   | ReloadPassiveKey  | EnergyPassiveKey  | DotPassiveKey
   | SharedPassiveKey  | SummonerPassiveKey | MobilityPassiveKey
   | GuardPassiveKey   | TechniquePassiveKey
-  | RelicPassiveKey   | StrikerPassiveKey;
+  | RelicPassiveKey   | StrikerPassiveKey | SquirePassiveKey;
 
 export type PassiveMap      = Partial<Record<PassiveKey, number>>;
 export type MechanicEffects = Partial<Record<PassiveKey, number>>;
@@ -803,7 +817,7 @@ export const ALL_PASSIVE_KEYS = [
   ...DEFENSE_KEYS, ...CADENCE_KEYS, ...COOLDOWN_KEYS,
   ...RELOAD_KEYS, ...ENERGY_KEYS, ...DOT_KEYS, ...SHARED_KEYS, ...SUMMONER_KEYS,
   ...MOBILITY_KEYS, ...GUARD_KEYS, ...TECHNIQUE_KEYS,
-  ...RELIC_KEYS, ...STRIKER_KEYS,
+  ...RELIC_KEYS, ...STRIKER_KEYS, ...SQUIRE_KEYS,
 ] as const;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

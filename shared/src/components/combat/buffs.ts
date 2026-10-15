@@ -138,6 +138,7 @@ export const BUFF_IDS = [
   'frame-charge',   // Heavy/Balanced — the bank, counting toward its cap
   // The Striker's Order (class-first build plan CS.1).
   'striker-focus',  // the opener's haste, until the finisher
+  'squire-guard',   // the Squire's brace, until the telegraphed blow lands
 ] as const;
 
 export type BuffId = typeof BUFF_IDS[number];

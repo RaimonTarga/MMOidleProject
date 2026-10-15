@@ -13,6 +13,7 @@ export * from './view';
 export * from './orderView';
 export { STRIKER_COMBO_LENGTH, STRIKER_TECHNIQUE_SWING, strikerComboLength, strikerMasteredBeats, strikerSlots } from './configs/striker';
 export { CONDUIT_ROSTER_BODY_CAP, DEFAULT_FORMATION_ORDERS, rosterCommand } from './configs/conduit';
+export { SQUIRE_RESOLVE } from './configs/squire';
 export { STRIKER_KIT, type StrikerFamily, type StrikerPiece, type StrikerPieceExtra, type StrikerTrophy, type StrikerTrophyKind } from './striker/kit';
 export { SQUIRE_KIT, type SquireFamily, type SquirePiece, type SquirePieceExtra, type SquireTrophy, type SquireTrophyKind } from './squire/kit';
 export { APPRENTICE_KIT, type ApprenticeSchool, type ApprenticePiece, type ApprenticePieceExtra, type ApprenticeTrophy, type ApprenticeTrophyKind } from './apprentice/kit';

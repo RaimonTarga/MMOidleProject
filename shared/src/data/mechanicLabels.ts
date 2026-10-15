@@ -88,6 +88,13 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   'striker.beat-slow-pct':                { label: 'Slower beats' },
   'striker.grit-pct':                     { label: 'Grit' },
   'striker.grit-ms':                      { label: 'Grit window', companion: true },
+  // ── The Squire's weapon jobs and lines (class-first build plan CQ.4) ───────
+  'squire.slam-damage-pct':               { label: 'Slam damage' },
+  'squire.slam-radius-pct':               { label: 'Wider slam' },
+  'squire.counter-damage-pct':            { label: 'Counter damage' },
+  'squire.bash-stun-pct':                 { label: 'Longer Shield Bash stun' },
+  'squire.bash-cost-cut-pct':             { label: 'Cheaper Shield Bash' },
+  'squire.steel-will-cost-cut-pct':       { label: 'Cheaper Steel Will' },
   'defense.debuff-resistance':            { label: 'Debuff resist' },
   'defense.hit-to-dot-pct':               { label: 'Damage deferred' },
   'defense.absorb-pct':                   { label: 'Absorb' },

@@ -17,6 +17,7 @@ import type { MomentId } from '../moments';
 import type {
   ClassKit,
   DisciplineDef,
+  KitParams,
   LeafDef,
   PieceDef,
   SpecializationDef,
@@ -46,12 +47,12 @@ export type SquireDisciplineId = 'squire-avenger' | 'squire-bulwark' | 'squire-j
 /** The T4 question, "what happens when you can't answer?" (§8.7), one column per answer. */
 export type SquireLeafColumn = 'empty-bar' | 'wasted-answer' | 'quiet';
 
-export function response(piece: Omit<SquirePiece, 'classId' | 'params'>): SquirePiece {
-  return { classId: 'cooldown', params: {}, ...piece };
+export function response(piece: Omit<SquirePiece, 'classId' | 'params'> & { params?: KitParams }): SquirePiece {
+  return { classId: 'cooldown', ...piece, params: piece.params ?? {} };
 }
 
-export function squireTrophy(entry: Omit<SquireTrophy, 'classId' | 'params'>): SquireTrophy {
-  return { classId: 'cooldown', params: {}, ...entry };
+export function squireTrophy(entry: Omit<SquireTrophy, 'classId' | 'params'> & { params?: KitParams }): SquireTrophy {
+  return { classId: 'cooldown', ...entry, params: entry.params ?? {} };
 }
 
 function discipline(
@@ -81,6 +82,9 @@ const PIECES: readonly SquirePiece[] = [
     name: 'Slam',
     family: 'slam',
     text: 'When your Resolve bar is full, you slam everything around you with the shield. Each boss you beat changes the slam or how Resolve flows.',
+    // The target takes the swing times `mult` (the empowered multiplier); everything within
+    // `radius` px of you takes the same blow.
+    params: { mult: 2, radius: 110 },
   }),
   // ── T1 (§8.4) ──
   response({
@@ -89,6 +93,8 @@ const PIECES: readonly SquirePiece[] = [
     family: 'hold',
     answers: 'enemies-near',
     text: 'When three or more enemies crowd you, you shove them all back a step with your shield.',
+    // Lands when it moves `minMoved` enemies. Costs and refunds are in pips of Resolve.
+    params: { cost: 1, refund: 1.5, radius: 110, distance: 60, minMoved: 3, lockoutMs: 2500 },
   }),
   response({
     id: 'squire-riposte',
@@ -96,6 +102,7 @@ const PIECES: readonly SquirePiece[] = [
     family: 'counter',
     answers: 'repeat-hits',
     text: 'The third time one enemy hits you, you strike it back at once.',
+    params: { cost: 0.5, refund: 1, damagePct: 1 },
   }),
   response({
     id: 'squire-steel-will',
@@ -103,6 +110,7 @@ const PIECES: readonly SquirePiece[] = [
     family: 'guard',
     answers: 'dot-landed',
     text: 'When a poison or bleed lands on you, you spend Resolve to shake it off.',
+    params: { cost: 1, refund: 1.5 },
     ranks: [{ rank: 2, text: 'It also shakes off corrosion and slows.' }],
   }),
   response({
@@ -111,6 +119,8 @@ const PIECES: readonly SquirePiece[] = [
     family: 'guard',
     answers: 'telegraph-at-me',
     text: 'When a telegraphed blow is aimed at you, you brace behind your shield: it deals much less, and catching it gives Resolve back.',
+    // The brace holds until the blow lands (at most `maxWindowMs`); a caught blow takes `cut` off.
+    params: { cost: 1, refund: 2, cut: 0.7, maxWindowMs: 4000 },
     ranks: [
       { rank: 2, text: 'One brace also catches a second telegraphed blow that comes within a few seconds.' },
       { rank: 3, text: 'A caught blow also staggers its attacker.' },
@@ -122,6 +132,7 @@ const PIECES: readonly SquirePiece[] = [
     family: 'counter',
     answers: 'enemy-winds-up',
     text: 'When the enemy you fight starts a wind-up, you bash it with your shield: the stun interrupts it.',
+    params: { cost: 1, refund: 2, stunMs: 1200 },
   }),
   // ── T2 (§8.16) ──
   response({
@@ -308,6 +319,7 @@ const TROPHIES: readonly SquireTrophy[] = [
     name: 'Muster',
     kind: 'resolve',
     text: 'Every enemy that joins the fight against you fills a chunk of your Resolve, whether it hits you or not.',
+    params: { fillPerEnemy: 0.5 },
     ranks: [{ rank: 2, bossTier: 2, text: 'A whole wave rallying to the fight fills twice as much.' }],
   }),
   squireTrophy({
@@ -316,6 +328,8 @@ const TROPHIES: readonly SquireTrophy[] = [
     name: 'Relentless',
     kind: 'resolve',
     text: 'Your slam fires at a third of a full bar, at a third the size; each slam fired soon after the last is a bit bigger.',
+    // Each slam within `chainMs` of the last adds `chainPct` to the next, up to `chainMax`.
+    params: { barShare: 0.34, sizePct: 0.34, chainPct: 0.15, chainMs: 6000, chainMax: 1 },
     ranks: [{ rank: 2, bossTier: 2, text: 'The chain of slams grows faster.' }],
   }),
   squireTrophy({
@@ -324,6 +338,7 @@ const TROPHIES: readonly SquireTrophy[] = [
     name: 'Rot-Eater',
     kind: 'resolve',
     text: 'Poison and bleed on you fill your Resolve as if they were hits.',
+    params: { dotFillMult: 1 },
     ranks: [
       { rank: 2, bossTier: 2, text: 'Every debuff that lands on you also fills your Resolve.' },
       { rank: 3, bossTier: 3, text: 'Rot-Eater grows stronger.' },
@@ -335,6 +350,7 @@ const TROPHIES: readonly SquireTrophy[] = [
     name: 'Faultline',
     kind: 'slam',
     text: 'Your slam runs as a shockwave down a line through the target and everything behind it, reaching enemies at range.',
+    params: { length: 320, width: 70 },
     ranks: [
       { rank: 2, bossTier: 2, text: 'The shockwave hits barriers twice as hard.' },
       { rank: 3, bossTier: 3, text: 'The line runs longer.' },
@@ -347,6 +363,7 @@ const TROPHIES: readonly SquireTrophy[] = [
     name: 'Corrode',
     kind: 'slam',
     text: 'Each slam strips plating from everything it hits, more with every slam.',
+    params: { platingPerSlam: 2, maxStacks: 5, durationMs: 8000 },
     ranks: [
       { rank: 2, bossTier: 2, text: 'Your slams can strip more plating in all.' },
       { rank: 3, bossTier: 3, text: 'Corrode grows stronger.' },

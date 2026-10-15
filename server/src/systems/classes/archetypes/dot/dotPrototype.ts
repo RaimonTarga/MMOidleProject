@@ -41,6 +41,7 @@ import { canApplyPlayerDebuff } from "../../../combat/status/debuffGuard";
 import { evadeBlocksDebuffs } from "../../../defense/mitigation/evasion";
 import { applyMonsterDotToPlayer } from '../../../combat/status/monsterDot';
 import { strikerDotFloor } from '../cadence/strikerGear';
+import { squireDotTickFill } from '../cooldown/squire';
 import {
   pushDotTickEvent,
   dotElementForSource,
@@ -361,6 +362,8 @@ export function updateDotArchetype(world: World, dt: number, now = Date.now()): 
 
     // The Striker's Bloodless: while attacking, DoTs can't take you below its floor.
     hpDamage = strikerDotFloor(entity, hpDamage, now);
+    // The Squire's Rot-Eater: poison and bleed on you fill Resolve.
+    squireDotTickFill(world, entity, hpDamage);
     entity.hasHealth.hp -= hpDamage;
     pushPlayerDotTickEvent(world, entity, monsterDotElement(world, effect.sourceId, effect), hpDamage, { sourceType: "monster", sourceId: effect.sourceId, absorbed });
 

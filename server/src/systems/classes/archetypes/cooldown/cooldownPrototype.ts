@@ -6,12 +6,13 @@ import { initCooldownT3 } from './t3';
 import { isReverbEcho } from './t3/pipeline/reverbEcho';
 import { registerDestroyerHold } from './t3/pipeline/destroyer';
 import type { World } from '../../../../world/World';
+import { initSquire, squireRulesOf } from './squire';
 import { relicRatingsFromPassives, resolveCooldownRelicProfile } from '@mmo-idle/shared';
 
 // ── Fallback constants (balanced-frame values, used when no frame is unlocked) ─
 
 export const EXECUTION_COOLDOWN_MS = 7_000;  // ms between execution windows
-const EXECUTION_MULTIPLIER         = 2.0;    // damage multiplier on execution strike
+export const EXECUTION_MULTIPLIER  = 2.0;    // damage multiplier on execution strike (the Squire's slam)
 
 /**
  * The live recharge length — the Squire's cycle. Exported because the frame loop
@@ -47,6 +48,8 @@ export function resolveExecutionCooldownMs(entity: { usesSkills: { passives: imp
 export function updateCooldownArchetype(world: World, dt: number): void {
   for (const entity of world.cooldownPlayers) {
     const cd     = entity.usesCooldown;
+    // A Squire with Response rules runs on Resolve (`squire.ts`), not the timer.
+    if (squireRulesOf(world, entity)) continue;
 
     // First encounter (or after respawn):
     // start the preparation cycle. Read cd duration from passives.
@@ -108,6 +111,10 @@ export function initCooldownArchetype(): void {
     attackerSlice:     'usesCooldown',
     passiveKey:        'cooldown.empowered-mult',
   });
+
+  // The Squire (class-first build plan CQ.1): Resolve, the Guard's catch, the slam. After
+  // the empowered multiplier, so the slam reads the multiplied hit.
+  initSquire();
 
   initCooldownT3();
 

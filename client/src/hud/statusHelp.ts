@@ -58,6 +58,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'debuff-lava-burn': d('Lava', 'You are standing in lava. It burns harder for every second you stay in it, past your plating; stepping out is the whole answer.'),
 
   // -- The Striker's Order (class-first build plan CS.1) ------------------------
+  'squire-guard': b('Braced', 'You raised your shield against the telegraphed blow aimed at you: when it lands it deals much less, and catching it refunds Resolve.'),
   'striker-focus': b('Focus', 'Your opener focused you: every beat of this combo swings faster, until its finisher.'),
   // -- Abilities -------------------------------------------------------------
   'ability-guard': b('Guard', 'Your Guard is up: incoming damage is reduced for the window. Guard potency deepens the reduction and Guard duration lengthens the window.'),

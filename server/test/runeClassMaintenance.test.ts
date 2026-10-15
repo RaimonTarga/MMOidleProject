@@ -14,6 +14,7 @@ import { setAggroTarget, setAttackTarget } from "../src/systems/combat/ai/target
 import { RUNE_WAIT_FOR_SUMMONS_FLAG, updateRuneDerivedConfig } from "../src/systems/combat/ai/runeConfig";
 import { updateReloadArchetype } from "../src/systems/classes/archetypes/reload/reloadPrototype";
 import { updateCooldownArchetype } from "../src/systems/classes/archetypes/cooldown/cooldownPrototype";
+import { addResolve, updateSquire } from "../src/systems/classes/archetypes/cooldown/squire";
 import { updateSummonerArchetype } from "../src/systems/classes/archetypes/summoner/summonerPrototype";
 import { driveMinion } from "../src/systems/classes/archetypes/summoner/ai";
 import { setEntityMotion } from "../src/systems/world/movement";
@@ -127,7 +128,10 @@ function scenario(archetype: CombatArchetype, actionId: string) {
   setEntityMotion(world, player, { x: 800, y: 400 });
   updateAutoTargets(world, 1100);
   assert(!player.isMoving, "Squire holds during grace until ready");
-  updateCooldownArchetype(world, 10000);
+  // The Squire's slam arms on a full Resolve bar (class-first build plan CQ.1).
+  updateSquire(world, 0, 1100);
+  addResolve(world, player, 100);
+  updateSquire(world, 0, 1100);
   assert(player.hasEmpoweredAttack);
   world.createMonster("node-5-5", "plains-slime", { x: 800, y: 400 });
   updateAutoTargets(world, 1200);
