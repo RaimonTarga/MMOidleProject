@@ -177,8 +177,9 @@ for (const beat of route) {
   assert(plainsBoss?.teaches?.join(',') === 'seals,boss-altar', 'the first seal introduces seals and the altar');
 }
 
-// ── Every class root gets the opening, then the seal route ───────────────────
-assert(Object.keys(TUTORIAL_CLASS_BEATS).length === 0, 'no class builder is registered yet');
+// ── Every class root gets the opening, then its builder or the seal route ────
+// D6 pinned an empty map. A class track registers its builder here; classes
+// without one still get the seal route exactly.
 assert(CLASS_ROOTS.length === 6, `six class roots, found ${CLASS_ROOTS.map((node) => node.id).join(',')}`);
 
 function sameRoute(script: TutorialScript): void {
@@ -197,7 +198,13 @@ for (const root of CLASS_ROOTS) {
   assert(script.id === `tutorial-${root.name.toLowerCase()}`, `${root.id}: id ${script.id}`);
   assert(script.classRoot === root.id, `${root.id}: class root is stored`);
   assert(tutorialScriptFor(root.id) === script, `${root.id}: the script is cached`);
-  sameRoute(script);
+  if (TUTORIAL_CLASS_BEATS[root.id]) {
+    script.beats.slice(0, TUTORIAL_OPENING.beats.length).forEach((beat, i) => {
+      assert(beat === TUTORIAL_OPENING.beats[i], `${script.id}: opening beat ${beat.id} was replaced`);
+    });
+  } else {
+    sameRoute(script);
+  }
 }
 
 {
