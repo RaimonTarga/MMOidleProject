@@ -209,11 +209,14 @@ export function updateKnockback(world: World, dt: number): void {
  */
 export function playerForcedMovementResistPct(player: PlayerEntity): number {
   let best = 0;
-  // The Squire's brace counts too (its Planted line, class-first build plan CQ.4).
-  for (const effectId of [...ABILITY_GUARD_EFFECT_IDS, 'squire-guard']) {
+  for (const effectId of ABILITY_GUARD_EFFECT_IDS) {
     const guard = getStatusEffect(player.tracksCombat, effectId);
     if (!guard || guard.remainingMs <= 0) continue;
     best = Math.max(best, guard.data['knockbackResistPct'] ?? 0);
   }
+  // The Squire's brace (its Planted line, class-first build plan CQ.4) is the designer's
+  // exception to the cap: braced and planted means no forced movement at all.
+  const brace = getStatusEffect(player.tracksCombat, 'squire-guard');
+  if (brace && brace.remainingMs > 0 && (brace.data['knockbackResistPct'] ?? 0) >= 1) return 1;
   return Math.max(0, Math.min(PLAYER_FORCED_MOVEMENT_RESIST_CAP, best));
 }

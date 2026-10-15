@@ -209,7 +209,6 @@ import { fxMobCastWindup } from "../fx/mobCastWindups";
 import { attackFlairOf, type AttackFlair } from "../fx/attackFlair";
 import { bespokePathFor, playAscensionRing } from "../fx/bespokePaths";
 import { fxDualBlueRound } from "../fx/bespoke/slinger";
-import { fxSwiftbladeStrike } from "../fx/bespoke/striker";
 import { championTether, fxSummonShatter } from "../fx/conduitPaths";
 import { abilityCallout, playAbilityRank } from "../fx/abilityRank";
 import { fxRadiantArc } from "../fx/bespoke/apprentice";
@@ -354,7 +353,6 @@ type AttackFxFn = (args: AttackFxArgs) => void;
 
 const FLASH_CLIENT_EFFECT = "flash-teleport";
 const FIRST_STRIKE_CLIENT_EFFECT = "first-strike";
-const SWIFTBLADE_CLIENT_EFFECT = "swiftblade";
 const CHANNEL_BEAM_CLIENT_EFFECT = "channel-beam";
 const HOLY_FLASH_CLIENT_EFFECT = "holy-flash";
 const ALT_ONHIT_CLIENT_EFFECT = "reload-alt-onhit";
@@ -1818,7 +1816,6 @@ function runFxForAttackStyle(
   const player = presentation?.player ?? state.view.get(actorId) as PlayerView | undefined;
   const lungeTarget = state.interpolation.get(ev.targetId)?.base ?? presentation?.targetBase;
   const isFlashTeleport = ev.effects?.includes(FLASH_CLIENT_EFFECT) ?? false;
-  const isSwiftblade = ev.effects?.includes(SWIFTBLADE_CLIENT_EFFECT) ?? false;
   const isHolyBeam = ev.effects?.includes(CHANNEL_BEAM_CLIENT_EFFECT) ?? false;
   const isHolyFlash = ev.effects?.includes(HOLY_FLASH_CLIENT_EFFECT) ?? false;
   const isAltShot = ev.effects?.includes(ALT_ONHIT_CLIENT_EFFECT) ?? false;
@@ -1935,11 +1932,6 @@ function runFxForAttackStyle(
       ev.empowered,
       tint,
     );
-  } else if (isSwiftblade) {
-    // Swiftblade's finisher is the Striker's own cut, twice: the primary and the
-    // extra strike each carry this effect and each draw one crescent.
-    playEmpoweredRing(args);
-    fxSwiftbladeStrike(scene, ev.playerId, from, to, tint, flair);
   } else {
     playEmpoweredRing(args);
     // Stage 3: the specialization's bespoke attack (fx/bespokePaths.ts) replaces the
@@ -1979,7 +1971,6 @@ function runFxForAttackStyle(
 
   for (const effectId of ev.effects ?? []) {
     if (effectId === FLASH_CLIENT_EFFECT) continue;
-    if (effectId === SWIFTBLADE_CLIENT_EFFECT) continue; // handled above
     if (effectId === COOLDOWN_REVERB_ECHO_FX) continue; // drawn by the Reverb path's payoff
     if (effectId === CHANNEL_BEAM_CLIENT_EFFECT) continue; // handled above
     if (effectId === HOLY_FLASH_CLIENT_EFFECT) continue; // handled above
