@@ -388,4 +388,26 @@ const refill = (player: PlayerEntity, ammo = 8): void => { player.usesReload!.am
   assert.equal(s.player.hasAttackTarget?.targetId, first.isMonster.id, 'the previous target comes back');
 }
 
+// ── The HUD's discipline facts ride the networked reload slice (T2-W2) ───────
+{
+  const twin = setup({
+    discipline: 'slinger-gunslinger', rack: ['slinger-snare', 'slinger-venom'], clipRules: [{ clip: 'slinger-snare', conditions: [] }],
+  });
+  updateSlinger(twin.world, twin.player, 100, clock);
+  assert.ok(twin.player.usesReload!.twinClipId, 'Gunslinger: the second gun reaches the networked slice');
+  assert.equal(twin.player.usesReload!.shellBank, undefined, 'and no shell bank');
+
+  const siege = setup({ discipline: 'slinger-siege' });
+  const target = siege.spawn(430, 400);
+  shoot(siege.world, siege.player, target);
+  updateSlinger(siege.world, siege.player, 100, clock);
+  assert.ok((siege.player.usesReload!.shellBank ?? 0) > 0, 'Siege: the banked shell reaches the networked slice');
+  assert.equal(siege.player.usesReload!.twinClipId, undefined, 'and no second gun');
+
+  const plain = setup();
+  updateSlinger(plain.world, plain.player, 100, clock);
+  assert.equal(plain.player.usesReload!.twinClipId, undefined, 'no discipline: neither field is present');
+  assert.equal(plain.player.usesReload!.shellBank, undefined);
+}
+
 console.log('slingerT2: ok');

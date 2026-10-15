@@ -54,6 +54,10 @@ function AmmoPolygon({
   clipName,
   nextClipName,
   reloadPct,
+  twinClipColor,
+  twinClipName,
+  shell,
+  calledShot,
 }: {
   ammo: number;
   max: number;
@@ -62,6 +66,10 @@ function AmmoPolygon({
   clipName: string | null;
   nextClipName: string | null;
   reloadPct: number;
+  twinClipColor: string | null;
+  twinClipName: string | null;
+  shell: number;
+  calledShot: boolean;
 }) {
   const previousAmmo = useRef(ammo);
   const [refilling, setRefilling] = useState(false);
@@ -122,11 +130,14 @@ function AmmoPolygon({
     clipName ? `${clipName}.` : null,
     `${ammo} of ${max} ammunition remaining`,
     nextClipName ? `Next clip: ${nextClipName}.` : null,
+    twinClipName ? `Second gun: ${twinClipName}.` : null,
+    shell > 0 ? `Shell charged with ${shell} damage.` : null,
+    calledShot ? 'Called shot ready.' : null,
     reloadPct > 0 ? 'Reloading.' : null,
   ].filter((part): part is string => !!part).join(' ');
 
   return (
-    <div className={`mechanic-ammo-chamber${shot ? ' mechanic-ammo-chamber--shot' : ''}${refilling ? ' mechanic-ammo-chamber--refilling' : ''}`}>
+    <div className={`mechanic-ammo-chamber${shot ? ' mechanic-ammo-chamber--shot' : ''}${refilling ? ' mechanic-ammo-chamber--refilling' : ''}${shell > 0 ? ' mechanic-ammo-chamber--shell' : ''}${calledShot ? ' mechanic-ammo-chamber--called' : ''}`}>
       <span className="mechanic-ammo-chamber__rail" aria-hidden="true" />
       <svg
         className={`mechanic-reload${geometry.density}${clipColor ? ' mechanic-reload--clip' : ''}`}
@@ -151,9 +162,12 @@ function AmmoPolygon({
             const loaded = index >= spent;
             const current = ammo > 0 && index === spent;
             const last = loaded && index === max - 1;
+            // Twin guns: the even rounds of the clip are the second gun's.
+            const second = twinClipColor !== null && !last && (index + 1) % 2 === 0;
             const dotStyle = {
               '--ammo-dot-delay': `${Math.round(index * refillDelayStep)}ms`,
               ...(last ? { fill: SLINGER_LAST_ROUND_CSS, stroke: '#ffe7a3' } : {}),
+              ...(second && loaded ? { fill: twinClipColor } : {}),
             } as CSSProperties;
             return (
               <circle
@@ -190,6 +204,16 @@ function AmmoPolygon({
           aria-hidden="true"
         />
       )}
+      {shell > 0 && (
+        <span className="mechanic-ammo-chamber__tag mechanic-ammo-chamber__tag--shell" title={`Shell: ${shell} damage banked`} aria-hidden="true">
+          {shell}
+        </span>
+      )}
+      {calledShot && (
+        <span className="mechanic-ammo-chamber__tag mechanic-ammo-chamber__tag--called" title="Called shot: the last round flies to your rule's pick" aria-hidden="true">
+          called
+        </span>
+      )}
       {overflow > 0 && (
         <span className="mechanic-ammo-chamber__overflow" aria-hidden="true">+{overflow}</span>
       )}
@@ -209,6 +233,10 @@ export function LoadoutAmmoCompact({ model }: { model: ReloadMechanicModel }) {
       ? '#e6a43c'
       : (model.clipColor ?? '#9aa3ad');
   const next = model.nextClipName ? ` Next: ${model.nextClipName}.` : '';
+  const tag = model.discipline === 'siege' && model.shell > 0
+    ? `shell ${model.shell}`
+    : model.calledShot ? 'called'
+      : model.twinClipName ? 'twin' : null;
   const label = reloading
     ? `Reloading. ${model.clipName ?? 'Clip'}.${next}`
     : `${model.ammo} of ${model.ammoMax}. ${model.clipName ?? 'Clip'}.${model.ammo > 0 ? ' Last round still loaded.' : ''}${next}`;
@@ -223,6 +251,15 @@ export function LoadoutAmmoCompact({ model }: { model: ReloadMechanicModel }) {
       aria-valuenow={model.ammo}
     >
       <span className="loadout-ammo-compact__count">{reloading ? 'Reloading' : `${model.ammo}/${model.ammoMax}`}</span>
+      {tag && <span className="loadout-ammo-compact__tag">{tag}</span>}
+      {model.twinClipColor && (
+        <i
+          className="loadout-ammo-compact__next"
+          style={{ background: model.twinClipColor }}
+          title={model.twinClipName ? `Second gun: ${model.twinClipName}` : 'Second gun'}
+          aria-hidden="true"
+        />
+      )}
       <span className="loadout-ammo-compact__track" aria-hidden="true">
         <span style={{ width: `${Math.max(0, Math.min(100, width * 100))}%`, background: color }} />
         {!reloading && model.ammo > 1 && <i className="loadout-ammo-compact__last" />}
@@ -255,6 +292,10 @@ export function ReloadMechanic({ model }: { model: ReloadMechanicModel }) {
         clipName={model.loadout ? model.clipName : null}
         nextClipName={model.loadout ? model.nextClipName : null}
         reloadPct={model.loadout ? reloadPct : 0}
+        twinClipColor={model.loadout ? model.twinClipColor : null}
+        twinClipName={model.loadout ? model.twinClipName : null}
+        shell={model.loadout ? model.shell : 0}
+        calledShot={model.loadout && model.calledShot}
       />
     </MechanicFrame>
   );

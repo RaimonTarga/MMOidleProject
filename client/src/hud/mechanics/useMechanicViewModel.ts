@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
 import { dotElementForPlayer, classConfigContextFromState } from '@mmo-idle/shared';
-import { slingerClipColor, slingerClipName } from '../../ui/slingerClipColor';
+import { slingerClipColor, slingerClipName, slingerDisciplineKind } from '../../ui/slingerClipColor';
 import {
   ammoCountAtom,
   ammoMaxAtom,
@@ -106,6 +106,9 @@ export function useMechanicViewModel(): MechanicViewModel | null {
       const loadout = classConfig?.system.kind === 'loadout';
       const clipId = loadout ? playerView?.reloadClip ?? '' : '';
       const nextId = loadout ? playerView?.reloadNextClip ?? '' : '';
+      const discipline = loadout ? slingerDisciplineKind(playerView?.disciplineId) : null;
+      const reloadRemainingMs = Math.max(0, playerView?.reloadRemainingMs ?? 0);
+      const twinId = discipline === 'gunslinger' ? playerView?.reloadTwinClip ?? '' : '';
       return {
         kind: 'reload',
         ammo: Math.max(0, ammo),
@@ -115,8 +118,13 @@ export function useMechanicViewModel(): MechanicViewModel | null {
         nextClipColor: slingerClipColor(nextId),
         clipName: slingerClipName(clipId),
         nextClipName: slingerClipName(nextId),
-        reloadRemainingMs: Math.max(0, playerView?.reloadRemainingMs ?? 0),
+        reloadRemainingMs,
         reloadDurationMs: Math.max(0, playerView?.reloadDurationMs ?? 0),
+        discipline,
+        twinClipColor: slingerClipColor(twinId),
+        twinClipName: slingerClipName(twinId),
+        shell: discipline === 'siege' ? Math.max(0, playerView?.reloadShell ?? 0) : 0,
+        calledShot: discipline === 'trickshot' && ammo === 1 && reloadRemainingMs <= 0,
       };
     }
 

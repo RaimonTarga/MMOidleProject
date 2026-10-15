@@ -126,6 +126,10 @@ export interface PlayerView {
   /** The loaded clip type and the next one, for the ammo ring (kit piece ids). */
   reloadClip: string;
   reloadNextClip: string;
+  /** Gunslinger's second gun clip, or '' (no twin guns). */
+  reloadTwinClip: string;
+  /** Siege's banked shell damage; 0 when the shell is empty or the Slinger is not Siege. */
+  reloadShell: number;
   executionReady: boolean;
   executionCooldownPct: number;
   /** The Squire's Resolve in pips (class-first build plan CQ.1), and the bar's size. */
@@ -371,6 +375,8 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     reloadDurationMs: entity.usesReload?.reloadDurationMs ?? 0,
     reloadClip: entity.usesReload?.clipId ?? '',
     reloadNextClip: entity.usesReload?.nextClipId ?? '',
+    reloadTwinClip: entity.usesReload?.twinClipId ?? '',
+    reloadShell: entity.usesReload?.shellBank ?? 0,
     executionReady: entity.hasEmpoweredAttack !== undefined,
     executionCooldownPct: entity.usesCooldown?.executionCooldownPct ?? 0,
     resolve: entity.usesCooldown?.resolve ?? 0,

@@ -9,6 +9,10 @@ export interface UsesReload {
   nextClipId: string;
   /** Full duration captured when the current reload began; 0 while idle. */
   reloadDurationMs: number;
+  /** Gunslinger only: the second gun's clip (the even rounds). Absent for every other Slinger. */
+  twinClipId?: string;
+  /** Siege only: the damage banked in the shell, rounded. Absent for every other Slinger. */
+  shellBank?: number;
 }
 
 export function initUsesReload(args: { ammoMax: number }): UsesReload {

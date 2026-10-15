@@ -627,6 +627,23 @@
   text-shadow: 0 0 4px rgba(240, 217, 146, 0.6);
 }
 
+/* Siege's shell and Trickshot's called shot, on the ring (bible §10.5). */
+.mechanic-ammo-chamber__tag {
+  position: absolute;
+  z-index: 2;
+  left: 8px;
+  bottom: 6px;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.mechanic-ammo-chamber__tag--shell { color: #ffb36b; text-shadow: 0 0 4px rgba(255, 140, 60, 0.7); }
+.mechanic-ammo-chamber__tag--called { color: #f5c542; text-shadow: 0 0 4px rgba(245, 197, 66, 0.7); }
+.mechanic-ammo-chamber--shell .mechanic-reload__housing { stroke: #ff9a4a; }
+.mechanic-ammo-chamber--called .mechanic-reload__housing { stroke: #f5c542; }
+
 .mechanic-reload {
   position: relative;
   z-index: 1;
@@ -2210,6 +2227,13 @@
 .loadout-ammo-compact__track > span {
   display: block;
   height: 100%;
+}
+
+.loadout-ammo-compact__tag {
+  flex: 0 0 auto;
+  color: #ffb36b;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
 }
 
 .loadout-ammo-compact__last {
