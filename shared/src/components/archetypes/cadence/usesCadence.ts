@@ -9,6 +9,13 @@ export interface UsesCadence {
   sparkTrophyId: string | null;
   /** Coil resolved this combo: the finisher hits harder. */
   coiled: boolean;
+  // ── The Striker's discipline resource (T2; server writes, the HUD strip reads) ──
+  /** Light: the shine is lit, so this combo's beats hit harder. */
+  lit: boolean;
+  /** Balanced: steps the edge has risen this combo. */
+  edge: number;
+  /** Heavy: Momentum, as a bonus on the finisher (0.5 = +50%). */
+  momentum: number;
 }
 
 export function initUsesCadence(args: { threshold: number }): UsesCadence {
@@ -17,5 +24,8 @@ export function initUsesCadence(args: { threshold: number }): UsesCadence {
     threshold:     args.threshold,
     sparkTrophyId: null,
     coiled:        false,
+    lit:           false,
+    edge:          0,
+    momentum:      0,
   };
 }

@@ -1,6 +1,8 @@
+import type { CSSProperties } from 'react';
 import type { OrderBeatView, OrderView } from '@mmo-idle/shared';
 import { GameIcon } from '../ui/GameIcon';
 import { classPieceIconSource, trophyIconSource } from '../ui/conceptIcons';
+import { orderResourceFill, orderResourceText, type OrderResource } from './orderResource';
 import './orderStrip.css';
 
 type Phase = 'landed' | 'next' | 'coming';
@@ -31,13 +33,14 @@ function stripLabel(order: OrderView, count: number, armed: boolean): string {
   return `Order. Beat ${at} of ${order.beats.length} next: ${name}. Finisher: ${finisher}.`;
 }
 
-function BeatCell({ beat, phase, icon }: { beat: OrderBeatView; phase: Phase; icon: number }) {
+function BeatCell({ beat, phase, icon, lit }: { beat: OrderBeatView; phase: Phase; icon: number; lit: boolean }) {
   const name = beat.pieceName ?? 'Plain swing';
   return (
     <span
       className="order-strip__cell"
       data-tone={beatTone(beat)}
       data-phase={phase}
+      data-lit={lit ? 'true' : undefined}
       title={name}
     >
       {beat.pieceId ? (
@@ -59,23 +62,32 @@ export function OrderStrip({
   order,
   count,
   armed,
+  resource = null,
   compact = false,
 }: {
   order: OrderView;
   count: number;
   armed: boolean;
+  /** The discipline's resource (T2): Light's shine, Balanced's edge, Heavy's Momentum. */
+  resource?: OrderResource | null;
   compact?: boolean;
 }) {
   const finisherName = order.finisher.trophyId ? order.finisher.name : 'Finisher';
   const icon = compact ? 14 : 18;
-  return (
+  const beats = order.beats.length;
+  const resourceText = resource ? orderResourceText(resource, beats) : null;
+  const fill = resource ? orderResourceFill(resource, beats) : 0;
+  const lit = resource?.kind === 'light' && resource.lit;
+  const strip = (
     <div
       className={`order-strip${compact ? ' order-strip--compact' : ''}`}
+      data-resource={resource?.kind}
+      style={resource ? ({ '--order-fill': fill } as CSSProperties) : undefined}
       role="group"
-      aria-label={stripLabel(order, count, armed)}
+      aria-label={resourceText ? `${stripLabel(order, count, armed)} ${resourceText}.` : stripLabel(order, count, armed)}
     >
       {order.beats.map((beat) => (
-        <BeatCell key={beat.index} beat={beat} phase={beatPhase(beat.index, count, armed)} icon={icon} />
+        <BeatCell key={beat.index} beat={beat} phase={beatPhase(beat.index, count, armed)} icon={icon} lit={lit} />
       ))}
       <span
         className="order-strip__cell order-strip__cell--finisher"
@@ -94,6 +106,16 @@ export function OrderStrip({
           <i className="order-strip__mark order-strip__mark--finisher" aria-hidden="true" />
         )}
       </span>
+    </div>
+  );
+  if (!resourceText || compact) return strip;
+  return (
+    <div className="order-strip__stack">
+      {strip}
+      <div className="order-strip__resource" data-resource={resource?.kind} aria-hidden="true">
+        <span className="order-strip__resource-bar"><i style={{ width: `${Math.round(fill * 100)}%` }} /></span>
+        <span className="order-strip__resource-text">{resourceText}</span>
+      </div>
     </div>
   );
 }

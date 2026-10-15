@@ -138,3 +138,15 @@
     max-width: none;
   }
 }
+
+.order-editor__discipline {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.order-editor__discipline-hint {
+  margin: 0;
+  color: var(--hud-text-muted);
+  font-size: 12px;
+}

@@ -68,7 +68,7 @@ export function CompactMechanic({ model }: { model: MechanicViewModel }) {
   const payoffs = usePayoffsView();
   if (model.kind === 'dot' && payoffs) return <SigilReadout budget={payoffs.sigils.cap} model={model} compact />;
   if (model.kind === 'cadence' && order) {
-    return <OrderStrip order={order} count={model.count} armed={model.armed} compact />;
+    return <OrderStrip order={order} count={model.count} armed={model.armed} resource={model.resource} compact />;
   }
   if (model.kind === 'reload' && model.loadout) {
     return <LoadoutAmmoCompact model={model} />;

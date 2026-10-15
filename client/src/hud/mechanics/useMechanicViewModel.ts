@@ -11,6 +11,7 @@ import {
   channelingPctAtom,
   classConfigAtom,
   combatArchetypeAtom,
+  disciplineIdAtom,
   energyCountAtom,
   energyMaxAtom,
   executionCooldownPctAtom,
@@ -28,6 +29,7 @@ import {
   targetDotTickSerialAtom,
   unlockedSkillsAtom,
 } from '../atoms';
+import { orderResourceFor } from '../orderResource';
 import type { MechanicViewModel } from './types';
 
 function clampPct(value: number): number {
@@ -51,6 +53,7 @@ export function useMechanicViewModel(): MechanicViewModel | null {
   const slotCount = useAtomValue(summonSlotCountAtom);
   const summonSlots = useAtomValue(summonSlotsAtom);
   const summonHealth = useAtomValue(summonHealthAtom);
+  const disciplineId = useAtomValue(disciplineIdAtom);
   const cadenceThreshold = useAtomValue(cadenceThresholdAtom);
   const cadenceCount = useAtomValue(cadenceCountAtom);
   const cadenceArmed = useAtomValue(cadenceEmpoweredArmedAtom);
@@ -72,6 +75,11 @@ export function useMechanicViewModel(): MechanicViewModel | null {
         count: Math.max(0, cadenceCount),
         threshold: Math.max(2, cadenceThreshold || 2),
         armed: cadenceArmed,
+        resource: orderResourceFor(disciplineId, {
+          lit: playerView?.cadenceLit ?? false,
+          edge: playerView?.cadenceEdge ?? 0,
+          momentum: playerView?.cadenceMomentum ?? 0,
+        }),
       };
 
     case 'cooldown':

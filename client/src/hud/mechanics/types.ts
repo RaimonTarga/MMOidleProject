@@ -1,11 +1,14 @@
 import type { SummonSlotView } from '@mmo-idle/shared';
 import type { SummonHealthView } from '../atoms';
+import type { OrderResource } from '../orderResource';
 
 export type CadenceMechanicModel = {
   kind: 'cadence';
   count: number;
   threshold: number;
   armed: boolean;
+  /** The Striker's T2 discipline resource (null before a discipline is picked). */
+  resource: OrderResource | null;
 };
 
 export type CooldownMechanicModel = {

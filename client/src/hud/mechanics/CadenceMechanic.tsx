@@ -18,6 +18,11 @@ function orderHelp(count: number, armed: boolean, beats: number): ReactNode {
         stay as they are. Grey is a plain swing, the class colour a technique,
         gold a mastered one. The last cell is the finisher.
       </div>
+      <div style={{ marginTop: 6 }}>
+        With a discipline, a bar under the strip shows its resource: Light's
+        shine (blue beats when lit), Balanced's edge (rises a step per beat) or
+        Heavy's Momentum. A stun or a pause in the fight puts it out.
+      </div>
       <div style={{ marginTop: 6 }}>{next}</div>
     </>
   );
@@ -72,7 +77,7 @@ export function CadenceMechanic({ model }: { model: CadenceMechanicModel }) {
         title="Order"
         state={model.armed ? 'empowered' : undefined}
       >
-        <OrderStrip order={order} count={model.count} armed={model.armed} />
+        <OrderStrip order={order} count={model.count} armed={model.armed} resource={model.resource} />
       </MechanicFrame>
     );
   }

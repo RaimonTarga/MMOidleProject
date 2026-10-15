@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
+import { useAtomValue } from 'jotai';
 import type { ClassScreenView, OrderBeatView } from '@mmo-idle/shared';
-import { withBeat } from '@mmo-idle/shared';
+import { STRIKER_KIT, withBeat } from '@mmo-idle/shared';
+import { disciplineIdAtom, playerTierAtom } from '../../hud/atoms';
 import { hudBus } from '../../hudBus';
 import { GameIcon } from '../GameIcon';
 import { classPieceIconSource, trophyIconSource } from '../conceptIcons';
@@ -49,6 +51,8 @@ function scrollToRelic(): void {
  */
 export function OrderEditor({ view }: { view: ClassScreenView }) {
   const order = useOrderView();
+  const disciplineId = useAtomValue(disciplineIdAtom);
+  const playerTier = useAtomValue(playerTierAtom);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [fullNotice, setFullNotice] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -70,6 +74,7 @@ export function OrderEditor({ view }: { view: ClassScreenView }) {
     return <p className="class-panel__editor">The Order is not set yet.</p>;
   }
 
+  const discipline = STRIKER_KIT.disciplines.find((entry) => entry.id === disciplineId) ?? null;
   const config = view.config?.system.kind === 'order' ? view.config : null;
   const openBeat = openIndex === null ? null : order.beats.find((beat) => beat.index === openIndex) ?? null;
   const slots = order.slots;
@@ -111,6 +116,18 @@ export function OrderEditor({ view }: { view: ClassScreenView }) {
         {`Techniques: ${slots.used} of ${slots.open} beats`}
         {slots.mastered > 0 ? `, ${slots.mastered} mastered` : ''}
       </p>
+
+      {discipline ? (
+        <div className="order-editor__discipline">
+          <h4 className="class-panel__subheading">{`${discipline.name}: ${order.beats.length + 1} beats`}</h4>
+          <p className="class-panel__line">{discipline.text}</p>
+        </div>
+      ) : playerTier >= 2 ? (
+        <p className="order-editor__discipline-hint" role="status">
+          Pick a discipline in the Passive Tree: Light, Balanced or Heavy. It sets how long your combo is and
+          what it builds.
+        </p>
+      ) : null}
 
       {order.problems.length > 0 && (
         <div className="order-editor__problems" role="alert">
@@ -177,7 +194,9 @@ export function OrderEditor({ view }: { view: ClassScreenView }) {
             </span>
           )}
           <span className="order-editor__beat-name">
-            {order.finisher.trophyId ? order.finisher.name : 'Finisher'}
+            {order.finisher.trophyId
+              ? `${order.finisher.name}${order.finisher.rank > 1 ? ` ${rankMark(order.finisher.rank)}` : ''}`
+              : 'Finisher'}
           </span>
         </button>
       </div>

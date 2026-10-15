@@ -20,6 +20,7 @@ import {
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../../ecs/entity';
 import type { World } from '../../../../world/World';
+import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
 import { fightSnapshotFor } from '../../../combat/moments/fightSnapshot';
 import { momentActive } from '../../../combat/moments/moments';
 import { isHardControlled } from '../../../combat/status/playerHardControl';
@@ -154,6 +155,8 @@ export function updateStrikerT2(world: World, dt: number, now: number): void {
       if (stunned || idle || snapshot.traveling) breakStrikerResource(player);
     }
 
+    syncResourceSlice(world, player, state);
+
     // Chase: Recovery is multiplied while you close on a target.
     const chase = p['striker.closing-recovery-x'] ?? 0;
     if (chase > 1 && closingOnTarget(world, player)) activateRecoveryBoost(cs, chase, BOOST_MS);
@@ -164,7 +167,7 @@ export function updateStrikerT2(world: World, dt: number, now: number): void {
     if (closeIn > 0 && closingOnTarget(world, player) && fightSnapshotFor(world, player, now).rangedAttacker) {
       const live = getStatusEffect(cs, ABILITY_SIDESTEP_EFFECT_ID);
       if (!live || (live.data['evasionPct'] ?? 0) === 0) {
-        const effect = applyStatusEffect(cs, {
+        const effect = applyStatusEffect(player.tracksCombat, {
           id: ABILITY_SIDESTEP_EFFECT_ID,
           maxStacks: 1,
           remainingMs: BOOST_MS,
@@ -192,6 +195,18 @@ export function updateStrikerT2(world: World, dt: number, now: number): void {
       }
     }
   }
+}
+
+/** The HUD reads the resource off the networked slice; copy it over and mark it dirty only on a change. */
+function syncResourceSlice(world: World, player: PlayerEntity, state: StrikerT2State): void {
+  const cadence = player.usesCadence;
+  if (!cadence) return;
+  const momentum = Math.round(state.momentum * 100) / 100;
+  if (cadence.lit === state.lit && cadence.edge === state.edge && cadence.momentum === momentum) return;
+  cadence.lit = state.lit;
+  cadence.edge = state.edge;
+  cadence.momentum = momentum;
+  markSliceDirty(world, player, 'usesCadence');
 }
 
 /** The player has a target and is walking up to it (not yet in reach). */
