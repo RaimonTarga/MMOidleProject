@@ -126,7 +126,7 @@ initCombatSystems();
   slinger.usesReload!.ammo = 1;
   slinger.usesReload!.ammoMax = 1;
   const hit = attackOnce(world, slinger);
-  close(hit.pool, 65 / 0.65 * 0.85 * 0.5 * 1.5,
+  close(hit.pool, 65 / SLINGER_DIRECT_ATTACK_EFFECTIVENESS * 0.85 * 0.5 * 1.5,
     'Slinger weapon reservoir applies 0.85 effectiveness exactly once');
   assert(hit.damage === Math.round(65 * 0.5) + 20,
     'Slinger flat on-hit remains full strength and outside conversion');

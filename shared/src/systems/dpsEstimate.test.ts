@@ -8,6 +8,7 @@
  * and the two cases the old auto-attack formula got outright wrong now behave.
  */
 
+import { SLINGER_DIRECT_ATTACK_EFFECTIVENESS } from './classSecondaryDamage';
 import { estimatePlayerDps, type DpsEstimateInput } from './dpsEstimate';
 import type { PassiveMap } from '../passives';
 import { SUMMONER_CORE_TUNING, SUMMONER_FRAME_TUNING } from '../data/summoner';
@@ -210,7 +211,7 @@ function testSlingerSecondaryDamageBreakdown(): void {
     weaponId: 'ashbrand-blade', archetype: 'reload',
     passives: { 'reload.empowered-mult': 1.5 },
   });
-  const empoweredDot = ((9 * 100 + 150) / 0.65 * 0.85) * 0.5 * 1.5 / 11.6;
+  const empoweredDot = ((9 * 100 + 150) / SLINGER_DIRECT_ATTACK_EFFECTIVENESS * 0.85) * 0.5 * 1.5 / 11.6;
   assert(Math.abs(part(empoweredEstimate, 'Weapon damage over time') - Math.round(empoweredDot * 10) / 10) < 1e-9,
     'Slinger reservoir estimate includes the empowered last shot exactly once');
   const estimate = estimatePlayerDps({
@@ -224,7 +225,7 @@ function testSlingerSecondaryDamageBreakdown(): void {
   const cycleSec = 10 + 1.6;
   const expectedDirect = Math.round(65 * 0.5) * 10 / cycleSec;
   const expectedOnHit = 20 * 10 / cycleSec;
-  const expectedDot = (65 / 0.65 * 0.85) * 0.5 * 1.5 * 10 / cycleSec;
+  const expectedDot = (65 / SLINGER_DIRECT_ATTACK_EFFECTIVENESS * 0.85) * 0.5 * 1.5 * 10 / cycleSec;
   assert(Math.abs(part(estimate, 'Direct attacks') - Math.round(expectedDirect * 10) / 10) < 1e-9,
     'Slinger direct estimate retains the resolved 65% Attack basis');
   assert(Math.abs(part(estimate, 'Flat on-hit') - Math.round(expectedOnHit * 10) / 10) < 1e-9,

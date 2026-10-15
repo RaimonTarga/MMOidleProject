@@ -1,7 +1,10 @@
 import type { PassiveMap } from '../passives';
 
-/** Final Attack-stat effectiveness for ordinary Slinger shots. */
-export const SLINGER_DIRECT_ATTACK_EFFECTIVENESS = 0.65;
+/**
+ * Final Attack-stat effectiveness for ordinary Slinger shots. 1: fire rate is its own stat now
+ * (bible §10.2), so there is no half-damage layer paying for a double-speed one.
+ */
+export const SLINGER_DIRECT_ATTACK_EFFECTIVENESS = 1;
 
 /**
  * Effectiveness retained when a Slinger weapon converts direct hit damage into

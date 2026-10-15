@@ -317,9 +317,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
       p.dealsDamage.attack += Math.round(p.dealsDamage.attack * attackSpeedPct * rate);
     }
 
-    // Reload's half-damage pays for its double-speed. Sniper (slow hard-set cadence)
-    // and Melter (continuous laser with its own per-tick scaling) don't get that
-    // double-speed, so both are exempt and keep full attack damage.
+    // The old half-damage layer is gone with the double-speed one (effectiveness is 1).
     if (!isSnipe && !isLaser) {
       p.dealsDamage.attack = Math.max(
         1,
@@ -334,12 +332,8 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
         200,
         Math.round(p.usesSkills.passives['reload.snipe-cadence-ms'] ?? 2000),
       );
-    } else {
-      p.performsAttack.attackCooldown = Math.max(1, Math.round(p.performsAttack.attackCooldown * 0.5));
-      if ((p.usesSkills.passives['reload.gatling'] ?? 0) > 0) {
-        p.performsAttack.attackCooldown = Math.max(1, Math.round(p.performsAttack.attackCooldown * 0.5));
-      }
     }
+    // Otherwise the gun's own fire rate stands: no double-speed layer (bible §10.2).
   }
 
   // The Striker's Weighty line (class-first build plan CS.4): slower beats.

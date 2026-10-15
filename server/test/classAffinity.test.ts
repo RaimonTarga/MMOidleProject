@@ -183,7 +183,7 @@ const SPIRIT = ["energy-root"];
   });
 
   let expected = Math.round(GAME_CONFIG.PLAYER_ATTACK * (1 + affinity));
-  expected = Math.max(1, Math.floor(expected * 0.65)); // reload archetype
+  // No reload layer: fire rate is the gun's own stat (bible §10.2).
   assert(
     result.dealsDamage.attack === expected,
     `attack retains class/archetype stat layers (${expected}), got ${result.dealsDamage.attack}`,
@@ -206,15 +206,11 @@ const SPIRIT = ["energy-root"];
     const ordinary = build([id]);
     const slinger = build([id], undefined, 0, { combatArchetype: 'reload' });
     assert(ordinary.performsAttack.attackCooldown < 200, 'generic haste must exceed 5 APS');
-    assert(slinger.performsAttack.attackCooldown < 100, 'Slinger haste must exceed 10 nominal APS');
+    assert(slinger.performsAttack.attackCooldown < 200, 'Slinger haste is the guns own: no double-speed layer');
     assert(
-      slinger.performsAttack.attackCooldown === Math.round(ordinary.performsAttack.attackCooldown / 2),
-      'Slinger must retain its double-speed multiplier above the former cap',
+      slinger.performsAttack.attackCooldown === ordinary.performsAttack.attackCooldown,
+      'Slinger fire rate is the weapon and haste alone, the same as any class',
     );
-    fixture.mechanicEffects['reload.gatling'] = 1;
-    const gatling = build([id], undefined, 0, { combatArchetype: 'reload' });
-    assert(gatling.performsAttack.attackCooldown < slinger.performsAttack.attackCooldown,
-      'Gatling must retain its additional speed multiplier above 10 nominal APS');
     fixture.statEffects.attackSpeedPct = 1e9;
     const extreme = build([id], undefined, 0, { combatArchetype: 'reload' });
     assert(extreme.performsAttack.attackCooldown === 1, 'rounding must never produce a zero cooldown');
