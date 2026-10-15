@@ -4,6 +4,7 @@ import { TUTORIAL_OPENING } from './opening';
 import { buildSealRouteBeats } from './sealRoute';
 import { buildSquireBeats } from './squire';
 import { buildStrikerBeats } from './striker';
+import { buildApprenticeBeats } from './apprentice';
 
 export { TUTORIAL_FAREWELL } from './farewell';
 export { TUTORIAL_OPENING } from './opening';
@@ -21,6 +22,7 @@ const scripts = new Map<string, TutorialScript>();
 export const TUTORIAL_CLASS_BEATS: Partial<Record<string, () => TutorialBeat[]>> = {
   'cadence-root': buildStrikerBeats,
   'cooldown-root': buildSquireBeats,
+  'dot-root': buildApprenticeBeats,
 };
 
 /**
