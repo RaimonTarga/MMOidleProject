@@ -3,7 +3,7 @@
 Kept by the conductor. Plan: [class-first-build-plan-2026-10-14.md](../class-first-build-plan-2026-10-14.md).
 Integration branch `rework/class-first` (conductor worktree `../mmo-rework`).
 
-**Updated:** 2026-10-15 (afternoon): S4, S7, Planted and the Striker FX delete done; F7-PANEL, CS6, CQ6, CQ7 merged; CS5-UI and CQ5-UI are the open delegate tasks.
+**Updated:** 2026-10-15 (evening): the Conduit CD.1–CD.5 done; Striker, Squire and gear delegates merged; 74 new icons wired; CD6-UI, CD7-ROUTE, CD8-CLEANUP are the open delegate tasks.
 **Baseline:** `rework/class-first` after the CQ7 merge: full suite **342/342** (biomeEcology flakes under load), typecheck clean.
 Codex hit rate limits on 2026-10-14, so D5, K1–K3, D1, T0 and D2 ran as Claude subagents of the conductor (same briefs, same worktrees).
 
@@ -24,53 +24,63 @@ Recorded in the bible (§4 Armor/charm row, §5) where they are design.
 
 | ID | Task | Agent | Worktree · branch | State |
 |---|---|---|---|---|
-| CS5-UI | [The Order editor and beat strip](CS5-striker-ui.md) | Grok | `../mmo-rw-cs5-ui` · `rw/cs5-ui` | ready (worktree made 2026-10-15) |
-| CQ5-UI | [The Response rules editor, Resolve pips, callouts](CQ-squire-delegates.md) | Grok | `../mmo-rw-cq5-ui` · `rw/cq5-ui` | ready (worktree made 2026-10-15) |
-| G-GEAR-C | [Every class's moved lines on second bases](G-GEAR-C-moved-lines.md) | Grok | `../mmo-rw-gear-c` · `rw/gear-c` | ready (plumbing done: `movedLines`, `<base>-b`) |
-| ICONS-3 | Redraw the Striker crests and flat T1 icons | the designer, via Codex | `../mmo-rw-icons-3` · `rw/icons-3` | **not merged**; the designer handles art themselves. Keep old art, add icons only where needed |
+| CD6-UI | [The Formation editor, Command pips, rebuild queue](CD-conduit-delegates.md) | Grok | `../mmo-rw-cd6-ui` · `rw/cd6-ui` | ready |
+| CD7-ROUTE | [The Conduit's guided tutorial and bot route](CD-conduit-delegates.md) | Codex or Grok | `../mmo-rw-cd7-route` · `rw/cd7-route` | ready |
+| CD8-CLEANUP | [Delete the Conduit's old frame, range and specialization content](CD-conduit-delegates.md) | Codex or Grok | `../mmo-rw-cd8-cleanup` · `rw/cd8-cleanup` | ready |
+| ICONS-3 | Redraw the Striker crests and flat T1 icons | the designer, via Codex | `../mmo-rw-icons-3` · `rw/icons-3` | **not merged**: superseded by the 74 style-recovery icons, wired in `ce68c66f` |
 
 ## Paste-ready prompts
 
 Open the agent **in the task's worktree folder** and paste its prompt.
 
-**CS5-UI (Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-cs5-ui`:
+**CD6-UI (Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-cd6-ui`:
 
 ```text
 You're working on the MMO Idle class-first rework, in this folder, on branch
-rw/cs5-ui. First read docs/briefs/class-first-build/AGENT-RULES.md, then do the
-task in docs/briefs/class-first-build/CS5-striker-ui.md. Work only in this folder;
-never run pnpm install. When you're done, commit on your branch, write your report
-where the brief says, and tell me.
-```
-
-**CQ5-UI (Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-cq5-ui`:
-
-```text
-You're working on the MMO Idle class-first rework, in this folder, on branch
-rw/cq5-ui. First read docs/briefs/class-first-build/AGENT-RULES.md and
-CS5-striker-ui.md, then do the task marked CQ5-UI in
-docs/briefs/class-first-build/CQ-squire-delegates.md. Work only in this folder; never
+rw/cd6-ui. First read docs/briefs/class-first-build/AGENT-RULES.md and
+CS5-striker-ui.md, then do the task marked CD6-UI in
+docs/briefs/class-first-build/CD-conduit-delegates.md. Work only in this folder; never
 run pnpm install. When you're done, commit on your branch, write your report where the
 brief says, and tell me.
 ```
 
-**G-GEAR-C (Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-gear-c`:
+**CD7-ROUTE (Codex or Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-cd7-route`:
 
 ```text
 You're working on the MMO Idle class-first rework, in this folder, on branch
-rw/gear-c. First read docs/briefs/class-first-build/AGENT-RULES.md, then do the
-task in docs/briefs/class-first-build/G-GEAR-C-moved-lines.md. Work only in this folder;
-never run pnpm install. When you're done, commit on your branch, write your report
-where the brief says, and tell me.
+rw/cd7-route. First read docs/briefs/class-first-build/AGENT-RULES.md and
+CS6-striker-route.md, then do the task marked CD7-ROUTE in
+docs/briefs/class-first-build/CD-conduit-delegates.md. Work only in this folder; never
+run pnpm install. When you're done, commit on your branch, write your report where the
+brief says, and tell me.
+```
+
+**CD8-CLEANUP (Codex or Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-cd8-cleanup`:
+
+```text
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/cd8-cleanup. First read docs/briefs/class-first-build/AGENT-RULES.md and
+CS7-striker-cleanup.md, then do the task marked CD8-CLEANUP in
+docs/briefs/class-first-build/CD-conduit-delegates.md. Work only in this folder; never
+run pnpm install. When you're done, commit on your branch, write your report where the
+brief says, and tell me.
 ```
 
 ## Queued (briefs written when their inputs land)
 
 | ID | Task | Agent | Waits for |
 |---|---|---|---|
-| Next class | The Conduit ([C-conduit](C-conduit.md), plan written 2026-10-15; CD.1–CD.3 done; CD.4 Souls and CD.5 gear keys next, then the delegate briefs), then Slinger, Spirit, Apprentice | Conductor | — |
+| Next class | The Conduit ([C-conduit](C-conduit.md): CD.1–CD.5 done, CD6–CD8 are delegate tasks), then Slinger, Spirit, Apprentice | Conductor | — |
 
 ## Known follow-ups (not yet a task)
+
+- **Conduit stand-ins (designer to look at):** the Mountain Soul's shield is a heal (minions have no
+  ward); the Cave Soul's spiderling is a free half-strength strike every 2 s (no temporary summon
+  entity yet); Deep Reserve doubles rebuild speed instead of rebuilding two at once; the Poison
+  Staff reuses the bleed driver (ticks stack, red numbers); Soul seed lines, the T1 weapon and line
+  numbers and the Soul body's 1.3x HP / 1.2x damage are placeholders. Lines on T2+ bases
+  (Sentinel, Bloomlink, Sandveil, Purge, Permafrost, Hibernate, Fireproof, Emberglow...) and the
+  T2+ weapon jobs (First Strike, Longshot...) are still `effects: {}`.
 
 - **S7 follow-ups:** the ward is `defense.ward-hit-pct` (Mountain, a hit over `CHARM_WARD_BIG_HIT_PCT` of max HP) and `defense.ward-freeze-pct` (Tundra, the rising edge of the Frozen status on you, whoever applied it); size, 5 s window and 10 s gap between raises are placeholders (`GAME_CONFIG.CHARM_WARD_*`). The barrier engine, its Guard hooks and the Mountain armor-branch barrier recipes stay for the Spirit (XC1). `barrier.test` and `charmHooks.test` lend the T4/T1 charms the old barrier lines in-test. The 6 charm entries in `nonWeaponLadders.fixture.ts` were repointed to the ward values.
 
@@ -121,6 +131,9 @@ where the brief says, and tell me.
 
 | ID | Task | Merged |
 |---|---|---|
+| CS5-UI, CQ5-UI, G-GEAR-C | The Striker's Order editor and beat strip; the Squire's Response rules editor and Resolve pips; every class's moved lines on second bases (Grok); census tests skip `-b` bases | merges `5f44dbda`, `8791410c`, `75958acc` |
+| ICONS (designer) | The 74 style-recovery class-piece and trophy icons wired over the earlier versions; cache-busting v2 | `ce68c66f` |
+| CD.4, CD.5 | The Conduit's Souls (a free extra body plus the five T1 seed lines); the weapon jobs and T1 lines (Command from the weapon, multipliers, Poison Staff, Shared Plating, Herd, Deep Reserve, Bramble, Sapbark, Poison Shift, Bloodtithe, Big-Hit Intercept, You Tank); `composeFormationView` | `5bc76699`, `8cbe526f`, `df14e201` |
 | CD.1–CD.3 | The Conduit: the formation is the roster in the class config (`RosterBody`, `<piece>#<n>` slots); the T1 types' stat multipliers, acid, power shot and taunting sweep (`summonPieces.ts`); the orders, Recall rule and rebuild order (`formationOrders.ts`); `conduitFormation.test.ts` | `be52d9fa`, `a9994353`, `208a7f46`; 343/343 |
 | F7-PANEL, CS6-ROUTE, CQ6-ROUTE, CQ7-CLEANUP | The class screen shell; the Striker's and Squire's tutorials and bot routes; the Squire's frame loop and T3 paths deleted (Grok) | merges `093c1050`, `84a63cc5`, `a15f697f`, then CQ7; 342/342 |
 | S7 | The timed ward on the Mountain (big hit) and Tundra (frozen) charm bases, replacing their barrier; `charmWards.test.ts` | next commit |
