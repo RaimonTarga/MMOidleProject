@@ -7,6 +7,7 @@ const outputRoot = path.resolve('client/public/assets/concept-icons');
 const groups = [
   ['classes', 96, 80],
   ['frames', 96, 54],
+  ['disciplines', 96, 54],
   ['ranges', 96, 54],
   ['ranges/classes', 96, 54],
   ['paths', 96, 54],
