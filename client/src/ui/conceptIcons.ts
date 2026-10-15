@@ -435,6 +435,8 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'cadence-hemorrhage': 'debuff-dot',
   'striker-rot': 'debuff-poison',
   'conduit-poison': 'debuff-poison',
+  'slinger-venom': 'debuff-poison',
+  'slinger-rot': 'debuff-poison',
   'energy-storm': 'energy-storm',
   'energy-ci-tag': 'energy-ac-charge',
   'death-mark': 'reload-snipe-ready',

@@ -136,14 +136,14 @@ function directAttack(
   eq(res.damage, 60, 'plain direct attack damage must use full plating');
 }
 
-// 2. Reload still uses its existing 0.5 behavior.
+// 2. A class-first Slinger pays full plating: the half-plating price moved to the Breaching clip (bible §10.4).
 {
   const world = new World();
   const player = attach(world, { archetype: 'reload' });
   const target = targetFor(world, 40, 0);
   player.dealsDamage.attack = 100;
   const res = directAttack(world, player, target, undefined, 'player');
-  eq(res.platingMult!, 0.5, 'reload must keep its existing 0.5 plating compensation');
+  eq(res.platingMult!, 1, 'a Slinger with a Loadout pays full plating');
 }
 
 // 3. A Conduit/Summoner formation packet uses 0.5.

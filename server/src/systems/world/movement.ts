@@ -1,3 +1,4 @@
+import { reloadMoveMult, regroupSpeedMult } from '../classes/archetypes/reload/slinger';
 import {
   ABILITY_SIDESTEP_EFFECT_ID,
   LAIR_DRAG_ROOT_EFFECT_ID,
@@ -495,6 +496,12 @@ function playerSpeedMults(
 
   // Sidestep's burst (design §22.8) rides its window's status, so it ends exactly
   // when the evasion window does.
+  // The Slinger's reload is stationary (0), or slowed by Quickdraw; Regroup hastes after a big hit.
+  const reloadMult = reloadMoveMult(player);
+  if (reloadMult !== null) mults.push(reloadMult);
+  const regroup = regroupSpeedMult(player, now);
+  if (regroup > 1) mults.push(regroup);
+
   const sidestep = getStatusEffect(cs, ABILITY_SIDESTEP_EFFECT_ID);
   if (sidestep && sidestep.remainingMs > 0) mults.push(1 + Math.max(0, sidestep.data['moveSpeedPct'] ?? 0));
 

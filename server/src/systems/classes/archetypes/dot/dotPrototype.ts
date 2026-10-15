@@ -315,7 +315,9 @@ export function updateDotArchetype(world: World, dt: number, now = Date.now()): 
     const base = computeLinearDotDamage(effect);
     const dotResist = Math.min(
       0.9,
-      entity.usesSkills.passives["defense.dot-resistance"] ?? 0,
+      (entity.usesSkills.passives["defense.dot-resistance"] ?? 0)
+        // The Slinger's Oilskin: damage over time on you is shrugged off while you reload.
+        + (entity.usesReload && entity.usesReload.reloadingMs > 0 ? entity.usesSkills.passives['slinger.oilskin'] ?? 0 : 0),
     );
     // General DR applies at GAME_CONFIG.DOT_DR_SHARE; dedicated resistance adds specialization.
     const drForDot = entity.mitigatesDamage.damageReduction * GAME_CONFIG.DOT_DR_SHARE;

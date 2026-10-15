@@ -5,6 +5,10 @@ export interface UsesReload {
   laserHeat: number;
   laserOverheated: boolean;
   reloadingMs: number;
+  /** The loaded clip type (a Slinger kit piece id; the plain clip's id until a rule picks another). */
+  clipId: string;
+  /** The clip the Loadout's rules would load at the next reload, for the ring. */
+  nextClipId: string;
   /** Full duration captured when the current reload began; 0 while idle. */
   reloadDurationMs: number;
   /**
@@ -45,6 +49,8 @@ export function initUsesReload(args: { ammoMax: number }): UsesReload {
     laserHeat:       0,
     laserOverheated: false,
     reloadingMs:     0,
+    clipId:          'slinger-plain-clip',
+    nextClipId:      'slinger-plain-clip',
     reloadDurationMs: 0,
     chainRounds:     0,
     clipSpeedStacks: 0,

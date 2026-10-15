@@ -52,7 +52,9 @@ for (const expected of PIECES) {
   assert(found.name === expected.name, `${expected.id}: name ${found.name}`);
   assert(found.family === expected.family, `${expected.id}: family ${found.family}`);
   assert(found.color === expected.color, `${expected.id}: color ${found.color}`);
-  assert(Object.keys(found.params).length === 0, `${expected.id}: params must be empty`);
+  // The T1 clips and trophy rounds carry their runtime numbers since CL.2; later pieces stay empty.
+  const t1Clip = ['slinger-scatter', 'slinger-snare', 'slinger-venom', 'slinger-stopping', 'slinger-breaching'].includes(expected.id);
+  assert(t1Clip ? Object.values(found.params).every(Number.isFinite) : Object.keys(found.params).length === 0, `${expected.id}: params empty until their runtime`);
   familyCount[found.family] += 1;
 }
 assert(familyCount.damage === 11, `damage 11 (plain included), found ${familyCount.damage}`);
@@ -173,7 +175,8 @@ for (const expected of TROPHIES) {
   if (!found) throw new Error(`missing trophy ${expected.id}`);
   assert(found.name === expected.name, `${expected.id}: name ${found.name}`);
   assert(found.kind === 'round', `${expected.id}: kind ${found.kind}`);
-  assert(Object.keys(found.params).length === 0, `${expected.id}: params must be empty`);
+  const t1Round = ['slinger-relic-plains', 'slinger-relic-forest', 'slinger-relic-swamp', 'slinger-relic-mountain', 'slinger-relic-cave'].includes(expected.id);
+  assert(t1Round ? Object.values(found.params).every(Number.isFinite) : Object.keys(found.params).length === 0, `${expected.id}: params empty until their runtime`);
   assert(
     found.ranks.map((rank) => rank.bossTier).join() === expected.bossTiers.join(),
     `${expected.id}: boss tiers ${found.ranks.map((rank) => rank.bossTier).join()}`,

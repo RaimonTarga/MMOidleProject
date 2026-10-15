@@ -40,12 +40,12 @@ export type SlingerTrophy = TrophyDef<SlingerTrophyKind>;
 /** The trophy rounds' colour on the ring. */
 export const SLINGER_LAST_ROUND_COLOR = '#f5c542';
 
-export function clip(piece: Omit<SlingerPiece, 'classId' | 'params'>): SlingerPiece {
-  return { classId: 'reload', params: {}, ...piece };
+export function clip(piece: Omit<SlingerPiece, 'classId' | 'params'> & { params?: SlingerPiece['params'] }): SlingerPiece {
+  return { classId: 'reload', ...piece, params: piece.params ?? {} };
 }
 
-export function slingerTrophy(entry: Omit<SlingerTrophy, 'classId' | 'params' | 'kind'>): SlingerTrophy {
-  return { classId: 'reload', params: {}, kind: 'round', ...entry };
+export function slingerTrophy(entry: Omit<SlingerTrophy, 'classId' | 'params' | 'kind'> & { params?: SlingerTrophy['params'] }): SlingerTrophy {
+  return { classId: 'reload', kind: 'round', ...entry, params: entry.params ?? {} };
 }
 
 function discipline(entry: Omit<DisciplineDef, 'classId' | 'params'>): DisciplineDef {
@@ -73,6 +73,7 @@ const PIECES: readonly SlingerPiece[] = [
   // ── T1 (§10.4) ──
   clip({
     id: 'slinger-scatter',
+    params: { nicks: 2, nickPct: 0.4, damagePct: 0.9 },
     name: 'Scatter',
     family: 'damage',
     color: '#f2a33a',
@@ -80,6 +81,7 @@ const PIECES: readonly SlingerPiece[] = [
   }),
   clip({
     id: 'slinger-snare',
+    params: { slowPerRound: 0.08, slowCap: 0.4, durationMs: 3000, damagePct: 0.9 },
     name: 'Snare',
     family: 'control',
     color: '#39c9b8',
@@ -88,6 +90,7 @@ const PIECES: readonly SlingerPiece[] = [
   }),
   clip({
     id: 'slinger-venom',
+    params: { ticksPerRound: 2, maxTicks: 12, tickShare: 0.2, tickMs: 1000, damagePct: 0.9 },
     name: 'Venom',
     family: 'damage',
     color: '#8fdc3c',
@@ -96,6 +99,7 @@ const PIECES: readonly SlingerPiece[] = [
   }),
   clip({
     id: 'slinger-stopping',
+    params: { shovePx: 22, maxShoves: 4, windowMs: 3000, damagePct: 0.9 },
     name: 'Stopping',
     family: 'control',
     color: '#4a78ff',
@@ -104,6 +108,7 @@ const PIECES: readonly SlingerPiece[] = [
   }),
   clip({
     id: 'slinger-breaching',
+    params: { platingMult: 0.25, damagePct: 0.9 },
     name: 'Breaching',
     family: 'damage',
     color: '#ff5a3c',
@@ -252,6 +257,7 @@ const LESSONS: readonly LessonDef[] = [
 const TROPHIES: readonly SlingerTrophy[] = [
   slingerTrophy({
     id: 'slinger-relic-plains',
+    params: { shovePx: 90, lineLength: 240, lineWidth: 44 },
     lineage: 'plains',
     name: 'Stampede Round',
     text: 'Your last round knocks the target, and everything in a line behind it, back.',
@@ -259,6 +265,7 @@ const TROPHIES: readonly SlingerTrophy[] = [
   }),
   slingerTrophy({
     id: 'slinger-relic-forest',
+    params: { secondShotPct: 0.6 },
     lineage: 'forest',
     name: 'Twin Round',
     text: 'Your last round fires twice.',
@@ -266,6 +273,7 @@ const TROPHIES: readonly SlingerTrophy[] = [
   }),
   slingerTrophy({
     id: 'slinger-relic-swamp',
+    params: { sharePct: 0.5, ticks: 4, tickMs: 1000 },
     lineage: 'swamp',
     name: 'Rot Round',
     text: "Your last round's wound rots, and it hits again over a few seconds.",
@@ -276,6 +284,7 @@ const TROPHIES: readonly SlingerTrophy[] = [
   }),
   slingerTrophy({
     id: 'slinger-relic-mountain',
+    params: { radius: 110, blastPct: 0.8 },
     lineage: 'mountain',
     name: 'Quake Round',
     text: 'Your last round is a heavy slug that hits everything around the target.',
@@ -287,6 +296,7 @@ const TROPHIES: readonly SlingerTrophy[] = [
   }),
   slingerTrophy({
     id: 'slinger-relic-cave',
+    params: { splinters: 3, splinterPct: 0.5, radius: 220 },
     lineage: 'cave',
     name: 'Splinter Round',
     text: 'Your last round splits into three that strike the nearest other enemies.',

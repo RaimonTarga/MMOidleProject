@@ -121,6 +121,9 @@ export interface PlayerView {
   reloadRemainingMs: number;
   /** Full duration captured at reload start, used to render progress. */
   reloadDurationMs: number;
+  /** The loaded clip type and the next one, for the ammo ring (kit piece ids). */
+  reloadClip: string;
+  reloadNextClip: string;
   heatPct: number;
   laserOverheated: boolean;
   executionReady: boolean;
@@ -374,6 +377,8 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     ammoMax: entity.usesReload?.ammoMax ?? 0,
     reloadRemainingMs: entity.usesReload?.reloadingMs ?? 0,
     reloadDurationMs: entity.usesReload?.reloadDurationMs ?? 0,
+    reloadClip: entity.usesReload?.clipId ?? '',
+    reloadNextClip: entity.usesReload?.nextClipId ?? '',
     heatPct: entity.usesReload ? Math.min(100, Math.round(entity.usesReload.laserHeat / resolveLaserProfile(entity.usesSkills?.passives ?? {}).heatMax * 100)) : 0,
     laserOverheated: entity.usesReload?.laserOverheated ?? false,
     executionReady: entity.hasEmpoweredAttack !== undefined,

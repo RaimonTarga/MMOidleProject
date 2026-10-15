@@ -206,7 +206,7 @@ export function auditStatusRegistry(root: string = AUDIT_DEFAULT_ROOT) {
     }
     if (api === 'applyClassDotStack') add('dot', `server/src/systems/classes/archetypes/dot/dotPrototype.ts:130; ${loc(node)}`, 'monster', 'no');
     // The Striker's bleed records (Rend, Festering Cut's rot): the id is the fourth argument.
-    if (api === 'applyBleed') for (const id of strings(node.arguments[3])) add(id, loc(node), 'monster', 'no');
+    if (api === 'applyBleed' || api === 'applyTickDot') for (const id of strings(node.arguments[3])) add(id, loc(node), 'monster', 'no');
     const indexes = APIs.get(api);
     if (indexes) {
       const cfg = node.arguments[indexes[1]], target = node.arguments[indexes[0]]?.getText() ?? '';

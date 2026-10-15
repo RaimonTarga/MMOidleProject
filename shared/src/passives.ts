@@ -122,6 +122,21 @@ export const DEFENSE_KEYS = [
   'conduit.poison-shift',  // Poison Shift: poison on you moves to a summon
   'conduit.bloodtithe-pct',  // Bloodtithe: share of the rebuild HP cost returned when a summon dies
   'conduit.intercept-pct',  // Big-Hit Intercept: a hit over this share of your HP goes to the nearest tank
+  'slinger.reload-walk-pct',  // Quickdraw: walk at this share of speed while reloading
+  'slinger.elbow-room',  // Elbow Room: reload faster while three or more enemies are near
+  'slinger.breathing-room',  // Breathing Room: Recovery rises with the distance to the nearest enemy
+  'slinger.fleet',  // Fleet: Recovery share multiplied while you move
+  'slinger.snake-oil',  // Snake Oil: Recovery share multiplied while you carry poison or bleed and no enemy is near
+  'slinger.oilskin',  // Oilskin: share of damage over time on you shrugged off while reloading
+  'slinger.dig-in',  // Dig In: while reloading, no single hit takes more than this share of your HP
+  'slinger.hunker',  // Hunker: plating multiplied while reloading
+  'slinger.regroup-speed-pct',  // Regroup: speed after a hit over a quarter of your HP
+  'slinger.scatter-extra',  // Pepperbox: Scatter nicks this many more enemies
+  'slinger.opener-pct',  // Carbine: the first rounds of a clip hit this much harder
+  'slinger.poison-long-pct',  // Snakebite Pistol: your poison lasts this much longer
+  'slinger.last-vs-poisoned-pct',  // Snakebite Pistol: the last round hits a poisoned target this much harder
+  'slinger.last-round-pct',  // Hand Cannon: the last round hits this much harder
+  'slinger.ramp-pct',  // Drum Gun: each round of a clip hits this much harder than the last
   'defense.recovery-hit-pct',         // Cairnstone: a hit over this share of max HP...
   'defense.recovery-hit-x',           // ...multiplies the Recovery share by this for a few seconds
   'squire.recovery-riposte-x',        // Counterbalance: after a Riposte, the Recovery share is multiplied by this

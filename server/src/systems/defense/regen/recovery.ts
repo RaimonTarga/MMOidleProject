@@ -9,6 +9,7 @@ import {
 import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { COMBAT_ELAPSED_KEY } from '../core/pools';
+import { SLINGER_RECOVERY_X } from '../../classes/archetypes/reload/slinger';
 import { registerCombatListener } from '../../combat/engine/combatPipeline';
 import { applyHealToPlayer } from './healing';
 
@@ -138,6 +139,9 @@ function shareMultiplier(player: PlayerEntity): number {
     const t = Math.min(1, getResource(cs, COMBAT_ELAPSED_KEY) / rampMs);
     factor *= 1 + (rhythmMax - 1) * t;
   }
+  // The Slinger's Recovery lines (Breathing Room, Fleet, Snake Oil) write one factor each tick.
+  const slinger = getResource(cs, SLINGER_RECOVERY_X);
+  if (slinger > 0) factor *= slinger;
   return factor;
 }
 

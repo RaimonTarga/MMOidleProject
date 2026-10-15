@@ -4,7 +4,7 @@
  * hitting slot's piece: the Spitter's acid, the Marksman's power shot, the tanks' taunting sweep.
  * Every number is a kit `params` placeholder.
  */
-import { CONDUIT_KIT, getResource, getStatusEffect, removeStatusEffect, setResource, type ConduitPiece } from '@mmo-idle/shared';
+import { CONDUIT_KIT, getResource, setResource, type ConduitPiece } from '@mmo-idle/shared';
 import type { MinionEntity, MonsterEntity, PlayerEntity } from '../../../../ecs/entity';
 import type { World } from '../../../../world/World';
 import { applyTaunt } from '../../../combat/ai/targeting';
@@ -13,9 +13,8 @@ import { attackNow, registerCombatListener, type CombatContext } from '../../../
 import { evadeBlocksDebuffs } from '../../../defense/mitigation/evasion';
 import { applyFramePlatingShred } from '../../shared/frameLoop';
 import { onTankTaunt } from './souls';
-import { attachMarker } from '../../../../ecs/markerHelpers';
 import { CONDUIT_POISON_ID } from '../../../combat/damage/bleedIds';
-import { applyPlayerDebuff } from '../../shared/applyPlayerDebuff';
+import { applyTickDot } from '../../shared/tickDot';
 
 const PIECES = new Map<string, ConduitPiece>(CONDUIT_KIT.pieces.map((piece) => [piece.id, piece]));
 
@@ -73,19 +72,7 @@ export function registerSummonPieces(): void {
     // Poison Staff: every summon hit adds ticks to a poison on the target (back-loaded damage).
     const poison = owner.usesSkills.passives['conduit.poison-stacks'] ?? 0;
     if (poison > 0 && !evadeBlocksDebuffs(ctx) && target.hasHealth.hp > 0) {
-      const prior = getStatusEffect(target.tracksCombat, CONDUIT_POISON_ID);
-      const ticks = Math.min(POISON_MAX_TICKS, (prior?.stacks ?? 0) + poison * POISON_TICKS_PER_HIT);
-      const perTick = Math.max(1, Math.round(ctx.damage * POISON_TICK_SHARE), prior?.data['damagePerTick'] ?? 0);
-      removeStatusEffect(target.tracksCombat, CONDUIT_POISON_ID);
-      const effect = applyPlayerDebuff(owner, target.tracksCombat, {
-        id: CONDUIT_POISON_ID,
-        instanced: false,
-        remainingMs: -1,
-        sourceId: owner.isPlayer.id,
-        data: { damagePerTick: perTick, nextTickIn: POISON_TICK_MS, tickIntervalMs: POISON_TICK_MS },
-      }, { origin: 'mechanic' });
-      effect.stacks = ticks; // one stack per remaining tick, as a bleed
-      attachMarker(world, target, 'hasHemorrhage');
+      applyTickDot(world, owner, target, CONDUIT_POISON_ID, ctx.damage * POISON_TICK_SHARE, poison * POISON_TICKS_PER_HIT, POISON_MAX_TICKS, POISON_TICK_MS);
     }
 
     // Tanks (Plains Warden, Cave Brute): the sweep taunts the enemies around the target.

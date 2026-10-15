@@ -111,7 +111,8 @@ export function initReloadArchetype(): void {
     // ammo/plating bookkeeping — otherwise a cancelled shot still drains the clip.
     if (ctx.cancelled) return;
 
-    ctx.platingMult = 0.5;
+    // Half plating was every Slinger shot's price; it moved to the Breaching clip (bible §10.4).
+    ctx.platingMult = entity.configuresClass?.config.system.kind === 'loadout' ? 1 : 0.5;
 
     const reload = entity.usesReload;
     const passives = entity.usesSkills.passives;

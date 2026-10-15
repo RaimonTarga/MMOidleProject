@@ -19,6 +19,12 @@ export const STRIKER_ROT_ID = 'striker-rot';
 /** The Conduit's Poison Staff: summon hits add ticks to a poison on the target. */
 export const CONDUIT_POISON_ID = 'conduit-poison';
 
+/** The Slinger's Venom clip: each round adds poison ticks. */
+export const SLINGER_VENOM_ID = 'slinger-venom';
+
+/** Rot Round: the last round's wound rots over a few seconds. */
+export const SLINGER_ROT_ID = 'slinger-rot';
+
 /**
  * How a bleed's `stacks` field behaves, carried in the effect's own data under
  * `bleedMode` so one driver can serve both shapes.
@@ -35,6 +41,8 @@ export const BLEED_EFFECT_IDS: readonly string[] = [
   CADENCE_BLEED_ID,
   STRIKER_ROT_ID,
   CONDUIT_POISON_ID,
+  SLINGER_VENOM_ID,
+  SLINGER_ROT_ID,
 ];
 
 /** Whether this monster state carries any bleed the driver owns. */
