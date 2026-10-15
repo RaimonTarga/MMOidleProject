@@ -3,7 +3,7 @@
 Kept by the conductor. Plan: [class-first-build-plan-2026-10-14.md](../class-first-build-plan-2026-10-14.md).
 Integration branch `rework/class-first` (conductor worktree `../mmo-rework`).
 
-**Updated:** 2026-10-15 (late night): all six T1 runtimes are in (Striker, Squire, Conduit, Slinger, Spirit, Apprentice); delegate tasks open: CD6–8, CL5–7, SP5–7, AP5–7; 350/350.
+**Updated:** 2026-10-15 (night): all delegate tasks merged except CD8-CLEANUP (running); 353/353; the first live smoke run found no server errors, the Striker cannot yet beat the Plains boss (balance).
 **Baseline:** `rework/class-first` after the CQ7 merge: full suite **342/342** (biomeEcology flakes under load), typecheck clean.
 Codex hit rate limits on 2026-10-14, so D5, K1–K3, D1, T0 and D2 ran as Claude subagents of the conductor (same briefs, same worktrees).
 
@@ -24,19 +24,9 @@ Recorded in the bible (§4 Armor/charm row, §5) where they are design.
 
 | ID | Task | Agent | Worktree · branch | State |
 |---|---|---|---|---|
-| CD6-UI | [The Formation editor, Command pips, rebuild queue](CD-conduit-delegates.md) | Grok | `../mmo-rw-cd6-ui` · `rw/cd6-ui` | ready |
-| CD7-ROUTE | [The Conduit's guided tutorial and bot route](CD-conduit-delegates.md) | Codex or Grok | `../mmo-rw-cd7-route` · `rw/cd7-route` | ready |
-| CD8-CLEANUP | [Delete the Conduit's old frame, range and specialization content](CD-conduit-delegates.md) | Codex or Grok | `../mmo-rw-cd8-cleanup` · `rw/cd8-cleanup` | ready |
-| CL5-UI | [The Loadout editor and the ammo ring](CL-slinger-delegates.md) | Grok | `../mmo-rw-cl5-ui` · `rw/cl5-ui` | ready |
-| CL6-ROUTE | [The Slinger's guided tutorial and bot route](CL-slinger-delegates.md) | Codex or Grok | `../mmo-rw-cl6-route` · `rw/cl6-route` | ready |
-| CL7-CLEANUP | [Delete the Slinger's old frame, range and T3 content](CL-slinger-delegates.md) | Codex or Grok | `../mmo-rw-cl7-cleanup` · `rw/cl7-cleanup` | ready |
-| SP5-UI | [The Thresholds editor and the storm gauge](SP-spirit-delegates.md) | Grok | `../mmo-rw-sp5-ui` · `rw/sp5-ui` | ready |
-| SP6-ROUTE | [The Spirit's guided tutorial and bot route](SP-spirit-delegates.md) | Codex or Grok | `../mmo-rw-sp6-route` · `rw/sp6-route` | ready |
-| SP7-CLEANUP | [Delete the Spirit's old frame, range and T3 content](SP-spirit-delegates.md) | Codex or Grok | `../mmo-rw-sp7-cleanup` · `rw/sp7-cleanup` | ready |
-| AP5-UI | [The Payoff rules editor and the sigil ring](AP-apprentice-delegates.md) | Grok | `../mmo-rw-ap5-ui` · `rw/ap5-ui` | ready |
-| AP6-ROUTE | [The Apprentice's guided tutorial and bot route](AP-apprentice-delegates.md) | Codex or Grok | `../mmo-rw-ap6-route` · `rw/ap6-route` | ready |
-| AP7-CLEANUP | [Delete the Apprentice's old frame, range and T3 content](AP-apprentice-delegates.md) | Codex or Grok | `../mmo-rw-ap7-cleanup` · `rw/ap7-cleanup` | ready |
-| ICONS-3 | Redraw the Striker crests and flat T1 icons | the designer, via Codex | `../mmo-rw-icons-3` · `rw/icons-3` | **not merged**: superseded by the 74 style-recovery icons, wired in `ce68c66f` |
+| CD8-CLEANUP | [Delete the Conduit's old frame, range and specialization content](CD-conduit-delegates.md) | Grok | `../mmo-rw-cd8-cleanup` · `rw/cd8-cleanup` | **running** (uncommitted; merge when it reports) |
+
+All other delegate tasks are merged (2026-10-15 night, `2214470f`): CD6, CD7, CL5, CL6, CL7, SP5, SP6, SP7, AP5, AP6, AP7.
 
 ## Paste-ready prompts
 
@@ -208,6 +198,21 @@ them): worth a look in the client or a log line.
 
 ## Known follow-ups (not yet a task)
 
+- **From the 2026-10-15 delegate reports (not yet tasks):** the Conduit HUD cannot show the next
+  rebuild's HP cost (needs a networked `costHp` on the active reconstruction); the Slinger's
+  trophy-round callout and the Apprentice's trophy/chain callouts need the server to publish a
+  last-round / payoff event on the combat event (`slingerLastRound` stays on the server context);
+  the Apprentice's sigil ring follows only the local player's current target (the client gets no
+  per-enemy owner counts); the Spirit's character crackle thinning was skipped; SP7 kept
+  `energy.flash`, `energy.range-mid-discharge-stagger-ms`, the AC marker slots and generic FX
+  primitives (their readers live outside its paths); CL7 kept `reload.acquire-radius-mult`, the
+  tactical-reload rune, the empowered multiplier registration and `client/src/fx/bespoke/slinger.ts`;
+  player-facing copy still says "65% effectiveness" in `reload-root`, `ClassIdentity.tsx` and
+  `abilityText.ts`; `docs/guided-tutorial-current-state.md` and `docs/bot-experiment-runner-current-state.md`
+  still say no class builder / only `smoke-t1` (docs pass).
+- **Fixed on merge:** the client's Formation view ignored the weapon's Command (`budgetBonus` on
+  `ClassStateInput`; `useFormationView` passes `conduit.command`).
+
 - **Apprentice stand-ins and gaps:** Numb slows movement only (no attack slow); Petrify's "takes
   more damage" and Seize rank II/III are not wired; Stone Sigil is the whole-hit `hit-to-dot` rather
   than "a hit over a quarter of your HP"; the sigil tick (12% of attack per sigil per second, 6 s
@@ -290,6 +295,7 @@ them): worth a look in the client or a log line.
 
 | ID | Task | Merged |
 |---|---|---|
+| CD6-UI, CD7-ROUTE, CL5-UI, CL6-ROUTE, CL7-CLEANUP, SP5-UI, SP6-ROUTE, SP7-CLEANUP, AP5-UI, AP6-ROUTE, AP7-CLEANUP | The four classes' editors and HUD, tutorials and bot routes; the Slinger, Spirit and Apprentice cleanups (Grok: CD6/7, CL5/6/7; Codex: SP5/6/7, AP5/6/7). Registries and the tutorial test reconciled by hand; the three cleanups' overlapping deletions merged as "neither side's legacy survives" | `8a2556d7`, `ae97176d`, `1a2976f0`, `2214470f`; 353/353 |
 | AP.1–AP.4 | The Apprentice: hits lay linear sigils (weapon potency, never the hit; cap = the budget); the Payoff rules spend them at moments (Detonate, Spread, Numb, Siphon, Seize, Converge); the five T1 trophies; the weapon shapes and T1 lines; `composePayoffsView`; `apprenticeSigils.test.ts` | `93ba0920` + fix; 350/350 |
 | SP.1–SP.4 | The Spirit: the storm (one bar of damage and shield, constant flow, hits and DoT drain it, Eye of the Storm, Sealed Vessel); the bands, floor and gather/hover phases; Bolt, Chain Lightning, Thunderclap, Downpour, Thunderbolt; the five T1 trophies; weapon shapes and the T1 lines; plain zaps at a quarter; `composeThresholdsView`; `spiritStorm.test.ts` | `e60d8053`, `8e43ce0f`; 347/347 |
 | CL.1–CL.4 | The Slinger: fire rate is the gun's stat (half-damage and double-speed layers gone); the Loadout picks the clip at each reload; per-round effects (Scatter, Snare, Venom, Stopping, Breaching); trophy rounds (Stampede, Twin, Rot, Quake, Splinter); the stationary reload; the six T1 guns and the T1 lines; `composeLoadoutView`; `slingerLoadout.test.ts` | `0d3e7ad6`, `6d975cf9`; 345/345 |

@@ -145,6 +145,8 @@ export interface ClassStateInput {
   bossesCleared: readonly string[];
   /** The T2 pick; ignored unless it is one of the class's own disciplines. */
   disciplineId?: string | null;
+  /** The equipped weapon's change to the class budget (the Conduit's `conduit.command`). */
+  budgetBonus?: number;
 }
 
 /**
@@ -160,5 +162,7 @@ export function classConfigContextFromState(state: ClassStateInput): ClassConfig
     archetype,
     { biomeLevel: state.biomeLevel, bossesCleared: state.bossesCleared, disciplineId },
     globalMastery(state.biomeLevel),
+    1,
+    state.budgetBonus ?? 0,
   );
 }

@@ -7,6 +7,7 @@ import {
   classConfigAtom,
   combatArchetypeAtom,
   disciplineIdAtom,
+  passivesAtom,
   playerTierAtom,
 } from '../../hud/atoms';
 
@@ -21,6 +22,9 @@ export function useFormationView(override?: ClassConfig | null): FormationView |
   const bossesCleared = useAtomValue(bossesClearedAtom);
   const disciplineId = useAtomValue(disciplineIdAtom);
   const playerTier = useAtomValue(playerTierAtom);
+  const passives = useAtomValue(passivesAtom);
+  // The weapon adds or removes Command, as the server's context reads it.
+  const budgetBonus = passives['conduit.command'] ?? 0;
   const classConfig = override === undefined ? stored : override;
 
   return useMemo(() => composeFormationView({
@@ -30,5 +34,6 @@ export function useFormationView(override?: ClassConfig | null): FormationView |
     bossesCleared,
     disciplineId,
     playerTier,
-  }), [combatArchetype, classConfig, biomeLevel, bossesCleared, disciplineId, playerTier]);
+    budgetBonus,
+  }), [combatArchetype, classConfig, biomeLevel, bossesCleared, disciplineId, playerTier, budgetBonus]);
 }

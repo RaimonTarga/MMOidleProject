@@ -38,4 +38,7 @@ const orders = withOrders(config, { attackFirst: 'weakest', recallWhen: [] });
 const edited = composeFormationView({ ...input, classConfig: orders })!;
 assert(edited.orders.attackFirst.value === 'weakest' && edited.orders.recallWhen.length === 0, 'orders read back');
 
+const swarm = composeFormationView({ ...input, classConfig: config, budgetBonus: 2 })!;
+assert(swarm.command.total === 8, `a Swarm Staff adds its Command to the total (${swarm.command.total})`);
+
 console.log('formationView.test.ts: ok');
