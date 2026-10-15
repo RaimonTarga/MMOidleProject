@@ -2,6 +2,7 @@ import { SKILL_TREE } from '../../data/skillTree';
 import type { TutorialBeat, TutorialScript } from '../types';
 import { TUTORIAL_OPENING } from './opening';
 import { buildSealRouteBeats } from './sealRoute';
+import { buildStrikerBeats } from './striker';
 
 export { TUTORIAL_FAREWELL } from './farewell';
 export { TUTORIAL_OPENING } from './opening';
@@ -12,10 +13,12 @@ const scripts = new Map<string, TutorialScript>();
 
 /**
  * Per-class beats after the opening, keyed by class root (`cadence-root`, …).
- * Empty for now: each class's builder lands with its class track
- * (plan §5.2, task C<c>.6).
+ * A class with no builder still gets the seal route. The Striker is the first
+ * builder (plan §5.2, task C<c>.6).
  */
-export const TUTORIAL_CLASS_BEATS: Partial<Record<string, () => TutorialBeat[]>> = {};
+export const TUTORIAL_CLASS_BEATS: Partial<Record<string, () => TutorialBeat[]>> = {
+  'cadence-root': buildStrikerBeats,
+};
 
 /**
  * The whole guided route for one class, as ONE script so supersession sees

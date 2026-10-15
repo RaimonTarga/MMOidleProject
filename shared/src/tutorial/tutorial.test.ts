@@ -22,6 +22,7 @@ import {
   tutorialChecklist,
   tutorialProgress,
   tutorialScriptFor,
+  type TutorialBeat,
   type TutorialCondition,
   type TutorialConcept,
   type TutorialConceptId,
@@ -177,8 +178,8 @@ for (const beat of route) {
   assert(plainsBoss?.teaches?.join(',') === 'seals,boss-altar', 'the first seal introduces seals and the altar');
 }
 
-// ── Every class root gets the opening, then the seal route ───────────────────
-assert(Object.keys(TUTORIAL_CLASS_BEATS).length === 0, 'no class builder is registered yet');
+// ── Every class root gets the opening, then the seal route or its own builder ─
+assert(Object.keys(TUTORIAL_CLASS_BEATS).join(',') === 'cadence-root', 'only the Striker builder is registered');
 assert(CLASS_ROOTS.length === 6, `six class roots, found ${CLASS_ROOTS.map((node) => node.id).join(',')}`);
 
 function sameRoute(script: TutorialScript): void {
@@ -192,12 +193,75 @@ function sameRoute(script: TutorialScript): void {
   });
 }
 
+/** The Striker tail: seal ids, in seal order, with the lesson beats inserted. */
+const STRIKER_TAIL = [
+  'open:plains',
+  'striker:sweep',
+  'boss:plains',
+  'zone:forest',
+  'striker:hamstring',
+  'zone:swamp',
+  'striker:rend',
+  'zone:cave',
+  'striker:focus',
+  'striker:mountain',
+  'boss:mountain',
+  'farewell',
+];
+
+function farmGate(beat: TutorialBeat, biome: string): number | null {
+  const step = beat.steps[0];
+  if (!step || step.type !== 'farm') return null;
+  const gates = conditionsIn(step.until).filter(
+    (condition): condition is Extract<TutorialCondition, { type: 'biomeLevelAtLeast' }> =>
+      condition.type === 'biomeLevelAtLeast' && condition.biomeGroup === biome,
+  );
+  if (gates.length === 0) return null;
+  return Math.max(...gates.map((gate) => gate.level));
+}
+
+function assertStrikerTail(script: TutorialScript): void {
+  assert(script.beats.length === TUTORIAL_OPENING.beats.length + STRIKER_TAIL.length,
+    `${script.id}: opening plus the Striker tail`);
+  script.beats.slice(0, TUTORIAL_OPENING.beats.length).forEach((beat, i) => {
+    assert(beat === TUTORIAL_OPENING.beats[i], `${script.id}: opening beat ${beat.id} was replaced`);
+  });
+  const tail = script.beats.slice(TUTORIAL_OPENING.beats.length);
+  assert(tail.map((beat) => beat.id).join(',') === STRIKER_TAIL.join(','),
+    `${script.id}: tail is ${tail.map((beat) => beat.id).join(',')}`);
+  const say = (id: string) => tail.find((beat) => beat.id === id)?.say ?? '';
+  assert(say('open:plains').includes('combo'), 'the plains open beat teaches the combo');
+  assert(say('striker:sweep').includes('Sweep'), 'Sweep has its own beat');
+  assert(say('zone:forest').includes('finisher'), 'the forest beat opens on the trophy');
+  assert(say('striker:hamstring').includes('Hamstring') && say('striker:rend').includes('Rend'), 'Hamstring and Rend have their own beats');
+  assert(say('striker:focus').includes('Focus') && say('boss:mountain').includes('Coil'), 'Focus and Coil name the cast');
+  assert(tail[tail.length - 1].say === TUTORIAL_FAREWELL[0], 'the Striker route still ends on the farewell line');
+  // The lesson line is the beat that starts at level 2: the approach stops there,
+  // and the technique beat carries on to the seal route's cap.
+  for (const [approach, technique, biome] of [
+    ['open:plains', 'striker:sweep', 'plains'],
+    ['zone:forest', 'striker:hamstring', 'forest'],
+    ['zone:swamp', 'striker:rend', 'swamp'],
+    ['zone:cave', 'striker:focus', 'cave'],
+  ] as const) {
+    const approachBeat = tail.find((beat) => beat.id === approach);
+    const techniqueBeat = tail.find((beat) => beat.id === technique);
+    if (!approachBeat || !techniqueBeat) throw new Error(`${approach} and ${technique} exist`);
+    assert(farmGate(approachBeat, biome) === 2, `${approach} ends at the lesson`);
+    assert(farmGate(techniqueBeat, biome) === biomeLevelCap(1, biome), `${technique} carries on to the tier cap`);
+  }
+  const mountain = tail.find((beat) => beat.id === 'striker:mountain');
+  if (!mountain) throw new Error('the Mountain farm is missing');
+  assert(farmGate(mountain, 'mountain') === 2, 'the Mountain farm ends at Coil\'s lesson');
+}
+
 for (const root of CLASS_ROOTS) {
   const script = tutorialScriptFor(root.id);
   assert(script.id === `tutorial-${root.name.toLowerCase()}`, `${root.id}: id ${script.id}`);
   assert(script.classRoot === root.id, `${root.id}: class root is stored`);
   assert(tutorialScriptFor(root.id) === script, `${root.id}: the script is cached`);
-  sameRoute(script);
+  if (root.id === 'cadence-root') assertStrikerTail(script);
+  else sameRoute(script);
 }
 
 {
@@ -306,7 +370,8 @@ for (const script of SCRIPTS) {
     at({ biomeLevel: { ...levels }, bossesCleared: cleared }, `zone:${biome}`);
     levels[biome] = biomeLevelCap(1, biome);
   }
-  at({ biomeLevel: { ...levels }, bossesCleared: cleared }, 'boss:mountain');
+  at({ biomeLevel: { ...levels }, bossesCleared: cleared }, 'striker:mountain');
+  at({ biomeLevel: { ...levels, mountain: 2 }, bossesCleared: cleared }, 'boss:mountain');
   const finished = resolveBeatIndex(script, view({
     ...openingDone,
     playerTier: 2,
