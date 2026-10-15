@@ -26,7 +26,7 @@ function gates(condition: TutorialCondition): TutorialCondition[] {
 
 function tutorialLevel(biome: T1Biome): number {
   return Math.max(...tutorialScriptFor(SPIRIT_CLASS_ROOT).beats.flatMap((beat) =>
-    beat.steps.flatMap((step) => step.type === "farm" ? gates(step.until).flatMap((gate) =>
+    beat.steps.flatMap((step) => step.type === "farm" && step.at.kind === "biome" && step.at.tier === 1 ? gates(step.until).flatMap((gate) =>
       gate.type === "biomeLevelAtLeast" && gate.biomeGroup === biome ? [gate.level] : []) : [])));
 }
 

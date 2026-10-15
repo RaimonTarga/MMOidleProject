@@ -21,6 +21,8 @@ export interface SpendView {
   atFloor: boolean;
   /** Where it sits on the gauge (0–100), or null when it is not placed (calms at the floor). */
   band: number | null;
+  /** Fires by itself at a moment of the storm's shape (Storm Surge opens every surge), so it has no band. */
+  automatic: boolean;
 }
 
 export interface ThresholdsView {
@@ -29,6 +31,8 @@ export interface ThresholdsView {
   /** The floor you never spend below (0–100), drawn as a line on the gauge. */
   floorPct: number;
   phase: ThresholdsConfig['phase'];
+  /** The T2 discipline, once picked: it tilts the storm's shape (brim, tide, bank). */
+  discipline: { id: string; name: string } | null;
   /** Every spend and calm you know, with its band. */
   pieces: SpendView[];
   /** The trophy: a spend relic twists every spend, a storm relic twists the gauge. */
@@ -38,6 +42,9 @@ export interface ThresholdsView {
 
 const PIECES = new Map<string, SpiritPiece>(SPIRIT_KIT.pieces.map((piece) => [piece.id, piece]));
 const TROPHIES = new Map<string, SpiritTrophy>(SPIRIT_KIT.trophies.map((trophy) => [trophy.id, trophy]));
+
+/** Pieces the discipline's storm fires itself; they never sit in a band. */
+const AUTOMATIC_PIECES: ReadonlySet<string> = new Set(['spirit-storm-surge']);
 
 const WAITS_TEXT: Readonly<Record<string, string>> = {
   touched: 'an enemy is in melee with you',
@@ -66,14 +73,17 @@ export function composeThresholdsView(input: ClassScreenInput): ThresholdsView |
       waitsFor: piece.waitsFor ? WAITS_TEXT[piece.waitsFor] ?? piece.waitsFor : '',
       atFloor: piece.atFloor === true,
       band: piece.atFloor ? null : bandOf.get(piece.id) ?? null,
+      automatic: AUTOMATIC_PIECES.has(piece.id),
     });
   }
   const trophy = config.relic[0] ? TROPHIES.get(config.relic[0]) : undefined;
   const check = checkClassConfig(config, ctx);
+  const discipline = SPIRIT_KIT.disciplines.find((entry) => entry.id === ctx.disciplineId);
   return {
     storm: { pips: ctx.budget },
     floorPct: system.floorPct,
     phase: system.phase,
+    discipline: discipline ? { id: discipline.id, name: discipline.name } : null,
     pieces,
     relic: trophy
       ? { trophyId: trophy.id, name: trophy.name, kind: trophy.kind, text: trophy.text }

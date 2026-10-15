@@ -404,11 +404,27 @@ function assertSpiritTail(script: TutorialScript): void {
     assert(beat === TUTORIAL_OPENING.beats[i], `${script.id}: opening beat ${beat.id} was replaced`);
   });
   const tail = script.beats.slice(TUTORIAL_OPENING.beats.length);
-  assert(tail.map((beat) => beat.id).join(',') === [
+  assert(tail.slice(0, 12).map((beat) => beat.id).join(',') === [
     'open:plains', 'spirit:chain-lightning', 'boss:plains',
     'zone:forest', 'spirit:thunderclap', 'zone:swamp', 'spirit:downpour',
     'zone:cave', 'spirit:thunderbolt', 'spirit:mountain', 'boss:mountain', 'farewell',
   ].join(','), 'the Spirit keeps the seal route order and inserts its lessons');
+  // The Tier-2 stretch follows the farewell: the discipline pick, each zone's lesson, each boss's rank-up.
+  const t2 = tail.slice(12);
+  assert(t2.length === 21 && t2.every((beat) => beat.chapter.startsWith('Tier 2')), 'seven Tier-2 zones of three beats each');
+  assert(t2[0].say.includes('discipline') && ['Overflow', 'Tide', 'Reservoir'].every((name) => t2[0].say.includes(name)), 'the first Tier-2 beat is the discipline pick');
+  for (const [lesson, biome, name] of [
+    ['spirit:gale-t2', 'plains', 'Gale'], ['spirit:thunderclap-t2', 'forest', 'Thunderclap'],
+    ['spirit:hailstorm-t2', 'mountain', 'Hailstorm'], ['spirit:downpour-t2', 'swamp', 'Downpour'],
+    ['spirit:updraft-t2', 'cave', 'Updraft'], ['spirit:flare-t2', 'jungle', 'Flare'],
+    ['spirit:dust-devil-t2', 'desert', 'Dust Devil'],
+  ] as const) {
+    const beat = t2.find((entry) => entry.id === lesson)!;
+    assert(beat?.say.includes(name), `${lesson} names the piece`);
+    assert(farmGate(beat, biome) === biomeLevelCap(2, biome), `${lesson} continues to the Tier-2 cap`);
+    const boss = t2.find((entry) => entry.id === `t2boss:${biome}`)!;
+    assert(boss.steps.length === 1 && boss.steps[0].type === 'attemptBoss' && boss.steps[0].tier === 2, `${biome}: a Tier-2 boss beat`);
+  }
   const say = (id: string) => tail.find((beat) => beat.id === id)?.say ?? '';
   for (const text of ['plain rod', 'Storm 4', 'fills itself', 'Bolt band', '30% floor', 'gathers to full', 'breaks down to the floor', 'before HP']) {
     assert(say('open:plains').includes(text), `the Spirit intro teaches ${text}`);
@@ -430,7 +446,7 @@ function assertSpiritTail(script: TutorialScript): void {
   }
   assert(farmGate(tail.find((beat) => beat.id === 'spirit:mountain')!, 'mountain') === 2,
     'Mountain stops at Eye of the Storm');
-  assert(tail[tail.length - 1].say === TUTORIAL_FAREWELL[0], 'the Spirit keeps the farewell');
+  assert(tail[11].say === TUTORIAL_FAREWELL[0], 'the Spirit keeps the farewell');
   for (const beat of tail) {
     assert(beat.say.length < SAY_LIMIT && (beat.waiting?.length ?? 0) < SAY_LIMIT,
       `${beat.id}: Spirit lines stay under 170 characters`);
@@ -613,7 +629,14 @@ for (const script of SCRIPTS) {
   // whose boss was cleared without first farming the lesson.
   levels.mountain = 0;
   const finished = resolveBeatIndex(script, view({ ...openingDone, playerTier: 2, biomeLevel: levels, bossesCleared: cleared }));
-  assert(finished === script.beats.length, 'both seals at tier 2 finish the Spirit script');
+  // Tier 2 opens the Tier-2 stretch, which starts at the discipline pick; the guided T1 is done.
+  assert(finished === script.beats.findIndex((beat) => beat.id === 't2:plains'), 'both seals at tier 2 resume at the Tier-2 stretch');
+  const t2Done = { ...levels };
+  for (const biome of ['plains', 'forest', 'mountain', 'swamp', 'cave']) t2Done[biome] = biomeLevelCap(2, biome);
+  for (const biome of ['jungle', 'desert']) t2Done[biome] = biomeLevelCap(2, biome);
+  const t2Cleared = [...cleared, ...['plains', 'forest', 'mountain', 'swamp', 'cave', 'jungle', 'desert'].map((biome) => bossClearKey(biome, 2))];
+  assert(resolveBeatIndex(script, view({ ...openingDone, playerTier: 2, biomeLevel: t2Done, bossesCleared: t2Cleared })) === script.beats.length,
+    'every Tier-2 boss finishes the Spirit script');
 }
 
 // ── The first-hour checklist ─────────────────────────────────────────────────

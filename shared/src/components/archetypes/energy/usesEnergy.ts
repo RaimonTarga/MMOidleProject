@@ -2,6 +2,8 @@
 export interface UsesEnergy {
   energy: number;
   energyMax: number;
+  /** Tide's phase (T2): present only for a Tide Spirit; absent otherwise. */
+  tide?: 'ebb' | 'surge';
 }
 
 export function initUsesEnergy(): UsesEnergy {

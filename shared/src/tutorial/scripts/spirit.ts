@@ -4,7 +4,11 @@
  * learned. Mountain gets its approach before the second seal; the opening,
  * seal ids, zone order and farewell stay the shared route's.
  */
+import { biomeLevelCap } from '../../config/gameConfig';
 import { LESSON_ZONE_LEVEL } from '../../classKits/kitHelpers';
+import { absoluteZoneLevel } from '../../classKits/registry';
+import { SPIRIT_KIT } from '../../classKits/spirit/kit';
+import type { KitBiome } from '../../classKits/types';
 import type { TutorialBeat } from '../types';
 import { buildSealRouteBeats } from './sealRoute';
 
@@ -35,6 +39,119 @@ function lessonBeats(beat: TutorialBeat, id: string, say: string): TutorialBeat[
       steps: beat.steps,
     },
   ];
+}
+
+/** The Spirit's Tier-2 stretch, in the order the bible's table (§11.16) lists the biomes. */
+const T2_ZONES: ReadonlyArray<{
+  biome: KitBiome;
+  chapter: string;
+  /** The piece the zone's T2 lesson is about; its line names it. */
+  lessonPieceId: string;
+  approach: string;
+  lesson: string;
+  boss: string;
+}> = [
+  {
+    biome: 'plains',
+    chapter: 'Tier 2: The Plains',
+    lessonPieceId: 'spirit-gale',
+    approach: 'Tier 2. Pick a discipline in the Passive Tree: Overflow, Tide or Reservoir. Each reshapes your storm. Then fight the Plains again, harder now.',
+    lesson: 'Gale is a squall: a gust in front of you blows enemies back, and a charge caught in it stops dead. Keep fighting until the Plains boss is open.',
+    boss: 'Fight the Plains boss again. Crosswind ranks up: its spends now strike three enemies, not two.',
+  },
+  {
+    biome: 'forest',
+    chapter: 'Tier 2: The Forest',
+    lessonPieceId: 'spirit-thunderclap',
+    approach: 'The Forest duels and stuns. Fight up it.',
+    lesson: 'Thunderclap ranks up: what it staggers also attacks slower for a few seconds.',
+    boss: 'Fight the Forest boss. Squall ranks up: the discount on spends in a row builds faster.',
+  },
+  {
+    biome: 'mountain',
+    chapter: 'Tier 2: The Mountain',
+    lessonPieceId: 'spirit-hailstorm',
+    approach: 'The Mountain is plated and charges. Fight up it.',
+    lesson: 'Hailstorm is a strike: hail pelts the area around the target for a few seconds, and hits shields and barriers twice as hard.',
+    boss: 'Fight the Mountain boss. Thunderhead ranks up: your doubled spend also ignores part of the plating.',
+  },
+  {
+    biome: 'swamp',
+    chapter: 'Tier 2: The Swamp',
+    lessonPieceId: 'spirit-downpour',
+    approach: 'The Swamp brings pools, rain and Corrosion. Fight through it.',
+    lesson: 'Downpour ranks up: it also washes Corrosion and slows off you.',
+    boss: 'Fight the Swamp boss. Marsh Fire ranks up: its burst also washes a debuff off you.',
+  },
+  {
+    biome: 'cave',
+    chapter: 'Tier 2: The Cave',
+    lessonPieceId: 'spirit-updraft',
+    approach: 'The Cave erupts from below. Fight through it.',
+    lesson: 'Updraft is a calm: when the ground is about to erupt under you, a gust lifts you clear.',
+    boss: 'Fight the Cave boss. Static Web ranks up: the charge on enemies lasts longer.',
+  },
+  {
+    biome: 'jungle',
+    chapter: 'Tier 2: The Jungle',
+    lessonPieceId: 'spirit-flare',
+    approach: 'The Jungle is new: ambushers in cover and prey that flees. Fight into it.',
+    lesson: 'Flare is a squall: a flash around you reveals hidden ambushers and staggers them.',
+    boss: 'Fight the Jungle boss for Running Storm: a spend follows a fleeing target and hits harder the farther it ran.',
+  },
+  {
+    biome: 'desert',
+    chapter: 'Tier 2: The Desert',
+    lessonPieceId: 'spirit-dust-devil',
+    approach: 'The Desert marks, slows and kites. Fight into it.',
+    lesson: 'Dust Devil is a squall: a whirlwind runs down the farthest enemy attacking you and drags it toward you.',
+    boss: 'Fight the Desert boss for Sandstorm: a ring of sand slows enemies while you stay above your floor.',
+  },
+];
+
+/** The biome level where a T2 zone teaches its lesson (absolute, as the game counts levels). */
+export function spiritT2LessonLevel(biome: KitBiome, pieceId: string): number {
+  const lesson = SPIRIT_KIT.lessons.find((entry) =>
+    entry.pieceId === pieceId && entry.source.kind === 'zone' && entry.source.tier === 2 && entry.source.biome === biome);
+  if (!lesson || lesson.source.kind !== 'zone') throw new Error(`spirit tutorial: no T2 ${pieceId} lesson in ${biome}`);
+  return absoluteZoneLevel(lesson.source);
+}
+
+/**
+ * The Tier-2 beats, after the farewell: the discipline pick, each zone's lesson and its boss's
+ * trophy rank-up, at the moment the player gets them. Zone farms split at the lesson level like T1.
+ */
+export function buildSpiritT2Beats(): TutorialBeat[] {
+  return T2_ZONES.flatMap(({ biome, chapter, lessonPieceId, approach, lesson, boss }) => {
+    const at = { kind: 'biome', biomeGroup: biome, tier: 2, pick: 'uncleared' } as const;
+    const lessonLevel = spiritT2LessonLevel(biome, lessonPieceId);
+    const cap = biomeLevelCap(2, biome);
+    const name = biome.charAt(0).toUpperCase() + biome.slice(1);
+    return [
+      {
+        id: `t2:${biome}`,
+        chapter,
+        say: approach,
+        waiting: `Fighting the ${name} at Tier 2.`,
+        progress: [{ type: 'biomeLevel', biomeGroup: biome, level: lessonLevel }],
+        steps: [{ type: 'farm', at, until: { type: 'biomeLevelAtLeast', biomeGroup: biome, level: lessonLevel } }],
+      },
+      {
+        id: `spirit:${lessonPieceId.slice('spirit-'.length)}-t2`,
+        chapter,
+        say: lesson,
+        waiting: `Fighting the ${name} at Tier 2.`,
+        progress: [{ type: 'biomeLevel', biomeGroup: biome, level: cap }],
+        steps: [{ type: 'farm', at, until: { type: 'biomeLevelAtLeast', biomeGroup: biome, level: cap } }],
+      },
+      {
+        id: `t2boss:${biome}`,
+        chapter,
+        say: boss,
+        steps: [{ type: 'attemptBoss', biomeGroup: biome, tier: 2 }],
+      },
+    ] satisfies TutorialBeat[];
+  });
 }
 
 /** Beats after the shared Clearing opening for an energy-root character. */
@@ -82,5 +199,6 @@ export function buildSpiritBeats(): TutorialBeat[] {
       say: 'Eye of the Storm sits at the floor. At or below it, hits drain your storm at half cost. The Mountain boss is the second seal. Clear the guards, then the altar.',
     },
     sealBeat(seal, 'farewell'),
+    ...buildSpiritT2Beats(),
   ];
 }
