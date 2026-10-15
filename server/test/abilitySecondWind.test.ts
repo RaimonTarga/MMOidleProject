@@ -122,7 +122,7 @@ assert(
 // and 50% active, one second restores recovery × 0.5 HP — the rate is flat
 // (Phase 0b), so max HP does not enter.
 runRecovery(world, player, 1000, true);
-const perSecond = (player.hasHealth.recovery ?? 0) * 0.5;
+const perSecond = (player.hasHealth.recovery ?? 0) * (0.5 + GAME_CONFIG.RECOVERY_COMBAT_BASE_SHARE);
 assert(
   Math.abs(player.hasHealth.hp - (hpBefore + perSecond)) < 0.001,
   `Second Wind should restore ${perSecond} HP in its first second, got ${player.hasHealth.hp - hpBefore}`,
@@ -140,7 +140,7 @@ assert(
 
 runRecovery(world, player, 100, true);
 assert(
-  activeRecoveryFraction(player, true) === 0,
+  activeRecoveryFraction(player, true) === GAME_CONFIG.RECOVERY_COMBAT_BASE_SHARE,
   "Second Wind's Recovery access should lapse when the window expires",
 );
 assert(
