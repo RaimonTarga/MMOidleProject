@@ -5,6 +5,9 @@ import { useOrderView } from '../../ui/class/useOrderView';
 import { LoadoutAmmoCompact } from './ReloadMechanic';
 import { ResolveCompact } from './ResolvePips';
 import type { MechanicViewModel, SummonerMechanicModel } from './types';
+import type { MechanicViewModel } from './types';
+import { usePayoffsView } from '../../ui/class/usePayoffsView';
+import { SigilReadout } from '../SigilReadout';
 
 const SUMMONER_COMPACT_LABELS = {
   'volatile-brood': 'Volatile Brood',
@@ -77,6 +80,8 @@ function FormationCompact({ model, formation }: { model: SummonerMechanicModel; 
 export function CompactMechanic({ model }: { model: MechanicViewModel }) {
   const order = useOrderView();
   const formation = useFormationView();
+  const payoffs = usePayoffsView();
+  if (model.kind === 'dot' && payoffs) return <SigilReadout budget={payoffs.sigils.cap} model={model} compact />;
   if (model.kind === 'cadence' && order) {
     return <OrderStrip order={order} count={model.count} armed={model.armed} compact />;
   }

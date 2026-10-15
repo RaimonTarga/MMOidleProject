@@ -8,6 +8,11 @@ import { ThresholdsEditor } from './ThresholdsEditor';
 /**
  * The class's own editor: the Striker's Order, the Squire's Response rules, the Conduit's
  * Formation; each other class track replaces the placeholder for its own system.
+import { PayoffsEditor } from './PayoffsEditor';
+
+/**
+ * The class's own editor: Order, Response rules and Payoff rules; each other class
+ * track replaces the placeholder for its own system.
  */
 export function ClassSystemEditor({ view }: { view: ClassScreenView }) {
   if (view.systemKind === 'order') return <OrderEditor view={view} />;
@@ -15,6 +20,7 @@ export function ClassSystemEditor({ view }: { view: ClassScreenView }) {
   if (view.systemKind === 'formation') return <FormationEditor view={view} />;
   if (view.systemKind === 'loadout') return <LoadoutEditor view={view} />;
   if (view.systemKind === 'thresholds') return <ThresholdsEditor view={view} />;
+  if (view.systemKind === 'payoffs') return <PayoffsEditor view={view} />;
   return (
     <p className="class-panel__editor">
       {`The ${view.systemName} editor arrives with this class's track.`}
