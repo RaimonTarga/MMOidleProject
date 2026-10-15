@@ -172,6 +172,13 @@ export const DEFENSE_KEYS = [
   'spirit.monsoon-x',  // Monsoon: after an ambush hits you, the storm gathers this many times as fast for a few seconds
   'spirit.ranged-cost',  // Sandshroud: ranged hits drain the storm at this share of cost
   'spirit.oasis-pct',  // Oasis: while you are marked or slowed, the storm gathers this much faster
+  // Spirit T3 gear (class-first build plan T3-SPIRIT)
+  'spirit.shell-pct',  // Rime Staff: spends hit shelled targets (barrier, Ice Armor, shell-up) this much harder
+  'spirit.empty-pct',  // Ember Rod: spends hit up to this much harder, the emptier the storm
+  'spirit.chill-build',  // Insulated: the Chill builds this much slower while the storm is above the floor
+  'spirit.chill-flow-pct',  // Aurora: while chilled, the storm gathers this much faster
+  'spirit.fire-cost',  // Flash Steam: fire hits drain the storm at this share of cost
+  'spirit.heat-flow-pct',  // Thermal: each step of the Heat makes the storm gather this much faster
   'apprentice.branching',  // Branching Wand: each hit also lays a sigil on the nearest other enemy
   'apprentice.tick-speed',  // Thornwood Rod: sigils tick this many times as fast, for the inverse as long
   'apprentice.linger',  // Bog Censer: sigils last this many times as long

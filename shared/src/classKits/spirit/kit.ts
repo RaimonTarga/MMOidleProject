@@ -176,6 +176,7 @@ const PIECES: readonly SpiritPiece[] = [
   // ── T3 (§11.16) ──
   spiritPiece({
     id: 'spirit-downburst',
+    params: { costPips: 0.75, pinMs: 1200 },
     name: 'Downburst',
     family: 'squall',
     waitsFor: 'charging-at-me',
@@ -184,6 +185,7 @@ const PIECES: readonly SpiritPiece[] = [
   }),
   spiritPiece({
     id: 'spirit-tailwind',
+    params: { costPips: 0.5, distance: 220 },
     name: 'Tailwind',
     family: 'calm',
     waitsFor: 'drag-or-push',
@@ -191,6 +193,7 @@ const PIECES: readonly SpiritPiece[] = [
   }),
   spiritPiece({
     id: 'spirit-forked-bolt',
+    params: { costPips: 1, mult: 1.6, forks: 2, leapPct: 0.6, radius: 260 },
     name: 'Forked Bolt',
     family: 'strike',
     sidegradeOf: 'spirit-chain-lightning',
@@ -198,6 +201,7 @@ const PIECES: readonly SpiritPiece[] = [
   }),
   spiritPiece({
     id: 'spirit-foehn',
+    params: { costPips: 0.5, melt: 3 },
     name: 'Foehn',
     family: 'calm',
     waitsFor: 'chill-threshold',
@@ -205,6 +209,7 @@ const PIECES: readonly SpiritPiece[] = [
   }),
   spiritPiece({
     id: 'spirit-ash-lightning',
+    params: { costPips: 1.5, mult: 2.2, heatPct: 0.08 },
     name: 'Ash Lightning',
     family: 'strike',
     text: "The volcano's own lightning. It hits harder for each step of the fight's Heat.",
@@ -309,7 +314,7 @@ const TROPHIES: readonly SpiritTrophy[] = [
   }),
   spiritTrophy({
     id: 'spirit-relic-swamp',
-    params: { radius: 140, mult: 3, washes: 1 },
+    params: { radius: 140, mult: 3, washes: 1, rank3MultX: 1.5 },
     lineage: 'swamp',
     name: 'Marsh Fire',
     kind: 'storm',
@@ -334,7 +339,7 @@ const TROPHIES: readonly SpiritTrophy[] = [
   }),
   spiritTrophy({
     id: 'spirit-relic-cave',
-    params: { durationMs: 4000, zapMult: 2, rank2DurationX: 1.5 },
+    params: { durationMs: 4000, zapMult: 2, rank2DurationX: 1.5, passRadius: 90 },
     lineage: 'cave',
     name: 'Static Web',
     kind: 'spend',
@@ -346,7 +351,7 @@ const TROPHIES: readonly SpiritTrophy[] = [
   }),
   spiritTrophy({
     id: 'spirit-relic-jungle',
-    params: { followPx: 300, perHundredPx: 0.15 },
+    params: { followPx: 300, perHundredPx: 0.15, rank2X: 1.5, rank3X: 2 },
     lineage: 'jungle',
     name: 'Running Storm',
     kind: 'spend',
@@ -372,6 +377,7 @@ const TROPHIES: readonly SpiritTrophy[] = [
   }),
   spiritTrophy({
     id: 'spirit-relic-tundra',
+    params: { radius: 90, durationMs: 5000, slowPct: 0.3 },
     lineage: 'tundra',
     name: 'Ice Storm',
     kind: 'spend',
@@ -383,6 +389,7 @@ const TROPHIES: readonly SpiritTrophy[] = [
   }),
   spiritTrophy({
     id: 'spirit-relic-volcanic',
+    params: { radius: 160, mult: 1.5, everyMs: 3000 },
     lineage: 'volcanic',
     name: 'Pyrocumulus',
     kind: 'storm',

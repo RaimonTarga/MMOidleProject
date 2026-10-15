@@ -169,7 +169,7 @@ export const SPIRIT_GEAR: ClassGearDef = {
       cost: { blue: 124 }, stats: { attack: 162 }, attacksPerSecond: 0.50, tier: 3,
       icon: 'items/weapons/permafrost-maul.png',
       description: 'Your spends hit shelled targets harder.',
-      mechanicEffects: {},
+      mechanicEffects: { 'spirit.shell-pct': 0.5 },
     },
     {
       id: 'spirit-ember-rod-t3', name: 'Ember Rod',
@@ -177,7 +177,7 @@ export const SPIRIT_GEAR: ClassGearDef = {
       cost: { red: 140 }, stats: { attack: 70 }, attacksPerSecond: 1.65, tier: 3,
       icon: 'items/weapons/cinderlash.png',
       description: 'The emptier your storm, the harder your spends hit.',
-      mechanicEffects: {},
+      mechanicEffects: { 'spirit.empty-pct': 0.6 },
     },
     // The Plains' Forked Rod moves here.
     {
@@ -228,7 +228,7 @@ export const SPIRIT_GEAR: ClassGearDef = {
       cost: { blue: 273 }, stats: { attack: 378 }, attacksPerSecond: 0.50, tier: 4,
       icon: 'items/weapons/glacial-tyrant-maul.png',
       description: 'Your spends hit shelled targets harder.',
-      mechanicEffects: {},
+      mechanicEffects: { 'spirit.shell-pct': 0.5 },
     },
     {
       id: 'spirit-ember-rod-t4', name: 'Ember Rod',
@@ -236,7 +236,7 @@ export const SPIRIT_GEAR: ClassGearDef = {
       cost: { red: 308 }, stats: { attack: 119 }, attacksPerSecond: 1.80, tier: 4,
       icon: 'items/weapons/eruption-lash.png',
       description: 'The emptier your storm, the harder your spends hit.',
-      mechanicEffects: {},
+      mechanicEffects: { 'spirit.empty-pct': 0.6 },
     },
     // The Plains' Forked Rod, still here.
     {
@@ -320,10 +320,10 @@ export const SPIRIT_GEAR: ClassGearDef = {
     'jungle-charm-t3': { name: 'Monsoon', text: 'After an ambush hits you, the storm gathers three times as fast for a few seconds.', effects: { 'spirit.monsoon-x': 3 } },
     'desert-vest-t3': { name: 'Sandshroud', text: 'Ranged hits drain the storm at half cost.', effects: { 'spirit.ranged-cost': 0.5 } },
     'desert-charm-t3': { name: 'Oasis', text: 'While you are marked or slowed, the storm gathers faster.', effects: { 'spirit.oasis-pct': 0.5 } },
-    'tundra-vest-t3': { name: 'Insulated', text: 'The Chill builds on you slower while your storm is above the floor.', effects: {} },
-    'tundra-charm-t3': { name: 'Aurora', text: 'While you are chilled, the storm gathers faster.', effects: {} },
-    'volcanic-vest-t3': { name: 'Flash Steam', text: 'Fire damage drains the storm at half cost.', effects: {} },
-    'volcanic-charm-t3': { name: 'Thermal', text: 'Each step of the Heat makes the storm gather a little faster.', effects: {} },
+    'tundra-vest-t3': { name: 'Insulated', text: 'The Chill builds on you slower while your storm is above the floor.', effects: { 'spirit.chill-build': 0.4 } },
+    'tundra-charm-t3': { name: 'Aurora', text: 'While you are chilled, the storm gathers faster.', effects: { 'spirit.chill-flow-pct': 0.5 } },
+    'volcanic-vest-t3': { name: 'Flash Steam', text: 'Fire damage drains the storm at half cost.', effects: { 'spirit.fire-cost': 0.5 } },
+    'volcanic-charm-t3': { name: 'Thermal', text: 'Each step of the Heat makes the storm gather a little faster.', effects: { 'spirit.heat-flow-pct': 0.05 } },
     // ── T4 ──
     'mountain-vest-t4': { name: 'Grounded', text: 'While the storm is at or above your floor, hits cannot knock you back or stun you.', effects: { 'spirit.grounded': 1 } },
     'mountain-charm-t4': { name: 'Afterstorm', text: 'After a hit over a quarter of your HP, the storm gathers three times as fast for a few seconds.', effects: { 'spirit.afterstorm-x': 3, 'defense.recovery-hit-pct': 0.25 } },
@@ -331,10 +331,10 @@ export const SPIRIT_GEAR: ClassGearDef = {
     'jungle-charm-t4': { name: 'Monsoon', text: 'After an ambush hits you, the storm gathers three times as fast for a few seconds.', effects: { 'spirit.monsoon-x': 3 } },
     'desert-vest-t4': { name: 'Sandshroud', text: 'Ranged hits drain the storm at half cost.', effects: { 'spirit.ranged-cost': 0.5 } },
     'desert-charm-t4': { name: 'Oasis', text: 'While you are marked or slowed, the storm gathers faster.', effects: { 'spirit.oasis-pct': 0.5 } },
-    'tundra-vest-t4': { name: 'Insulated', text: 'The Chill builds on you slower while your storm is above the floor.', effects: {} },
-    'tundra-charm-t4': { name: 'Aurora', text: 'While you are chilled, the storm gathers faster.', effects: {} },
-    'volcanic-vest-t4': { name: 'Flash Steam', text: 'Fire damage drains the storm at half cost.', effects: {} },
-    'volcanic-charm-t4': { name: 'Thermal', text: 'Each step of the Heat makes the storm gather a little faster.', effects: {} },
+    'tundra-vest-t4': { name: 'Insulated', text: 'The Chill builds on you slower while your storm is above the floor.', effects: { 'spirit.chill-build': 0.4 } },
+    'tundra-charm-t4': { name: 'Aurora', text: 'While you are chilled, the storm gathers faster.', effects: { 'spirit.chill-flow-pct': 0.5 } },
+    'volcanic-vest-t4': { name: 'Flash Steam', text: 'Fire damage drains the storm at half cost.', effects: { 'spirit.fire-cost': 0.5 } },
+    'volcanic-charm-t4': { name: 'Thermal', text: 'Each step of the Heat makes the storm gather a little faster.', effects: { 'spirit.heat-flow-pct': 0.05 } },
     'graveyard-vest-t4': { name: 'Gravecloth', text: 'Hits from risen enemies drain the storm at half cost.', effects: {} },
     'graveyard-charm-t4': { name: 'Wake', text: 'Each enemy that rises near you makes the storm gather a burst.', effects: {} },
     'trench-vest-t4': { name: 'Deep Seal', text: 'While you carry three or more debuffs, hits drain the storm a third less.', effects: {} },
