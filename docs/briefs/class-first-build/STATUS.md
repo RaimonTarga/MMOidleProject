@@ -99,11 +99,12 @@ When you're done, commit on your branch, write your report where the brief says,
 | CQ5-UI | [The Response rules editor, Resolve pips, callouts](CQ-squire-delegates.md) | Grok | F7-PANEL merged |
 | Next class | The Conduit (the old slice plan's map), then Slinger, Spirit, Apprentice | Conductor | — |
 | CS5-UI | [The Order editor and beat strip](CS5-striker-ui.md) | Grok | F7-PANEL merged |
-| S4 | The in-combat Recovery baseline for every class; the Recovery-multiplier lines (Rhythm, Cairnstone, Counterbalance, Stone Patience; later the other classes') | Conductor | — (decided) |
 | S7 | The timed ward on the Mountain and Tundra charm bases (replacing their barrier) | Conductor or Grok | — (decided) |
 | G-GEAR-C | Second armor and charm bases for moved lines (T3–T4), every class | Conductor brief, Grok data | — (decided) |
 
 ## Known follow-ups (not yet a task)
+
+- **S4 follow-ups:** the always-on share (`RECOVERY_COMBAT_BASE_SHARE` 0.05), the boost window (`RECOVERY_BOOST_MS` 4 s), Rhythm's 20 s build-up and the x2/x3 factors are placeholders. Multipliers apply to the always-on share only (base + Old Guard), not to pulse/kill/skill sources. Conduit's Cairnstone carries the same big-hit keys (threshold a quarter of max HP). The other classes' Recovery lines are wired when their gear lines land.
 
 - **Bench specs throw on import:** `server/bench` specs and studies built on frame and path
   builds (`playerBreadthSpec.ts` and everything importing it). Typecheck passes; running them
@@ -150,6 +151,8 @@ When you're done, commit on your branch, write your report where the brief says,
 
 | ID | Task | Merged |
 |---|---|---|
+| S4 | The always-on in-combat Recovery share for every class; Recovery-multiplier lines (Rhythm, Cairnstone, Counterbalance, Stone Patience); `recoveryBoost.test.ts` | `76ae8143` + test fix |
+| Planted, Striker FX | Braced Squire takes no forced movement at all; Striker special-move FX and Swiftblade branch deleted (`attackProgression` count 36) | `bb1a196e` |
 | I1 | Agent worktree script | `c363ff18` |
 | I2 | Plan, agent rules, this board | `011e95d2` |
 | F1 | Class kit types, registry, moments, budget, scaling | `d1a7aac9` |
