@@ -15,6 +15,7 @@ import { apprenticeT4Route } from "./apprenticeT4";
 import { SQUIRE_T1_ID, squireT1Route } from "./squireT1";
 import { SQUIRE_T2_ID, squireT2Route } from "./squireT2";
 import { squireT3Route } from "./squireT3";
+import { squireT4Route } from "./squireT4";
 import { DEFAULT_SMOKE_CLASS, SMOKE_T1_ID, smokeT1Route } from "./smokeT1";
 import { STRIKER_T1_ID, strikerT1Route } from "./strikerT1";
 import { STRIKER_T2_ROUTE_IDS, strikerT2Route } from "./strikerT2";
@@ -32,6 +33,7 @@ import { spiritT4Route } from "./spiritT4";
  * `smoke-t1` stays class-agnostic. Each class's own route (`striker-t1`, `squire-t1`,
  * `conduit-t1`, `slinger-t1`, `slinger-t2`, `spirit-t1`, `apprentice-t1`) registers here as data over the same executor.
  * `squire-t3` continues the Squire past the tier-3 promotion (T3-W2); it stays out of the controlled batch list until it has run live.
+ * `squire-t4` continues the Squire past the tier-4 promotion (T4-W2); same status.
  * `striker-t3-*` (one per specialization, T3-W2) continue the Striker past the tier-3 promotion; they stay out of the controlled batch list until they have run live.
  * `striker-t4-*` (one per leaf, T4-W2) continue it past the tier-4 promotion; same status.
  * `conduit-t2` continues the Conduit past the tier-2 promotion (T2-W2); it is not yet in the controlled batch list.
@@ -56,6 +58,7 @@ const STRIKER_T4_ROUTES = Object.keys(STRIKER_T4_ROUTE_IDS).map((leaf) => strike
 const SQUIRE_ROUTE = squireT1Route();
 const SQUIRE_T2_ROUTE = squireT2Route();
 const SQUIRE_T3_ROUTE = squireT3Route();
+const SQUIRE_T4_ROUTE = squireT4Route();
 const CONDUIT_ROUTE = conduitT1Route();
 const CONDUIT_T2_ROUTE = conduitT2Route();
 const CONDUIT_T3_ROUTE = conduitT3Route();
@@ -81,6 +84,7 @@ export const ROUTES = new Map<string, Route>([
   [SQUIRE_ROUTE.id, SQUIRE_ROUTE],
   [SQUIRE_T2_ROUTE.id, SQUIRE_T2_ROUTE],
   [SQUIRE_T3_ROUTE.id, SQUIRE_T3_ROUTE],
+  [SQUIRE_T4_ROUTE.id, SQUIRE_T4_ROUTE],
   [CONDUIT_ROUTE.id, CONDUIT_ROUTE],
   [CONDUIT_T2_ROUTE.id, CONDUIT_T2_ROUTE],
   [CONDUIT_T3_ROUTE.id, CONDUIT_T3_ROUTE],

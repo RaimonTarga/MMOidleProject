@@ -17,6 +17,7 @@ import {
   disciplineIdAtom,
   playerTierAtom,
   specializationIdAtom,
+  unlockedSkillsAtom,
 } from '../../hud/atoms';
 import { GameIcon } from '../GameIcon';
 import { classPieceIconSource, trophyIconSource } from '../conceptIcons';
@@ -25,6 +26,7 @@ import './responsesEditor.css';
 
 const DISCIPLINES = classKitFor('cooldown').disciplines;
 const SPECIALIZATIONS = classKitFor('cooldown').specializations;
+const LEAVES = classKitFor('cooldown').leaves;
 /** The piece each discipline's pick unlocks (Parry, Intercept, Unbowed). */
 const DISCIPLINE_PIECE_IDS = new Set(DISCIPLINES.flatMap((d) => (d.pieceId ? [d.pieceId] : [])));
 
@@ -50,6 +52,7 @@ export function ResponsesEditor({ view }: { view: ClassScreenView }) {
   const disciplineId = useAtomValue(disciplineIdAtom);
   const specializationId = useAtomValue(specializationIdAtom);
   const playerTier = useAtomValue(playerTierAtom);
+  const unlockedSkills = useAtomValue(unlockedSkillsAtom);
 
   const responses = useMemo(() => composeResponsesView({
     combatArchetype,
@@ -102,6 +105,8 @@ export function ResponsesEditor({ view }: { view: ClassScreenView }) {
   const picked = DISCIPLINES.find((d) => d.id === disciplineId);
   const pickedSpec = SPECIALIZATIONS.find((s) => s.id === specializationId && s.disciplineId === disciplineId);
   const specOptions = SPECIALIZATIONS.filter((s) => s.disciplineId === disciplineId);
+  const pickedLeaf = LEAVES.find((l) => l.disciplineId === disciplineId && unlockedSkills.includes(l.id));
+  const leafOptions = LEAVES.filter((l) => l.disciplineId === disciplineId);
 
   return (
     <div className="responses-editor">
@@ -137,6 +142,24 @@ export function ResponsesEditor({ view }: { view: ClassScreenView }) {
           <ul className="responses-editor__hold">
             {specOptions.map((s) => (
               <li key={s.id}>{`${s.name}: ${s.text}`}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+      {pickedLeaf ? (
+        <section className="responses-editor__discipline" aria-label="Leaf">
+          <h4 className="class-panel__subheading">{`Leaf: ${pickedLeaf.name}`}</h4>
+          <p className="class-panel__line">{pickedLeaf.text}</p>
+        </section>
+      ) : pickedSpec && playerTier >= 4 && (
+        <section className="responses-editor__discipline" aria-label="Leaf">
+          <h4 className="class-panel__subheading">Pick a leaf</h4>
+          <p className="class-panel__line">
+            Tier 4 asks what happens when you cannot answer. Choose one in the Passive Tree.
+          </p>
+          <ul className="responses-editor__hold">
+            {leafOptions.map((l) => (
+              <li key={l.id}>{`${l.name}: ${l.text}`}</li>
             ))}
           </ul>
         </section>

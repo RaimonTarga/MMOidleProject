@@ -178,7 +178,7 @@ export function buildSquireBeats(): TutorialBeat[] {
     ),
   ]);
 
-  return [...beats, ...buildSquireTierTwoBeats(), ...buildSquireTierThreeBeats()];
+  return [...beats, ...buildSquireTierTwoBeats(), ...buildSquireTierThreeBeats(), ...buildSquireTierFourBeats()];
 }
 
 type T2Biome = 'plains' | 'forest' | 'mountain' | 'swamp' | 'cave' | 'jungle' | 'desert';
@@ -494,5 +494,129 @@ export function buildSquireTierThreeBeats(): TutorialBeat[] {
       'Fighting through the Volcanic.',
     ),
     t3Boss('volcanic', 'The Volcanic boss gives you Kindling: the longer a fight lasts, the more every gain of Resolve is worth.'),
+  ];
+}
+
+type T4Biome = 'mountain' | 'tundra' | 'jungle' | 'desert' | 'volcanic' | 'graveyard' | 'trench';
+
+const T4_CHAPTER: Record<T4Biome, string> = {
+  mountain: 'Tier 4: The Mountain',
+  tundra: 'Tier 4: The Tundra',
+  jungle: 'Tier 4: The Jungle',
+  desert: 'Tier 4: The Desert',
+  volcanic: 'Tier 4: The Volcanic',
+  graveyard: 'Tier 4: The Wasteland',
+  trench: 'Tier 4: The Trench',
+};
+
+function t4Lesson(biome: T4Biome): number {
+  return absoluteZoneLevel({ kind: 'zone', biome, tier: 4, level: LESSON_ZONE_LEVEL });
+}
+
+function t4Farm(id: string, biome: T4Biome, level: number, say: string, waiting: string): TutorialBeat {
+  return {
+    id,
+    chapter: T4_CHAPTER[biome],
+    say,
+    waiting,
+    progress: [{ type: 'biomeLevel', biomeGroup: biome, level }],
+    steps: [{
+      type: 'farm',
+      at: { kind: 'biome', biomeGroup: biome, tier: 4 },
+      until: { type: 'biomeLevelAtLeast', biomeGroup: biome, level },
+    }],
+  };
+}
+
+function t4Boss(biome: T4Biome, say: string): TutorialBeat {
+  return {
+    id: `squire4:boss-${biome}`,
+    chapter: T4_CHAPTER[biome],
+    say,
+    waiting: `Fighting the ${biome} boss.`,
+    steps: [{ type: 'attemptBoss', biomeGroup: biome, tier: 4 }],
+  };
+}
+
+/** The Tier-4 beats, after the Tier-3 stretch: the leaf, then every T4 zone and its lesson. */
+export function buildSquireTierFourBeats(): TutorialBeat[] {
+  return [
+    t4Farm(
+      'squire4:leaf',
+      'mountain',
+      t4Lesson('mountain') - 1,
+      'Tier 4 is open. Pick a leaf in the Passive Tree: it says what happens when you cannot answer.',
+      'Fighting on the Mountain while you choose.',
+    ),
+    t4Farm(
+      'squire4:guard-three',
+      'mountain',
+      biomeLevelCap(4, 'mountain'),
+      'Guard is stronger still: a blow it catches staggers whoever threw it.',
+      'Fighting up the Mountain.',
+    ),
+    t4Boss('mountain', 'The Mountain boss ranks your Guard up for good.'),
+    t4Farm(
+      'squire4:splitting-blow-two',
+      'tundra',
+      biomeLevelCap(4, 'tundra'),
+      'Splitting Blow is stronger: one blow breaks Ice Armor.',
+      'Fighting through the Tundra.',
+    ),
+    t4Boss('tundra', 'The Tundra boss ranks your Splitting Blow up.'),
+    t4Farm(
+      'squire4:watchful-two',
+      'jungle',
+      biomeLevelCap(4, 'jungle'),
+      'Watchful is stronger: what it stops stays staggered longer.',
+      'Fighting through the Jungle.',
+    ),
+    t4Boss('jungle', 'The Jungle boss ranks your Watchful up.'),
+    t4Farm(
+      'squire4:disarm',
+      'desert',
+      biomeLevelCap(4, 'desert'),
+      'Disarm is on: an enemy winding up a blow at you lands it at half strength, and you get your Resolve back.',
+      'Fighting through the Desert.',
+    ),
+    t4Boss('desert', "The Desert boss ranks your Executioner's Oath up."),
+    t4Farm(
+      'squire4:anchor-two',
+      'volcanic',
+      biomeLevelCap(4, 'volcanic'),
+      'Anchor is stronger: even a push into a hazard cannot move you.',
+      'Fighting through the Volcanic.',
+    ),
+    t4Boss('volcanic', 'The Volcanic boss ranks your Kindling up.'),
+    t4Farm(
+      'squire4:wasteland',
+      'graveyard',
+      t4Lesson('graveyard'),
+      'The Wasteland is new: the dead rise again. Fight on until you learn to meet them.',
+      'Fighting through the Wasteland.',
+    ),
+    t4Farm(
+      'squire4:lay-to-rest',
+      'graveyard',
+      biomeLevelCap(4, 'graveyard'),
+      'Lay to Rest is on: an enemy rising near you is struck down before it stands.',
+      'Fighting through the Wasteland.',
+    ),
+    t4Boss('graveyard', 'The Wasteland boss gives you the Charnel Ring: your slam grows with every enemy in the fight.'),
+    t4Farm(
+      'squire4:trench',
+      'trench',
+      t4Lesson('trench'),
+      'The Trench is new: things dive and burrow out of your reach. Fight on.',
+      'Fighting through the Trench.',
+    ),
+    t4Farm(
+      'squire4:lie-in-wait',
+      'trench',
+      biomeLevelCap(4, 'trench'),
+      'Lie in Wait is on: when a target is out of reach, you hold your slam for it.',
+      'Fighting through the Trench.',
+    ),
+    t4Boss('trench', 'The Trench boss gives you Undertow: your slam roots what it hits and cuts a dive short.'),
   ];
 }
