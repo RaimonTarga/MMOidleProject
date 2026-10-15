@@ -1,5 +1,6 @@
 import { OrderStrip } from '../OrderStrip';
 import { useOrderView } from '../../ui/class/useOrderView';
+import { LoadoutAmmoCompact } from './ReloadMechanic';
 import { ResolveCompact } from './ResolvePips';
 import type { MechanicViewModel } from './types';
 
@@ -53,6 +54,9 @@ export function CompactMechanic({ model }: { model: MechanicViewModel }) {
   const order = useOrderView();
   if (model.kind === 'cadence' && order) {
     return <OrderStrip order={order} count={model.count} armed={model.armed} compact />;
+  }
+  if (model.kind === 'reload' && model.mode === 'ammo' && model.loadout) {
+    return <LoadoutAmmoCompact model={model} />;
   }
   if (model.kind === 'cooldown' && model.responses) return <ResolveCompact model={model} />;
   const state = compactState(model);
