@@ -68,9 +68,11 @@ export function classConfigContext(
     pieceRanks: pieceRanks(archetype, progress),
     trophyRanks: trophies,
     trophiesNewestFirst: trophiesNewestFirst(archetype, progress, trophies),
-    budget: Math.max(1, classBudget(archetype, globalMasteryValue).value + budgetBonus),
+    // Colossus asks one more Command of the Conduit's room; Two Souls holds a second trophy (bible §7.6).
+    budget: Math.max(1, classBudget(archetype, globalMasteryValue).value + budgetBonus + (progress.specializationId === 'conduit-colossus' ? 1 : 0)),
     disciplineId: progress.disciplineId,
-    relicSlots,
+    specializationId: progress.specializationId ?? null,
+    relicSlots: progress.specializationId === 'conduit-two-souls' ? Math.max(relicSlots, 2) : relicSlots,
   };
 }
 
@@ -145,6 +147,8 @@ export interface ClassStateInput {
   bossesCleared: readonly string[];
   /** The T2 pick; ignored unless it is one of the class's own disciplines. */
   disciplineId?: string | null;
+  /** The T3 pick; ignored unless it is one of the class's own specializations. */
+  specializationId?: string | null;
   /** The equipped weapon's change to the class budget (the Conduit's `conduit.command`). */
   budgetBonus?: number;
 }
@@ -158,9 +162,11 @@ export function classConfigContextFromState(state: ClassStateInput): ClassConfig
   if (!archetype) return null;
   const picked = state.disciplineId ?? null;
   const disciplineId = picked && classKitFor(archetype).disciplines.some((d) => d.id === picked) ? picked : null;
+  const pickedSpec = state.specializationId ?? null;
+  const specializationId = disciplineId && pickedSpec && classKitFor(archetype).specializations.some((s) => s.id === pickedSpec) ? pickedSpec : null;
   return classConfigContext(
     archetype,
-    { biomeLevel: state.biomeLevel, bossesCleared: state.bossesCleared, disciplineId },
+    { biomeLevel: state.biomeLevel, bossesCleared: state.bossesCleared, disciplineId, specializationId },
     globalMastery(state.biomeLevel),
     1,
     state.budgetBonus ?? 0,

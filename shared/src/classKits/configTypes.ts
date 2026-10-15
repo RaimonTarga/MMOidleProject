@@ -184,6 +184,8 @@ export interface ClassConfigContext {
   budget: number;
   /** The T2 pick, once made. */
   disciplineId: string | null;
+  /** The T3 pick, once made. */
+  specializationId: string | null;
   /** How many trophies the relic slot holds (two with Two Souls). */
   relicSlots: number;
 }

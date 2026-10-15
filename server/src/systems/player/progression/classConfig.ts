@@ -28,7 +28,7 @@ import type { World } from '../../../world/World';
 type ProgressSlices = {
   holdsInventory?: { equipment: { weapon?: string | null } };
   tracksProgression: Pick<TracksProgression, 'biomeLevel' | 'bossesCleared'>;
-  usesSkills: Pick<UsesSkills, 'combatArchetype' | 'disciplineId'>;
+  usesSkills: Pick<UsesSkills, 'combatArchetype' | 'disciplineId' | 'specializationId'>;
 };
 
 /** The discipline pick, once it is one of the class's own disciplines. */
@@ -38,11 +38,19 @@ function disciplineOf(archetype: ClassArchetype, usesSkills: ProgressSlices['use
   return classKitFor(archetype).disciplines.some((discipline) => discipline.id === picked) ? picked : null;
 }
 
+/** The specialization pick, once it is one of the class's own and its discipline is picked. */
+function specializationOf(archetype: ClassArchetype, usesSkills: ProgressSlices['usesSkills']): string | null {
+  const picked = usesSkills.specializationId ?? null;
+  if (!picked || !disciplineOf(archetype, usesSkills)) return null;
+  return classKitFor(archetype).specializations.some((spec) => spec.id === picked) ? picked : null;
+}
+
 export function classKitProgressOf(archetype: ClassArchetype, slices: ProgressSlices): ClassKitProgress {
   return {
     biomeLevel: slices.tracksProgression.biomeLevel,
     bossesCleared: slices.tracksProgression.bossesCleared ?? [],
     disciplineId: disciplineOf(archetype, slices.usesSkills),
+    specializationId: specializationOf(archetype, slices.usesSkills),
   };
 }
 

@@ -106,7 +106,7 @@ export function composeFormationView(input: ClassScreenInput): FormationView | n
   const soul = config.relic[0] ? SOULS.get(config.relic[0]) : undefined;
   const check = checkClassConfig(config, ctx);
   return {
-    command: { used: rosterCommand(system.roster, ctx.disciplineId), total: ctx.budget },
+    command: { used: rosterCommand(system.roster, ctx.disciplineId, ctx.specializationId), total: ctx.budget },
     roster,
     available,
     orders: {

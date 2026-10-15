@@ -85,6 +85,8 @@ export interface ClassKitProgress {
   bossesCleared: readonly string[];
   /** The T2 pick, once made. */
   disciplineId: string | null;
+  /** The T3 pick, once made (under the discipline). */
+  specializationId?: string | null;
 }
 
 export function lessonReached(lesson: LessonDef, progress: ClassKitProgress): boolean {

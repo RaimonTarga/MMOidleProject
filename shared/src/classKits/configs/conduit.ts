@@ -75,12 +75,12 @@ export const CONDUIT_SYSTEM: ClassSystemSpec<FormationConfig> = {
     ];
     const roster: string[] = [];
     // Each body is priced by the discipline, given what is already fielded (Pack's first-of-a-type discount).
-    const costOf = (piece: ConduitPiece) => rosterCommand([...roster, piece.id], ctx.disciplineId) - rosterCommand(roster, ctx.disciplineId);
+    const costOf = (piece: ConduitPiece) => rosterCommand([...roster, piece.id], ctx.disciplineId, ctx.specializationId) - rosterCommand(roster, ctx.disciplineId, ctx.specializationId);
     for (const piece of wanted) {
-      if (rosterCommand([...roster, piece.id], ctx.disciplineId) > ctx.budget || roster.length >= CONDUIT_ROSTER_BODY_CAP) continue;
+      if (rosterCommand([...roster, piece.id], ctx.disciplineId, ctx.specializationId) > ctx.budget || roster.length >= CONDUIT_ROSTER_BODY_CAP) continue;
       roster.push(piece.id);
     }
-    while (thrall && costOf(thrall) > 0 && rosterCommand([...roster, thrall.id], ctx.disciplineId) <= ctx.budget && roster.length < CONDUIT_ROSTER_BODY_CAP) {
+    while (thrall && costOf(thrall) > 0 && rosterCommand([...roster, thrall.id], ctx.disciplineId, ctx.specializationId) <= ctx.budget && roster.length < CONDUIT_ROSTER_BODY_CAP) {
       roster.push(thrall.id);
     }
     return { kind: 'formation', roster, orders: { ...DEFAULT_FORMATION_ORDERS, recallWhen: [...DEFAULT_FORMATION_ORDERS.recallWhen] } };
@@ -91,7 +91,7 @@ export const CONDUIT_SYSTEM: ClassSystemSpec<FormationConfig> = {
     for (const id of config.roster) {
       if (!ownedPiece(CONDUIT_KIT, ctx, id)) problems.push(`"${id}" is not a summon you have bound`);
     }
-    const command = rosterCommand(config.roster, ctx.disciplineId);
+    const command = rosterCommand(config.roster, ctx.disciplineId, ctx.specializationId);
     if (command > ctx.budget) problems.push(`this formation needs ${command} Command; you have ${ctx.budget}`);
     if (config.roster.length > CONDUIT_ROSTER_BODY_CAP) problems.push(`at most ${CONDUIT_ROSTER_BODY_CAP} summons in the formation`);
     problems.push(...conditionProblems(config.orders.recallWhen, 'summoner', 'the Recall rule'));
