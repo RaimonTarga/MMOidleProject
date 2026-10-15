@@ -65,7 +65,8 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy', 'summoner'
     const summon = resolveSummonerProfile({ ...player.usesSkills, passives: player.usesSkills.passives });
     matrix.push({ root, relic: relic.id, preview, runtime: {
       cadenceThreshold: player.usesCadence?.threshold,
-      cooldownMs: player.usesCooldown?.executionCooldownMs,
+      resolve: player.usesCooldown?.resolve,
+      resolveMax: player.usesCooldown?.resolveMax,
       ammoMax: player.usesReload?.ammoMax,
       energyMax: player.usesEnergy?.energyMax, energy: player.usesEnergy?.energy,
       dot: dot ? { maxStacks: dot.maxStacks, data: dot.data } : undefined,
