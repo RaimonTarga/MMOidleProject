@@ -1,6 +1,6 @@
 # Map, Crafting, Upgrade, Inventory and Passive Tree panels
 
-> Class-first rework (2026-10-15): the core slot, stance and rite crafting, crafted rune recipes, and evolve/reconstruct removed; see the bible.
+> Class-first rework (2026-10-15): the core slot, stance and rite crafting, crafted rune recipes, evolve/reconstruct, and technique (ability) recipes removed; see the bible.
 
 Audited 2026-09-28. Implemented, not yet released or committed; in-game review pending. Client
 presentation only: no server, protocol, balance or save changes. The sections
@@ -44,8 +44,8 @@ Owners: `client/src/ui/map/MapPanel.tsx`, `NodeInfo.tsx`, `constants.ts`, `clien
 Owners: `client/src/ui/crafting/MakeTab.tsx`, `makeEntries.ts`, `useMakeEntries.ts`, `client/src/ui/crafting.css`, `panelFilters.ts`.
 
 - The left rail of categories is `KIND_ORDER`: Weapon, Armor, Recovery, Boots,
-  Relic, Technique. There is no Core, Stance, Rite, or Rune category. The Relic
-  label remains. Crafted relic items are gone; the relic slot holds the class
+  Relic. There is no Core, Stance, Rite, Rune or Technique category (abilities are
+  class pieces now, learned from zone levels, D3). The Relic label remains. Crafted relic items are gone; the relic slot holds the class
   boss trophy, which `class:setConfig` sets.
 - Each rail item shows counts: `N ready · N new`.
 - **A category appears only when its first recipe unlocks** (the biome level at

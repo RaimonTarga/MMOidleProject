@@ -68,7 +68,6 @@ because it is detailed.
 | Charms | [charms-current-state.md](charms-current-state.md) |
 | Global Mastery | [global-mastery-current-state.md](global-mastery-current-state.md) |
 | Runes | [rune-system-current-state.md](rune-system-current-state.md) |
-| Runic attunement | [runic-attunement-current-state.md](runic-attunement-current-state.md) |
 | Seals and tier advancement | [seals-current-state.md](seals-current-state.md) |
 | T1 item rework | [t1-item-rework-current-state.md](t1-item-rework-current-state.md) |
 | Tier balance | [tier-balance-current-state.md](tier-balance-current-state.md) |
@@ -209,6 +208,7 @@ Use the current-state table above and the source when they conflict.
   - [Stances](archive/stances-current-state.md), the [stance authoring guide](archive/stances-authoring-guide.md), and [stance future notes](archive/stances-future-design-notes.md) — removed (D2).
   - [Rites](archive/rites-current-state.md) and the [rite authoring guide](archive/rites-authoring-guide.md) — removed (D2).
   - [Relic items](archive/relics-current-state.md) — removed (F5). The relic slot remains and holds the class boss trophy.
+  - [Runic attunement](archive/runic-attunement-current-state.md) — Runic Points (D2) and ability attunement (D3) removed.
   - [Core design philosophy](../design_docs/archive/CORE_DESIGN_PHILOSOPHY.md), [core cast review](../design_docs/archive/CORE_CAST_REVIEW_DRAFT.md), [core T4 cast](../design_docs/archive/CORE_T4_CAST.md), and [relics design](../design_docs/archive/relics-design.md) — superseded by the bible (§4).
   - [Tier-2 bot infrastructure](archive/t2-bot-testing-infrastructure.md) and the [bot capability audit](archive/bot-harness-capability-audit.md) — class and campaign routes were removed (D5). The living runner docs stay in the operations table.
 - [Archive guide](archive/README.md) explains how completed plans and

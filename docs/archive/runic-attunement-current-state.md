@@ -1,3 +1,5 @@
+> **ARCHIVED (2026-10-15): the class-first rework removed this system (D2: Runic Points; D3: attunement).** Design authority: [class-first-bible.md](../../design_docs/class-first-bible.md). Kept for history only.
+
 # Runic attunement — current state
 
 Runic Points reserve the active build: attuned abilities, attuned stances, Rune logic, and Rites. Learning remains permanent. No ability or stance count is capped by tier.
@@ -22,7 +24,7 @@ These are balance seeds. No mechanic assumes the five-mastery step, and pricing 
 
 ## Execution
 
-A `use-ability` rule carries `targetAbilityId`. Abilities have no built-in trigger: an ability auto-fires only while one of its rules is active, and is manual-only without one. Ability prices are net of their reference wiring (see [abilities](abilities-current-state.md#wiring-and-pricing)).
+A `use-ability` rule carries `targetAbilityId`. Abilities have no built-in trigger: an ability auto-fires only while one of its rules is active, and is manual-only without one. Ability prices are net of their reference wiring (see [abilities](../abilities-current-state.md#wiring-and-pricing)).
 
 Active targets are considered in Rune order. Ordinary Techniques share one armed/cast/charge opportunity. Instant self-facing Techniques remain non-blocking and can activate even after an ordinary Technique claims that opportunity. Guards resolve at most one activation per 100 ms decision window; ongoing effects overlap. Cooldowns, interruption, ability targeting, ranks and damage mechanics are unchanged.
 

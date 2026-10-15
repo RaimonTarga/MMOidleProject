@@ -1,5 +1,13 @@
 # Abilities — Current State
 
+> Class-first rework (2026-10-15, D3): abilities are no longer crafted, attuned, slotted on a
+> hotbar or fired by a Use Ability rune. The 19 definitions and the engine below stay as an
+> internal effect library for the class runtimes (`fireTechnique` / `fireGuard` in
+> `server/src/systems/player/abilities/abilityFiring.ts`; nothing calls them in production
+> yet). The cast machine also runs class casts (`registerClassCast`, the Striker's opener,
+> wind-up and Skyfall). Sections on learning, attunement, the Use Ability rune and the
+> hotbar describe removed code.
+
 Living truth for the active **Ability** system (Technique / Guard). Design authority is
 `design_docs/ABILITY_CAST_AND_TIER_PROGRESSION_T1_T4.md`; the superseded plans live in
 `docs/archive/abilities-plan.md`, `docs/archive/abilities-evolution-implementation-plan.md`
@@ -37,7 +45,7 @@ relative roles; changing them is expected, and should preserve each ability's ro
 
 ## Active build state
 
-See [Runic attunement](runic-attunement-current-state.md) for the current budget, migration, validation and UI contract. `knownAbilities` records permanent learning. `attunedAbilities: AttunedAbilities` holds ordered Technique and Guard lists. There is no tier or family count cap; each ability reserves its authored RP cost independently of rank. Global Mastery controls capacity.
+See [Runic attunement](archive/runic-attunement-current-state.md) (archived) for the current budget, migration, validation and UI contract. `knownAbilities` records permanent learning. `attunedAbilities: AttunedAbilities` holds ordered Technique and Guard lists. There is no tier or family count cap; each ability reserves its authored RP cost independently of rank. Global Mastery controls capacity.
 
 Legacy singular/array loadouts and slot-indexed Rune rules migrate through `attunementMigration.ts`, preserving real targets and learned progression. Over-budget saves remain active and visible until the player reduces their reservation.
 
