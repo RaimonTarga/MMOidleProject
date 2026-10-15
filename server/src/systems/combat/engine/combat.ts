@@ -357,10 +357,9 @@ export function runPlayerAttack(
   // A boss 'stat-buff' evasion action can override the dodge fraction at runtime
   // (e.g. drop to 0 in a desperation phase). 0 is a valid override, so use ??.
   // ONE dodge clock per monster — see `rollMonsterDodge`.
-  // A hit a completed CAST delivers (the Destroyer's execution riding Slam or
-  // Snipe, design §22.5) is never dodged and never moves that clock: the cast
-  // already resolved on this body, and a cast's own payload (`applyPlayerAoe`)
-  // never rolls the dodge either.
+  // A hit a completed CAST delivers is never dodged and never moves that clock:
+  // the cast already resolved on this body, and a cast's own payload
+  // (`applyPlayerAoe`) never rolls the dodge either.
   const evadeChance = ctx.metadata["castDelivered"] === true ? 0 : monsterDodgeChance(target);
   let evaded = false;
   let evadeMult = 0;
@@ -444,8 +443,7 @@ export function runPlayerAttack(
 
   emitCombatEvent("onHit", ctx, world);
   // The ONE multiplier the hit landed at (its mechanic, a bank, a window), for a
-  // caller that carries the same blow further: the Destroyer's execution spreads
-  // over a Slam's area at the strength it landed with.
+  // caller that carries the same blow further.
   if (opts.resultMetadata) {
     opts.resultMetadata.empoweredMultiplier = Number(ctx.metadata["empoweredMultiplier"] ?? 1);
   }
@@ -2265,7 +2263,8 @@ export function updateCombat(world: World, dt: number, now: number) {
       continue;
     }
 
-    // Channeled Beam locks all auto-attacks; the beam system handles targeting + damage.
+    // A channel that attaches isChanneling locks all auto-attacks. The Squire's
+    // beam was the writer (CQ7); the lock stays for the marker.
     if (player.isChanneling) {
       player.performsAttack.lastAttackAt = now;
       continue;
