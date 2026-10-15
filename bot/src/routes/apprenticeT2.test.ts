@@ -138,6 +138,6 @@ for (const { biomeGroup, lesson } of APPRENTICE_T2_ZONES) {
   assert.equal(current(), `apprentice-boss-${biomeGroup}-2`, `${biomeGroup}: the boss line`);
   state.bossesCleared.push(bossClearKey(biomeGroup, 2));
 }
-assert.equal(current(), "done", "the guide is finished after the Desert boss");
+assert.equal(current(), "apprentice-t3-mountain", "the T2 stretch hands over to the T3 stretch (apprenticeT3.test.ts)");
 
 console.log("apprenticeT2: ok");

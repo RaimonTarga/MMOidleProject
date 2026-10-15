@@ -6,6 +6,7 @@ import { SLINGER_T1_ID, slingerT1Route } from "./slingerT1";
 import { slingerT2Route } from "./slingerT2";
 import { APPRENTICE_T1_ID, apprenticeT1Route } from "./apprenticeT1";
 import { apprenticeT2Route } from "./apprenticeT2";
+import { apprenticeT3Route } from "./apprenticeT3";
 import { SQUIRE_T1_ID, squireT1Route } from "./squireT1";
 import { SQUIRE_T2_ID, squireT2Route } from "./squireT2";
 import { DEFAULT_SMOKE_CLASS, SMOKE_T1_ID, smokeT1Route } from "./smokeT1";
@@ -45,6 +46,7 @@ const SPIRIT_ROUTE = spiritT1Route();
 const SPIRIT_T2_ROUTE = spiritT2Route();
 const APPRENTICE_ROUTE = apprenticeT1Route();
 const APPRENTICE_T2_ROUTE = apprenticeT2Route();
+const APPRENTICE_T3_ROUTE = apprenticeT3Route();
 export const ROUTES = new Map<string, Route>([
   [SMOKE_ROUTE.id, SMOKE_ROUTE],
   [STRIKER_ROUTE.id, STRIKER_ROUTE],
@@ -59,6 +61,7 @@ export const ROUTES = new Map<string, Route>([
   [SPIRIT_T2_ROUTE.id, SPIRIT_T2_ROUTE],
   [APPRENTICE_ROUTE.id, APPRENTICE_ROUTE],
   [APPRENTICE_T2_ROUTE.id, APPRENTICE_T2_ROUTE],
+  [APPRENTICE_T3_ROUTE.id, APPRENTICE_T3_ROUTE],
 ]);
 
 /**
