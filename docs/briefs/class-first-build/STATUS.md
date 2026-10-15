@@ -35,6 +35,8 @@ Suite after the five: 354/355. **Known failing until Wave 2:** `statusRegistry.t
 statuses with no client tile/help/badge/icon: `ability-sidestep` (Close In stand-in), `conduit-bark`,
 `conduit-mark`, `squire-parry`. Wave 2 UI adds them (icons are the designer's).
 
+**Conduit bandwidth (measured 2026-10-15, `server/test/_conduitBandwidth.ts`):** a moving Conduit costs about 180 B per summon per broadcast (5 Hz): 6 summons 1.3 KB, 12 summons 2.3 KB, 20 summons 3.6 KB (about 18 KB/s per viewer at 20). Patches are already minimal (one `hasPosition` slice plus `removed: isMoving`); only a field-level position diff would shrink them, and that is a protocol change. **Decision: no diet; the Command budget may rise to 20 bodies.** Revisit if many viewers share a node.
+
 ## Tier 2 prompts (wave 1)
 
 Plan: [T2-plan.md](T2-plan.md). One agent per class (Codex or Grok), each in its own folder.
