@@ -27,7 +27,6 @@ import {
   NODE_BIOMES,
   STARTER_RUNE_IDS,
   SUMMONER_CORE_TUNING,
-  SUMMONER_FRAME_TUNING,
   baseRecoveryForTier,
   emptyEquipment,
 } from '@mmo-idle/shared';
@@ -47,7 +46,7 @@ const WARMUP_TICKS = 200;
 const MEASURE_TICKS = 600;
 
 const ROOT_COUNT = SUMMONER_CORE_TUNING.rootCount;
-const ROOT_HP_PCT = SUMMONER_FRAME_TUNING.root.totalSummonHpPct;
+const ROOT_HP_PCT = SUMMONER_CORE_TUNING.totalSummonHpPct;
 const ROOT_OFFENSE = SUMMONER_CORE_TUNING.formationOffenseMult;
 const ORIGINAL_CAP = SUMMONER_CORE_TUNING.hardEntityCap;
 
@@ -75,15 +74,13 @@ function parseArgs(argv: string[]) {
   };
 }
 
-/** Patch today's formation tuning so the root fields `count` bodies of root size. */
+/** Patch today's formation tuning so a roster of `count` thralls keeps root per-body size. */
 function patchFormation(count: number): void {
   const core = SUMMONER_CORE_TUNING as unknown as Record<string, number>;
-  const root = SUMMONER_FRAME_TUNING.root as unknown as Record<string, number>;
   const bodies = Math.max(1, count);
   core.hardEntityCap = Math.max(ORIGINAL_CAP, bodies);
-  root.count = bodies;
   // Per-body HP and damage stay at the root's (4 bodies): the army does not split.
-  root.totalSummonHpPct = (ROOT_HP_PCT / ROOT_COUNT) * bodies;
+  core.totalSummonHpPct = (ROOT_HP_PCT / ROOT_COUNT) * bodies;
   core.formationOffenseMult = (ROOT_OFFENSE / ROOT_COUNT) * bodies;
 }
 
@@ -162,6 +159,18 @@ function runCell(
       syncArchetypeSlices(world, entity);
       recalculatePlayerEntityStats(world, entity);
       syncArchetypeSlices(world, entity);
+      if (conduit && entity.configuresClass?.config.system.kind === 'formation') {
+        // After refresh, so a measured army is not clamped back to the Command budget.
+        entity.configuresClass.config = {
+          mode: 'custom',
+          relic: [],
+          system: {
+            kind: 'formation',
+            roster: Array.from({ length: summonsEach }, () => 'conduit-thrall'),
+            orders: { attackFirst: 'closest', tanksGuard: 'conduit', recallWhen: [], rebuildFirst: 'as-fallen' },
+          },
+        };
+      }
       Object.assign(entity.usesAutocombat, DEFAULT_AUTOCOMBAT_CONFIG, { auto: true });
       owners.push(entity);
     }

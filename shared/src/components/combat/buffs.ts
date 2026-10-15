@@ -64,23 +64,6 @@ export const BUFF_IDS = [
   'defense-stationary-dr',   // stationary DR ramp
   'defense-engagement-dr',  // Desert opening protection
   'defense-reactive-plating',// on-hit stacking plating buff
-  'summoner-volatile-brood',
-  'summoner-endless-swarm',
-  'summoner-harrier-brood',
-  'summoner-coordinated-hunt',
-  'summoner-withering-chorus',
-  'summoner-grand-ritual',
-  'summoner-colossus',
-  'summoner-battle-bond',
-  'summoner-twin-covenant',
-  // Conduit frame loops (progression rework Phase 3): Splinter's frenzy window,
-  // Effigy's linked-slam bank, and Consort's standing line. The line's tile is the
-  // only one of the three with neither a clock nor a cap, because it is a STATE —
-  // it reports bodies standing out of the formation's slots, and stays on the bar
-  // while the line is broken so the player can see what they are missing.
-  'summoner-frame-frenzy',
-  'summoner-frame-link',
-  'summoner-frame-line',
   'debuff-stunned',
   // Abilities (system rework Step 7): the active Guard-ability buff (e.g. Brace).
   // One id per GUARD SLOT — two equipped Guards layer independently and each

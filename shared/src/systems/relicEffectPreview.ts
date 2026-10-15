@@ -1,6 +1,6 @@
 import type { PassiveMap } from '../passives';
 import type { SubVariant } from '../data/skillTree';
-import { SUMMONER_SPECIALIZATION_TUNING, summonerSpecializationFor, type SummonerFrame } from '../data/summoner';
+
 import { resolveRelicMagnitudeMultiplier, type RelicRatings } from './relics';
 import { SCALABLE_MECHANIC_BUFFS, SCALABLE_MECHANIC_DEBUFFS, scaleMechanicMagnitude } from './mechanicEffectScaling';
 
@@ -65,19 +65,6 @@ export function relicEffectPreview(
       add('debuff', 'dot-frozen', 'damageTakenPct', 'Frozen damage taken', p['dot.freeze-damage-taken-pct'] ?? 0.35, 'percent');
     }
     if ((p['dot.wind-spirit'] ?? 0) > 0) add('debuff', 'dot-frostbite', 'dotTakenPerStack', 'Frostbite DoT damage taken per stack', p['dot.frostbite-dot-taken-pct'] ?? 0.03, 'percent');
-  }
-  if (archetype === 'summoner') {
-    const frame = (options.subVariant ?? 'root') as SummonerFrame;
-    const specialization = summonerSpecializationFor(frame, options.unlockedSkills ?? []);
-    if (specialization === 'grand-ritual') {
-      add('buff', 'summoner-grand-ritual', 'damageMult', 'Grand Ritual empowered damage', SUMMONER_SPECIALIZATION_TUNING.grandRitual.damageMult, 'multiplier');
-    }
-    if (specialization === 'harrier-brood') {
-      add('debuff', 'summoner-harrier-brood', 'damageTakenPctPerSlot', 'Harrier damage taken per mark', SUMMONER_SPECIALIZATION_TUNING.harrierBrood.damageTakenPctPerSlot, 'percent');
-    }
-    if (specialization === 'withering-chorus') {
-      add('debuff', 'summoner-withering-chorus', 'damagePctPerSlot', 'Withering Chorus damage per voice', SUMMONER_SPECIALIZATION_TUNING.witheringChorus.damagePctPerSlot, 'percent');
-    }
   }
   return result;
 }

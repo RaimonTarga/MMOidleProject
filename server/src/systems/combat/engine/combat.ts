@@ -14,7 +14,6 @@ import {
   TEST_ROOM_NODE_ID,
   distanceSq,
   geometryContains,
-  resolveSummonerProfile,
 } from "@mmo-idle/shared";
 import type {
   AggroTargetKind,
@@ -25,7 +24,6 @@ import type {
 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../player/progression/rewards";
 import { ATTACK_NOW, makeCombatContext, emitCombatEvent, recordBaseDefenseMeasurement, type FormationAttackContribution } from "./combatPipeline";
-import { formationTempoWeight } from "../../classes/archetypes/summoner/profile";
 import { onMinionStruck } from "../../classes/archetypes/summoner/minionHits";
 import { formationAreaMults } from "../../classes/archetypes/summoner/formationArea";
 import {
@@ -278,41 +276,7 @@ export function runPlayerAttack(
   const ctx = makeCombatContext(player, "player", target, "monster");
   // The tick's clock, for listeners that start something timed (a class cast).
   ctx.metadata[ATTACK_NOW] = now;
-  const directSummonerProfile = !opts.formation && player.usesSkills.combatArchetype === 'summoner'
-    ? resolveSummonerProfile({
-      selectedSubVariant: player.usesSkills.selectedSubVariant,
-      selectedRange: player.usesSkills.selectedRange,
-      unlockedSkills: player.usesSkills.unlockedSkills,
-      passives: player.usesSkills.passives,
-    })
-    : null;
-  const battleBondProfile = directSummonerProfile?.specialization === 'battle-bond'
-    ? directSummonerProfile
-    : null;
-  ctx.formation = opts.formation ?? (battleBondProfile ? {
-    ownerId: player.isPlayer.id,
-    physicalEntityId: player.isPlayer.id,
-    slotId: 'conduit:0',
-    directDamageWeight: battleBondProfile.battleBondConduitOffenseWeight * battleBondProfile.relicPotencyMult,
-    onHitMagnitudeWeight:
-      battleBondProfile.battleBondConduitOffenseWeight
-      * battleBondProfile.secondaryEffectMult
-      * battleBondProfile.relicPotencyMult,
-    secondaryEffectMult: battleBondProfile.secondaryEffectMult,
-    procWeight:
-      battleBondProfile.battleBondConduitOffenseWeight
-      * battleBondProfile.secondaryEffectMult,
-    // The bonded Conduit is one more body in the formation for cadence purposes,
-    // so its own swings buy Tempo on the same normalized scale its summon does.
-    tempoWeight: formationTempoWeight(
-      battleBondProfile,
-      battleBondProfile.battleBondConduitOffenseWeight,
-    ),
-    targetId: target.isMonster.id,
-    cycleSerial: 0,
-    cycleCompleted: false,
-    side: 'conduit',
-  } : undefined);
+  ctx.formation = opts.formation;
   // Summoner/Conduit formation packets split one offense budget across several
   // physical bodies, so each packet would otherwise pay the target's full flat
   // Plating on its own share of the damage. Reload halves plating for the same

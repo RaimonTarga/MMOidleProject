@@ -54,7 +54,6 @@ import { STUN_EFFECT } from '../src/systems/combat/status/stun';
 import {
   CHILL_EFFECT, CONF_EFFECT_ID, DOT_EFFECT_ID, FROZEN_EFFECT,
 } from '../src/systems/classes/archetypes/dot/t3/core/constants';
-import { summonerFrameLinkEffectId } from '../src/systems/classes/archetypes/summoner/frameLoop';
 import { auditStatusRegistry } from '../scripts/statusAudit';
 import { statusMeta } from '../../client/src/hud/targetStatusMeta';
 import { targetStatusHelp } from '../../client/src/hud/statusHelp';
@@ -100,7 +99,7 @@ function assert(condition: unknown, message: string): void {
   assert(CHILL_STATUS_ID === CHILL_EFFECT, 'the chill id');
   assert(FROZEN_STATUS_ID === FROZEN_EFFECT, 'the frozen id');
   assert(STUN_STATUS_ID === STUN_EFFECT, 'the stun id');
-  assert(isTargetHiddenStatusId(summonerFrameLinkEffectId('owner-1')), 'the Effigy link record is bookkeeping');
+  assert(isTargetHiddenStatusId('frame.summoner.link.owner-1'), 'the Effigy link record is bookkeeping');
   assert(!isTargetHiddenStatusId('dot') && !isTargetHiddenStatusId('vulnerability'), 'and nothing else is');
 
   initCombatSystems();
@@ -188,7 +187,7 @@ function assert(condition: unknown, message: string): void {
     data: { damagePerTick: 25, ticksLeft: 4 },
   });
   applyStatusEffect(target.tracksCombat, {
-    id: summonerFrameLinkEffectId(ownerId), remainingMs: 2_000, sourceId: ownerId, data: { slotMask: 1, totalMs: 2_000 },
+    id: `frame.summoner.link.${ownerId}`, remainingMs: 2_000, sourceId: ownerId, data: { slotMask: 1, totalMs: 2_000 },
   });
   applyStatusEffect(target.tracksCombat, {
     id: ABILITY_ROOT_EFFECT_ID, remainingMs: 1_400, sourceId: ownerId, data: { totalMs: 2_000 },

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
-import { DUNGEON_DEFS, NODE_BIOMES, SUMMONER_CORE_TUNING, SUMMONER_FRAME_TUNING,
+import { DUNGEON_DEFS, NODE_BIOMES, SUMMONER_CORE_TUNING,
   buildNavGrid, navigationBodyHalfExtents, moverOverlapsBlockShapes, globalMastery } from '@mmo-idle/shared';
 import { createFarmWorld } from './worldFactory';
 import { setupArena, BOT_SPAWN } from './arena';
@@ -76,8 +76,10 @@ if(spec.arm==='tax15'||spec.arm==='combined')Object.assign(SUMMONER_CORE_TUNING,
 if(spec.arm==='tax0')Object.assign(SUMMONER_CORE_TUNING,{reconstructionHpCostRatio:0});
 if(['hp25','hp50','hp100','combined'].includes(spec.arm)) {
   const hpMult=spec.arm==='hp100'?2:spec.arm==='hp50'?1.5:1.25;
-  for(const frame of Object.values(SUMMONER_FRAME_TUNING))frame.totalSummonHpPct*=hpMult;
-  Object.assign(SUMMONER_CORE_TUNING,{reconstructionHpCostRatio:(spec.arm==='combined'?0.15:0.3)/hpMult});
+  Object.assign(SUMMONER_CORE_TUNING,{
+    totalSummonHpPct: SUMMONER_CORE_TUNING.totalSummonHpPct * hpMult,
+    reconstructionHpCostRatio:(spec.arm==='combined'?0.15:0.3)/hpMult,
+  });
 }
 if(spec.arm==='pre-attrition')Object.assign(SUMMONER_CORE_TUNING,{areaShareExponent:0,outOfCombatReconstructionSpeedMult:1});
 let rng=spec.seed>>>0;

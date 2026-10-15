@@ -30,11 +30,6 @@ import { setAttackTarget } from '../../../combat/ai/targeting';
 import { stopEntity } from '../../../world/movement';
 import { summonerProfileFor } from './profile';
 import { emitSummonObservation } from './observation';
-import {
-  applySummonerLineBonus,
-  summonerLineBonus,
-  type SummonerLineBonus,
-} from './lineHolds';
 
 /**
  * A minion's OUT-OF-COMBAT regen rate (HP/s): a fixed share of its own pool.
@@ -110,30 +105,22 @@ export function computeMinionMaxHp(owner: PlayerEntity, slot = 0): number {
  * plating and DR in full (a copy, not a split). Plains/Forest swarm hits are
  * tuned to be eaten by plating, so unarmored summons took every hit at full
  * strength while every other class shrugged them off.
- *
- * `lineBonus` is Consort's frame loop on top of that (`lineHolds.ts`): the whole
- * formation's share while every slot still stands. It is a REQUIRED argument rather
- * than a default so a future call site cannot silently drop it — this function and
- * the per-tick resync disagreeing is the exact trap `summoner.minion-damage-pct`
- * already fell into once (see `syncLiveMinionFrameStats`).
  */
 export function computeMinionMitigation(
   owner: PlayerEntity,
-  lineBonus: SummonerLineBonus,
 ): { plating: number; damageReduction: number } {
-  return applySummonerLineBonus({
+  return {
     plating: owner.mitigatesDamage.plating * (1 + (owner.usesSkills.passives['conduit.plating-share'] ?? 0)),
     damageReduction: owner.mitigatesDamage.damageReduction,
-  }, lineBonus);
+  };
 }
 
 export function syncMinionMitigation(
   world: World,
   minion: MinionEntity,
   owner: PlayerEntity,
-  lineBonus: SummonerLineBonus,
 ): void {
-  const desired = computeMinionMitigation(owner, lineBonus);
+  const desired = computeMinionMitigation(owner);
   if (minion.mitigatesDamage.plating === desired.plating
     && minion.mitigatesDamage.damageReduction === desired.damageReduction) return;
   minion.mitigatesDamage.plating = desired.plating;
@@ -177,42 +164,7 @@ export function syncMinionHitbox(world: World, minion: MinionEntity, sizeMult: n
  */
 export function resolveMinionType(owner: PlayerEntity, slot = 0): MinionMonsterType {
   const profile = summonerProfileFor(owner);
-  // A Formation slot wears its piece's body.
-  const slotBody = profile.slots[slot]?.body;
-  if (slotBody) return slotBody;
-  switch (profile.specialization) {
-    case 'harrier-brood':
-      return 'conduit-summon-inquisitor';
-    case 'endless-swarm':
-      return 'conduit-summon-kilnmaster';
-    case 'volatile-brood':
-      return 'conduit-summon-iconoclast';
-    case 'coordinated-hunt':
-      return 'conduit-summon-marshal';
-    case 'withering-chorus':
-      return 'conduit-summon-chorister';
-    case 'grand-ritual':
-      return 'conduit-summon-ritualist';
-    case 'twin-covenant':
-      return profile.slots[slot]?.role === 'defense-twin'
-        ? 'conduit-summon-covenanter-defense'
-        : 'conduit-summon-covenanter-offense';
-    case 'battle-bond':
-      return 'conduit-summon-champion';
-    case 'colossus':
-      return 'conduit-summon-idolwright';
-  }
-
-  switch (profile.frame) {
-    case 'light':
-      return 'conduit-summon-splinter';
-    case 'balanced':
-      return 'conduit-summon-consort';
-    case 'heavy':
-      return 'conduit-summon-effigy';
-    default:
-      return 'conduit-summon';
-  }
+  return profile.slots[slot]?.body ?? 'conduit-summon';
 }
 
 export function spawnMinionForOwner(
@@ -288,7 +240,7 @@ export function spawnMinionForOwner(
     // completes the formation sees it one call later in the same summoner pass
     // anyway, and sharing the one function is what keeps spawn and resync from
     // drifting apart.
-    mitigatesDamage: computeMinionMitigation(owner, summonerLineBonus(world, owner)),
+    mitigatesDamage: computeMinionMitigation(owner),
     tracksCombat: makeTracksCombat(),
     hasStatus: {},
   };

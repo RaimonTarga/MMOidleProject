@@ -17,7 +17,6 @@ import {
   resolveEmpoweredMultiplier,
   resolveEnergyMax,
   resolveSummonerProfile,
-  SUMMONER_SPECIALIZATION_TUNING,
   SKILL_TREE,
   upkeepOnHitBonus,
   weaponDotProfileForWeapon,
@@ -990,22 +989,10 @@ function estimateClassDamage(
       stats.performsAttack.attackCooldown * profile.summonAttackCooldownMult,
     ));
     const slotAps = 1000 / minionCd;
-    const harrierMult = profile.specialization === 'harrier-brood'
-      ? 1 + profile.slots.length * SUMMONER_SPECIALIZATION_TUNING.harrierBrood.damageTakenPctPerSlot
-      : 1;
     let formationDirect = 0;
     for (const slot of profile.slots) {
       formationDirect += directNoOnHit(
-        stats.dealsDamage.attack * profile.formationOffenseMult * slot.offenseWeight * harrierMult,
-        targetWithDebuffs,
-        platingMult,
-      ) * slotAps;
-    }
-    if (profile.battleBondConduitOffenseWeight > 0) {
-      formationDirect += directNoOnHit(
-        stats.dealsDamage.attack
-          * profile.battleBondConduitOffenseWeight
-          * profile.relicPotencyMult,
+        stats.dealsDamage.attack * profile.formationOffenseMult * slot.offenseWeight,
         targetWithDebuffs,
         platingMult,
       ) * slotAps;
@@ -1013,35 +1000,14 @@ function estimateClassDamage(
     directPerHit = 0;
     effectiveHitRate = slotAps;
     formationOnHitPerSec = stats.dealsDamage.onHitDamage
-      * (
-        profile.slots.reduce((sum, slot) => sum + slot.procWeight, 0)
-        + profile.battleBondConduitOffenseWeight
-      )
+      * profile.slots.reduce((sum, slot) => sum + slot.procWeight, 0)
       * profile.secondaryEffectMult
       * profile.relicPotencyMult
       * slotAps;
     classMechanicPerSec += formationDirect + formationOnHitPerSec;
     formationWeaponBasisPerSec = formationDirect;
     formationSecondaryEffectMult = profile.secondaryEffectMult;
-    if (profile.specialization === 'volatile-brood') {
-      const slot = profile.slots[0]!;
-      classMechanicPerSec += stats.dealsDamage.attack * profile.formationOffenseMult
-        * slot.offenseWeight * SUMMONER_SPECIALIZATION_TUNING.volatileBrood.explosionDamageMult
-        / (SUMMONER_SPECIALIZATION_TUNING.volatileBrood.detonationIntervalMs / 1000);
-    } else if (profile.specialization === 'withering-chorus') {
-      dotPerSec += stats.dealsDamage.attack
-        * SUMMONER_SPECIALIZATION_TUNING.witheringChorus.damagePctPerSlot
-        * profile.slots.length;
-    } else if (profile.specialization === 'grand-ritual') {
-      const ritual = SUMMONER_SPECIALIZATION_TUNING.grandRitual;
-      classMechanicPerSec += stats.dealsDamage.attack * profile.formationOffenseMult
-        * (ritual.damageMult - 1) * ritual.chargesPerLivingSlot
-        / (ritual.intervalMs / 1000);
-    } else if (profile.specialization === 'battle-bond') {
-      const bond = SUMMONER_SPECIALIZATION_TUNING.battleBond;
-      classMechanicPerSec += stats.dealsDamage.attack * 0.5 * (slotAps * 2 / bond.threshold);
-    }
-    notes.push(`${profile.slots.length} ${profile.frame} ${profile.range} summons at ${slotAps.toFixed(2)} APS; formation budget normalized`);
+    notes.push(`${profile.slots.length} summons at ${slotAps.toFixed(2)} APS; formation budget normalized`);
   }
 
   const encounter = applyEncounterAverages(directPerHit, p, targetWithDebuffs, effectiveHitRate);
@@ -1552,7 +1518,7 @@ function mechanicFrequency(stats: PlayerStatsTarget): string {
       unlockedSkills: stats.usesSkills.unlockedSkills,
       passives: p,
     });
-    return `${profile.slots.length} ${profile.frame}/${profile.range} summons at ${asNumber(hitRate)} APS each; one formation budget`;
+    return `${profile.slots.length} summons at ${asNumber(hitRate)} APS each; one formation budget`;
   }
   return `${asNumber(hitRate)} hits/s`;
 }

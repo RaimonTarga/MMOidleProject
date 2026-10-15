@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai';
-import { dotElementForPlayer, resolveDotClassProfile, resolveDotStackCap, resolveDotRelicDeliveryProfile, relicRatingsFromPassives, summonerSpecializationFor } from '@mmo-idle/shared';
+import { dotElementForPlayer, resolveDotClassProfile, resolveDotStackCap, resolveDotRelicDeliveryProfile, relicRatingsFromPassives } from '@mmo-idle/shared';
 import {
   ammoCountAtom,
   ammoMaxAtom,
@@ -127,7 +127,7 @@ export function useMechanicViewModel(): MechanicViewModel | null {
     case 'summoner':
       return {
         kind: 'summoner',
-        specialization: summonerSpecializationFor(selectedSubVariant ?? 'root', unlockedSkills),
+        specialization: null,
         activeCount,
         slotCount,
         slots: summonSlots.map((slot, index) => ({

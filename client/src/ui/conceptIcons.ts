@@ -145,19 +145,9 @@ const BUFF_IDS = new Set([
   'reload-momentum',
   'reload-snipe-ready',
   'sunlight',
-  'summoner-battle-bond',
-  'summoner-colossus',
-  'summoner-coordinated-hunt',
-  'summoner-endless-swarm',
-  'summoner-frame-frenzy',
-  'summoner-frame-line',
-  'summoner-frame-link',
-  'summoner-grand-ritual',
-  'summoner-harrier-brood',
   'summoner-howl-banner',
-  'summoner-twin-covenant',
+  // Boss morph still borrows this tile. The specialization that drew it is gone.
   'summoner-volatile-brood',
-  'summoner-withering-chorus',
   // The evasion window's art, worn by Sidestep (see `BUFF_ICON_ALIASES`).
   'lineage-evasion',
 ]);
@@ -295,9 +285,6 @@ const BUFF_ICON_ALIASES: Record<string, string> = {
   'reload-frame-ramp': 'reload-hair-trigger',
   'energy-frame-overcharge': 'energy-overcharge',
   'energy-frame-surge': 'energy-ac-charge',
-  'summoner-frame-frenzy': 'summoner-coordinated-hunt',
-  'summoner-frame-line': 'summoner-colossus',
-  'summoner-frame-link': 'summoner-battle-bond',
   // Sidestep has no art yet: its window is an evasion window, so it borrows the
   // evasion-window tile until its own icon is generated.
   'ability-sidestep': 'lineage-evasion',
@@ -447,8 +434,6 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'tundra-rimebrand-burn': 'dot-chill',
   'rimebrand-burn': 'dot-chill',
   vulnerability: 'expose-weakness',
-  'summoner-harried': 'summoner-harrier-brood',
-  'summoner-withering-chorus': 'summoner-withering-chorus',
   'enemy-barrier': 'defense-absorb',
 };
 

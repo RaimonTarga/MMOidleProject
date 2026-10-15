@@ -16,7 +16,7 @@
  *   dot        a target reaches max stacks                (dotPrototype.ts)
  *   reload     a reload completes                         (reloadLifecycle.ts)
  *   energy     the burst fires                            (energyPrototype.ts)
- *   summoner   a formation cycle completes                (summoner/frameLoop.ts)
+ *   summoner   a formation cycle completes                (summoner/formationAttack.ts)
  *
  * The summoner's moment MOVED in Phase 3. 1c hung it on `applySummonerCommand`, but
  * a command is a click: it never fires unattended, so a card keyed to it would never

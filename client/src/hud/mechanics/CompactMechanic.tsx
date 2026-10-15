@@ -3,18 +3,6 @@ import { useOrderView } from '../../ui/class/useOrderView';
 import { ResolveCompact } from './ResolvePips';
 import type { MechanicViewModel } from './types';
 
-const SUMMONER_COMPACT_LABELS = {
-  'volatile-brood': 'Volatile Brood',
-  'endless-swarm': 'Endless Swarm',
-  'harrier-brood': 'Harrier Brood',
-  'coordinated-hunt': 'Coordinated Hunt',
-  'withering-chorus': 'Withering Chorus',
-  'grand-ritual': 'Grand Ritual',
-  colossus: 'Colossus',
-  'battle-bond': 'Battle Bond',
-  'twin-covenant': 'Twin Covenant',
-} as const;
-
 function compactState(model: MechanicViewModel): { label: string; value: string; pct: number } {
   switch (model.kind) {
     case 'cadence':
@@ -39,7 +27,7 @@ function compactState(model: MechanicViewModel): { label: string; value: string;
         : { label: 'Ammo', value: model.ammo === 0 ? 'Reloading…' : `${model.ammo} / ${model.ammoMax}`, pct: model.ammoMax > 0 ? model.ammo / model.ammoMax * 100 : 0 };
     case 'summoner':
       return {
-        label: model.specialization ? SUMMONER_COMPACT_LABELS[model.specialization] : 'Summons',
+        label: 'Summons',
         value: `${model.activeCount} / ${model.slotCount} active`,
         pct: model.slotCount > 0 ? model.activeCount / model.slotCount * 100 : 0,
       };

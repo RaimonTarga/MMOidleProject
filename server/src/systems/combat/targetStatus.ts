@@ -2,8 +2,6 @@ import {
   DAMAGE_TAKEN_PCT_KEY,
   isTargetHiddenStatusId,
   weaponDotProfileForEffect,
-  SUMMONER_CHORUS_EFFECT_ID,
-  SUMMONER_HARRIER_EFFECT_ID,
   type StatusEffect,
   type StatusValue,
   type TargetStatusView,
@@ -52,17 +50,6 @@ function buildTargetStatus(world: World, monster: MonsterEntity): TargetStatusVi
     // Bookkeeping, not an effect (the Effigy link record): no badge.
     if (isTargetHiddenStatusId(fx.id)) continue;
     const weaponDotProfile = weaponDotProfileForEffect(fx.id);
-    const aggregateSummonerEffect = fx.id === SUMMONER_HARRIER_EFFECT_ID
-      || fx.id === SUMMONER_CHORUS_EFFECT_ID;
-    const existing = aggregateSummonerEffect
-      ? out.find((status) => status.id === fx.id)
-      : undefined;
-    if (existing) {
-      existing.stacks += fx.stacks;
-      existing.remainingMs = Math.max(existing.remainingMs, fx.remainingMs);
-      existing.totalMs = Math.max(existing.totalMs, fx.data.totalMs ?? 0);
-      continue;
-    }
     // What a damage-over-time record still owes: the target frame's "owes"
     // number (design §26.2), from the same DoT inventory Detonate bills from.
     const owed = dotOwedOnMonster(world, monster, fx);

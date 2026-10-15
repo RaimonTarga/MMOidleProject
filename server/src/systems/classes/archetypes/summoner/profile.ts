@@ -20,8 +20,6 @@ function rosterOf(owner: PlayerEntity): readonly RosterBody[] | undefined {
   const cooldownMult = 1 + (passives['conduit.cooldown-pct'] ?? 0);
   const system = owner.configuresClass?.config.system;
   if (system?.kind !== 'formation') return undefined;
-  // Transitional (CD.8 deletes it with the frames): a character still on a frame or range pick keeps the old path.
-  if (owner.usesSkills.selectedSubVariant || owner.usesSkills.selectedRange) return undefined;
   const bodies: RosterBody[] = [];
   for (const id of system.roster) {
     const piece = CONDUIT_KIT.pieces.find((candidate) => candidate.id === id);
@@ -66,9 +64,9 @@ export function summonerProfileFor(owner: PlayerEntity): SummonerProfile {
   });
 }
 
-/** Champion fights directly; every other Conduit delivers Techniques via summons. */
+/** Every Conduit with summons delivers Techniques through the formation. None fights directly. */
 export function usesSummonTechniques(owner: PlayerEntity): boolean {
-  return !!owner.summonsMinions && summonerProfileFor(owner).specialization !== 'battle-bond';
+  return !!owner.summonsMinions;
 }
 
 

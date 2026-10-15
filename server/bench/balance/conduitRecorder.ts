@@ -51,10 +51,9 @@ export class ConduitRecorder {
     const profile = summonerProfileFor(this.owner), totals = summonerProfileWeightTotals(profile);
     const live = profile.slots.map((slot, i) => ({ slot, i, minion: this.world.getMinionEntity(this.owner.summonsMinions?.minionIds[i] ?? '') }))
       .filter(x => x.minion && x.minion.hasHealth.hp > 0);
-    const ownerShare = this.owner.isDead || this.owner.hasHealth.hp <= 0 ? 0 : profile.battleBondConduitOffenseWeight;
     return { profile, live, bodies: live.length / profile.slots.length,
-      offense: (ownerShare + live.reduce((n,x) => n+x.slot.offenseWeight,0)) / totals.offense,
-      proc: (ownerShare + live.reduce((n,x) => n+x.slot.procWeight,0)) / totals.proc,
+      offense: live.reduce((n,x) => n+x.slot.offenseWeight,0) / totals.offense,
+      proc: live.reduce((n,x) => n+x.slot.procWeight,0) / totals.proc,
       initialized: this.initialized.size === profile.slots.length };
   }
   private record(e: SummonObservation) {

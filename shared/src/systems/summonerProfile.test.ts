@@ -1,8 +1,9 @@
-import { resolveSummonerProfile, summonerProfileWeightTotals } from './summonerProfile';
+import { resolveSummonerProfile, summonerProfileWeightTotals, type RosterBody } from './summonerProfile';
 import {
   SUMMON_ATTACK_STYLE,
-  SUMMON_SIZE_MULT_MAX,
-  SUMMON_SIZE_MULT_MIN,
+  SUMMONER_BASELINE_ATTACK_RANGE,
+  SUMMONER_CORE_TUNING,
+  SUMMONER_RANGE_TUNING,
   isRangedSummonStyle,
 } from '../data/summoner';
 import { resolveSummonTint } from '../sprites/frameMaps';
@@ -17,121 +18,62 @@ function close(actual: number, expected: number, message: string): void {
   }
 }
 
-function profile(
-  selectedSubVariant: 'light' | 'balanced' | 'heavy' | null,
-  selectedRange: string | null = null,
-  specialization?: string,
-) {
-  return resolveSummonerProfile({
-    selectedSubVariant,
-    selectedRange,
-    unlockedSkills: specialization ? [specialization] : [],
+function body(mode: RosterBody['mode'], command = 1, pieceId = 'conduit-thrall'): RosterBody {
+  return { pieceId, family: 'generic', command, mode, row: 'middle', body: 'conduit-summon' };
+}
+
+{
+  const empty = resolveSummonerProfile({});
+  assert(empty.slots.length === 0, 'no roster fields no summons');
+  assert(empty.attackMode === 'melee', 'baseline summons attack in melee');
+  assert(empty.attackRange === SUMMONER_BASELINE_ATTACK_RANGE, 'baseline summon reach stays at 24px');
+  assert(empty.reconstructionIntervalMs === SUMMONER_CORE_TUNING.reconstructionIntervalMs, 'reconstruction stays at the core interval');
+  assert(empty.totalSummonHpPct === SUMMONER_CORE_TUNING.totalSummonHpPct, 'the roster keeps the old root HP share');
+  assert(empty.formationOffenseMult === SUMMONER_CORE_TUNING.formationOffenseMult, 'formation offense stays the core multiplier');
+  assert(empty.secondaryEffectMult === 1, 'the formation spends one secondary budget');
+  assert(empty.relicPotencyMult === 1, 'relic potency no longer scales a formation');
+  assert(empty.preferredDistance === SUMMONER_RANGE_TUNING.mid.preferredDistance, 'the formation escorts at mid range');
+}
+
+{
+  const four = resolveSummonerProfile({
+    roster: [body('melee'), body('melee'), body('reach'), body('ranged')],
   });
-}
-
-for (const [frame, expected] of [
-  [null, 4],
-  ['light', 6],
-  ['balanced', 5],
-  ['heavy', 2],
-] as const) {
-  const resolved = profile(frame);
-  assert(resolved.slots.length === expected, `${frame ?? 'root'} count`);
-  const totals = summonerProfileWeightTotals(resolved);
-  close(totals.offense, 1, `${frame ?? 'root'} offense weights`);
-  close(totals.defense, 1, `${frame ?? 'root'} defense weights`);
-  close(totals.proc, 1, `${frame ?? 'root'} proc weights`);
-}
-
-for (const [frame, expectedSecondary] of [
-  [null, 1],
-  ['light', 1.2],
-  ['balanced', 1],
-  ['heavy', 1],
-] as const) {
-  const resolved = profile(frame);
-  close(
-    summonerProfileWeightTotals(resolved).proc * resolved.secondaryEffectMult,
-    expectedSecondary,
-    `${frame ?? 'root'} formation secondary-effect budget`,
-  );
-  close(
-    summonerProfileWeightTotals(resolved).offense * resolved.formationOffenseMult,
-    resolved.formationOffenseMult,
-    `${frame ?? 'root'} direct offense budget stays independent`,
-  );
+  assert(four.slots.length === 4, 'one slot per roster body');
+  const totals = summonerProfileWeightTotals(four);
+  close(totals.offense, 1, 'equal Command weights sum to one offense budget');
+  close(totals.defense, 1, 'equal Command weights sum to one defense budget');
+  close(totals.proc, 1, 'equal Command weights sum to one proc budget');
+  assert(four.slots[0]!.attackRange === SUMMONER_BASELINE_ATTACK_RANGE, 'melee bodies fight at the baseline reach');
+  assert(four.slots[2]!.attackRange === SUMMONER_RANGE_TUNING.mid.attackRange, 'reach bodies use the mid attack range');
+  assert(four.slots[3]!.attackRange === SUMMONER_RANGE_TUNING.far.attackRange, 'ranged bodies use the far attack range');
 }
 
 {
-  const swarm = profile('light', null, 'summoner-light-t3-b');
-  assert(swarm.specialization === 'endless-swarm', 'persisted light-b maps to Endless Swarm');
-  assert(swarm.slots.length === 8, 'Endless Swarm stays under exceptional cap');
-  close(
-    summonerProfileWeightTotals(swarm).proc * swarm.secondaryEffectMult,
-    1.3,
-    'Kilnmaster formation secondary-effect budget',
-  );
+  const rated = resolveSummonerProfile({
+    roster: [body('melee'), body('melee')],
+    relicRatings: { frequency: 1, potency: 1, buffEffect: 0, debuffEffect: 0 },
+    selectedSubVariant: 'heavy',
+    selectedRange: 'summoner-range-close',
+    unlockedSkills: ['summoner-heavy-t3-b'],
+  });
+  assert(rated.slots.length === 2, 'frame, range, specialization and relic ratings do not add bodies');
+  assert(rated.reconstructionIntervalMs === SUMMONER_CORE_TUNING.reconstructionIntervalMs, 'relic ratings do not shorten reconstruction');
+  assert(rated.formationOffenseMult === SUMMONER_CORE_TUNING.formationOffenseMult, 'relic ratings do not raise offense');
 }
 
 {
-  const colossus = profile('heavy', 'summoner-range-far', 'summoner-heavy-t3-c');
-  assert(colossus.specialization === 'colossus', 'persisted heavy-c maps to Colossus');
-  assert(colossus.slots.length === 1, 'Colossus has one slot');
-  assert(colossus.attackMode === 'ranged', 'range remains independent of specialization');
+  const slower = resolveSummonerProfile({
+    passives: { 'summoner.reconstruction-interval-mult': 2 },
+  });
+  assert(slower.reconstructionIntervalMs === SUMMONER_CORE_TUNING.reconstructionIntervalMs * 2, 'the reconstruction passive scales the interval');
+  const floored = resolveSummonerProfile({
+    passives: { 'summoner.reconstruction-interval-mult': 0.1 },
+  });
+  assert(floored.reconstructionIntervalMs === SUMMONER_CORE_TUNING.minimumReconstructionIntervalMs, 'reconstruction respects the core floor');
 }
 
 {
-  const bond = profile('heavy', null, 'summoner-heavy-t3-b');
-  const totals = summonerProfileWeightTotals(bond);
-  assert(bond.specialization === 'battle-bond', 'persisted heavy-b maps to Battle Bond');
-  assert(bond.slots.length === 1, 'Battle Bond has one summon');
-  close(totals.offense, 1, 'Battle Bond summon plus Conduit offense budget');
-  close(totals.proc, 1, 'Battle Bond summon plus Conduit proc budget');
-}
-
-{
-  const twin = profile('heavy', null, 'summoner-heavy-t3-a');
-  assert(twin.specialization === 'twin-covenant', 'persisted heavy-a maps to Twin Covenant');
-  assert(twin.slots[0]?.role === 'offense-twin', 'first twin is offensive');
-  assert(twin.slots[1]?.role === 'defense-twin', 'second twin is defensive');
-  assert(twin.slots[0]!.offenseWeight > twin.slots[1]!.offenseWeight, 'offensive twin owns offense');
-  assert(twin.slots[1]!.defenseWeight > twin.slots[0]!.defenseWeight, 'defensive twin owns defense');
-}
-
-{
-  const closeRange = profile('balanced', 'summoner-range-close');
-  const farRange = profile('balanced', 'summoner-range-far');
-  assert(closeRange.totalSummonHpPct > farRange.totalSummonHpPct, 'Close assigns more summon durability');
-  assert(closeRange.redirectionPct > farRange.redirectionPct, 'Close protects more strongly');
-  assert(closeRange.conduitDefenseShare < farRange.conduitDefenseShare, 'Far shifts defense to Conduit');
-  close(closeRange.formationOffenseMult, farRange.formationOffenseMult, 'range does not change offense');
-}
-
-{
-  // Range scales the summon body it never swaps, and the clamp keeps the
-  // compounded extremes readable.
-  const closeRange = profile('balanced', 'summoner-range-close');
-  const midRange = profile('balanced', 'summoner-range-mid');
-  const farRange = profile('balanced', 'summoner-range-far');
-  assert(closeRange.slots[0]!.sizeMult > midRange.slots[0]!.sizeMult, 'Vigil enlarges summons');
-  assert(farRange.slots[0]!.sizeMult < midRange.slots[0]!.sizeMult, 'Harrier shrinks summons');
-
-  // Kilnmaster at Harrier range compounds to 0.389 before clamping; Idolwright
-  // at Vigil range to 3.28. Both must land inside the readable band.
-  const swarmFar = profile('light', 'summoner-range-far', 'summoner-light-t3-b');
-  const idolClose = profile('heavy', 'summoner-range-close', 'summoner-heavy-t3-c');
-  for (const p of [swarmFar, idolClose]) {
-    for (const slot of p.slots) {
-      assert(slot.sizeMult >= SUMMON_SIZE_MULT_MIN, 'summon size never falls below the floor');
-      assert(slot.sizeMult <= SUMMON_SIZE_MULT_MAX, 'summon size never exceeds the ceiling');
-    }
-  }
-}
-
-{
-  // Tint is range-derived and resolves from the owner's unlocked skills. All
-  // three ranges carry their own hue, and the three must stay distinguishable —
-  // the point of the tint is telling formations apart at a glance.
   assert(resolveSummonTint([]) === 0xffffff, 'no range unlocked leaves summons untinted');
   const tints = (['close', 'mid', 'far'] as const).map((r) =>
     resolveSummonTint([`summoner-range-${r}`]));
@@ -142,32 +84,10 @@ for (const [frame, expectedSecondary] of [
 }
 
 {
-  // Only the melee formation lunges; the client gates its lunge on this, so a
-  // Procession bolt or Harrier beam must never report itself as melee.
-  const profiles = {
-    close: profile('balanced', 'summoner-range-close'),
-    mid:   profile('balanced', 'summoner-range-mid'),
-    far:   profile('balanced', 'summoner-range-far'),
-  };
-  assert(!isRangedSummonStyle(SUMMON_ATTACK_STYLE[profiles.close.attackMode]),
-    'Vigil summons attack in melee and may lunge');
-  assert(isRangedSummonStyle(SUMMON_ATTACK_STYLE[profiles.mid.attackMode]),
-    'Procession summons fire at reach and must not lunge');
-  assert(isRangedSummonStyle(SUMMON_ATTACK_STYLE[profiles.far.attackMode]),
-    'Harrier summons fire at range and must not lunge');
-
-  // Before the range choice exists, the summons walk in and hit things: the
-  // bolt belongs to Procession and must not leak into the baseline formation.
-  const baseline = profile('balanced', null);
-  assert(baseline.attackMode === 'melee', 'baseline summons attack in melee');
-  assert(SUMMON_ATTACK_STYLE[baseline.attackMode] !== SUMMON_ATTACK_STYLE.reach,
-    'baseline summons do not borrow the Procession bolt');
-  assert(baseline.range === profiles.mid.range,
-    'baseline keeps neutral formation tuning until a range is selected');
-  assert(baseline.attackRange < profiles.mid.attackRange,
-    'baseline summons close to near-melee range instead of borrowing Procession reach');
-  assert(baseline.attackRange === 24, 'baseline summon reach stays at 24px');
+  assert(!isRangedSummonStyle(SUMMON_ATTACK_STYLE.melee), 'melee summons may lunge');
+  assert(isRangedSummonStyle(SUMMON_ATTACK_STYLE.reach), 'reach summons must not lunge');
+  assert(isRangedSummonStyle(SUMMON_ATTACK_STYLE.ranged), 'ranged summons must not lunge');
+  assert(SUMMON_ATTACK_STYLE.melee !== SUMMON_ATTACK_STYLE.reach, 'melee does not borrow the reach bolt');
 }
 
 console.log('summonerProfile.test.ts: ok');
-

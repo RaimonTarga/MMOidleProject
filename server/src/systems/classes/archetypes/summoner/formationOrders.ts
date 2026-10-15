@@ -19,8 +19,6 @@ import { conditionsHold } from '../../../combat/moments/moments';
 
 export function ordersOf(owner: PlayerEntity): FormationOrders | null {
   const system = owner.configuresClass?.config.system;
-  // Transitional (CD.8 deletes it with the frames): a character still on a frame or range pick keeps the old path.
-  if (owner.usesSkills.selectedSubVariant || owner.usesSkills.selectedRange) return null;
   return system?.kind === 'formation' ? system.orders : null;
 }
 

@@ -74,15 +74,12 @@ function SummonConduit({ slot, index }: { slot: SummonSlot; index: number }) {
 
 export function SummonerMechanic({ model }: { model: SummonerMechanicModel }) {
   const help = useMechanicHelp(model);
-  const specializationClass = model.specialization
-    ? ` mechanic-summons--${model.specialization}`
-    : '';
   return (
     <MechanicFrame kind="summoner" title="Summons" help={help}>
       <div
-        className={`mechanic-summons${specializationClass}`}
-        data-specialization={model.specialization ?? 'baseline'}
-        aria-label={`${model.activeCount} of ${model.slotCount} summons active${model.specialization ? `, ${model.specialization.replace(/-/g, ' ')}` : ''}`}
+        className="mechanic-summons"
+        data-specialization="baseline"
+        aria-label={`${model.activeCount} of ${model.slotCount} summons active`}
       >
         <span className="mechanic-summons__crest" aria-hidden="true" />
         <span className="mechanic-summons__bus" aria-hidden="true" />

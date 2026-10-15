@@ -14,7 +14,7 @@
  */
 import assert from 'node:assert/strict';
 import { readFileSync, appendFileSync } from 'node:fs';
-import { SUMMONER_FRAME_TUNING, SUMMONER_RANGE_TUNING, SUMMONER_SPECIALIZATION_TUNING, SUMMONER_CORE_TUNING, posHitboxFromEntity, reachGap, BURN_FAMILY, ITEM_DATABASE, ABILITY_DATABASE, SKILL_TREE, MONSTER_DATABASE, NODE_BIOMES, DUNGEON_DEFS, composePlayerView, withReferenceAbilityWiring } from '@mmo-idle/shared';
+import { SUMMONER_RANGE_TUNING, SUMMONER_CORE_TUNING, posHitboxFromEntity, reachGap, BURN_FAMILY, ITEM_DATABASE, ABILITY_DATABASE, SKILL_TREE, MONSTER_DATABASE, NODE_BIOMES, DUNGEON_DEFS, composePlayerView, withReferenceAbilityWiring } from '@mmo-idle/shared';
 import { createBalanceWorld } from '../bench/balance/worldFactory';
 import { setupArena, teardownArena, BOT_SPAWN } from '../bench/balance/arena';
 import { prepareSurveyBot, SURVEY_CELLS, SURVEY_CLASSES, type SurveyCell } from '../bench/balance/ttkSurveySpec';
@@ -51,7 +51,7 @@ interface Row {
   /** Weapon DoT profile overrides by weapon id; item stat overrides by item id. */
   wd?: Record<string, Record<string, number>>;
   ip?: Record<string, Record<string, number>>;
-  /** Summoner tuning overrides by path, rooted at {frame, range, spec, core}. */
+  /** Summoner tuning overrides by path, rooted at {range, core}. Frame and spec tunings are gone. */
   st?: Record<string, unknown>;
   /** Drop rune rules by action id (e.g. 'orbit'). */
   dropRunes?: string[];
@@ -165,7 +165,7 @@ function patchMonsters(mp: Row["mp"]): () => void {
 function patchItems(row: Row): () => void {
   const undo: (() => void)[] = [];
   if (row.st) {
-    const roots: any = { frame: SUMMONER_FRAME_TUNING, range: SUMMONER_RANGE_TUNING, spec: SUMMONER_SPECIALIZATION_TUNING, core: SUMMONER_CORE_TUNING };
+    const roots: any = { range: SUMMONER_RANGE_TUNING, core: SUMMONER_CORE_TUNING };
     const saved = structuredClone(roots);
     for (const [p, v] of Object.entries(row.st)) setPath(roots, p, v);
     undo.push(() => { for (const k of Object.keys(roots)) for (const kk of Object.keys(roots[k])) roots[k][kk] = saved[k][kk]; });

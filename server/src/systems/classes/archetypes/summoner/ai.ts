@@ -31,8 +31,6 @@ import { computeMinionSpeed, despawnMinion, getFollowOffset } from './spawn';
 import {
   isSummonerRecalling,
   recallSpot,
-  resolveCommandedFocusTarget,
-  resolveCommandedMoveDestination,
 } from './command';
 import { summonerProfileFor } from './profile';
 import { orderedTarget } from './formationOrders';
@@ -122,73 +120,6 @@ function strikeWhenReady(world: World, owner: PlayerEntity, minion: MinionEntity
   }
 }
 
-function countMinionsTargetingMonster(
-  world: World,
-  ownerId: string,
-  monsterId: string,
-  excludeMinionId?: string,
-): number {
-  let count = 0;
-  for (const m of world.minionEntities) {
-    if (m.isMinion.ownerPlayerId !== ownerId) continue;
-    if (excludeMinionId && m.isMinion.id === excludeMinionId) continue;
-    if (m.hasHealth.hp <= 0) continue;
-
-    if (m.controlsMinion.currentTargetId === monsterId) count++;
-  }
-  return count;
-}
-
-/**
- * Swarm: prefer in-leash monsters with the fewest minions already assigned,
- * breaking ties by distance to this minion. Sticky while the target stays valid.
- */
-function findSwarmMinionTarget(
-  world: World,
-  owner: PlayerEntity,
-  minion: MinionEntity,
-  leashRadius: number,
-): MonsterEntity | null {
-  const leashSq = leashRadius * leashRadius;
-  const ownerPos = owner.hasPosition.current;
-  const minionPos = minion.hasPosition.current;
-  const nodeId = owner.hasPosition.nodeId;
-  const candidates: MonsterEntity[] = [];
-
-  for (const m of world.monsterEntitiesInNode(nodeId)) {
-    if (m.hasHealth.hp <= 0) continue;
-    if (!heatAllowsTarget(world, owner, m)) continue;
-    if (distanceSq(m.hasPosition.current, ownerPos) > leashSq) continue;
-    candidates.push(m);
-  }
-  if (candidates.length === 0) return null;
-
-  const currentId = minion.controlsMinion.currentTargetId;
-  if (currentId) {
-    const current = candidates.find((c) => c.isMonster.id === currentId);
-    if (current) return current;
-  }
-
-  let best: MonsterEntity | null = null;
-  let bestCount = Infinity;
-  let bestDistSq = Infinity;
-  for (const m of candidates) {
-    const count = countMinionsTargetingMonster(
-      world,
-      owner.isPlayer.id,
-      m.isMonster.id,
-      minion.isMinion.id,
-    );
-    const distSq = distanceSq(m.hasPosition.current, minionPos);
-    if (count < bestCount || (count === bestCount && distSq < bestDistSq)) {
-      bestCount = count;
-      bestDistSq = distSq;
-      best = m;
-    }
-  }
-  return best;
-}
-
 /**
  * Constrain `desired` so it lies within `leashRadius` of `owner.hasPosition`.
  * If `desired` is already in range it's returned unchanged; otherwise we
@@ -245,9 +176,6 @@ export function driveMinion(
 ): void {
   const leashRadius = computeLeashRadius(owner);
   const profile = summonerProfileFor(owner);
-  const isSwarm = profile.specialization === 'endless-swarm';
-  const focusOverride = resolveCommandedFocusTarget(world, owner);
-  const moveDest = resolveCommandedMoveDestination(owner, leashRadius);
   const cm = minion.controlsMinion;
 
   // The ability lifecycle owns rush movement and the arrival strike.
@@ -284,26 +212,13 @@ export function driveMinion(
     return;
   }
 
-  if (moveDest) {
-    const distToDest = distance(minion.hasPosition.current, moveDest);
-    if (distToDest > FOLLOW_HOVER_TOL) {
-      setEntityMotion(world, minion, moveDest);
-    } else {
-      stopEntity(world, minion);
-    }
-    setAttackTarget(world, minion, null);
-    cm.currentTargetId = null;
-    return;
-  }
-
   const inherited = inheritedRuneTarget(world, owner, leashRadius);
   // The Formation's orders (what to attack first, who the tanks guard) replace the owner's rune targeting.
   const ordered = orderedTarget(world, owner, minion, leashRadius);
   const rebuilding = owner.usesAutocombat.auto && getFlag(owner.tracksCombat, RUNE_WAIT_FOR_SUMMONS_FLAG);
-  const target = focusOverride ?? (rebuilding ? null : ordered !== undefined ? ordered : inherited !== undefined ? inherited : isSwarm
-    ? findSwarmMinionTarget(world, owner, minion, leashRadius)
-    : findMinionTarget(world, owner, leashRadius));
-  const stickyTarget = isSwarm || !!focusOverride || !!inherited || !!ordered;
+  const target = rebuilding ? null : ordered !== undefined ? ordered : inherited !== undefined ? inherited
+    : findMinionTarget(world, owner, leashRadius);
+  const stickyTarget = !!inherited || !!ordered;
 
   if (target) {
     if (stickyTarget) {
