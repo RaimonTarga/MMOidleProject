@@ -698,7 +698,7 @@ function estimatedPlayerDamage(player: PlayerEntity, monster: MonsterEntity): nu
     onHitDamage: player.dealsDamage.onHitDamage,
     targetPlating: monster.mitigatesDamage.plating,
     targetDamageReduction: monster.mitigatesDamage.damageReduction,
-    platingMult: player.usesReload ? 0.5 : 1,
+    platingMult: 1,
     platingShredStacks: shred.stacks,
     platingShredPerStack: shred.perStack,
   });
@@ -710,7 +710,7 @@ function isGlancingPlayerHit(player: PlayerEntity, monster: MonsterEntity): bool
     attack: player.dealsDamage.attack,
     targetPlating: monster.mitigatesDamage.plating,
     targetDamageReduction: monster.mitigatesDamage.damageReduction,
-    platingMult: player.usesReload ? 0.5 : 1,
+    platingMult: 1,
     platingShredStacks: shred.stacks,
     platingShredPerStack: shred.perStack,
   });

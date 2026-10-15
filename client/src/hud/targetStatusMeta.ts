@@ -34,7 +34,6 @@ const STATUS_META: Record<string, StatusMeta> = {
   'magma-obsidian-shell': { label: 'Obsidian Shell', color: '#df6248' },
   'shatter-vulnerable': { label: 'Shatter Window', color: '#78cfff' },
   'plating-shred': { label: 'Shred',   color: '#d8b24a' },
-  'reload-suppress-shred': { label: 'Suppressed', color: '#d8b24a' },
   'cadence-hemorrhage': { label: 'Bleed', color: '#c41e1e' },
   'slinger-venom':      { label: 'Venom', color: '#8fdc3c' },
   'slinger-rot':        { label: 'Rot', color: '#7a8b2e' },
@@ -42,7 +41,6 @@ const STATUS_META: Record<string, StatusMeta> = {
   'striker-rot':        { label: 'Rot', color: '#7a8b2e' },
   'energy-storm':       { label: 'Storm', color: '#c77dff' },
   'energy-ci-tag':      { label: 'Induction', color: '#c77dff' },
-  'death-mark':         { label: 'Death Mark', color: '#e05a5a' },
   brittle:         { label: 'Brittle', color: '#d88a4a' },
   'dr-shatter':    { label: 'Shattered', color: '#f0c04a' },
   // Weapon reservoir-DoT effects (poison → Poison, fire → Burn, frost → Chill).

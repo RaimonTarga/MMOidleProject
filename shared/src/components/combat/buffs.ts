@@ -26,12 +26,6 @@ export const BUFF_IDS = [
   'dot-frozen',
   'dot-frenzy',
   'dot-frostbite',
-  'reload-snipe-ready',
-  'reload-cover-fire',
-  'reload-momentum',
-  'reload-cannon',
-  // Slinger frame loop (progression rework Phase 3): Artillerist's clip-long ramp.
-  'reload-frame-ramp',
   'flurry',
   // Desert Falchion's alpha window (shared/src/systems/alphaWindow.ts).
   'sunlight',

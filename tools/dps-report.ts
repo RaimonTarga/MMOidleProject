@@ -514,35 +514,10 @@ function attackRate(stats: PlayerStatsTarget, passives: PassiveMap): number {
 
 function reloadCycleRate(stats: PlayerStatsTarget, passives: PassiveMap, baseHitRate: number): number {
   if (stats.usesSkills.combatArchetype !== 'reload') return baseHitRate;
-  if ((passives['reload.laser'] ?? 0) > 0) return 0;
-
   const ammo = Math.max(1, Math.round(passives['reload.max-ammo'] ?? 10));
-  let reloadMs = Math.max(100, Math.round(passives['reload.reload-time-ms'] ?? 1600));
-  if ((passives['reload.momentum'] ?? 0) > 0) {
-    const maxStacks = Math.max(0, Math.round(passives['reload.momentum-max-stacks'] ?? 5));
-    const reduction = passives['reload.momentum-reload-reduction'] ?? 0.1;
-    reloadMs = Math.max(100, Math.round(reloadMs * Math.max(0.3, 1 - maxStacks * reduction)));
-  }
-
+  const reloadMs = Math.max(100, Math.round(passives['reload.reload-time-ms'] ?? 1600));
   const secondsPerShot = 1 / Math.max(0.01, baseHitRate);
-  if ((passives['reload.blunderbuss'] ?? 0) > 0) {
-    return ammo / (secondsPerShot + reloadMs / 1000);
-  }
-
-  // Hair Trigger: each shot in the clip ramps attack speed (stacks reset on reload),
-  // so the clip's shots fire progressively faster. Sum the per-shot intervals
-  // instead of assuming a flat cadence.
-  let clipShotTime = ammo * secondsPerShot;
-  if ((passives['reload.hair-trigger'] ?? 0) > 0) {
-    const pct = passives['reload.hair-trigger-pct-per-shot'] ?? 0.07;
-    const maxStacks = Math.max(0, Math.round(passives['reload.hair-trigger-max-stacks'] ?? 5));
-    clipShotTime = 0;
-    for (let i = 0; i < ammo; i++) {
-      const stacks = Math.min(i, maxStacks); // first shot fires at base speed, then ramps
-      clipShotTime += Math.max(0.2, secondsPerShot / (1 + stacks * pct));
-    }
-  }
-  return ammo / (clipShotTime + reloadMs / 1000);
+  return ammo / (ammo * secondsPerShot + reloadMs / 1000);
 }
 
 function applyEncounterAverages(
@@ -641,7 +616,7 @@ function estimateClassDamage(
   const archetype = stats.usesSkills.combatArchetype;
   const baseHitRate = attackRate(stats, p);
   const hitRate = reloadCycleRate(stats, p, baseHitRate);
-  const platingMult = archetype === 'reload' ? 0.5 : 1;
+  const platingMult = 1;
   const targetWithDebuffs = withWeaponDebuffs(target, p, Math.max(baseHitRate, hitRate));
   const baseDirect = directNoOnHit(stats.dealsDamage.attack, targetWithDebuffs, platingMult);
   const baseWithOnHit = directHit(stats.dealsDamage.attack, stats.dealsDamage.onHitDamage, targetWithDebuffs, platingMult);
@@ -914,70 +889,6 @@ function estimateClassDamage(
       directPerHit *= averageMult;
       dotPerSec *= averageMult;
       notes.push(`freeze damage bonus averaged at ${Math.round(freezeUptime * 100)}% uptime (${chillMax} hits, ${freezeSec}s freeze)`);
-    }
-  } else if (archetype === 'reload') {
-    if ((p['reload.laser'] ?? 0) > 0) {
-      const heatPerTick = p['reload.laser-heat-per-tick'] ?? 2;
-      const coolPerTick = p['reload.laser-cool-per-tick'] ?? 2.5;
-      const duty = (100 / heatPerTick) / ((100 / heatPerTick) + (100 / coolPerTick));
-      directPerHit = directNoOnHit(
-        stats.dealsDamage.attack * (p['reload.laser-damage-per-tick-pct'] ?? 0.18),
-        targetWithDebuffs,
-        platingMult,
-      ) + stats.dealsDamage.onHitDamage;
-      effectiveHitRate = 10 * duty;
-      notes.push('laser heat/cool duty cycle estimated');
-    } else if ((p['reload.alternating-cadence'] ?? 0) > 0) {
-      const attackShot = directNoOnHit(stats.dealsDamage.attack * 2, targetWithDebuffs, platingMult);
-      const onHitShot = stats.dealsDamage.onHitDamage * 2;
-      directPerHit = (attackShot + onHitShot) / 2;
-      notes.push('dual shots averaged 50/50');
-    } else if ((p['reload.blunderbuss'] ?? 0) > 0) {
-      const mult = Math.max(0, 1 + (p['reload.blunderbuss-damage-mult'] ?? 0));
-      directPerHit *= mult;
-      notes.push(`blunderbuss modeled as full-magazine single-target volley at ${Math.round(mult * 100)}% pellet damage`);
-    } else if ((p['reload.death-mark'] ?? 0) > 0) {
-      const ammo = Math.max(1, Math.round(p['reload.max-ammo'] ?? 10));
-      classMechanicPerSec += stats.dealsDamage.attack * ammo * (p['reload.death-mark-detonate-mult'] ?? 0.65) * effectiveHitRate / ammo;
-      notes.push('death mark detonation averaged per clip');
-    } else if ((p['reload.cannon'] ?? 0) > 0) {
-      classMechanicPerSec += stats.dealsDamage.attack * (p['reload.cannon-damage-per-shot'] ?? 0.5) * effectiveHitRate;
-      notes.push('cannon stored pool averaged per shot');
-    } else if ((p['reload.exploding-clip'] ?? 0) > 0) {
-      // Duelist: the last round of each clip is armed empowered (reload.empowered-mult)
-      // and gets the standard empowered splash (single-target here, so splash ignored).
-      const empMult = empowered?.effective ?? p['reload.empowered-mult'] ?? 3.5;
-      const ammo = Math.max(1, Math.round(p['reload.max-ammo'] ?? 10));
-      const empoweredShot = directNoOnHit(stats.dealsDamage.attack * empMult, targetWithDebuffs, platingMult) + stats.dealsDamage.onHitDamage;
-      classMechanicPerSec += (empoweredShot - baseWithOnHit) * effectiveHitRate / ammo;
-      notes.push(`exploding clip: empowered last shot (${empMult}x) once per ${ammo}-round clip`);
-    }
-    if ((p['reload.snipe-fullhp-mult'] ?? 0) > 1) {
-      // Full-HP bonus: every shot landed while the target is above the threshold deals
-      // fullHpMult x damage (snipeDamage.ts). It only ever applies to the top
-      // (1 - threshold) slice of a fresh target's HP bar, so its real value is a
-      // start-of-kill burst, not a sustained proc. Model it as the exact kill-time
-      // speed-up: ratio of shots-to-kill without the bonus vs. with it, at constant
-      // cadence. Folding it into directPerHit (rather than weaponProc) lets it inherit
-      // shared.damage-mult and weapon-DoT conversion, matching the live order where the
-      // full-HP mult lands in the onHit listener after those layers.
-      const fullHpMult = p['reload.snipe-fullhp-mult'] ?? 1;
-      const threshold = p['reload.snipe-fullhp-threshold'] ?? 0.95;
-      const normalShot = Math.max(1, directPerHit);
-      const fullHpShot = normalShot * fullHpMult;
-      const windowHp = target.hp * Math.max(0, 1 - threshold);
-      // Shots that land above the threshold: enough 4x shots to clear the window,
-      // never more than it takes to kill, at least one.
-      const bonusShots = Math.max(1, Math.min(
-        Math.ceil(windowHp / fullHpShot),
-        Math.ceil(target.hp / fullHpShot),
-      ));
-      const shotsNoBonus = Math.max(1, Math.ceil(target.hp / normalShot));
-      const remainingHp = Math.max(0, target.hp - bonusShots * fullHpShot);
-      const shotsWithBonus = Math.max(1, bonusShots + Math.ceil(remainingHp / normalShot));
-      const killSpeedup = shotsNoBonus / shotsWithBonus;
-      directPerHit *= killSpeedup;
-      notes.push(`sniper full-HP ${fullHpMult}x on top ${Math.round((1 - threshold) * 100)}% HP: ${bonusShots} bonus shot(s)/kill, +${Math.round((killSpeedup - 1) * 100)}% direct vs avg tier HP`);
     }
   } else if (archetype === 'summoner') {
     const profile = resolveSummonerProfile({
@@ -1540,7 +1451,6 @@ function mechanicFrequency(stats: PlayerStatsTarget): string {
     return `DoT cap ${profile.maxStacks} stacks, tick ${asNumber(profile.tickIntervalMs)}ms`;
   }
   if (archetype === 'reload') {
-    if ((p['reload.laser'] ?? 0) > 0) return 'laser heat/cool duty cycle';
     const ammo = Math.max(1, Math.round(p['reload.max-ammo'] ?? 10));
     const reloadMs = Math.max(100, Math.round(p['reload.reload-time-ms'] ?? 1600));
     return `${ammo} shots, ${asNumber(reloadMs)}ms reload, ${asNumber(hitRate)} effective shots/s`;
@@ -1703,7 +1613,7 @@ function reportFormulaForSubclass(node: SkillNode, rows: ReportRow[]): string {
     archetype === 'cooldown' ? 'execution DPS = execution hit / cooldown; replacement paths override direct hit model' :
     archetype === 'dot' ? 'DoT DPS = computeScaledDotDamage(max stacks) / tick interval; direct reduced by conversion pct' :
     archetype === 'energy' ? 'cycle average over energy charge hits plus empowered discharge' :
-    archetype === 'reload' ? 'effective shots/s = ammo / (shot time + reload time); spec branches override as needed' :
+    archetype === 'reload' ? 'effective shots/s = ammo / (shot time + reload time)' :
     archetype === 'summoner' ? 'sum of weighted slot hits at inherited weapon APS; formation proc/on-hit budget normalized; reconstruction uptime omitted' :
     'steady-state hit estimate';
   const notes = best ? formulaLabel(best) : '';
@@ -2133,9 +2043,9 @@ function classMechanicFormulaRows(): Array<Array<string | number>> {
     [
       'Slinger',
       'Reload',
-      'Magazine drains per shot; empty clip starts reload. max ammo and reload time come from frame/spec passives.',
-      'After skill/equipment stats: normal reload attack = floor(attack * 0.65), then attack cooldown *= 0.5. Sniper and laser skip the 0.65 damage layer and double-speed layer.',
-      'Effective shot rate = ammo / (ammo / baseHitRate + reloadSeconds), except blunderbuss report estimate treats the clip as a single-target volley.',
+      'Magazine drains per shot; empty clip starts reload. Clip size is reload.max-ammo and reload time is reload.reload-time-ms, both from the gun.',
+      'Fire rate is the gun\'s own stat. There is no half-damage layer and no double-speed layer. Plating is full.',
+      'Effective shot rate = ammo / (ammo / baseHitRate + reloadSeconds).',
     ],
   ];
 }
@@ -2176,13 +2086,10 @@ ${mdTable(['Class', 'Mechanic', 'Passive formulas', 'Final damage multipliers', 
 
 ## Reload Exact Notes
 
-- Root Slinger stats: attack +18, maxHp +24, attackSpeedPct +0.20, attackRange +120, evasion +0.30, speed +15.
-- Frame magazine/reload bases: Scout 5 ammo / 1200 ms reload; Marksman 10 ammo / 2000 ms reload; Artillerist 20 ammo / 3000 ms reload.
-- Generic reload stat layer in \`recalculatePlayerStats\`: after normal stat rebuild, if not Sniper and not Laser, \`attack = max(1, floor(attack * 0.65))\`; if not Sniper, \`attackCooldown = max(200, round(attackCooldown * 0.5))\`; Gatling halves cooldown again with a 100 ms floor.
-- Sniper: \`attack += round(attack * attackSpeedPct * (reload.snipe-as-to-dmg ?? 0.5))\`, then cooldown hard-sets to \`reload.snipe-cadence-ms ?? 2000\`; it ignores weapon APS, attack-speed cooldown scaling, and reload double-speed.
-- Laser: keeps full attack and does not use normal hit rate in the report; report estimates heat/cool duty cycle using \`laser-heat-per-tick\`, \`laser-cool-per-tick\`, and \`laser-damage-per-tick-pct\`.
-- Plating compensation/bypass: live reload \`beforeAttack\` sets \`ctx.platingMult = 0.5\`; damage formula receives effective target plating multiplied by 0.5. The report mirrors this with \`platingMult = 0.5\` for reload.
-- Reload time: \`reload.reload-time-ms ?? 1600\`, multiplied by \`reload.reload-time-mult\` when present, minimum 100 ms. Momentum reduces reload time by \`1 - stacks * reload.momentum-reload-reduction\`, floored by the runtime constant.
+- Fire rate is the gun's own stat. The half-damage layer and the double-speed layer are gone.
+- Plating is full for a Slinger. The report uses \`platingMult = 1\`. Breaching's own plating cut is a clip effect and is not modelled here.
+- Clip size is \`reload.max-ammo\`, default 10. Reload time is \`reload.reload-time-ms\`, default 1600 ms, minimum 100 ms.
+- Effective shot rate = ammo / (ammo / baseHitRate + reloadSeconds).
 
 ## Energy Exact Notes
 

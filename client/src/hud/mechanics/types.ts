@@ -34,11 +34,8 @@ export type EnergyMechanicModel = {
 
 export type ReloadMechanicModel = {
   kind: 'reload';
-  mode: 'ammo' | 'heat';
   ammo: number;
   ammoMax: number;
-  heatPct: number;
-  overheated: boolean;
   /** A Slinger with a Loadout. The ring takes the loaded clip's colour. */
   loadout: boolean;
   clipColor: string | null;

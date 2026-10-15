@@ -106,19 +106,11 @@ const PERCENT_KEYS = new Set([
   'defense.dot-resistance',
   'defense.evade-mitigation',
   'dot.rimeshatter-dr-reduction',
-  'reload.cannon-charge-fraction',
-  'reload.cannon-damage-per-shot',
-  'reload.hair-trigger-pct-per-shot',
-  'reload.momentum-reload-reduction',
-  'reload.momentum-reload-reduction-floor',
-  'reload.snipe-fullhp-threshold',
   'weapon.brittle-dr',
 ]);
 
 /** Scalars that multiply rather than measure, whatever their suffix reads like. */
-const MULTIPLIER_KEYS = new Set([
-  'reload.snipe-as-to-dmg',
-]);
+const MULTIPLIER_KEYS = new Set<string>([]);
 
 function humanize(text: string): string {
   return text

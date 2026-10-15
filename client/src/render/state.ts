@@ -173,15 +173,6 @@ export interface RenderState {
     }
   >;
 
-  laserBeam: {
-    graphics: Phaser.GameObjects.Graphics | null;
-    targetId: string | null;
-    until: number;
-  };
-  /** Cannoneer charge-up ring on the own player (see client/src/fx/cannonFx.ts). */
-  cannonCharge: {
-    graphics: Phaser.GameObjects.Graphics | null;
-  };
   /** Red ground ring under the own player's attack target (see render/targetIndicator.ts). */
   targetIndicator: {
     graphics: Phaser.GameObjects.Graphics | null;
@@ -252,14 +243,6 @@ export function createRenderState(): RenderState {
     thoughtBubble: new Map(),
     spriteMeta: new Map(),
     debugRanges: new Map(),
-    laserBeam: {
-      graphics: null,
-      targetId: null,
-      until: 0,
-    },
-    cannonCharge: {
-      graphics: null,
-    },
     targetIndicator: {
       graphics: null,
     },

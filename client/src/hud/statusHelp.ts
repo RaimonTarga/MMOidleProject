@@ -106,13 +106,6 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'dot-frenzy': m('Frenzy', 'A window of raised attack speed and added on-hit damage.'),
   'dot-frostbite': m('Frostbite', 'The target takes amplified damage from your damage-over-time specifically.'),
 
-  // -- Reload ----------------------------------------------------------------
-  'reload-snipe-ready': m('Snipe', 'Your next shot lands for a multiplier against a target still at full health.'),
-  'reload-cover-fire': m('Cover fire', 'You take reduced damage while reloading — the downtime stops being a hole in your defense.'),
-  'reload-momentum': m('Momentum', 'Each completed reload grants a stack that raises attack speed and shortens reload time. Stacks persist through combat and decay slowly out of combat.'),
-  'reload-cannon': m('Cannon', 'Shots stored to fire mid-reload, so the magazine break is not silent.'),
-  'reload-frame-ramp': m('Ramp', 'Artillerist’s frame loop. Every round fired raises attack speed, with no cap before the magazine runs dry, and your damage climbs with the same ramp. Reloading is the reset, which is what makes the long clip the climb and the reload the cool-down.'),
-
   // -- Summoner --------------------------------------------------------------
   'summoner-volatile-brood': m('Volatile brood', 'One summon at a time is armed to detonate. Between detonations the next one is being prepared.'),
   'summoner-endless-swarm': m('Endless swarm', 'Your formation refills itself toward its target count rather than needing to be resummoned.'),
@@ -158,14 +151,12 @@ const TARGET_HELP: Record<string, StatusHelp> = {
   'ability-rooted': d('Bound', 'Binding Strike has pinned the target in place. It can still attack anything already in reach, but cannot reposition until the bind ends.'),
   // Bramble Guard's Entangle keystone (design §22.4): the slow on whatever hit a brambled player.
   'ability-entangled': d('Entangled', 'It struck you through your brambles and the thorns caught its stride: it moves slower, but still attacks and casts. An entangled target counts as held for the cards that need one.'),
-  'death-mark': d('Death Mark', 'Your shots are stacking marks on the target. Your next reload detonates them a beat later, each mark adding to the blast.'),
   'energy-ci-tag': d('Induction', 'Cascading Induction: your regular hits land almost nothing but charge the target. Your next discharge grows with every charge stored here, then spends them all.'),
   stunned: d('Stunned', 'The target cannot move or act until this hard-control window ends. This is the control applied by Stunning Strike or a frost shatter; slow resistance does not help.'),
   'stun-immune': b('Stun ward', 'The target is protected from another stun while this ward lasts, including the tail after the current stun. It does not reduce damage or prevent slows.'),
   'canopy-chameleon-barrage': b('Barrage', 'The Canopy Chameleon has primed a short volley: its next two attacks resolve at triple attack speed. The counter shows how many attacks remain.'),
   'thornback-chameleon-barrage': b('Barrage', 'The Thornback Chameleon has primed a thorn volley: its next three attacks resolve at triple attack speed. The counter shows how many attacks remain.'),
   'plating-shred': d('Shred', 'Plating stripped from the target. Every hit landed on it — yours and your party’s — has that much less flat damage removed.'),
-  'reload-suppress-shred': d('Suppressed', 'Suppressing fire has stripped plating from the target. The shred remains as a separate reload pressure effect, so the target’s flat protection is lower while it lasts.'),
   'cadence-hemorrhage': d('Bleed', 'The target is bleeding: damage over time applied by your rhythm, past its plating.'),
   'slinger-venom': d('Venom', 'Venom rounds poisoned this enemy: it takes damage over time, and every round adds ticks.'),
   'slinger-rot': d('Rot', 'The last round’s wound is rotting: it deals part of the shot again over a few seconds.'),

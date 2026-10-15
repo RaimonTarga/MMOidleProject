@@ -144,10 +144,6 @@ initCombatSystems();
     slinger.usesReload.reloadingMs === 0 && slinger.usesReload.reloadDurationMs === 0,
     "reload completion should clear presentation timing",
   );
-  slinger.usesReload.ammo = 3;
-  slinger.usesSkills.passives["reload.laser"] = 1;
-  assert(requestManualReload(world, slinger).success, "Laser Slinger reload input should be a harmless no-op");
-  assert(slinger.usesReload.ammo === 3 && slinger.usesReload.reloadingMs === 0, "Laser heat must not enter the magazine reload lifecycle");
 }
 
 // `currentTargetOnly` acts on the player's current combat target and nothing

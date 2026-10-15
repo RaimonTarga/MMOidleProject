@@ -8,7 +8,7 @@ import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { runPlayerAttack } from '../src/systems/combat/engine/combat';
 import { setEmpoweredAttack } from '../src/systems/combat/engine/empoweredAttacks';
 import { resolveCastPayload } from '../src/systems/player/abilities/abilityEffects';
-import { updateReloadT3Ticks } from '../src/systems/classes/archetypes/reload/t3/ticks/laser';
+
 initCombatSystems();
 let serial = 0;
 function fixture(archetype: 'cadence' | 'cooldown' | 'reload' | 'dot' | 'energy' | 'summoner' | null) {
@@ -57,7 +57,7 @@ const attack = (world: World, player: ReturnType<typeof fixture>['player'], targ
 
 
 function damage(onHit: number, plating: number, dr: number, mode = 'normal'): number {
-  const { world, player } = fixture(mode === 'empowered' ? 'cadence' : mode === 'laser' ? 'reload' : null);
+  const { world, player } = fixture(mode === 'empowered' ? 'cadence' : null);
   const target = targetFor(world);
   target.mitigatesDamage.plating = plating;
   target.mitigatesDamage.damageReduction = dr;
@@ -69,18 +69,14 @@ function damage(onHit: number, plating: number, dr: number, mode = 'normal'): nu
     setEmpoweredAttack(world, player);
   }
   if (mode === 'slam') resolveCastPayload(world, player, ABILITY_DATABASE.get('slam')!, target);
-  else if (mode === 'laser') {
-    player.usesSkills.passives['reload.laser'] = 1;
-    player.usesSkills.passives['reload.laser-damage-per-tick-pct'] = 1;
-    updateReloadT3Ticks(world, 100, 1000);
-  } else attack(world, player, target);
+  else attack(world, player, target);
   return hp - target.hasHealth.hp;
 }
 for (const [plating, dr, expected] of [[40, 0.5, 40], [110, 0.5, 5], [140, 0.5, 1], [0, 0, 120]]) {
   eq(damage(20, plating, dr), expected, 'attack and on-hit share target defenses');
   eq(estimatePlayerHitDamage({ attack: 100, onHitDamage: 20, targetPlating: plating, targetDamageReduction: dr, platingMult: 1 }), expected, 'hit estimator matches combat');
 }
-for (const mode of ['normal', 'empowered', 'laser']) {
+for (const mode of ['normal', 'empowered']) {
   eq(damage(20, 40, 0.5, mode) - damage(0, 40, 0.5, mode), 10, `${mode}: DR halves flat bonus without empowered scaling`);
 }
 eq(damage(20, 40, 0.5, 'slam'), damage(0, 40, 0.5, 'slam'), 'Slam is an independent cast and does not multiply on-hit');

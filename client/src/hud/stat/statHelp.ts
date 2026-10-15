@@ -120,24 +120,10 @@ export const STAT_HELP: Record<string, string> = {
   'cooldown.empowered-cd-ms': 'How long your execution takes to come back up.',
   'cooldown.empowered-mult': 'The damage multiplier your execution hits for.',
 
-  // ── Reload (magazine and heat management) ──────────────────────────────────
+  // ── Reload (the magazine) ──────────────────────────────────────────────────
   'reload.max-ammo': 'Shots in your magazine before you must reload.',
   'reload.reload-time-ms': 'How long a reload takes. You do not attack while reloading.',
-  'reload.reload-time-mult': 'Multiplies your reload time — below 1 is faster.',
-  'reload.laser': 'Continuous fire instead of discrete shots, managed by heat rather than ammo.',
-  'reload.snipe': 'A fixed, slow firing cadence that ignores weapon attack speed — attack speed becomes damage instead.',
-  'reload.snipe-fullhp-mult': 'Damage multiplier against targets still at (or near) full health.',
-  'reload.gatling': 'Sustained fire that spins up the longer you keep shooting.',
-  'reload.blunderbuss': 'Each volley fires multiple pellets in a spread, knocking targets back — and you with them.',
-  'reload.death-mark': 'Shots stack a mark on the target that detonates for bonus damage.',
-  'reload.suppressing-fire': 'Sustained fire shreds the target’s defenses as it stacks.',
-  'reload.cover-fire': 'Firing grants you damage reduction while you keep it up.',
-  'reload.alternating-cadence': 'Shots alternate: even shots hit for attack damage, odd shots for on-hit damage.',
-  'reload.momentum': 'Each reload stacks attack speed and shortens the next reload. Stacks decay out of combat.',
-  'reload.cannon': 'Every shot banks damage into a pool; reloading charges, then fires the whole pool as one burst.',
-  'reload.kill-chain': 'Every kill loads a round on top of your clip, even past its size, until you next reload.',
   'reload.mechanic-proxy-mult': 'The multiplier a hit lands at when an Empowered card makes it count as your class mechanic.',
-  'reload.ramp-carry-pct': 'The share of your attack-speed ramp a reload keeps instead of resetting it.',
 
   // ── Energy (charge on hits, spend on a discharge) ───────────────────────────
   'energy.per-hit': 'Energy gained per landed hit.',

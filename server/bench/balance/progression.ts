@@ -90,13 +90,8 @@ function gearScore(recipe: Recipe, slot: Exclude<GearSlot, 'relic'>): number {
 // Relic scoring lives below the shared path-profile helpers because it needs the
 // selected build's passives, not authored magnitude alone.
 const RELIC_BUFF_PASSIVES = [
-  'reload.hair-trigger',
   'energy.overdrive',
   'dot.frenzy',
-] as const satisfies readonly PassiveKey[];
-
-const RELIC_DEBUFF_PASSIVES = [
-  'reload.suppressing-fire',
 ] as const satisfies readonly PassiveKey[];
 
 function mergeFullyUpgradedRecipePassives(target: PassiveMap, recipe: Recipe): void {
@@ -144,12 +139,6 @@ function relicProfileFactor(profile: ResolvedRelicProfile): number {
     case 'cooldown':
       return lowerIsBetter(profile.cooldownMs.before, profile.cooldownMs.after)
         * higherIsBetter(profile.empoweredMultiplier.before, profile.empoweredMultiplier.after);
-    case 'reload':
-      return lowerIsBetter(profile.reloadMs.before, profile.reloadMs.after)
-        * higherIsBetter(profile.ammoMax.before, profile.ammoMax.after);
-    case 'laser':
-      return lowerIsBetter(profile.coolingMs.before, profile.coolingMs.after)
-        * higherIsBetter(profile.heatMax.before, profile.heatMax.after);
     case 'dot':
       return lowerIsBetter(profile.tickIntervalMs.before, profile.tickIntervalMs.after)
         * higherIsBetter(profile.maxStacks.before, profile.maxStacks.after);
@@ -191,7 +180,7 @@ function relicScore(
     score *= resolveRelicMagnitudeMultiplier(ratings.buffEffect);
   }
   // DoT's root damage is always routed through the scalable mechanic-debuff path.
-  if (classRoot === 'dot-root' || hasAnyPassive(passives, RELIC_DEBUFF_PASSIVES)) {
+  if (classRoot === 'dot-root') {
     score *= resolveRelicMagnitudeMultiplier(ratings.debuffEffect);
   }
   return score;

@@ -4,15 +4,14 @@ import type { SubVariant } from '../data/skillTree';
 import { resolveDotClassProfile, resolveDotStackCap } from './dotClassProfile';
 import { resolveSummonerProfile } from './summonerProfile';
 import { resolveEnergyMaxBeforeRelic } from './energyMax';
-import { resolveLaserRelicProfile } from './laserProfile';
-import { ZERO_RELIC_RATINGS, resolveCadenceRelicProfile, resolveCooldownRelicProfile, resolveReloadRelicProfile, resolveDotRelicDeliveryProfile, resolveEnergyRelicProfile, type RelicRatings, type ResolvedRelicProfile } from './relics';
+import { ZERO_RELIC_RATINGS, resolveCadenceRelicProfile, resolveCooldownRelicProfile, resolveDotRelicDeliveryProfile, resolveEnergyRelicProfile, type RelicRatings, type ResolvedRelicProfile } from './relics';
 
 /** Character-specific preview authority used by inventory and Forge. */
 function resolvePrimaryRelicPreview(
   archetype: string | null | undefined,
   passives: PassiveMap,
   ratings: RelicRatings,
-  options: { subVariant?: SubVariant | null; playerTier?: number; unlockedSkills?: readonly string[]; selectedRange?: string | null; momentumStacks?: number } = {},
+  options: { subVariant?: SubVariant | null; playerTier?: number; unlockedSkills?: readonly string[]; selectedRange?: string | null } = {},
 ): ResolvedRelicProfile | null {
   switch (archetype) {
     case 'cadence': {
@@ -33,14 +32,10 @@ function resolvePrimaryRelicPreview(
         * (1 + (passives['weapon.empowered-mult-bonus'] ?? 0));
       return resolveCooldownRelicProfile(ms, mult, ratings);
     }
-    case 'reload': {
-      if ((passives['reload.laser'] ?? 0) > 0) return resolveLaserRelicProfile(passives, ratings);
-      const ammo = Math.max(1, Math.round(passives['reload.max-ammo'] ?? 10));
-      const base = Math.round(passives['reload.reload-time-ms'] ?? 1600);
-      const momentum = (passives['reload.momentum'] ?? 0) > 0 ? Math.max(passives['reload.momentum-reload-reduction-floor'] ?? 0.3, 1 - (options.momentumStacks ?? 0) * (passives['reload.momentum-reload-reduction'] ?? 0.1)) : 1;
-      const ms = Math.max(100, Math.round(base * (passives['reload.reload-time-mult'] ?? 1) * momentum));
-      return resolveReloadRelicProfile(ms, ammo, ratings);
-    }
+    case 'reload':
+      // The magazine and the reload time are the gun's stats. Relic items are gone,
+      // and the old reload profile scaled a frame the Loadout replaced.
+      return null;
     case 'dot': {
       const profile = resolveDotClassProfile(passives, options.subVariant);
       return resolveDotRelicDeliveryProfile(profile.tickIntervalMs, resolveDotStackCap(passives, profile.maxStacks), ratings);
@@ -79,7 +74,7 @@ export function resolveRelicPreview(
   archetype: string | null | undefined,
   passives: PassiveMap,
   ratings: RelicRatings,
-  options: { subVariant?: SubVariant | null; playerTier?: number; unlockedSkills?: readonly string[]; selectedRange?: string | null; momentumStacks?: number } = {},
+  options: { subVariant?: SubVariant | null; playerTier?: number; unlockedSkills?: readonly string[]; selectedRange?: string | null } = {},
 ): ResolvedRelicProfile | null {
   const profile = resolvePrimaryRelicPreview(archetype, passives, ratings, options);
   const secondaryEffects = relicEffectPreview(archetype, passives, ratings, {

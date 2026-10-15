@@ -17,7 +17,6 @@ import { GAME_CONFIG, baseRecoveryForTier, poolFactorForTier } from '../index';
 import { mergePassives, makePulseAccumulator, finalizePulse } from '../passives';
 import { relicRatingsFromPassives, resolveCadenceRelicProfile } from './relics';
 import { summonerSpecializationFor } from '../data/summoner';
-import { SLINGER_DIRECT_ATTACK_EFFECTIVENESS } from './classSecondaryDamage';
 import { dotClassProfileForSubVariant } from './dotClassProfile';
 import { weaponDotProfileForWeapon } from './weaponFamilies';
 
@@ -281,14 +280,6 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     p.resetCadenceCounters(profile.threshold.after);
   }
 
-  // 3b. Dualslinger (reload-balanced-t3-c): per-tier on-hit scaling, authored on
-  // the node ('reload.alternating-onhit-per-tier'). Rewards the on-hit half of its
-  // attack/on-hit split — the odd (2× on-hit) shots scale up with tier.
-  const altOnHitPerTier = p.usesSkills.passives['reload.alternating-onhit-per-tier'] ?? 0;
-  if (altOnHitPerTier > 0) {
-    p.dealsDamage.onHitDamage += Math.max(1, (p.playerTier ?? 4) - 4 + 1) * altOnHitPerTier;
-  }
-
   // Re-clamp damage reduction: equipment + upgrades are applied after the step-2 clamp.
   p.mitigatesDamage.damageReduction = Math.min(0.9, Math.max(0, p.mitigatesDamage.damageReduction));
 
@@ -302,38 +293,6 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   } else {
     p.evadesHits.dodgeRate = 0;
     p.evadesHits.evadeMitigation = 0;
-  }
-
-  // 3b. Reload archetype final multiplier
-  if (p.usesSkills.combatArchetype === 'reload') {
-    const isSnipe = (p.usesSkills.passives['reload.snipe'] ?? 0) > 0;
-    const isLaser = (p.usesSkills.passives['reload.laser'] ?? 0) > 0;
-
-    // Sniper converts the bonus attack-speed STAT into attack damage (weapon APS is
-    // ignored entirely — the cadence is hard-set below). Deliberately sub-1.0 so
-    // attack speed is a damage source, never an efficiency race toward fast weapons.
-    if (isSnipe) {
-      const rate = p.usesSkills.passives['reload.snipe-as-to-dmg'] ?? 0.5;
-      p.dealsDamage.attack += Math.round(p.dealsDamage.attack * attackSpeedPct * rate);
-    }
-
-    // The old half-damage layer is gone with the double-speed one (effectiveness is 1).
-    if (!isSnipe && !isLaser) {
-      p.dealsDamage.attack = Math.max(
-        1,
-        Math.floor(p.dealsDamage.attack * SLINGER_DIRECT_ATTACK_EFFECTIVENESS),
-      );
-    }
-
-    if (isSnipe) {
-      // Hard-set the firing cadence (ms/shot), ignoring weapon APS, the attack-speed
-      // stat, and the reload double-speed layer. Default 2000ms = 0.5 APS.
-      p.performsAttack.attackCooldown = Math.max(
-        200,
-        Math.round(p.usesSkills.passives['reload.snipe-cadence-ms'] ?? 2000),
-      );
-    }
-    // Otherwise the gun's own fire rate stands: no double-speed layer (bible §10.2).
   }
 
   // The Striker's Weighty line (class-first build plan CS.4): slower beats.

@@ -315,11 +315,11 @@ export function runPlayerAttack(
   } : undefined);
   // Summoner/Conduit formation packets split one offense budget across several
   // physical bodies, so each packet would otherwise pay the target's full flat
-  // Plating on its own share of the damage. Reload halves plating for the same
-  // shape of problem (many partial-damage hits vs one full hit) — mirror that
-  // compensation here so every formation contributor gets it uniformly, rather
-  // than patching each Summoner specialization separately. Deliberately not
-  // scaled by summon count: swarms still pay more total Plating tax per cycle.
+  // Plating on its own share of the damage. Every formation contributor pays
+  // half plating, rather than patching each specialization separately.
+  // Deliberately not scaled by summon count: swarms still pay more total
+  // Plating tax per cycle. A Slinger pays full plating (bible §10.4); Breaching
+  // sets its own platingMult on the clip.
   if (ctx.formation) {
     ctx.platingMult = 0.5;
   }

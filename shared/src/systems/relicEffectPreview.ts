@@ -42,9 +42,6 @@ export function relicEffectPreview(
     const before = value;
     result.push({ kind, label, unit, before, after: scaleMechanicMagnitude(id, field, before, resolveRelicMagnitudeMultiplier(kind === 'buff' ? ratings.buffEffect : ratings.debuffEffect), registry) });
   };
-  if (archetype === 'reload') {
-    if ((p['reload.suppressing-fire'] ?? 0) > 0) add('debuff', 'reload-suppress-shred', 'platingReduction', 'Suppressing Fire plating removed per stack', p['reload.suppress-shred'] ?? 4, 'flat');
-  }
   if (archetype === 'energy') {
     if ((p['energy.overdrive'] ?? 0) > 0) add('buff', 'energy-overdrive', 'attackDamagePct', 'Surge attack-damage bonus', p['energy.overdrive-attack-damage-pct'] ?? 0.4, 'percent');
     // damagePerTick is captured from `attack` at cast time, unavailable here;

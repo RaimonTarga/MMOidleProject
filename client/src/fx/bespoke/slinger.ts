@@ -16,7 +16,7 @@ const head = (at: P): P => ({ x: at.x, y: at.y - 44 });
 
 /** The Artillerist ramp's fill, 0..1: the `reload-frame-ramp` tile reports it as `durationPct`. */
 function rampFill(player: PlayerView): number {
-  const ramp = (player.activeBuffs ?? []).find((b) => b.id === 'reload-frame-ramp');
+  const ramp = (player.activeBuffs ?? []).find((b) => (b.id as string) === 'reload-frame-ramp');
   return ramp ? Math.max(0, Math.min(1, (ramp.durationPct ?? 0) / 100)) : 0;
 }
 

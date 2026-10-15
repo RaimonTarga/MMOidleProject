@@ -18,7 +18,7 @@ function brittleReduction(monsterState: TracksCombat): {
   };
 }
 
-/** Sum the shared plating-shred record, Suppressing Fire's and brittle's plating reductions. */
+/** Sum the shared plating-shred record and brittle's plating reduction. */
 export function effectivePlatingAfterShred(
   basePlating: number,
   monsterState: TracksCombat | undefined,
@@ -27,10 +27,8 @@ export function effectivePlatingAfterShred(
   if (!monsterState) return Math.max(0, basePlating - extraFlatShred);
 
   const cadenceShred = getStatusEffect(monsterState, 'plating-shred');
-  const reloadShred = getStatusEffect(monsterState, 'reload-suppress-shred');
   const shredTotal =
-    (cadenceShred?.stacks ?? 0) * (cadenceShred?.data['platingReduction'] ?? 0) +
-    (reloadShred?.stacks ?? 0) * (reloadShred?.data['platingReduction'] ?? 0);
+    (cadenceShred?.stacks ?? 0) * (cadenceShred?.data['platingReduction'] ?? 0);
 
   return Math.max(
     0,

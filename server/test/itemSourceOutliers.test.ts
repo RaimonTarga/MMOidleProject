@@ -1,12 +1,12 @@
 import { baseRecoveryForTier } from '@mmo-idle/shared';
-import { GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment, MONSTER_DATABASE, ITEM_DATABASE, applyStatusEffect, getStatusEffect, removeStatusEffect, getCounter, setCounter, CHAOTIC_HIT_COUNTER_KEY, estimatePlayerDps, itemMechanicEffectsAt, upgradeStatBonusTotal } from '@mmo-idle/shared';
+import { GAME_CONFIG, STARTER_RUNE_IDS, emptyEquipment, MONSTER_DATABASE, ITEM_DATABASE, applyStatusEffect, getStatusEffect, removeStatusEffect, getCounter, setCounter, CHAOTIC_HIT_COUNTER_KEY, itemMechanicEffectsAt, upgradeStatBonusTotal } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { World } from '../src/world/World';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { runPlayerAttack, runMonsterAttack } from '../src/systems/combat/engine/combat';
-import { updateReloadT3Ticks } from '../src/systems/classes/archetypes/reload/t3/ticks/laser';
+
 import { equipItem } from '../src/systems/player/economy/inventory';
 import { applyResistedPlayerDebuff } from '../src/systems/combat/status/debuffGuard';
 import { applyPlatingShredStacks } from '../src/systems/combat/status/platingShred';
@@ -104,36 +104,24 @@ function equip(world: World, player: ReturnType<typeof fixture>['player'], id: s
   } finally { MONSTER_DATABASE.delete(id); }
 }
 
-// Real equipped Axe: each third channel tick pays the same dead hit as a basic attack.
-// The Squire's beam was the third mode; it went with the T3 paths (CQ7).
-for(const mode of ['normal','laser'] as const) {
-  const {world,player}=fixture(mode==='laser'?'reload':null);
+// Real equipped Axe: each third attack pays the same dead hit as a basic attack.
+// The Squire's beam and the Slinger laser went with their T3 paths.
+{
+  const {world,player}=fixture(null);
   equip(world,player,'graveyard-plague-axe');
   const target=targetFor(world);
   player.dealsDamage.attack=100;
   player.dealsDamage.onHitDamage=20;
-  // Control the damage basis; keep the actual equipped weapon's interval and vulnerability rider.
-  if(mode==='laser') Object.assign(player.usesSkills.passives,{'reload.laser':1,'reload.laser-damage-per-tick-pct':1});
   const losses:number[]=[];
   for(let i=0;i<3;i++) {
     const hp=target.hasHealth.hp;
-    if(mode==='laser') updateReloadT3Ticks(world,100,1000+i*100);
-    else attack(world,player,target);
+    attack(world,player,target);
     losses.push(hp-target.hasHealth.hp);
   }
-  assert(losses[0]>0&&losses[1]>0,mode+' first two hits deal damage');
-  eq(losses[2],0,mode+' dead hit suppresses direct AND flat on-hit damage');
-  eq(getCounter(player.tracksCombat,CHAOTIC_HIT_COUNTER_KEY),3,mode+' progression');
-  assert(getStatusEffect(target.tracksCombat,'vulnerability'),mode+' dead swing still applies its rider');
-  if(mode==='laser') assert(player.usesReload!.laserHeat>0,'dead laser tick still spends heat');
-}
-// No target: channel state updates must not secretly spend a swing.
-{
-  const {world,player}=fixture('reload');
-  equip(world,player,'chaotic-axe');
-  player.usesSkills.passives['reload.laser']=1;
-  updateReloadT3Ticks(world,100,1000);
-  eq(getCounter(player.tracksCombat,CHAOTIC_HIT_COUNTER_KEY),0,'idle laser does not spend swing');
+  assert(losses[0]>0&&losses[1]>0,'first two hits deal damage');
+  eq(losses[2],0,'dead hit suppresses direct AND flat on-hit damage');
+  eq(getCounter(player.tracksCombat,CHAOTIC_HIT_COUNTER_KEY),3,'progression');
+  assert(getStatusEffect(target.tracksCombat,'vulnerability'),'dead swing still applies its rider');
 }
 // A cancelled ordinary attack must not commit the prepared dead swing.
 {
@@ -144,13 +132,6 @@ for(const mode of ['normal','laser'] as const) {
   setCounter(player.tracksCombat,CHAOTIC_HIT_COUNTER_KEY,2);
   attack(world,player,target);
   eq(getCounter(player.tracksCombat,CHAOTIC_HIT_COUNTER_KEY),2,'cancelled attack retains progress');
-}
-// Preview stays consistent with the newly paid channel drawback.
-{
-  const base={attack:100,onHitDamage:20,attackCooldownMs:1000,archetype:'reload',passives:{'reload.laser':1,'reload.laser-damage-per-tick-pct':1},playerTier:4};
-  const normal=estimatePlayerDps(base);
-  const axe=estimatePlayerDps({...base,passives:{...base.passives,'weapon.dead-swing-interval':3}});
-  assert(Math.abs(axe.total / normal.total - 2/3) < .001,'laser sheet pays dead tick (rounded display)');
 }
 // Requested conservative authored budgets (not simulated balance conclusions).
 // "Completed" was base + the +5 ladder; the ladder is folded into base now
