@@ -100,18 +100,20 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-hunting-rifle-t2', name: 'Hunting Rifle',
       recipeGroup: 'jungle', requiredBiomeLevel: 1, slot: 'weapon',
-      cost: { green: 55 }, stats: { attack: 24, onHitDamage: 23 }, attacksPerSecond: 1.55, tier: 2,
+      cost: { green: 55 }, stats: { attack: 24, onHitDamage: 23, attackRange: 60 }, attacksPerSecond: 1.55, tier: 2,
       icon: 'items/weapons/stinger-rapier.png',
       description: 'Long reach. Rounds hit harder the farther the target is.',
-      mechanicEffects: {},
+      // PLACEHOLDER: reach, clip and reload are not in the bible.
+      mechanicEffects: { 'reload.max-ammo': 6, 'reload.reload-time-ms': 1800, 'slinger.far-pct': 0.5 },
     },
     {
       id: 'slinger-long-rifle-t2', name: 'Long Rifle',
       recipeGroup: 'desert', requiredBiomeLevel: 1, slot: 'weapon',
-      cost: { yellow: 70 }, stats: { attack: 65 }, attacksPerSecond: 0.80, tier: 2,
+      cost: { yellow: 70 }, stats: { attack: 65, attackRange: 140 }, attacksPerSecond: 0.80, tier: 2,
       icon: 'items/weapons/sunsteel-falchion.png',
       description: 'The longest reach. It outranges kiters.',
-      mechanicEffects: {},
+      // PLACEHOLDER: reach, clip and reload are not in the bible.
+      mechanicEffects: { 'reload.max-ammo': 5, 'reload.reload-time-ms': 2000 },
     },
     // ── T3 ──
     {
@@ -305,10 +307,10 @@ export const SLINGER_GEAR: ClassGearDef = {
     'mountain-charm-t2': { name: 'Regroup', text: 'After a hit over a quarter of your HP, you move faster and Recovery doubles for a few seconds.', effects: { 'defense.recovery-hit-pct': 0.25, 'defense.recovery-hit-x': 2, 'slinger.regroup-speed-pct': 0.3 } },
     'cave-vest-t2': { name: 'Hunker', text: 'Your plating doubles while you reload.', effects: { 'slinger.hunker': 2 } },
     'cave-charm-t2': { name: 'Bivouac', text: 'Out-of-combat Recovery is much faster.', effects: { 'defense.ooc-recovery-pct': 1 } },
-    'jungle-vest-t2': { name: 'Lookout', text: 'An enemy that ambushes you while you reload is slowed and revealed.', effects: {} },
-    'jungle-charm-t2': { name: 'Undergrowth', text: 'Recovery doubles while no enemy is targeting you.', effects: {} },
-    'desert-vest-t2': { name: 'Glass Duster', text: 'You reload faster and hit harder, and the armor defends you less.', effects: {} },
-    'desert-charm-t2': { name: 'Shade', text: 'Every few seconds a mark or slow on you ends.', effects: {} },
+    'jungle-vest-t2': { name: 'Lookout', text: 'An enemy that ambushes you while you reload is slowed and revealed.', effects: { 'slinger.lookout': 0.4 } },
+    'jungle-charm-t2': { name: 'Undergrowth', text: 'Recovery doubles while no enemy is targeting you.', effects: { 'slinger.undergrowth': 2 } },
+    'desert-vest-t2': { name: 'Glass Duster', text: 'You reload faster and hit harder, and the armor defends you less.', effects: { 'slinger.damage-pct': 0.15, 'slinger.reload-faster-pct': 0.2 } },
+    'desert-charm-t2': { name: 'Shade', text: 'Every few seconds a mark or slow on you ends.', effects: { 'slinger.shade': 5000 } },
     // ── T3 ──
     'swamp-vest-t3': { name: 'Oilskin', text: 'Damage over time on you is halved while you reload.', effects: { 'slinger.oilskin': 0.5 } },
     'swamp-charm-t3': { name: 'Snake Oil', text: 'Recovery doubles while you carry poison or bleed and no enemy is near you.', effects: { 'slinger.snake-oil': 2 } },

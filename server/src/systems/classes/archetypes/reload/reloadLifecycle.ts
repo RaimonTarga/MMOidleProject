@@ -1,5 +1,6 @@
 import type { World } from '../../../../world/World';
 import type { PlayerEntity } from '../../../../ecs/entity';
+import { reloadShiftMsFor } from '../../slinger/tuning';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
@@ -31,8 +32,10 @@ export function registerReloadLifecycleHook(hook: ReloadLifecycleHook): void {
 
 /** Authored reload time. Guns write `reload.reload-time-ms`; the floor is 100ms. */
 export function resolveReloadTimeMs(player: PlayerEntity): number {
-  const base = Math.round(player.usesSkills.passives['reload.reload-time-ms'] ?? RELOAD_TIME_MS);
-  return Math.max(100, base);
+  const passives = player.usesSkills.passives;
+  // The discipline shifts the gun's reload by a flat amount; Glass Duster shortens the whole.
+  const base = Math.round(passives['reload.reload-time-ms'] ?? RELOAD_TIME_MS) + reloadShiftMsFor(player.usesSkills.disciplineId);
+  return Math.max(100, Math.round(base * (1 - Math.min(0.9, passives['slinger.reload-faster-pct'] ?? 0))));
 }
 
 /** Start reload timer only — no lifecycle hooks. */

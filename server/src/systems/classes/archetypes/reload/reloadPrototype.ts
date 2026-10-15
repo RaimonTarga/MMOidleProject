@@ -2,6 +2,7 @@ import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import { registerEmpoweredMultiplier } from '../../../combat/engine/empoweredAttacks';
 import type { World } from '../../../../world/World';
 import { getFlag } from '@mmo-idle/shared';
+import { clipShiftFor } from '../../slinger/tuning';
 import { isPlayerActivelyInCombat } from '../../../combat/ai/engagement';
 import { RUNE_TACTICAL_RELOAD_FLAG } from '../../../combat/ai/runeConfig';
 import {
@@ -24,7 +25,8 @@ const RELOAD_PROXY_MULT = 3.5;
 export function updateReloadArchetype(world: World, dt: number): void {
   for (const entity of world.reloadPlayers) {
     const reload = entity.usesReload;
-    const maxAmmo = Math.max(1, Math.round(entity.usesSkills.passives['reload.max-ammo'] ?? RELOAD_MAX_AMMO));
+    // The gun sets the clip; the discipline shifts it by a flat amount (bible §10.2).
+    const maxAmmo = Math.max(1, Math.round(entity.usesSkills.passives['reload.max-ammo'] ?? RELOAD_MAX_AMMO) + clipShiftFor(entity.usesSkills.disciplineId));
     if (reload.ammoMax !== maxAmmo) {
       const isFirstInit = reload.ammoMax === 0;
       reload.ammoMax = maxAmmo;
