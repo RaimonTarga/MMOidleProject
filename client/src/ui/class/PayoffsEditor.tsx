@@ -38,11 +38,23 @@ export function PayoffsEditor({ view }: { view: ClassScreenView }) {
     send(withPlacementConditions(config as ClassConfig, index, conditions));
   }
 
+  const school = payoffs.discipline?.school ?? null;
   return (
     <div className="payoffs-editor">
+      {payoffs.discipline && (
+        <article className={`class-panel__card payoffs-editor__discipline payoffs-editor__family--${payoffs.discipline.school}`}>
+          <div>
+            <div className="class-panel__card-title">
+              <span className="class-panel__name">{payoffs.discipline.name}</span>
+              <span className="payoffs-editor__family">{`adds ${payoffs.discipline.pieceName}`}</span>
+            </div>
+            <p className="class-panel__line">{payoffs.discipline.text}</p>
+          </div>
+        </article>
+      )}
       <div className="payoffs-editor__board">
         <figure className="payoffs-editor__enemy">
-          <SigilRing cap={payoffs.sigils.cap} stacks={payoffs.sigils.cap} enemy />
+          <SigilRing cap={payoffs.sigils.cap} stacks={payoffs.sigils.cap} enemy school={school} />
           <figcaption>{`Sigils ${payoffs.sigils.cap}`}</figcaption>
         </figure>
         {payoffs.moments.map((moment) => (
@@ -96,7 +108,8 @@ export function PayoffsEditor({ view }: { view: ClassScreenView }) {
       <h4 className="class-panel__subheading">The payoffs you know</h4>
       <div className="class-panel__cards">
         {payoffs.available.map((payoff) => {
-          const moment = payoffs.moments.find((entry) => entry.moment === chosenMoments[payoff.pieceId]) ?? payoffs.moments[0];
+          // A payoff bound to its own moment (Blast Back, Sear...) starts on it.
+          const moment = payoffs.moments.find((entry) => entry.moment === (chosenMoments[payoff.pieceId] ?? payoff.moment)) ?? payoffs.moments[0];
           return (
             <article key={payoff.pieceId} className={`class-panel__card payoffs-editor__known payoffs-editor__family--${payoff.family}`}>
               <GameIcon source={classPieceIconSource(payoff.pieceId)} size={36} fallback={payoff.name.charAt(0)} decorative />

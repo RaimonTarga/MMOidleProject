@@ -103,7 +103,7 @@ for (const [index, biomeGroup] of ZONE_ORDER.entries()) {
   assert(farm.at.kind === "biome" && farm.at.biomeGroup === biomeGroup && farm.at.tier === 1);
   assert(farm.until.type === "biomeLevelAtLeast" && farm.until.biomeGroup === biomeGroup);
   const guideLevels = script.beats.flatMap((beat) => beat.steps.flatMap((step) =>
-    step.type !== "farm" ? [] : gates(step.until).flatMap((gate) =>
+    step.type !== "farm" || step.at.kind !== "biome" || step.at.tier !== 1 ? [] : gates(step.until).flatMap((gate) =>
       gate.type === "biomeLevelAtLeast" && gate.biomeGroup === biomeGroup ? [gate.level] : [])));
   assert.equal(farm.until.level, Math.max(...guideLevels), `${biomeGroup}: matches the guide's terminal level`);
   assert.equal(farm.until.level, biomeGroup === SECOND_SEAL ? 2 : biomeLevelCap(1, biomeGroup));
@@ -146,7 +146,10 @@ const tail = { ...script, beats: script.beats.slice(TUTORIAL_OPENING.beats.lengt
 const seal = buildSealRouteBeats();
 const sealIds = new Set(seal.map((beat) => beat.id));
 assert.deepEqual(tail.beats.filter((beat) => sealIds.has(beat.id)).map((beat) => beat.id), seal.map((beat) => beat.id));
-assert.deepEqual(tail.beats[tail.beats.length - 1], seal[seal.length - 1]);
+// The farewell keeps its place and step; the T2 stretch follows it (apprenticeT2.test.ts).
+const farewell = tail.beats.find((beat) => beat.id === "farewell");
+assert.deepEqual(farewell?.steps, seal[seal.length - 1].steps);
+assert.deepEqual(tail.beats.slice(tail.beats.indexOf(farewell!) + 1).map((beat) => beat.id).slice(0, 1), ["apprentice-t2-plains"]);
 assert.equal(new Set(script.beats.map((beat) => beat.id)).size, script.beats.length);
 for (const beat of tail.beats) {
   for (const line of [beat.say, beat.waiting]) {
@@ -192,8 +195,8 @@ assert.match(tail.beats[resolveBeatIndex(tail, state)].say, /Seize.*wind-up/);
 state.bossesCleared.push(bossClearKey(SECOND_SEAL, 1));
 assert.equal(current(), "farewell", "both seals still wait on the tier-2 promotion");
 state.playerTier = 2;
-assert.equal(current(), "done");
+assert.equal(current(), "apprentice-t2-plains", "the tier-2 promotion hands over to the T2 stretch");
 delete state.biomeLevel[SECOND_SEAL];
-assert.equal(current(), "done", "an existing Mountain seal does not replay the approach on resume");
+assert.equal(current(), "apprentice-t2-plains", "an existing Mountain seal does not replay the approach on resume");
 
 console.log("apprenticeT1: ok");

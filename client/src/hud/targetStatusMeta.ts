@@ -35,6 +35,9 @@ const STATUS_META: Record<string, StatusMeta> = {
   'conduit-poison':     { label: 'Poison', color: '#88bb55' },
   'striker-rot':        { label: 'Rot', color: '#7a8b2e' },
   brittle:         { label: 'Brittle', color: '#d88a4a' },
+  'apprentice-held':     { label: 'Held', color: '#6fd0ff' },
+  'apprentice-withered': { label: 'Withered', color: '#7ac74f' },
+  'dot-frozen':          { label: 'Frozen', color: '#6fd0ff' },
   'dr-shatter':    { label: 'Shattered', color: '#f0c04a' },
   // Weapon reservoir-DoT effects (poison → Poison, fire → Burn, frost → Chill).
   // Swamp owns poison, Volcanic owns fire, Tundra owns frost.

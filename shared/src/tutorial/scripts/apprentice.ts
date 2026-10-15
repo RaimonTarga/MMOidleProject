@@ -2,8 +2,15 @@
  * The Apprentice's guided T1 (AP6, bible §9.4), built on the seal route.
  * Zone farms stop at the lesson, then the payoff line carries on to the cap.
  * Mountain has no walk in the seal route, so its lesson precedes the boss.
+ *
+ * After the tier-2 promotion the guide goes on through the T2 table (§9.16): the school pick,
+ * then each T2 zone as a farm to its lesson, the lesson line (the farm goes on to the zone's
+ * cap) and the boss line, which names the trophy the kill ranks up.
  */
+import { APPRENTICE_KIT } from '../../classKits/apprentice/kit';
 import { LESSON_ZONE_LEVEL } from '../../classKits/kitHelpers';
+import { absoluteZoneLevel } from '../../classKits/registry';
+import { biomeLevelCap } from '../../config/gameConfig';
 import type { TutorialBeat } from '../types';
 import { TUTORIAL_SEALS } from './plans';
 import { buildSealRouteBeats } from './sealRoute';
@@ -51,10 +58,123 @@ function splitAtLesson(beat: TutorialBeat): TutorialBeat[] {
   ];
 }
 
+/** What each T2 zone gives (bible §9.16): its lesson (a new piece or a rank-up) and its trophy line. */
+interface T2Zone {
+  biome: string;
+  name: string;
+  chapter: string;
+  intro: string;
+  lesson: { pieceId: string; rank: number; say: string };
+  boss: string;
+}
+
+/** The T2 stretch in the bible's table order. Lines name moments as the Payoff rules do. */
+const T2_ZONES: readonly T2Zone[] = [
+  {
+    biome: 'plains',
+    name: 'Plains',
+    chapter: 'The Plains, Tier 2',
+    intro: 'Tier 2: pick a school. Poison spreads on its own, Fire chains its blasts, Frost freezes then shatters. Fight the Plains on.',
+    lesson: { pieceId: 'apprentice-blast-back', rank: 1, say: 'Blast Back is learned: a Detonate on a charging enemy stops its charge. Place it on "an enemy charges or leaps at you".' },
+    boss: 'The Plains boss ranks up Outbreak: Spread will pass to three neighbours. Clear the guards, then the altar.',
+  },
+  {
+    biome: 'forest',
+    name: 'Forest',
+    chapter: 'The Forest, Tier 2',
+    intro: 'The Forest again, with stuns and duels. Fight through it.',
+    lesson: { pieceId: 'apprentice-numb', rank: 2, say: 'Numb is stronger: a numbed enemy\'s wind-ups also take longer.' },
+    boss: 'The Forest boss ranks up Firstbrand: your first hit lays half a bar. Clear the guards, then the altar.',
+  },
+  {
+    biome: 'mountain',
+    name: 'Mountain',
+    chapter: 'The Mountain, Tier 2',
+    intro: 'The Mountain now has barriers you can break. Fight up it.',
+    lesson: { pieceId: 'apprentice-sear', rank: 1, say: 'Sear is learned: spend a shielded target\'s sigils to burn its barrier at double. Place it on "the target raises a shield".' },
+    boss: 'The Mountain boss ranks up Petrify: a held enemy also takes more from your ticks. Clear the guards, then the altar.',
+  },
+  {
+    biome: 'swamp',
+    name: 'Swamp',
+    chapter: 'The Swamp, Tier 2',
+    intro: 'The Swamp now has rain and Corrosion. Fight through it.',
+    lesson: { pieceId: 'apprentice-siphon', rank: 2, say: 'Siphon is stronger: it also washes a poison, bleed or Corrosion off you.' },
+    boss: 'The Swamp boss ranks up Glut: twice the drain reach. Clear the guards, then the altar.',
+  },
+  {
+    biome: 'cave',
+    name: 'Cave',
+    chapter: 'The Cave, Tier 2',
+    intro: 'The Cave now erupts from below. Fight through it.',
+    lesson: { pieceId: 'apprentice-seep', rank: 1, say: 'Seep is learned: an enemy that burrows out of reach keeps ticking, doubled. Place it on "out of reach".' },
+    boss: 'The Cave boss ranks up Brood Sigils: one every 1.5 seconds. Clear the guards, then the altar.',
+  },
+  {
+    biome: 'jungle',
+    name: 'Jungle',
+    chapter: 'The Jungle',
+    intro: 'The Jungle is new: prey that flees, and ambushers from cover. Fight through it.',
+    lesson: { pieceId: 'apprentice-snag', rank: 1, say: 'Snag is learned: a fleeing or kiting enemy with a full bar is rooted. Place it on "the target flees".' },
+    boss: 'The Jungle boss gives Scent: sigils on an enemy that runs never fall off. Clear the guards, then the altar.',
+  },
+  {
+    biome: 'desert',
+    name: 'Desert',
+    chapter: 'The Desert',
+    intro: 'The Desert is new: marks, slows and kiters. Fight through it.',
+    lesson: { pieceId: 'apprentice-recoil', rank: 1, say: 'Recoil is learned: when a mark, slow or curse lands on you, its caster catches a full bar. Place it on "a debuff lands".' },
+    boss: 'The Desert boss gives Dune Wind: Spread can leap any distance. Clear the guards, then the altar.',
+  },
+];
+
+/** The zone's biome level at which its lesson arrives, as the kit counts it. */
+function t2LessonLevel(zone: T2Zone): number {
+  const lesson = APPRENTICE_KIT.lessons.find((entry) => entry.pieceId === zone.lesson.pieceId && entry.rank === zone.lesson.rank);
+  if (lesson?.source.kind !== 'zone') throw new Error(`apprentice tutorial: ${zone.lesson.pieceId} has no zone lesson`);
+  return absoluteZoneLevel(lesson.source);
+}
+
+/** The T2 zones as beats: the farm to the lesson, the lesson (farm on to the cap), the boss. */
+function buildT2Beats(): TutorialBeat[] {
+  return T2_ZONES.flatMap((zone): TutorialBeat[] => {
+    const at = { kind: 'biome' as const, biomeGroup: zone.biome, tier: 2 };
+    const lessonLevel = t2LessonLevel(zone);
+    const cap = biomeLevelCap(2, zone.biome);
+    const lessonId = zone.lesson.rank === 1 ? zone.lesson.pieceId : `${zone.lesson.pieceId}-${zone.lesson.rank}`;
+    const waiting = `Fighting in the ${zone.name}.`;
+    return [
+      {
+        id: `apprentice-t2-${zone.biome}`,
+        chapter: zone.chapter,
+        say: zone.intro,
+        waiting,
+        progress: [{ type: 'biomeLevel', biomeGroup: zone.biome, level: lessonLevel }],
+        steps: [{ type: 'farm', at, until: { type: 'biomeLevelAtLeast', biomeGroup: zone.biome, level: lessonLevel } }],
+      },
+      {
+        id: `${lessonId}-lesson`,
+        chapter: zone.chapter,
+        say: zone.lesson.say,
+        waiting,
+        progress: [{ type: 'biomeLevel', biomeGroup: zone.biome, level: cap }],
+        steps: [{ type: 'farm', at, until: { type: 'biomeLevelAtLeast', biomeGroup: zone.biome, level: cap } }],
+      },
+      {
+        id: `apprentice-boss-${zone.biome}-2`,
+        chapter: zone.chapter,
+        say: zone.boss,
+        waiting: `Fighting for the ${zone.name} boss.`,
+        steps: [{ type: 'attemptBoss', biomeGroup: zone.biome, tier: 2 }],
+      },
+    ];
+  });
+}
+
 /** Beats after the shared opening; its Clearing equipment stays unchanged. */
 export function buildApprenticeBeats(): TutorialBeat[] {
   const [firstSeal, secondSeal] = TUTORIAL_SEALS;
-  return buildSealRouteBeats().flatMap((beat): TutorialBeat[] => {
+  const t1 = buildSealRouteBeats().flatMap((beat): TutorialBeat[] => {
     if (beat.id === `open:${firstSeal}`) {
       return splitAtLesson({
         ...beat,
@@ -93,6 +213,11 @@ export function buildApprenticeBeats(): TutorialBeat[] {
         },
       ];
     }
+    if (beat.id === 'farewell') {
+      return [{ ...beat, say: 'Two seals, and Tier 2. A school and new lessons wait in the zones ahead.' }];
+    }
     return splitAtLesson(beat);
   });
+  // The farewell waits on tier 2; the T2 stretch follows it, and the panel's goodbye comes last.
+  return [...t1, ...buildT2Beats()];
 }

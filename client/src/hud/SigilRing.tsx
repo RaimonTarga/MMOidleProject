@@ -1,17 +1,26 @@
 import './sigilRing.css';
 
+/** The Apprentice's three schools (bible §9.5): the sigils take their colour. */
+export type SigilSchool = 'poison' | 'fire' | 'frost';
+
+/** The school of a T2 discipline id (`apprentice-poison`), or null before the pick. */
+export function sigilSchoolOf(disciplineId: string | null | undefined): SigilSchool | null {
+  const school = disciplineId?.replace('apprentice-', '');
+  return school === 'poison' || school === 'fire' || school === 'frost' ? school : null;
+}
+
 /** The mastery budget plus the weapon's already-resolved cap bonus. */
 export function sigilCap(budget: number, passives: Record<string, number>): number {
   return Math.max(1, budget + Math.round(passives['apprentice.cap-extra'] ?? 0));
 }
 
 /** A neutral T1 ring: empty pips show room, filled pips show the enemy's sigils. */
-export function SigilRing({ cap, stacks, enemy = false }: { cap: number; stacks: number; enemy?: boolean }) {
+export function SigilRing({ cap, stacks, enemy = false, school = null }: { cap: number; stacks: number; enemy?: boolean; school?: SigilSchool | null }) {
   const size = 72 + cap * 4;
   const center = size / 2;
   return (
     <svg
-      className="sigil-ring"
+      className={`sigil-ring${school ? ` sigil-ring--${school}` : ''}`}
       viewBox={`0 0 ${size} ${size}`}
       role="img"
       aria-label={`${stacks} of ${cap} sigils`}

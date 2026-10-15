@@ -1,18 +1,20 @@
 import { useAtomValue } from 'jotai';
-import { passivesAtom } from './atoms';
+import { disciplineIdAtom, passivesAtom } from './atoms';
 import { MechanicFrame } from './mechanics/MechanicFrame';
 import type { DotMechanicModel } from './mechanics/types';
-import { SigilRing, sigilCap } from './SigilRing';
+import { SigilRing, sigilCap, sigilSchoolOf } from './SigilRing';
 
 /** Sigils belong to the enemy; the readout labels its target rather than a player resource. */
 export function SigilReadout({ budget, model, compact = false }: { budget: number; model: DotMechanicModel; compact?: boolean }) {
   const passives = useAtomValue(passivesAtom);
   const cap = sigilCap(budget, passives);
+  // Fire, Frost and Poison sigils each wear their school's colour once the T2 discipline is picked.
+  const school = sigilSchoolOf(useAtomValue(disciplineIdAtom));
   const count = model.hasTarget ? `${model.stacks} / ${cap}` : 'No target';
   const ring = (
-    <div className={`sigil-readout${compact ? ' sigil-readout--compact' : ''}`}>
+    <div className={`sigil-readout${compact ? ' sigil-readout--compact' : ''}${school ? ` sigil-readout--${school}` : ''}`}>
       {compact && <span>{`Sigils ${cap}`}</span>}
-      <SigilRing cap={cap} stacks={model.hasTarget ? model.stacks : 0} enemy />
+      <SigilRing cap={cap} stacks={model.hasTarget ? model.stacks : 0} enemy school={school} />
       <span className="sigil-readout__count">{model.hasTarget ? `Target ${count}` : count}</span>
     </div>
   );
