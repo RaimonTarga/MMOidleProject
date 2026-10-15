@@ -71,6 +71,8 @@ export const BUFF_IDS = [
   'striker-focus',  // the opener's haste, until the finisher
   'squire-guard',   // the Squire's brace, until the telegraphed blow lands
   'squire-parry',   // the Avenger's Parry brace: the blow is negated and countered
+  'slinger-fan-the-hammer', // the Gunslinger's Fan the Hammer: fast rounds after a reload
+  'slinger-entrenched',     // the Siege's Entrenched: standing still ramps fire rate and shell
 ] as const;
 
 export type BuffId = typeof BUFF_IDS[number];

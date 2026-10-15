@@ -108,6 +108,13 @@ export function layRime(player: PlayerEntity, at: { x: number; y: number }, radi
   setResource(cs, RIME.until, now + groundMs);
 }
 
+/** The frozen ground while it lasts, for the HUD slice; null once it has thawed. */
+export function rimeGround(player: PlayerEntity, now: number): { x: number; y: number; radius: number } | null {
+  const cs = player.tracksCombat;
+  if (getResource(cs, RIME.until) <= now) return null;
+  return { x: Math.round(getResource(cs, RIME.x)), y: Math.round(getResource(cs, RIME.y)), radius: getResource(cs, RIME.r) };
+}
+
 /** Enemies standing on the frozen ground are slowed. */
 export function rimeTick(world: World, player: PlayerEntity, now: number): void {
   const cs = player.tracksCombat;
@@ -159,7 +166,7 @@ export function entrenchTick(player: PlayerEntity, now: number): void {
     removeStatusEffect(cs, ENTRENCHED_EFFECT_ID);
     return;
   }
-  const effect = applyStatusEffect(cs, {
+  const effect = applyStatusEffect(player.tracksCombat, {
     id: ENTRENCHED_EFFECT_ID, maxStacks: 1, remainingMs: -1, refreshable: false, sourceId: player.isPlayer.id,
     data: { totalMs: ENTRENCH_FULL_MS },
   });

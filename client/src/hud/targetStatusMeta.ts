@@ -31,6 +31,10 @@ const STATUS_META: Record<string, StatusMeta> = {
   'plating-shred': { label: 'Shred',   color: '#d8b24a' },
   'cadence-hemorrhage': { label: 'Bleed', color: '#c41e1e' },
   'slinger-venom':      { label: 'Venom', color: '#8fdc3c' },
+  'slinger-burn':       { label: 'Burn', color: '#ff7a3c' },
+  'slinger-deathmark':  { label: 'Deathmark', color: '#c41e1e' },
+  'slinger-fan-the-hammer': { label: 'Fanning', color: '#e8c25a' },
+  'slinger-entrenched': { label: 'Entrenched', color: '#b08a4a' },
   'slinger-rot':        { label: 'Rot', color: '#7a8b2e' },
   'conduit-poison':     { label: 'Poison', color: '#88bb55' },
   'conduit-mark':       { label: 'Marked', color: '#d86a4a' },
@@ -39,6 +43,7 @@ const STATUS_META: Record<string, StatusMeta> = {
   brittle:         { label: 'Brittle', color: '#d88a4a' },
   'apprentice-held':     { label: 'Held', color: '#6fd0ff' },
   'apprentice-withered': { label: 'Withered', color: '#7ac74f' },
+  'dot-chill':           { label: 'Chill', color: '#9fd8ff' },
   'dot-frozen':          { label: 'Frozen', color: '#6fd0ff' },
   'dr-shatter':    { label: 'Shattered', color: '#f0c04a' },
   // Weapon reservoir-DoT effects (poison → Poison, fire → Burn, frost → Chill).

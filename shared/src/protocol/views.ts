@@ -130,6 +130,8 @@ export interface PlayerView {
   reloadTwinClip: string;
   /** Siege's banked shell damage; 0 when the shell is empty or the Slinger is not Siege. */
   reloadShell: number;
+  /** Rime Round's frozen ground while it lasts, or null. */
+  reloadRime: { x: number; y: number; radius: number } | null;
   executionReady: boolean;
   executionCooldownPct: number;
   /** The Squire's Resolve in pips (class-first build plan CQ.1), and the bar's size. */
@@ -377,6 +379,9 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     reloadNextClip: entity.usesReload?.nextClipId ?? '',
     reloadTwinClip: entity.usesReload?.twinClipId ?? '',
     reloadShell: entity.usesReload?.shellBank ?? 0,
+    reloadRime: entity.usesReload?.rimeRadius
+      ? { x: entity.usesReload.rimeX ?? 0, y: entity.usesReload.rimeY ?? 0, radius: entity.usesReload.rimeRadius }
+      : null,
     executionReady: entity.hasEmpoweredAttack !== undefined,
     executionCooldownPct: entity.usesCooldown?.executionCooldownPct ?? 0,
     resolve: entity.usesCooldown?.resolve ?? 0,

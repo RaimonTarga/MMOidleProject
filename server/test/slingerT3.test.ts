@@ -16,6 +16,7 @@ import {
   SLINGER_KIT,
   TUNDRA_CHILL_EFFECT_ID,
   VOLCANIC_HEAT_EFFECT_ID,
+  composePlayerView,
   type LoadoutConfig,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
@@ -34,6 +35,7 @@ import { emitCombatEvent, makeCombatContext } from '../src/systems/combat/engine
 import { runPlayerAttack } from '../src/systems/combat/engine/combat';
 import { isConcealedEntity } from '../src/systems/combat/invulnerability';
 import { applyMonsterSlow, monsterHasLiveRoot, updateMonsterSlows } from '../src/systems/combat/status/monsterControl';
+import { syncPlayerBuffs } from '../src/systems/combat/buffs/buffSync';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { World } from '../src/world/World';
 
@@ -562,6 +564,33 @@ const TWIN = { rack: ['slinger-snare', 'slinger-venom'], clipRules: [{ clip: 'sl
     if (/-t[23]$/.test(id) && Object.keys(line.effects).length === 0) dead.push(id);
   }
   assert.deepEqual(dead, [], 'no tier 2 or 3 gear job is empty');
+}
+{
+  // T3-W2: Rime Round's frozen ground reaches the networked slice and the view, and thaws off them.
+  const s = setup({ relic: ['slinger-relic-tundra'], bossesCleared: ['tundra:3'], ammo: 1 });
+  const target = s.spawn(430, 400);
+  assert.equal(composePlayerView(s.player as never)?.reloadRime, null, 'no frozen ground before the shot');
+  shoot(s.world, s.player, target);
+  updateSlinger(s.world, s.player, 100, clock);
+  const rime = composePlayerView(s.player as never)?.reloadRime;
+  assert.ok(rime && rime.radius > 0 && rime.x === 430, 'the frozen ground is on the view, at the target');
+  clock += 60_000;
+  updateSlinger(s.world, s.player, 100, clock);
+  assert.equal(composePlayerView(s.player as never)?.reloadRime, null, 'and gone once it thaws');
+}
+{
+  // T3-W2: Fan the Hammer and Entrenched wear a buff-bar tile while they last.
+  const fan = setup({ discipline: GUNSLINGER, specialization: 'slinger-fan-the-hammer', ...TWIN });
+  fan.player.usesReload!.ammo = 0;
+  completeReload(fan.world, fan.player);
+  syncPlayerBuffs(fan.world, Date.now());
+  assert.ok(fan.player.hasStatus.activeBuffs?.some((buff) => buff.id === 'slinger-fan-the-hammer'), 'Fan the Hammer shows its tile');
+  const entrenched = setup({ discipline: SIEGE, specialization: 'slinger-entrenched' });
+  updateSlinger(entrenched.world, entrenched.player, 100, clock);
+  clock += 4_000;
+  updateSlinger(entrenched.world, entrenched.player, 100, clock);
+  syncPlayerBuffs(entrenched.world, Date.now());
+  assert.ok(entrenched.player.hasStatus.activeBuffs?.some((buff) => buff.id === 'slinger-entrenched'), 'Entrenched shows its tile');
 }
 
 console.log('slingerT3: ok');

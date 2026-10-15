@@ -4,6 +4,7 @@ import { CONDUIT_T1_ID, conduitT1Route } from "./conduitT1";
 import { conduitT2Route } from "./conduitT2";
 import { SLINGER_T1_ID, slingerT1Route } from "./slingerT1";
 import { slingerT2Route } from "./slingerT2";
+import { slingerT3Route } from "./slingerT3";
 import { APPRENTICE_T1_ID, apprenticeT1Route } from "./apprenticeT1";
 import { apprenticeT2Route } from "./apprenticeT2";
 import { SQUIRE_T1_ID, squireT1Route } from "./squireT1";
@@ -41,6 +42,7 @@ const CONDUIT_ROUTE = conduitT1Route();
 const CONDUIT_T2_ROUTE = conduitT2Route();
 const SLINGER_ROUTE = slingerT1Route();
 const SLINGER_T2_ROUTE = slingerT2Route();
+const SLINGER_T3_ROUTE = slingerT3Route();
 const SPIRIT_ROUTE = spiritT1Route();
 const SPIRIT_T2_ROUTE = spiritT2Route();
 const APPRENTICE_ROUTE = apprenticeT1Route();
@@ -55,6 +57,7 @@ export const ROUTES = new Map<string, Route>([
   [CONDUIT_T2_ROUTE.id, CONDUIT_T2_ROUTE],
   [SLINGER_ROUTE.id, SLINGER_ROUTE],
   [SLINGER_T2_ROUTE.id, SLINGER_T2_ROUTE],
+  [SLINGER_T3_ROUTE.id, SLINGER_T3_ROUTE],
   [SPIRIT_ROUTE.id, SPIRIT_ROUTE],
   [SPIRIT_T2_ROUTE.id, SPIRIT_T2_ROUTE],
   [APPRENTICE_ROUTE.id, APPRENTICE_ROUTE],

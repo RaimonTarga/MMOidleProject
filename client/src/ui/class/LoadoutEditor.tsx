@@ -12,7 +12,7 @@ import {
   type ClipView,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
-import { disciplineIdAtom } from '../../hud/atoms';
+import { disciplineIdAtom, playerTierAtom, slingerSpecializationIdAtom } from '../../hud/atoms';
 import { GameIcon } from '../GameIcon';
 import { classPieceIconSource, trophyIconSource } from '../conceptIcons';
 import { rankMark } from './format';
@@ -41,6 +41,8 @@ function words(id: string): string {
 export function LoadoutEditor({ view }: { view: ClassScreenView }) {
   const { loadout, problemsFor } = useLoadoutEditor();
   const disciplineId = useAtomValue(disciplineIdAtom);
+  const specializationId = useAtomValue(slingerSpecializationIdAtom);
+  const playerTier = useAtomValue(playerTierAtom);
   const [tried, setTried] = useState<string[] | null>(null);
 
   useEffect(() => {
@@ -96,6 +98,8 @@ export function LoadoutEditor({ view }: { view: ClassScreenView }) {
         calledShot={system.calledShot?.filter((ref) => !ref.not).map((ref) => ref.id as string)}
         racked={loadout.racked.map((clip) => clip.name)}
       />
+
+      <SpecializationNote disciplineId={disciplineId} specializationId={specializationId} playerTier={playerTier} />
 
       <div className="loadout-editor__pips" aria-label={`Rack: ${loadout.rack.used} of ${loadout.rack.slots}`}>
         {Array.from({ length: loadout.rack.slots }, (_, index) => (
@@ -280,6 +284,49 @@ function DisciplineNote({ disciplineId, calledShot, racked }: {
             </ol>
           </>
         )}
+      </div>
+    </article>
+  );
+}
+
+/** How each T3 specialization reads in the editor, beside the kit's own text. */
+const SPECIALIZATION_TIPS: Record<string, string> = {
+  'slinger-fan-the-hammer': 'After each reload spin, the first three rounds of each gun fire at triple rate.',
+  'slinger-crossfire': 'The pair you rack is the build: rack two clips whose effects you want doubled up on one target.',
+  'slinger-gun-kata': "Stay close: the bonus and the second gun both want the enemy at arm's length. Melee also hurts you more.",
+  'slinger-deathmark': 'Marks sit on the enemies your rounds hit, shown on their frames; the shell bursts on all of them at the reload.',
+  'slinger-entrenched': 'Stand still to build it; the Entrenched tile on your buff bar shows how much you have.',
+  'slinger-rolling-fire': 'No big shell at the reload: a small one goes off every few rounds instead.',
+  'slinger-ricochet': 'Where the called shot goes next is picked by the same order as above.',
+  'slinger-pierce': 'Line enemies up: the called shot hits everything between you and its target in full.',
+  'slinger-deadeye': 'The last round waits for the first moment in the order above, or a few seconds, then hits much harder.',
+};
+
+/** The T3 specialization under the discipline: the pick, or a pointer to the Passive Tree. */
+function SpecializationNote({ disciplineId, specializationId, playerTier }: {
+  disciplineId: string | null;
+  specializationId: string | null;
+  playerTier: number;
+}) {
+  if (!disciplineId) return null;
+  const picked = SLINGER_KIT.specializations.find((entry) => entry.id === specializationId && entry.disciplineId === disciplineId);
+  if (!picked) {
+    if (playerTier < 3) return null;
+    return (
+      <article className="class-panel__card loadout-editor__discipline">
+        <p className="class-panel__line">Pick a specialization in the Passive Tree: three are open under your discipline.</p>
+      </article>
+    );
+  }
+  return (
+    <article className="class-panel__card loadout-editor__discipline">
+      <div>
+        <div className="class-panel__card-title">
+          <span className="class-panel__name">{picked.name}</span>
+          <span className="class-panel__family">specialization</span>
+        </div>
+        <p className="class-panel__line">{picked.text}</p>
+        {SPECIALIZATION_TIPS[picked.id] && <p className="class-panel__line">{SPECIALIZATION_TIPS[picked.id]}</p>}
       </div>
     </article>
   );
