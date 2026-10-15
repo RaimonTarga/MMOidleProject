@@ -10,13 +10,15 @@ import { pushDamageEvent } from '../../../combat/damage/damageEvent';
  * it as a raw HP subtraction and kill the slime if it drops to ≤0. The
  * summoner tick will start the respawn timer on the next pass.
  */
-import { CONDUIT_KIT, type MinionMonsterType } from '@mmo-idle/shared';
+import { CONDUIT_KIT, getResource, type MinionMonsterType } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import type { World } from '../../../../world/World';
 import type { MinionEntity, PlayerEntity } from '../../../../ecs/entity';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
 import { isRangedHit, sentinelClaims } from './summonPiecesT2';
+import { gravePactPays } from './summonPiecesT4';
 import { sporeCut } from './t3Shared';
+import { TICK_NOW } from './t4Shared';
 
 /** The living tank summon closest to the owner. */
 function nearestTank(world: World, owner: PlayerEntity): MinionEntity | null {
@@ -72,6 +74,12 @@ export function registerSummonerDamageSponge(): void {
     if (ctx.attackerType === 'monster') {
       const cut = sporeCut(ctx.attacker);
       if (cut > 0) ctx.damage = Math.round(ctx.damage * (1 - cut));
+    }
+
+    // Grave Pact (Graveyard vest): a hit that would kill you kills a summon in your place.
+    if (gravePactPays(world, player, ctx.damage, getResource(player.tracksCombat, TICK_NOW))) {
+      ctx.damage = 0;
+      return;
     }
 
     // Sandveil (Desert vest): ranged hits deal less to you.

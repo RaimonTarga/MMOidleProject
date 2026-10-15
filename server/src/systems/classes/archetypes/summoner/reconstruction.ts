@@ -9,6 +9,7 @@ import { isPlayerInCombat } from '../../../combat/ai/engagement';
 import { emitSummonObservation } from './observation';
 import { rebuildRank } from './formationOrders';
 import { rebuildCostMult } from './disciplines';
+import { onSummonRebuilt } from './leavesT4';
 
 type SummonerOwner = PlayerEntity & {
   summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
@@ -118,6 +119,7 @@ export function tickSummonReconstruction(
 
   const minion = spawnMinionForOwner(world, owner, index);
   if (!minion) return;
+  onSummonRebuilt(world, owner, minion);
   owner.hasHealth.hp = Math.max(floor, owner.hasHealth.hp - cost);
   emitSummonObservation(owner, { kind: 'replacement-paid', id: minion.entityId, hp: cost });
   pushDamageEvent(world, owner, cost);

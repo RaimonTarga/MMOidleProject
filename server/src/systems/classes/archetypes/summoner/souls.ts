@@ -121,7 +121,7 @@ export function soulPower(owner: PlayerEntity, soul: ConduitTrophy | undefined =
 }
 
 /** The strongest power among the fielded Souls of one lineage, 0 when none is out. */
-function lineagePower(owner: PlayerEntity, lineage: string): number {
+export function lineagePower(owner: PlayerEntity, lineage: string): number {
   let best = 0;
   for (const soul of soulsOf(owner)) {
     if (soul.lineage === lineage) best = Math.max(best, soulPower(owner, soul));

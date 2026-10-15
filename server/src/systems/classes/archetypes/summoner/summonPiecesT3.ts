@@ -38,7 +38,10 @@ import { evadeBlocksDebuffs } from '../../../defense/mitigation/evasion';
 import { applyHealToMinion } from '../../../defense/regen/healing';
 import { applyFramePlatingShred } from '../../shared/frameLoop';
 import { applyTickDot } from '../../shared/tickDot';
+import { raiseHusk } from './husks';
 import { fightHeatMult } from './souls';
+import { mirageAbility, shellAbility } from './supportsT4';
+import { TICK_NOW } from './t4Shared';
 import { PIECES, swing } from './summonPieces';
 import {
   coatBark, jobMult, livingMinions, pieceOfSlot, RANGED_ENEMY_REACH, setSupportEchoHook, supportHeal,
@@ -56,7 +59,7 @@ const HIBERNATE_COOLDOWN_MS = 20_000;
 /** Emberglow: how close to you a summon must be to share your Recovery. */
 const EMBERGLOW_RADIUS = 220;
 
-const BORN_AT = 'minion.bornAt';
+export const BORN_AT = 'minion.bornAt';
 const HORN_NEXT_AT = 'horn.nextAt';
 const FROST_NEXT_AT = 'frost.nextAt';
 const BURN_NEXT_AT = 'cinder.nextAt';
@@ -80,7 +83,7 @@ function formationTarget(world: World, owner: PlayerEntity): MonsterEntity | und
 // ── Supports: spores, frost, the horn (each with a strength, so Choir can echo it) ───────────
 
 /** Sporecaller: the enemies around the target deal less damage for a while. */
-function sporeAbility(world: World, owner: PlayerEntity, source: MinionEntity, piece: ConduitPiece, target: MonsterEntity, strength: number): void {
+export function sporeAbility(world: World, owner: PlayerEntity, source: MinionEntity, piece: ConduitPiece, target: MonsterEntity, strength: number): void {
   const mult = jobMult(owner, piece);
   const radius = (piece.params.sporeRadius ?? 0) * mult;
   const cut = Math.min(0.75, (piece.params.sporeCut ?? 0) * mult * strength);
@@ -98,7 +101,7 @@ function sporeAbility(world: World, owner: PlayerEntity, source: MinionEntity, p
 }
 
 /** Frostcaller: enemies around it attack and move slower. Bosses that accept no control shrug it off. */
-function frostAbility(world: World, owner: PlayerEntity, source: MinionEntity, piece: ConduitPiece, strength: number): void {
+export function frostAbility(world: World, owner: PlayerEntity, source: MinionEntity, piece: ConduitPiece, strength: number): void {
   const mult = jobMult(owner, piece);
   const move = Math.min(0.9, (piece.params.frostSlow ?? 0) * mult * strength);
   const attack = (piece.params.frostAttackSlow ?? 0) * mult * strength;
@@ -113,7 +116,7 @@ function frostAbility(world: World, owner: PlayerEntity, source: MinionEntity, p
 }
 
 /** Warhorn: its call gives every summon in a wide circle faster attacks for a few seconds. */
-function hornAbility(world: World, owner: PlayerEntity, source: MinionEntity, piece: ConduitPiece, strength: number): void {
+export function hornAbility(world: World, owner: PlayerEntity, source: MinionEntity, piece: ConduitPiece, strength: number): void {
   const mult = jobMult(owner, piece);
   const radius = (piece.params.hornRadius ?? 0) * mult;
   const ms = piece.params.hornMs ?? 0;
@@ -132,8 +135,30 @@ function hornAbility(world: World, owner: PlayerEntity, source: MinionEntity, pi
   }
 }
 
+/**
+ * A support's ability, fired from `source` at `strength` (1 is its own, a share of it is an echo, 2 is
+ * Final Command). `aim` is the enemy it fires at, for the abilities that need one.
+ */
+export function fireSupportAbility(world: World, owner: PlayerEntity, source: MinionEntity, piece: ConduitPiece, aim: MonsterEntity | undefined, strength: number): void {
+  switch (piece.id) {
+    case 'conduit-swamp-spitter': {
+      const shred = piece.params.shredFraction ?? 0;
+      if (aim && shred > 0) applyFramePlatingShred(owner, aim, shred * strength * (1 + (owner.usesSkills.passives['conduit.ability-pct'] ?? 0)), piece.params.shredMs ?? 4000);
+      break;
+    }
+    case 'conduit-barkward': coatBark(world, owner, source, piece, strength); break;
+    case 'conduit-bloomtender': supportHeal(world, owner, piece, strength); break;
+    case 'conduit-sporecaller': if (aim) sporeAbility(world, owner, source, piece, aim, strength); break;
+    case 'conduit-frostcaller': frostAbility(world, owner, source, piece, strength); break;
+    case 'conduit-warhorn': hornAbility(world, owner, source, piece, strength); break;
+    case 'conduit-icewarden': shellAbility(world, owner, source, piece, strength); break;
+    case 'conduit-mirage': mirageAbility(world, owner, source, piece, strength, getResource(owner.tracksCombat, TICK_NOW)); break;
+    default: break;
+  }
+}
+
 /** Choir (§7.6): when a support's ability fires, every other support type's ability echoes at a share of its strength. */
-function echoSupport(world: World, owner: PlayerEntity, source: MinionEntity, target: MonsterEntity | undefined): void {
+export function echoSupport(world: World, owner: PlayerEntity, source: MinionEntity, target: MonsterEntity | undefined): void {
   if (specializationOf(owner) !== 'conduit-choir') return;
   const aim = target && target.hasHealth.hp > 0 ? target : formationTarget(world, owner);
   const sourceId = source.isMinion.slotId.split('#')[0];
@@ -142,20 +167,7 @@ function echoSupport(world: World, owner: PlayerEntity, source: MinionEntity, ta
     const piece = pieceOfSlot(ally.isMinion.slotId);
     if (!piece || piece.family !== 'support' || seen.has(piece.id)) continue;
     seen.add(piece.id);
-    const strength = SPEC.choirEcho;
-    switch (piece.id) {
-      case 'conduit-swamp-spitter': {
-        const shred = piece.params.shredFraction ?? 0;
-        if (aim && shred > 0) applyFramePlatingShred(owner, aim, shred * strength * (1 + (owner.usesSkills.passives['conduit.ability-pct'] ?? 0)), piece.params.shredMs ?? 4000);
-        break;
-      }
-      case 'conduit-barkward': coatBark(world, owner, ally, piece, strength); break;
-      case 'conduit-bloomtender': supportHeal(world, owner, piece, strength); break;
-      case 'conduit-sporecaller': if (aim) sporeAbility(world, owner, ally, piece, aim, strength); break;
-      case 'conduit-frostcaller': frostAbility(world, owner, ally, piece, strength); break;
-      case 'conduit-warhorn': hornAbility(world, owner, ally, piece, strength); break;
-      default: break;
-    }
+    fireSupportAbility(world, owner, ally, piece, aim, SPEC.choirEcho);
   }
 }
 
@@ -279,7 +291,7 @@ export function registerSummonPiecesT3(): void {
     }
   });
 
-  // Infestation: an infested enemy that dies bursts. (Short-lived summons do not exist yet: the burst is area damage.)
+  // Infestation: an infested enemy that dies bursts, and rises as short-lived husks.
   registerCombatListener('onKill', (ctx, world) => {
     if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
     const owner = ctx.attacker;
@@ -288,6 +300,10 @@ export function registerSummonPiecesT3(): void {
     setFlag(dead.tracksCombat, INFESTED_FLAG, false);
     const victims = playerAoeTargets(world, owner, dead.hasPosition.current, SPEC.infestBurstRadius, dead.isMonster.id);
     if (victims.length > 0) applyPlayerAoeTo(world, owner, victims, owner.dealsDamage.attack * SPEC.infestBurstMult, 'summon', {}, {});
+    // ...and the infestation rises as short-lived husks (no temporary summon entity exists yet; see `husks.ts`).
+    for (let i = 0; i < SPEC.infestHusks; i++) {
+      raiseHusk(owner, dead.hasPosition.current, owner.dealsDamage.attack * SPEC.infestHuskMult, SPEC.infestHuskMs, SPEC.infestHuskEveryMs, attackNow(ctx), 12);
+    }
   });
 }
 

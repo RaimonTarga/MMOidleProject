@@ -36,6 +36,11 @@ export const CONDUIT_SPECIALIZATION_TUNING = {
   infestTickMs: 1_000,
   infestBurstRadius: 120,
   infestBurstMult: 1.5,
+  /** ...and (T4) rises as this many short-lived husks that strike for this long, this often, at this multiple of your attack. */
+  infestHusks: 3,
+  infestHuskMs: 5_000,
+  infestHuskEveryMs: 1_000,
+  infestHuskMult: 0.4,
   /** Shield Wall: each different kind of tank beyond the first takes this much more off the damage a tank soaks. */
   shieldWallLayerRelief: 0.1,
   /** The Hunt: a different damage summon that hit the target within this window adds this much to everyone's damage on it. */

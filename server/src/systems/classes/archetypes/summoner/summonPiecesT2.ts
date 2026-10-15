@@ -13,6 +13,7 @@ import {
   applyStatusEffect,
   CONDUIT_DISCIPLINE_TUNING,
   CONDUIT_KIT,
+  CONDUIT_LEAF_TUNING,
   getResource,
   getStatusEffect,
   isCleanseable,
@@ -38,6 +39,7 @@ import { runFormationAttack } from './formationAttack';
 import { markStackBonus } from './souls';
 import { PIECES, swing } from './summonPieces';
 import { HIBERNATE_EFFECT_ID, specializationOf } from './t3Shared';
+import { hasLeaf } from './t4Shared';
 
 /** The Executioner's mark on an enemy; `typeMask` has one bit per kind of summon that has hit it (Dune-Stalker's stacks). */
 export const MARK_EFFECT_ID = 'conduit-mark';
@@ -261,7 +263,7 @@ function updateBark(world: World, owner: PlayerEntity, now: number): void {
 }
 
 /** How many distinct harmful, cleansable effects a body carries. */
-function debuffsOn(cs: TracksCombat): string[] {
+export function debuffsOn(cs: TracksCombat): string[] {
   const ids = new Set<string>();
   for (const effect of cs.statusEffects) {
     if (effect.instanced || effect.stacks <= 0) continue;
@@ -309,6 +311,12 @@ export function firePackStrike(world: World, owner: PlayerEntity, now: number): 
     if (target.hasHealth.hp <= 0) break;
     runFormationAttack(world, owner, minion, target, now, { packStrike: true });
     struck++;
+  }
+  // Rally (T4 leaf): the blow also mends the whole formation.
+  if (struck > 0 && hasLeaf(owner, 'conduit-rally')) {
+    for (const ally of livingMinions(world, owner)) {
+      applyHealToMinion(ally, owner.isPlayer.id, ally.hasHealth.maxHp * CONDUIT_LEAF_TUNING.rallyHealPct, world);
+    }
   }
   return struck;
 }
