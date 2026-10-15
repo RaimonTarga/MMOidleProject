@@ -1,6 +1,7 @@
 import { SKILL_TREE } from '../../data/skillTree';
 import type { TutorialBeat, TutorialScript } from '../types';
 import { TUTORIAL_OPENING } from './opening';
+import { buildConduitBeats } from './conduit';
 import { buildSealRouteBeats } from './sealRoute';
 import { buildSquireBeats } from './squire';
 import { buildStrikerBeats } from './striker';
@@ -8,6 +9,7 @@ import { buildStrikerBeats } from './striker';
 export { TUTORIAL_FAREWELL } from './farewell';
 export { TUTORIAL_OPENING } from './opening';
 export { TUTORIAL_SEALS, T1_BIOME_ORDER, type T1Biome } from './plans';
+export { buildConduitBeats } from './conduit';
 export { buildSealRouteBeats } from './sealRoute';
 export { buildSquireBeats } from './squire';
 
@@ -21,6 +23,7 @@ const scripts = new Map<string, TutorialScript>();
 export const TUTORIAL_CLASS_BEATS: Partial<Record<string, () => TutorialBeat[]>> = {
   'cadence-root': buildStrikerBeats,
   'cooldown-root': buildSquireBeats,
+  'summoner-root': buildConduitBeats,
 };
 
 /**
