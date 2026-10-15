@@ -1,6 +1,6 @@
 /**
  * The Slinger's burn (bible §10.16 T3): Incendiary's rounds and Cinder Round set a target
- * burning. A burn builds to a cap and never detonates (the Apprentice's payoffs do). It is a
+ * burning (Thermite, T4, also eats shells). A burn builds to a cap and never detonates (the Apprentice's payoffs do). It is a
  * status on the monster; the Slinger's own tick (`tickBurns`, run from `updateSlinger`) deals
  * the damage as proc damage, so it skips plating like every other DoT tick.
  */
@@ -8,6 +8,7 @@ import { applyStatusEffect, getStatusEffect } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { applyPlayerProcDamage } from '../../combat/damage/procDamage';
+import { eatShells } from './t4';
 
 export const SLINGER_BURN_ID = 'slinger-burn';
 
@@ -20,6 +21,8 @@ export function applyBurn(
   maxStacks: number,
   durationMs: number,
   tickMs: number,
+  /** Thermite: each tick also eats shells, `drain` times the tick's damage; ice and obsidian lose `mult` times that. */
+  shell?: { drain: number; mult: number },
 ): void {
   const cs = target.tracksCombat;
   const prior = getStatusEffect(cs, SLINGER_BURN_ID);
@@ -38,6 +41,10 @@ export function applyBurn(
   effect.data['damagePerTick'] = Math.max(Math.round(perStack), prior?.data['damagePerTick'] ?? 0, 1);
   effect.data['tickIntervalMs'] = tickMs;
   effect.data['totalMs'] = Math.max(durationMs, effect.data['totalMs'] ?? 0);
+  if (shell) {
+    effect.data['shellDrain'] = shell.drain;
+    effect.data['shellMult'] = shell.mult;
+  }
   if (prior) effect.data['nextTickIn'] = prior.data['nextTickIn'] ?? tickMs;
 }
 
@@ -50,6 +57,9 @@ export function tickBurns(world: World, player: PlayerEntity, dt: number): void 
     burn.data['nextTickIn'] = (burn.data['nextTickIn'] ?? burn.data['tickIntervalMs'] ?? 1000) - dt;
     if (burn.data['nextTickIn'] > 0) continue;
     burn.data['nextTickIn'] = burn.data['tickIntervalMs'] ?? 1000;
-    applyPlayerProcDamage(world, player, monster, (burn.data['damagePerTick'] ?? 1) * Math.max(1, burn.stacks), { tags: ['slinger-burn'] });
+    const tick = (burn.data['damagePerTick'] ?? 1) * Math.max(1, burn.stacks);
+    applyPlayerProcDamage(world, player, monster, tick, { tags: ['slinger-burn'] });
+    // Thermite: the burn eats shells (damage over time skips barriers, so it wears them down here).
+    if ((burn.data['shellDrain'] ?? 0) > 0 && monster.hasHealth.hp > 0) eatShells(monster, tick * burn.data['shellDrain']!, burn.data['shellMult'] ?? 1);
   }
 }

@@ -9,6 +9,10 @@
  * Tier 3 (T3-SLINGER; §10.6, §10.16): the nine specializations, the T3 clips (Seeker, Acid, Tether, Frost,
  * Incendiary), the T3 trophy ranks and rounds (Rime, Cinder) and the Tundra and Volcanic gear.
  *
+ * Tier 4 (T4-SLINGER; §10.7, §10.16): the nine leaves, the T4 clip ranks and clips (Shellbreaker II, Frost II,
+ * Tracer III, Hollow-point II, Thermite, Hallowed, Exploit), the T4 trophy ranks and rounds (Quake IV, Rime II,
+ * Hunter's III, Bounty III, Cinder II, Toll, Harpoon) and the Wasteland and Trench gear.
+ *
  * The old frame, range, and T3 paths are gone (CL7). This file is the Loadout runtime.
  */
 import {
@@ -46,11 +50,10 @@ import { applyPlayerAoeTo, playerAoeTargets } from '../../../combat/damage/aoeDa
 import { SLINGER_ROT_ID, SLINGER_VENOM_ID } from '../../../combat/damage/bleedIds';
 import { applyKnockback } from '../../../combat/damage/knockback';
 import { attackNow, registerCombatListener } from '../../../combat/engine/combatPipeline';
-import { conditionsHold } from '../../../combat/moments/moments';
+import { conditionsHold, momentActive } from '../../../combat/moments/moments';
 import { monsterIgnoresControl } from '../../../combat/status/controlImmunity';
 import { applyMonsterSlow } from '../../../combat/status/monsterControl';
 import { applyStun } from '../../../combat/status/stun';
-import { stopEntity } from '../../../world/movement';
 import { classConfigContextOf } from '../../../player/progression/classConfig';
 import { applyFramePlatingShred } from '../../shared/frameLoop';
 import { applyTickDot } from '../../shared/tickDot';
@@ -65,17 +68,41 @@ import {
   fleeSlowTick,
   layRime,
   resetDeadeye,
+  isGettingAway,
   revealSeekable,
   rimeGround,
   rimeTick,
   startFan,
   takeDeadeyeHeld,
+  tetherFor,
   tetherHit,
   tetherTick,
 } from '../../slinger/t3';
-import { lookoutAmbusher, revealTraced, shadeTick, traceTarget } from '../../slinger/tracer';
 import {
+  aftershockTick,
+  clipDoesNothing,
+  distinctMonsterDebuffs,
+  distinctPlayerDebuffs,
+  fightSize,
+  hasIceArmor,
+  leafPicked,
+  lightHandsHit,
+  pressureSuitTick,
+  queueAftershocks,
+  SLIP_AWAY_X,
+  stakesTick,
+  steadyNerveTick,
+  stopCharge,
+  SWAP_CARRY,
+  weakenRisen,
+} from '../../slinger/t4';
+import { isTracedBy, lookoutAmbusher, revealTraced, shadeTick, traceTarget } from '../../slinger/tracer';
+import {
+  BUNKER,
+  BUNKER_MULT,
   CALLED_SHOT_MULT,
+  COOL_RELOAD,
+  COOL_RELOAD_MULT,
   CROSSFIRE,
   CROSSFIRE_EFFECT_MULT,
   CROSSFIRE_KEYS,
@@ -89,26 +116,39 @@ import {
   FAN_ROUNDS,
   FAN_THE_HAMMER,
   FAR_FULL_PX,
+  FRESH_POWDER,
   GUN_KATA,
   GUNSLINGER,
   HEAT_STACKS_MAX,
+  IMPROVISE,
+  IMPROVISE_MULT,
   KATA_CLOSE_MULT,
   KATA_CLOSE_PX,
   KATA_MELEE_PX,
+  LIGHT_HANDS,
+  LIGHT_HANDS_EVERY_MS,
+  LIGHT_HANDS_MULT,
   PIERCE,
   PIERCE_WIDTH_PX,
   RICOCHET,
   RICOCHET_BOUNCES,
+  QUICK_SWAP,
   RICOCHET_SHARE,
   ROLLING_EVERY_ROUNDS,
   ROLLING_FIRE,
   SIEGE,
   SIEGE_ROUND_PCT,
+  SLIP_AWAY,
+  SLIP_AWAY_MULT,
+  STAKES,
+  STEADY_NERVE,
   TRICKSHOT,
 } from '../../slinger/tuning';
 import { emitReloadStart, registerReloadLifecycleHook, startReloadTimer, resolveReloadTimeMs } from './reloadLifecycle';
 
 const PLAIN = 'slinger-plain-clip';
+/** Reaper's Repeater: the splash reaches enemies this close to the target (px). PLACEHOLDER. */
+const SPLASH_PX = 110;
 const CLIPS = new Map<string, SlingerPiece>(SLINGER_KIT.pieces.map((piece) => [piece.id, piece]));
 const TROPHIES = new Map<string, SlingerTrophy>(SLINGER_KIT.trophies.map((trophy) => [trophy.id, trophy]));
 
@@ -262,10 +302,13 @@ export function reloadMoveMult(player: PlayerEntity): number | null {
   return player.usesSkills.passives['slinger.reload-walk-pct'] ?? 0;
 }
 
-/** Regroup's speed layer: > 1 while the window after a big hit is open. */
+/** Regroup's speed layer: > 1 while the window after a big hit is open (and Slip Away's, while it holds). */
 export function regroupSpeedMult(player: PlayerEntity, now: number): number {
   const pct = player.usesSkills.passives['slinger.regroup-speed-pct'] ?? 0;
-  return pct > 0 && getResource(player.tracksCombat, REGROUP_UNTIL) > now ? 1 + pct : 1;
+  const regroup = pct > 0 && getResource(player.tracksCombat, REGROUP_UNTIL) > now ? 1 + pct : 1;
+  // Slip Away (T4 leaf) rides the same layer: written by the Slinger's tick while an enemy is in melee with you.
+  const slip = getResource(player.tracksCombat, SLIP_AWAY_X);
+  return slip > 1 ? regroup * slip : regroup;
 }
 
 function nearEnemies(world: World, player: PlayerEntity, radius: number): { count: number; nearest: number } {
@@ -336,6 +379,8 @@ export function updateSlinger(world: World, player: PlayerEntity, dt: number, no
       rule.switchEarly && rule.clip !== reload.clipId && (rule.clip === PLAIN || loadout.config.rack.includes(rule.clip))
       && conditionsHold(world, player, rule.conditions, now));
     if (switchTo) {
+      // Quick Swap: the rounds you had left come back in the next clip.
+      if (leafPicked(player, QUICK_SWAP)) setResource(cs, SWAP_CARRY, reload.ammo);
       startReloadTimer(world, player, resolveReloadTimeMs(player));
       emitReloadStart(world, player);
     }
@@ -347,7 +392,7 @@ export function updateSlinger(world: World, player: PlayerEntity, dt: number, no
   }
 
   // Siege: a reload that started without a round of ours (early, switch) fires the shell here.
-  if (shellPending(player)) fireShell(world, player);
+  if (shellPending(player)) fireShell(world, player, freshClip(player));
   if (discipline === TRICKSHOT) updateCalledShot(world, player, loadout, now);
 
   // Tracer: a traced target that went to ground stays a legal target.
@@ -360,7 +405,16 @@ export function updateSlinger(world: World, player: PlayerEntity, dt: number, no
   tetherTick(world, player, now);
   rimeTick(world, player, now);
   tickBurns(world, player, dt);
+  aftershockTick(world, player, now);
   sweepChillMarkers(world);
+  // The T4 leaves that stand on the fight: Stakes, Slip Away, Steady Nerve.
+  if (leafPicked(player, STAKES)) stakesTick(world, player, now);
+  const touched = (leafPicked(player, SLIP_AWAY) || leafPicked(player, STEADY_NERVE)) && momentActive(world, player, 'touched', undefined, now);
+  const slip = leafPicked(player, SLIP_AWAY) && touched ? SLIP_AWAY_MULT : 0;
+  if (getResource(cs, SLIP_AWAY_X) !== slip) setResource(cs, SLIP_AWAY_X, slip);
+  if (touched && leafPicked(player, STEADY_NERVE)) steadyNerveTick(player);
+  // Pressure Suit: no debuff lands while you reload.
+  if ((passives['slinger.pressure-suit'] ?? 0) > 0 && reload.reloadingMs > 0) pressureSuitTick(player);
   // Entrenched: standing still ramps fire rate and the shell.
   if (discipline === SIEGE && specializationOf(player) === ENTRENCHED) entrenchTick(player, now);
   else if (getResource(cs, 'slinger.entrench') > 0) clearEntrench(player);
@@ -393,11 +447,22 @@ export function updateSlinger(world: World, player: PlayerEntity, dt: number, no
   // Heatsink: Recovery rises with the Heat while no enemy is near you.
   const heatsink = passives['slinger.heatsink'] ?? 0;
   if (heatsink > 0 && count === 0) factor *= 1 + heatsink * heatStacks(player);
+  // Vigil: Recovery rises with the number of enemies in the fight while none is near you.
+  const vigil = passives['slinger.vigil'] ?? 0;
+  if (vigil > 0 && count === 0) factor *= 1 + vigil * fightSize(world, player);
+  // Ballast: Recovery rises for each different debuff on you.
+  const ballast = passives['slinger.ballast'] ?? 0;
+  if (ballast > 0) factor *= 1 + ballast * distinctPlayerDebuffs(player);
   // Warm Hands: the Chill on you does not build while you reload.
   if ((passives['slinger.warm-hands'] ?? 0) > 0) holdChill(player, reload.reloadingMs > 0);
   if (getResource(cs, SLINGER_RECOVERY_X) !== factor) setResource(cs, SLINGER_RECOVERY_X, factor);
 
   syncDisciplineHud(world, player, discipline, now);
+}
+
+/** Fresh Powder: the shell takes the clip being loaded, not the one fired. */
+function freshClip(player: PlayerEntity): string | undefined {
+  return leafPicked(player, FRESH_POWDER) ? player.usesReload!.nextClipId : undefined;
 }
 
 /** The Chill on the player, or any slow (Thaw). */
@@ -471,13 +536,6 @@ function shove(world: World, from: { x: number; y: number }, monster: MonsterEnt
   applyKnockback(world, monster.isMonster.id, from, distance);
 }
 
-/** Buckshot's pellets stop a charging enemy in its tracks. */
-function stopCharge(world: World, monster: MonsterEntity): void {
-  if ((monster.controlsMonster.chargeRemainingMs ?? 0) <= 0) return;
-  monster.controlsMonster.chargeRemainingMs = 0;
-  stopEntity(world, monster);
-}
-
 /** A live barrier or shield on the target (the mirror the client reads is refreshed every tick). */
 function hasBarrier(target: MonsterEntity): boolean {
   return (target.hasStatus.enemyBarrier?.amount ?? 0) > 0;
@@ -518,6 +576,7 @@ function applyClipEffect(
   hitDamage: number,
   now: number,
   boost: number,
+  iceArmor = false,
 ): void {
   const passives = player.usesSkills.passives;
   const p = boostedParams(loadout, clip, boost);
@@ -582,16 +641,28 @@ function applyClipEffect(
     tetherHit(player, target, p['rounds'] ?? 3, p['windowMs'] ?? 2500, p['tetherMs'] ?? 2000, now);
   } else if (clip === 'slinger-frost') {
     // Each round chills (slower attacks and movement) up to a cap; never freezes.
-    const chill = applyStatusEffect(target.tracksCombat, {
-      id: CHILL_STATUS_ID, maxStacks: p['maxChill'] ?? 5, remainingMs: p['chillMs'] ?? 4000, refreshable: true, sourceId: player.isPlayer.id,
-      data: { totalMs: p['chillMs'] ?? 4000, moveSlowPerStack: p['movePerChill'] ?? 0.06, attackSlowPerStack: p['attackPerChill'] ?? 0.05 },
-    });
+    // Frost II: it builds faster, and Ice Armor takes more of it.
+    const builds = Math.max(1, Math.round((p['chillPerRound'] ?? 1) * (iceArmor || hasIceArmor(target) ? p['iceArmorMult'] ?? 1 : 1)));
+    let chill = getStatusEffect(target.tracksCombat, CHILL_STATUS_ID);
+    for (let i = 0; i < builds; i++) {
+      chill = applyStatusEffect(target.tracksCombat, {
+        id: CHILL_STATUS_ID, maxStacks: p['maxChill'] ?? 5, remainingMs: p['chillMs'] ?? 4000, refreshable: true, sourceId: player.isPlayer.id,
+        data: { totalMs: p['chillMs'] ?? 4000, moveSlowPerStack: p['movePerChill'] ?? 0.06, attackSlowPerStack: p['attackPerChill'] ?? 0.05 },
+      });
+    }
+    if (!chill) return;
     chill.data['moveSlowPerStack'] = Math.max(chill.data['moveSlowPerStack'] ?? 0, p['movePerChill'] ?? 0.06);
     chill.data['attackSlowPerStack'] = Math.max(chill.data['attackSlowPerStack'] ?? 0, p['attackPerChill'] ?? 0.05);
     attachMarker(world, target, 'hasChill');
   } else if (clip === 'slinger-incendiary') {
     // Each round sets the target burning up to a cap; it never detonates.
     applyBurn(player, target, hitDamage * (p['burnShare'] ?? 0.15), 1, p['maxBurn'] ?? 5, p['burnMs'] ?? 4000, p['tickMs'] ?? 1000);
+  } else if (clip === 'slinger-thermite') {
+    // The same burn, and it eats shells: obsidian and ice take it double.
+    applyBurn(player, target, hitDamage * (p['burnShare'] ?? 0.15), 1, p['maxBurn'] ?? 5, p['burnMs'] ?? 4000, p['tickMs'] ?? 1000, { drain: p['shellDrain'] ?? 2, mult: p['shellMult'] ?? 2 });
+  } else if (clip === 'slinger-hallowed') {
+    // Risen enemies rise weaker. STAND-IN: one struck by these rounds is weakened (the corpse has no weakness field).
+    if (target.isRaised) weakenRisen(world, target, p['weakenPct'] ?? 0.3);
   }
 }
 
@@ -619,6 +690,8 @@ function applyTrophy(world: World, player: PlayerEntity, loadout: Loadout, targe
     if ((t['crackFraction'] ?? 0) > 0) for (const monster of [target, ...around]) applyFramePlatingShred(player, monster, t['crackFraction']!, t['crackMs'] ?? 6000);
     if ((t['knockdownMs'] ?? 0) > 0) for (const monster of [target, ...around]) if (!monsterIgnoresControl(monster)) applyStun(monster.tracksCombat, t['knockdownMs']!, player.isPlayer.id);
     if (around.length > 0) applyPlayerAoeTo(world, player, around, hitDamage * (t['blastPct'] ?? 0.8), 'player', {}, {});
+    // Quake Round IV: the blast leaves aftershocks.
+    if ((t['aftershocks'] ?? 0) > 0) queueAftershocks(player, at, t['radius'] ?? 110, t['aftershocks']!, hitDamage * (t['aftershockPct'] ?? 0.35), t['aftershockMs'] ?? 700, now);
   } else if (trophy.id === 'slinger-relic-cave') {
     const nearestTo = (from: { x: number; y: number }) => (a: MonsterEntity, b: MonsterEntity) =>
       Math.hypot(a.hasPosition.current.x - from.x, a.hasPosition.current.y - from.y) - Math.hypot(b.hasPosition.current.x - from.x, b.hasPosition.current.y - from.y);
@@ -645,6 +718,10 @@ function applyTrophy(world: World, player: PlayerEntity, loadout: Loadout, targe
     for (const monster of [target, ...playerAoeTargets(world, player, at, t['radius'] ?? 140, target.isMonster.id)]) {
       if (monster.hasHealth.hp > 0) applyBurn(player, monster, hitDamage * (t['burnShare'] ?? 0.2), t['stacks'] ?? 2, 5, 4000, 1000);
     }
+  } else if (trophy.id === 'slinger-relic-trench') {
+    // Harpoon Round: for a few seconds it can't get away. STAND-IN: held as Tether holds (a root when it tries to flee, dive or burrow) and traced, so it cannot hide.
+    tetherFor(player, target, t['harpoonMs'] ?? 4000, now);
+    traceTarget(player, target, now + (t['harpoonMs'] ?? 4000));
   }
 }
 
@@ -694,6 +771,12 @@ export function registerSlinger(): void {
       const now = Date.now();
       player.usesReload!.clipId = chooseClip(world, player, loadout, now);
       if (disciplineOf(player) === GUNSLINGER) setString(player.tracksCombat, TWIN_CLIP, chooseTwinClip(world, player, loadout, player.usesReload!.clipId, now));
+      // Quick Swap: the rounds a switch reload threw away come back with this clip.
+      const carry = getResource(player.tracksCombat, SWAP_CARRY);
+      if (carry > 0) {
+        setResource(player.tracksCombat, SWAP_CARRY, 0);
+        if (leafPicked(player, QUICK_SWAP)) player.usesReload!.ammo += carry;
+      }
       // Fan the Hammer: after every reload spin the first rounds fire at triple rate.
       if (disciplineOf(player) === GUNSLINGER && specializationOf(player) === FAN_THE_HAMMER) startFan(player);
     },
@@ -728,7 +811,7 @@ export function registerSlinger(): void {
   });
 
   // Damage: typed rounds trade raw damage for their effect; the gun's lines and the last round shape it.
-  registerCombatListener('onHit', (ctx) => {
+  registerCombatListener('onHit', (ctx, world) => {
     if (!isSlingerShot(ctx)) return;
     const player = ctx.attacker as PlayerEntity;
     const target = ctx.defender as MonsterEntity;
@@ -749,8 +832,20 @@ export function registerSlinger(): void {
     mult *= 1 + (passives['slinger.far-pct'] ?? 0) * Math.min(1, dist / FAR_FULL_PX); // Hunting Rifle: the farther the harder
     mult *= 1 + (passives['slinger.damage-pct'] ?? 0); // Glass Duster
     if (clip === 'slinger-buckshot') mult *= 1 + (p['closeBonus'] ?? 0) * (1 - Math.min(1, dist / (p['closePx'] ?? 160))); // harder up close
-    if (clip === 'slinger-hollow-point' && hpShare(target) < (p['belowHp'] ?? 0.5)) mult *= 1 + (p['bonusPct'] ?? 0.5);
+    if (clip === 'slinger-hollow-point' && hpShare(target) < (p['belowHp'] ?? 0.5)) {
+      // Hollow-point II: the bonus doubles below a third.
+      const low = (p['lowHp'] ?? 0) > 0 && hpShare(target) < p['lowHp']!;
+      mult *= 1 + (p['bonusPct'] ?? 0.5) * (low ? p['lowMult'] ?? 1 : 1);
+    }
     if (clip === 'slinger-shellbreaker' && hasBarrier(target)) mult *= p['barrierMult'] ?? 2;
+    if (clip === 'slinger-frost') ctx.metadata['slingerIceArmor'] = hasIceArmor(target); // before the barrier soaks the round
+    if (clip === 'slinger-exploit') mult *= 1 + (p['perDebuff'] ?? 0.15) * Math.min(p['maxDebuffs'] ?? 6, distinctMonsterDebuffs(target)); // each different debuff
+    if (clip === 'slinger-hallowed' && target.isRaised) mult *= p['risenMult'] ?? 2; // risen enemies take double
+    // Tracer III: rounds on a traced target hit harder while it flees or hides.
+    const fleeHit = clipParams(loadout, 'slinger-tracer')['fleeHitPct'] ?? 0;
+    if (fleeHit > 0 && isTracedBy(target, player.isPlayer.id, attackNow(ctx)) && (target.isConcealed || isGettingAway(player, target))) mult *= 1 + fleeHit;
+    const pressure = passives['slinger.pressure-pct'] ?? 0; // Pressure Rifle: the more HP the target has left
+    if (pressure > 0) mult *= 1 + pressure * hpShare(target);
     if (clip === 'slinger-seeker' && target.isConcealed) mult *= p['hiddenPct'] ?? 0.7; // a target found in cover: lighter
     const cold = passives['slinger.cold-pct'] ?? 0; // Frostlock Rifle: chilled, slowed or rooted enemies
     if (cold > 0 && isColdTarget(target)) mult *= 1 + cold;
@@ -763,11 +858,27 @@ export function registerSlinger(): void {
       if (getStatusEffect(target.tracksCombat, SLINGER_VENOM_ID)) mult *= 1 + (passives['slinger.last-vs-poisoned-pct'] ?? 0); // Snakebite
       if (ctx.metadata['slingerCalled'] === true) mult *= CALLED_SHOT_MULT; // Trickshot
       if (ctx.metadata['slingerHeld'] === true) mult *= DEADEYE_HELD_MULT; // Deadeye: the held round
+      // Improvise: the loaded clip does nothing to the called shot's target, so the shot makes up for it.
+      if (ctx.metadata['slingerCalled'] === true && leafPicked(player, IMPROVISE) && clipDoesNothing(target, clip)) mult *= IMPROVISE_MULT;
+      // Toll Round: harder for every enemy in the fight.
+      if (loadout.trophy?.id === 'slinger-relic-graveyard') {
+        const toll = trophyParams(loadout);
+        mult *= 1 + (toll['perEnemy'] ?? 0.1) * Math.min(toll['maxEnemies'] ?? 10, fightSize(world, player));
+      }
       if (loadout.trophy?.id === 'slinger-relic-jungle') mult *= 1 + (trophyParams(loadout)['farPctPer100px'] ?? 0) * (dist / 100); // Hunter's Round
     }
     if (mult !== 1) {
       ctx.damage = Math.max(1, Math.round(ctx.damage * mult));
       if (mult > 1 && ctx.metadata['empoweredMultiplier'] === undefined) ctx.metadata['empoweredMultiplier'] = mult;
+    }
+    // Shellbreaker II: a barrier breaks in a few rounds (enough damage to take it down in one blow, so Ice Armor shatters).
+    const breakAfter = clip === 'slinger-shellbreaker' ? p['breakAfterRounds'] ?? 0 : 0;
+    if (breakAfter > 0) {
+      const key = 'slinger.sb.rounds.' + player.isPlayer.id;
+      const barrier = target.hasStatus.enemyBarrier?.amount ?? 0;
+      const rounds = barrier > 0 ? getResource(target.tracksCombat, key) + 1 : 0;
+      setResource(target.tracksCombat, key, rounds >= breakAfter ? 0 : rounds);
+      if (barrier > 0 && rounds >= breakAfter) ctx.damage = Math.max(ctx.damage, Math.ceil(barrier + target.mitigatesDamage.plating) + 1);
     }
     // Bounty Round: the last round finishes a target below a threshold (a threshold, not an on-kill).
     if (last && loadout.trophy?.id === 'slinger-relic-desert' && hpShare(target) < (trophyParams(loadout)['threshold'] ?? 0.15)) {
@@ -799,9 +910,16 @@ export function registerSlinger(): void {
       if (spec === DEATHMARK && target.hasHealth.hp > 0) markDeathmark(player, target);
     }
 
+    // Reaper's Repeater: each round splashes a share of its damage to the enemies around the target.
+    const splash = player.usesSkills.passives['slinger.splash-pct'] ?? 0;
+    if (splash > 0 && hitDamage > 0) {
+      const around = playerAoeTargets(world, player, target.hasPosition.current, SPLASH_PX, target.isMonster.id);
+      if (around.length > 0) applyPlayerAoeTo(world, player, around, hitDamage * splash, 'player', {}, {});
+    }
+
     if (target.hasHealth.hp > 0 && hitDamage > 0) {
       const boost = crossfireBoost(player, target, clip, now, spec);
-      applyClipEffect(world, player, loadout, target, clip, hitDamage, now, boost);
+      applyClipEffect(world, player, loadout, target, clip, hitDamage, now, boost, ctx.metadata['slingerIceArmor'] === true);
 
       // Gun Kata: an enemy in melee with you takes both guns at once.
       if (spec === GUN_KATA && target.hasHealth.hp > 0) {
@@ -825,9 +943,9 @@ export function registerSlinger(): void {
     // Siege: the round that emptied the clip has banked; the reload's shell fires now. Rolling Fire fires a small one every few rounds.
     if (discipline === SIEGE) {
       if (spec === ROLLING_FIRE) {
-        if (round % ROLLING_EVERY_ROUNDS === 0 || last) fireShell(world, player);
+        if (round % ROLLING_EVERY_ROUNDS === 0 || last) fireShell(world, player, freshClip(player));
       } else if (shellPending(player)) {
-        fireShell(world, player);
+        fireShell(world, player, freshClip(player));
       }
     }
   });
@@ -839,6 +957,14 @@ export function registerSlinger(): void {
     const reload = player.usesReload;
     if (!reload || reload.reloadingMs <= 0) return;
     const passives = player.usesSkills.passives;
+    // The T4 leaves for the caught-reloading window: Light Hands, Bunker, Cool Reload; and Hallowed Ground.
+    if (leafPicked(player, LIGHT_HANDS) && lightHandsHit(player, LIGHT_HANDS_EVERY_MS, attackNow(ctx))) ctx.damage = Math.max(1, Math.round(ctx.damage * LIGHT_HANDS_MULT));
+    if (leafPicked(player, BUNKER)) ctx.damage = Math.max(1, Math.round(ctx.damage * BUNKER_MULT));
+    if (leafPicked(player, COOL_RELOAD) && (ctx.metadata['empoweredAttack'] === true || typeof ctx.metadata['abilityName'] === 'string')) {
+      ctx.damage = Math.max(1, Math.round(ctx.damage * COOL_RELOAD_MULT));
+    }
+    const hallowedGround = passives['slinger.hallowed-ground'] ?? 0;
+    if (hallowedGround > 0 && (ctx.attacker as MonsterEntity).isRaised) ctx.damage = Math.max(1, Math.round(ctx.damage * hallowedGround));
     const hunker = passives['slinger.hunker'] ?? 0;
     if (hunker > 1) {
       const extra = player.mitigatesDamage.plating * (hunker - 1) * (1 - player.mitigatesDamage.damageReduction);

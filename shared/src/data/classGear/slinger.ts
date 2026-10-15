@@ -263,7 +263,8 @@ export const SLINGER_GEAR: ClassGearDef = {
       cost: { purple: 270 }, stats: { attack: 258 }, attacksPerSecond: 1.10, tier: 4,
       icon: 'items/weapons/plague-axe.png',
       description: 'Each round splashes a share of its damage to the enemies around the target.',
-      mechanicEffects: {},
+      // PLACEHOLDER: clip, reload and the splash share are not in the bible.
+      mechanicEffects: { 'reload.max-ammo': 8, 'reload.reload-time-ms': 1800, 'slinger.splash-pct': 0.3 },
     },
     // The Swamp's Snakebite Pistol moves here.
     {
@@ -280,7 +281,8 @@ export const SLINGER_GEAR: ClassGearDef = {
       cost: { green: 270 }, stats: { attack: 257 }, attacksPerSecond: 1.15, tier: 4,
       icon: 'items/weapons/abyssal-axe.png',
       description: 'Rounds hit harder the more HP the target has left.',
-      mechanicEffects: {},
+      // PLACEHOLDER: clip, reload and the bonus are not in the bible.
+      mechanicEffects: { 'reload.max-ammo': 6, 'reload.reload-time-ms': 2000, 'slinger.pressure-pct': 0.5 },
     },
     // The Cave's Drum Gun moves here.
     {
@@ -345,10 +347,10 @@ export const SLINGER_GEAR: ClassGearDef = {
     'tundra-charm-t4': { name: 'Thaw', text: 'Recovery doubles while you are chilled or slowed.', effects: { 'slinger.thaw': 2 } },
     'volcanic-vest-t4': { name: 'Asbestos Coat', text: 'The extra damage from the Heat does not apply to you while you reload.', effects: { 'slinger.asbestos': 1 } },
     'volcanic-charm-t4': { name: 'Heatsink', text: 'Recovery rises with the Heat while no enemy is near you.', effects: { 'slinger.heatsink': 0.1 } },
-    'graveyard-vest-t4': { name: 'Hallowed Ground', text: 'While you reload, risen enemies around you deal half damage.', effects: {} },
-    'graveyard-charm-t4': { name: 'Vigil', text: 'Recovery rises with the number of enemies in the fight while none is near you.', effects: {} },
-    'trench-vest-t4': { name: 'Pressure Suit', text: 'Debuffs cannot land on you while you reload.', effects: {} },
-    'trench-charm-t4': { name: 'Ballast', text: 'Recovery rises for each debuff on you.', effects: {} },
+    'graveyard-vest-t4': { name: 'Hallowed Ground', text: 'While you reload, risen enemies around you deal half damage.', effects: { 'slinger.hallowed-ground': 0.5 } },
+    'graveyard-charm-t4': { name: 'Vigil', text: 'Recovery rises with the number of enemies in the fight while none is near you.', effects: { 'slinger.vigil': 0.1 } },
+    'trench-vest-t4': { name: 'Pressure Suit', text: 'Debuffs cannot land on you while you reload.', effects: { 'slinger.pressure-suit': 1 } },
+    'trench-charm-t4': { name: 'Ballast', text: 'Recovery rises for each debuff on you.', effects: { 'slinger.ballast': 0.1 } },
   },
   // Retired-biome lines on the receiving biome's second base (`<id>-b`).
   // Copied from the origin's last tier: Forest and Plains at T2, Swamp and Cave at T3.

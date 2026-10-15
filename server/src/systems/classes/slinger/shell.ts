@@ -79,8 +79,11 @@ export function shellPending(player: PlayerEntity): boolean {
   return getResource(player.tracksCombat, PENDING) > 0;
 }
 
-/** Fire the shell at the banked position. Returns the victims struck (empty when nothing was banked). */
-export function fireShell(world: World, player: PlayerEntity): MonsterEntity[] {
+/**
+ * Fire the shell at the banked position. Returns the victims struck (empty when nothing was banked).
+ * `asClip`: Fresh Powder makes the shell take that clip's property instead of the clip that fed it most.
+ */
+export function fireShell(world: World, player: PlayerEntity, asClip?: string): MonsterEntity[] {
   const cs = player.tracksCombat;
   setResource(cs, PENDING, 0);
   const spec = player.usesSkills.specializationId;
@@ -99,6 +102,7 @@ export function fireShell(world: World, player: PlayerEntity): MonsterEntity[] {
   const center = { x: getResource(cs, BANK_X), y: getResource(cs, BANK_Y) };
   setResource(cs, BANK, 0);
 
+  if (asClip) dominant = asClip;
   const cluster = dominant === 'slinger-scatter' || dominant === 'slinger-buckshot';
   // Deathmark: the shell bursts on every marked enemy at once (the marks say where it lands); no marks left, it falls where the last round did.
   const marked = spec === DEATHMARK ? markedBy(world, player) : [];
