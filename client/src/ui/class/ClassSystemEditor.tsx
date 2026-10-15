@@ -1,10 +1,12 @@
 import type { ClassScreenView } from '@mmo-idle/shared';
+import { OrderEditor } from './OrderEditor';
 
 /**
- * The class's own editor (the Order, Response rules, and the rest).
- * Each class track replaces this file. Until then the shell only names the system.
+ * The class's own editor. The Striker renders the Order; each other class
+ * track replaces the placeholder for its own system.
  */
 export function ClassSystemEditor({ view }: { view: ClassScreenView }) {
+  if (view.systemKind === 'order') return <OrderEditor view={view} />;
   return (
     <p className="class-panel__editor">
       {`The ${view.systemName} editor arrives with this class's track.`}

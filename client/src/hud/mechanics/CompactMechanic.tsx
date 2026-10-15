@@ -1,3 +1,5 @@
+import { OrderStrip } from '../OrderStrip';
+import { useOrderView } from '../../ui/class/useOrderView';
 import type { MechanicViewModel } from './types';
 
 const SUMMONER_COMPACT_LABELS = {
@@ -47,6 +49,10 @@ function compactState(model: MechanicViewModel): { label: string; value: string;
 
 /** Existing one-line mobile presentation, intentionally separate from desktop widgets. */
 export function CompactMechanic({ model }: { model: MechanicViewModel }) {
+  const order = useOrderView();
+  if (model.kind === 'cadence' && order) {
+    return <OrderStrip order={order} count={model.count} armed={model.armed} compact />;
+  }
   const state = compactState(model);
   const tone = model.kind === 'dot'
     ? model.element
