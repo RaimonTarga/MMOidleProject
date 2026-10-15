@@ -179,7 +179,7 @@ for (const beat of route) {
 }
 
 // ── Every class root gets the opening, then the seal route or its own builder ─
-assert(Object.keys(TUTORIAL_CLASS_BEATS).join(',') === 'cadence-root,cooldown-root', 'the Striker and Squire builders are registered');
+assert(Object.keys(TUTORIAL_CLASS_BEATS).join(',') === 'cadence-root,cooldown-root,summoner-root', 'the Striker, Squire and Conduit builders are registered');
 assert(CLASS_ROOTS.length === 6, `six class roots, found ${CLASS_ROOTS.map((node) => node.id).join(',')}`);
 
 function sameRoute(script: TutorialScript): void {
@@ -255,12 +255,73 @@ function assertStrikerTail(script: TutorialScript): void {
   assert(farmGate(mountain, 'mountain') === 2, 'the Mountain farm ends at Coil\'s lesson');
 }
 
+/** The Conduit tail: seal ids, in seal order, with the specialist beats inserted. */
+const CONDUIT_TAIL = [
+  'open:plains',
+  'conduit:warden',
+  'boss:plains',
+  'zone:forest',
+  'conduit:thornrunner',
+  'zone:swamp',
+  'conduit:bile-spitter',
+  'zone:cave',
+  'conduit:cave-brute',
+  'conduit:mountain',
+  'boss:mountain',
+  'farewell',
+];
+
+function assertConduitTail(script: TutorialScript): void {
+  assert(script.beats.length === TUTORIAL_OPENING.beats.length + CONDUIT_TAIL.length,
+    `${script.id}: opening plus the Conduit tail`);
+  script.beats.slice(0, TUTORIAL_OPENING.beats.length).forEach((beat, i) => {
+    assert(beat === TUTORIAL_OPENING.beats[i], `${script.id}: opening beat ${beat.id} was replaced`);
+  });
+  const tail = script.beats.slice(TUTORIAL_OPENING.beats.length);
+  assert(tail.map((beat) => beat.id).join(',') === CONDUIT_TAIL.join(','),
+    `${script.id}: tail is ${tail.map((beat) => beat.id).join(',')}`);
+  const say = (id: string) => tail.find((beat) => beat.id === id)?.say ?? '';
+  assert(say('open:plains').includes('Command') && say('open:plains').includes('Thralls') && say('open:plains').includes('Recall'),
+    'the plains open beat teaches Command, the Thralls and Recall');
+  assert(say('conduit:warden').includes('Plains Warden') && say('conduit:warden').includes('taunt'),
+    'the Plains Warden has its own beat');
+  assert(say('zone:forest').includes('Soul') && say('zone:forest').includes('relic'),
+    'the forest beat opens on the Soul');
+  assert(say('conduit:thornrunner').includes('Thornrunner') && say('conduit:bile-spitter').includes('Bile Spitter'),
+    'Thornrunner and Bile Spitter have their own beats');
+  assert(say('conduit:cave-brute').includes('Cave Brute') && say('boss:mountain').includes('Ridge Marksman'),
+    'Cave Brute and Ridge Marksman are named');
+  assert(tail[tail.length - 1].say === TUTORIAL_FAREWELL[0], 'the Conduit route still ends on the farewell line');
+  const plainsBoss = tail.find((beat) => beat.id === 'boss:plains');
+  const swamp = tail.find((beat) => beat.id === 'zone:swamp');
+  const open = tail.find((beat) => beat.id === 'open:plains');
+  assert(open?.teaches?.join(',') === 'zones', 'the Plains open still teaches zones');
+  assert(plainsBoss?.teaches?.join(',') === 'seals,boss-altar', 'the first seal still teaches seals and the altar');
+  assert(swamp?.teaches?.join(',') === 'poison', 'poison is still introduced in the Swamp');
+  for (const [approach, specialist, biome] of [
+    ['open:plains', 'conduit:warden', 'plains'],
+    ['zone:forest', 'conduit:thornrunner', 'forest'],
+    ['zone:swamp', 'conduit:bile-spitter', 'swamp'],
+    ['zone:cave', 'conduit:cave-brute', 'cave'],
+  ] as const) {
+    const approachBeat = tail.find((beat) => beat.id === approach);
+    const specialistBeat = tail.find((beat) => beat.id === specialist);
+    if (!approachBeat || !specialistBeat) throw new Error(`${approach} and ${specialist} exist`);
+    assert(farmGate(approachBeat, biome) === 2, `${approach} ends at the lesson`);
+    assert(farmGate(specialistBeat, biome) === biomeLevelCap(1, biome), `${specialist} carries on to the tier cap`);
+  }
+  const mountain = tail.find((beat) => beat.id === 'conduit:mountain');
+  if (!mountain) throw new Error('the Mountain farm is missing');
+  assert(farmGate(mountain, 'mountain') === 2, 'the Mountain farm ends at the Ridge Marksman lesson');
+}
+
 for (const root of CLASS_ROOTS) {
   const script = tutorialScriptFor(root.id);
   assert(script.id === `tutorial-${root.name.toLowerCase()}`, `${root.id}: id ${script.id}`);
   assert(script.classRoot === root.id, `${root.id}: class root is stored`);
   assert(tutorialScriptFor(root.id) === script, `${root.id}: the script is cached`);
   if (root.id === 'cadence-root') assertStrikerTail(script);
+  else if (root.id === 'summoner-root') assertConduitTail(script);
   else if (TUTORIAL_CLASS_BEATS[root.id]) {
     script.beats.slice(0, TUTORIAL_OPENING.beats.length).forEach((beat, i) => {
       assert(beat === TUTORIAL_OPENING.beats[i], `${script.id}: opening beat ${beat.id} was replaced`);
