@@ -3,6 +3,7 @@ import type { TutorialBeat, TutorialScript } from '../types';
 import { TUTORIAL_OPENING } from './opening';
 import { buildConduitBeats } from './conduit';
 import { buildSealRouteBeats } from './sealRoute';
+import { buildSlingerBeats } from './slinger';
 import { buildSquireBeats } from './squire';
 import { buildStrikerBeats } from './striker';
 
@@ -24,6 +25,7 @@ export const TUTORIAL_CLASS_BEATS: Partial<Record<string, () => TutorialBeat[]>>
   'cadence-root': buildStrikerBeats,
   'cooldown-root': buildSquireBeats,
   'summoner-root': buildConduitBeats,
+  'reload-root': buildSlingerBeats,
 };
 
 /**

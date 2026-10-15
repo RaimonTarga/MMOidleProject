@@ -180,6 +180,8 @@ for (const beat of route) {
 
 // ── Every class root gets the opening, then the seal route or its own builder ─
 assert(Object.keys(TUTORIAL_CLASS_BEATS).join(',') === 'cadence-root,cooldown-root,summoner-root', 'the Striker, Squire and Conduit builders are registered');
+assert(Object.keys(TUTORIAL_CLASS_BEATS).join(',') === 'cadence-root,cooldown-root,reload-root',
+  'the Striker, Squire and Slinger builders are registered');
 assert(CLASS_ROOTS.length === 6, `six class roots, found ${CLASS_ROOTS.map((node) => node.id).join(',')}`);
 
 function sameRoute(script: TutorialScript): void {
@@ -267,6 +269,18 @@ const CONDUIT_TAIL = [
   'zone:cave',
   'conduit:cave-brute',
   'conduit:mountain',
+/** The Slinger tail: seal ids, in seal order, with the clip beats inserted. */
+const SLINGER_TAIL = [
+  'open:plains',
+  'slinger:scatter',
+  'boss:plains',
+  'zone:forest',
+  'slinger:snare',
+  'zone:swamp',
+  'slinger:venom',
+  'zone:cave',
+  'slinger:breaching',
+  'slinger:mountain',
   'boss:mountain',
   'farewell',
 ];
@@ -274,6 +288,9 @@ const CONDUIT_TAIL = [
 function assertConduitTail(script: TutorialScript): void {
   assert(script.beats.length === TUTORIAL_OPENING.beats.length + CONDUIT_TAIL.length,
     `${script.id}: opening plus the Conduit tail`);
+function assertSlingerTail(script: TutorialScript): void {
+  assert(script.beats.length === TUTORIAL_OPENING.beats.length + SLINGER_TAIL.length,
+    `${script.id}: opening plus the Slinger tail`);
   script.beats.slice(0, TUTORIAL_OPENING.beats.length).forEach((beat, i) => {
     assert(beat === TUTORIAL_OPENING.beats[i], `${script.id}: opening beat ${beat.id} was replaced`);
   });
@@ -313,6 +330,36 @@ function assertConduitTail(script: TutorialScript): void {
   const mountain = tail.find((beat) => beat.id === 'conduit:mountain');
   if (!mountain) throw new Error('the Mountain farm is missing');
   assert(farmGate(mountain, 'mountain') === 2, 'the Mountain farm ends at the Ridge Marksman lesson');
+  assert(tail.map((beat) => beat.id).join(',') === SLINGER_TAIL.join(','),
+    `${script.id}: tail is ${tail.map((beat) => beat.id).join(',')}`);
+  const say = (id: string) => tail.find((beat) => beat.id === id)?.say ?? '';
+  assert(say('open:plains').includes('plain pistol') && say('open:plains').includes('ammo ring'),
+    'the plains open beat teaches the pistol and the ring');
+  assert(say('open:plains').includes('stand still while you reload'), 'the reload is stationary');
+  assert(say('slinger:scatter').includes('Scatter') && say('slinger:scatter').includes('three or more'),
+    'Scatter has its own beat and its default rule');
+  assert(say('boss:plains').includes('plain last round'), 'the first boss is still a plain last round');
+  assert(say('zone:forest').includes('Stampede Round'), 'the forest beat opens on Stampede Round');
+  assert(say('slinger:snare').includes('Snare') && say('slinger:venom').includes('Venom'),
+    'Snare and Venom have their own beats');
+  assert(say('slinger:breaching').includes('Breaching') && say('boss:mountain').includes('Stopping'),
+    'Breaching and Stopping name the clip');
+  assert(tail[tail.length - 1].say === TUTORIAL_FAREWELL[0], 'the Slinger route still ends on the farewell line');
+  for (const [approach, clip, biome] of [
+    ['open:plains', 'slinger:scatter', 'plains'],
+    ['zone:forest', 'slinger:snare', 'forest'],
+    ['zone:swamp', 'slinger:venom', 'swamp'],
+    ['zone:cave', 'slinger:breaching', 'cave'],
+  ] as const) {
+    const approachBeat = tail.find((beat) => beat.id === approach);
+    const clipBeat = tail.find((beat) => beat.id === clip);
+    if (!approachBeat || !clipBeat) throw new Error(`${approach} and ${clip} exist`);
+    assert(farmGate(approachBeat, biome) === 2, `${approach} ends at the lesson`);
+    assert(farmGate(clipBeat, biome) === biomeLevelCap(1, biome), `${clip} carries on to the tier cap`);
+  }
+  const mountain = tail.find((beat) => beat.id === 'slinger:mountain');
+  if (!mountain) throw new Error('the Mountain farm is missing');
+  assert(farmGate(mountain, 'mountain') === 2, 'the Mountain farm ends at Stopping\'s lesson');
 }
 
 for (const root of CLASS_ROOTS) {
@@ -322,6 +369,7 @@ for (const root of CLASS_ROOTS) {
   assert(tutorialScriptFor(root.id) === script, `${root.id}: the script is cached`);
   if (root.id === 'cadence-root') assertStrikerTail(script);
   else if (root.id === 'summoner-root') assertConduitTail(script);
+  else if (root.id === 'reload-root') assertSlingerTail(script);
   else if (TUTORIAL_CLASS_BEATS[root.id]) {
     script.beats.slice(0, TUTORIAL_OPENING.beats.length).forEach((beat, i) => {
       assert(beat === TUTORIAL_OPENING.beats[i], `${script.id}: opening beat ${beat.id} was replaced`);

@@ -1,6 +1,7 @@
 import { SKILL_TREE } from "@mmo-idle/shared";
 import type { Route } from "../route/types";
 import { CONDUIT_T1_ID, conduitT1Route } from "./conduitT1";
+import { SLINGER_T1_ID, slingerT1Route } from "./slingerT1";
 import { SQUIRE_T1_ID, squireT1Route } from "./squireT1";
 import { DEFAULT_SMOKE_CLASS, SMOKE_T1_ID, smokeT1Route } from "./smokeT1";
 import { STRIKER_T1_ID, strikerT1Route } from "./strikerT1";
@@ -26,11 +27,13 @@ const SMOKE_ROUTE = smokeT1Route(classRootFor(DEFAULT_SMOKE_CLASS));
 const STRIKER_ROUTE = strikerT1Route();
 const SQUIRE_ROUTE = squireT1Route();
 const CONDUIT_ROUTE = conduitT1Route();
+const SLINGER_ROUTE = slingerT1Route();
 export const ROUTES = new Map<string, Route>([
   [SMOKE_ROUTE.id, SMOKE_ROUTE],
   [STRIKER_ROUTE.id, STRIKER_ROUTE],
   [SQUIRE_ROUTE.id, SQUIRE_ROUTE],
   [CONDUIT_ROUTE.id, CONDUIT_ROUTE],
+  [SLINGER_ROUTE.id, SLINGER_ROUTE],
 ]);
 
 /**
@@ -74,6 +77,7 @@ export function isClassAgnosticRouteId(id: string): boolean {
  * need `--controlled=false`.
  */
 export const CONTROLLED_ROUTE_IDS: readonly string[] = [SMOKE_T1_ID, STRIKER_T1_ID, SQUIRE_T1_ID, CONDUIT_T1_ID];
+export const CONTROLLED_ROUTE_IDS: readonly string[] = [SMOKE_T1_ID, STRIKER_T1_ID, SQUIRE_T1_ID, SLINGER_T1_ID];
 
 export function isControlledRouteId(id: string): boolean {
   return CONTROLLED_ROUTE_IDS.includes(id);
