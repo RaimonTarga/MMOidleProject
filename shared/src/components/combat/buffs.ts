@@ -136,6 +136,8 @@ export const BUFF_IDS = [
   // labels and colours its own (see `classes/shared/frameLoop.ts`).
   'frame-window',   // Light/Balanced — the timed window the mechanic opened
   'frame-charge',   // Heavy/Balanced — the bank, counting toward its cap
+  // The Striker's Order (class-first build plan CS.1).
+  'striker-focus',  // the opener's haste, until the finisher
 ] as const;
 
 export type BuffId = typeof BUFF_IDS[number];

@@ -209,6 +209,8 @@ export function auditStatusRegistry(root: string = AUDIT_DEFAULT_ROOT) {
       add('stun-immune', `server/src/systems/combat/status/stun.ts:65; ${loc(node)}`, who, 'no');
     }
     if (api === 'applyClassDotStack') add('dot', `server/src/systems/classes/archetypes/dot/dotPrototype.ts:130; ${loc(node)}`, 'monster', 'no');
+    // The Striker's bleed records (Rend, Festering Cut's rot): the id is the fourth argument.
+    if (api === 'applyBleed') for (const id of strings(node.arguments[3])) add(id, loc(node), 'monster', 'no');
     const indexes = APIs.get(api);
     if (indexes) {
       const cfg = node.arguments[indexes[1]], target = node.arguments[indexes[0]]?.getText() ?? '';
@@ -249,10 +251,12 @@ export function auditStatusRegistry(root: string = AUDIT_DEFAULT_ROOT) {
   const badge = entries('client/src/hud/targetStatusMeta.ts', 'STATUS_META');
   const iconSets = ['BUFF_IDS', 'DEBUFF_IDS', 'TARGET_BUFF_ICON_IDS', 'TARGET_DEBUFF_ICON_IDS', 'MONSTER_DOT_ART_ICON_IDS', 'ABILITY_IDS'];
   const sets = new Map(iconSets.map((name) => [name, new Set(strings(variable(iconFile, name)))]));
-  const aliases = new Map(['ABILITY_ICON_ALIASES', 'BUFF_ICON_ALIASES', 'BUFF_ABILITY_ICON_ALIASES', 'DEBUFF_BUFF_DIR_ICON_ALIASES', 'MONSTER_DOT_ICON_ALIASES', 'TARGET_STATUS_ALIASES', 'BOSS_DEBUFF_ICON_ALIASES'].map((name) => [name, entries(iconFile, name)]));
+  const aliases = new Map(['ABILITY_ICON_ALIASES', 'BUFF_ICON_ALIASES', 'BUFF_ABILITY_ICON_ALIASES', 'DEBUFF_BUFF_DIR_ICON_ALIASES', 'MONSTER_DOT_ICON_ALIASES', 'TARGET_STATUS_ALIASES', 'BOSS_DEBUFF_ICON_ALIASES', 'CLASS_PIECE_STATUS_ICONS'].map((name) => [name, entries(iconFile, name)]));
   function alias(name: string, id: string): string | undefined { return strings(aliases.get(name)?.get(id)?.value)[0]; }
   function iconPath(id: string, instance?: string, seen = new Set<string>()): string | undefined {
     if (seen.has(id)) return undefined; seen.add(id);
+    const classPiece = alias('CLASS_PIECE_STATUS_ICONS', id);
+    if (classPiece) return `class-pieces/${classPiece}`;
     if (sets.get('BUFF_IDS')!.has(id)) {
       const rawAbility = alias('BUFF_ABILITY_ICON_ALIASES', id);
       const ability = rawAbility ? alias('ABILITY_ICON_ALIASES', rawAbility) ?? rawAbility : undefined;

@@ -97,13 +97,10 @@ export const rootEntries = [
     id: 'cadence-root', name: 'Striker', tier: 0,
     classId: 'cadence-root', subVariantId: null,
     parent: null, children: [],
-    description: 'Class mechanic — a five-hit finisher cycle, plus a Recovery pulse that activates 20% of your Recovery every 6s for 4s. A balanced bruiser — your recovery rate surges on a fixed cycle, sustaining you through prolonged engagements.',
+    description: 'Class mechanic — the combo: a short loop of beats ending in a finisher. You set what each beat does in your Order.',
     cost: 1, statEffects: {"attackPct": 0.08, "maxHpPct": 0.18, "platingPct": 0.05, "attackSpeedPct": 0.06, "moveSpeedPct": 0.04, "damageReduction": 0.18},
-    // Recovery pulse: every 6s, run at +20% Recovery for 4s. Recovery is flat HP/s
-    // (Phase 0b, 2026-09-30): at the naked T1 base of 6.5 HP/s that is
-    // 6.5 × 0.20 × 4s ≈ 5 HP per cycle, and it scales with Recovery gear rather
-    // than with the pool. Numbers are a first pass.
-    mechanicEffects: {"defense.recovery-pulse-pct": 0.2, "defense.recovery-pulse-interval-ms": 6000, "defense.recovery-pulse-duration-ms": 4000},
+    // The old Recovery pulse is gone (bible §12.2): nothing defensive rides the combo.
+    mechanicEffects: {},
   }],
 
 

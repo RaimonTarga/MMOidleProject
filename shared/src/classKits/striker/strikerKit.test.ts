@@ -119,7 +119,7 @@ for (const d of kit.disciplines) {
   sameSet(leaves.map((l) => l.column), ['spike', 'swarm', 'slow-bleed'], `${d.id}: one leaf per T4 column`);
 }
 
-// ── Numbers come later: every params is empty ──
+// ── Numbers: placeholders for the designer ──
 const allParams = [
   ...kit.pieces.flatMap((p) => [p.params, ...(p.ranks ?? []).map((r) => r.params ?? {})]),
   ...kit.trophies.flatMap((t) => [t.params, ...t.ranks.map((r) => r.params ?? {})]),
@@ -127,6 +127,8 @@ const allParams = [
   ...kit.specializations.map((s) => s.params),
   ...kit.leaves.map((l) => l.params),
 ];
-assert(allParams.every((params) => Object.keys(params).length === 0), 'params stay empty until the class runtime');
+// Placeholders for the designer; the runtime reads them (C-striker CS.1).
+assert(allParams.every((params) => Object.values(params).every((v) => Number.isFinite(v) && v >= 0)),
+  'every number is finite and non-negative');
 
 console.log('strikerKit.test.ts: ok');

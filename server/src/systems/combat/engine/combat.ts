@@ -24,7 +24,7 @@ import type {
   Vec2,
 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../player/progression/rewards";
-import { makeCombatContext, emitCombatEvent, recordBaseDefenseMeasurement, type FormationAttackContribution } from "./combatPipeline";
+import { ATTACK_NOW, makeCombatContext, emitCombatEvent, recordBaseDefenseMeasurement, type FormationAttackContribution } from "./combatPipeline";
 import { formationTempoWeight } from "../../classes/archetypes/summoner/profile";
 import { formationAreaMults } from "../../classes/archetypes/summoner/formationArea";
 import {
@@ -275,6 +275,8 @@ export function runPlayerAttack(
   },
 ): PlayerAttackOutcome {
   const ctx = makeCombatContext(player, "player", target, "monster");
+  // The tick's clock, for listeners that start something timed (a class cast).
+  ctx.metadata[ATTACK_NOW] = now;
   const directSummonerProfile = !opts.formation && player.usesSkills.combatArchetype === 'summoner'
     ? resolveSummonerProfile({
       selectedSubVariant: player.usesSkills.selectedSubVariant,

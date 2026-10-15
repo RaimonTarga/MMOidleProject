@@ -19,6 +19,8 @@ import {
   abilityDef,
   abilityDisplayName,
   abilityRankNumber,
+  findPiece,
+  findTrophy,
   type PlayerView,
 } from '@mmo-idle/shared';
 import type { GameScene } from '../scenes/GameScene';
@@ -69,7 +71,8 @@ export function abilityRankFor(scene: GameScene, playerId: string, abilityId: st
  */
 export function abilityCallout(scene: GameScene, playerId: string, abilityId: string): string {
   const def = abilityDef(abilityId);
-  if (!def) return abilityId;
+  // A class piece's cast (the Striker's opener and wind-up, Skyfall) calls out its own name.
+  if (!def) return findPiece(abilityId)?.name ?? findTrophy(abilityId)?.name ?? abilityId;
   const view = scene.state.view.get(playerId) as PlayerView | undefined;
   const rank = abilityRankFor(scene, playerId, abilityId);
   return abilityDisplayName(def, view?.playerTier ?? 0, rank >= 2 ? 'noun' : 'plain');

@@ -32,6 +32,23 @@ export function strikerSlots(budget: number, beats: number): { open: number; mas
   return { open: Math.min(budget, beats), mastered: Math.max(0, budget - beats) };
 }
 
+/**
+ * A technique beat's swing damage, as a share of a plain swing's (§12.2: the price).
+ * PLACEHOLDER (C-striker: 0.7). A mastered technique pays no price.
+ */
+export const STRIKER_TECHNIQUE_SWING = 0.7;
+
+/**
+ * The techniques that pay no price. STAND-IN: the Order does not yet say which technique a
+ * mastery step masters, so the first `mastered` techniques in beat order are; T1 never
+ * reaches a mastery step (one beat opens per step until all four are open).
+ */
+export function strikerMasteredBeats(beats: readonly (string | null)[], mastered: number): Set<number> {
+  const out = new Set<number>();
+  beats.forEach((id, index) => { if (id !== null && out.size < mastered) out.add(index); });
+  return out;
+}
+
 /** Which techniques a default Order fields first when there are more than open beats. */
 function defaultPriority(piece: StrikerPiece): number {
   if (piece.cast === 'windup') return 0;

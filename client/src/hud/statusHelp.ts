@@ -57,6 +57,9 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'debuff-stunned': d('Stunned', 'You cannot move or act. Hard control: control resistance and break-free effects shorten it; slow resistance does nothing.'),
   'debuff-lava-burn': d('Lava', 'You are standing in lava. It burns harder for every second you stay in it, past your plating; stepping out is the whole answer.'),
 
+  // -- The Striker's Order (class-first build plan CS.1) ------------------------
+  'striker-focus': b('Focus', 'Your opener focused you: every beat of this combo swings faster, until its finisher.'),
+  'striker-rot': d('Rot', 'Your finisher’s wound is rotting: it deals part of the blow again over a few seconds.'),
   // -- Abilities -------------------------------------------------------------
   'ability-guard': b('Guard', 'Your Guard is up: incoming damage is reduced for the window. Guard potency deepens the reduction and Guard duration lengthens the window.'),
   'ability-guard-2': b('Guard', 'Your second Guard is up. Two equipped Guards layer independently, each with its own window.'),

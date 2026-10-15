@@ -25,6 +25,11 @@ export interface UsesCadence {
   crescendoTimerMs: number;
   /** Verdict: character-side banked execution power (persists across targets). */
   verdictStored: number;
+  // ── The Order (class-first build plan CS.1) ────────────────────────────────
+  /** The spark trophy riding this combo (armed by the last finisher), or null. */
+  sparkTrophyId: string | null;
+  /** Coil resolved this combo: the finisher hits harder. */
+  coiled: boolean;
 }
 
 export function initUsesCadence(args: { threshold: number }): UsesCadence {
@@ -43,5 +48,7 @@ export function initUsesCadence(args: { threshold: number }): UsesCadence {
     rampageCdReduction: 0,
     crescendoTimerMs:  0,
     verdictStored:     0,
+    sparkTrophyId:     null,
+    coiled:            false,
   };
 }

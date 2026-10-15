@@ -53,6 +53,81 @@ import { beginFormationCharge, cancelFormationCharge, formationChargeMinions, up
 import { techniquePowerPctFor } from "./abilityKata";
 
 /**
+ * A class piece cast on this machine (class-first build plan CS.1: the Striker's opener and
+ * wind-up, Skyfall's finisher). It shares the ability casts' wind-up, cast bar, offensive
+ * channel and hard-control abort; its class runtime resolves it. Self-facing: it needs no
+ * target and cannot lose one. Attack speed never shortens it; cast speed does.
+ */
+export interface ClassCast {
+  /** The wind-up finished: apply the piece. */
+  resolve(world: World, player: PlayerEntity, now: number): void;
+}
+
+const CLASS_CASTS = new Map<string, ClassCast>();
+
+/** Register a class piece's cast once, at init, under the piece's id. */
+export function registerClassCast(id: string, cast: ClassCast): void {
+  CLASS_CASTS.set(id, cast);
+}
+
+/** Begin a registered class cast. False when it can't start (controlled, already casting). */
+export function beginClassCast(
+  world: World,
+  player: PlayerEntity,
+  id: string,
+  authoredMs: number,
+  now: number,
+): boolean {
+  if (!CLASS_CASTS.has(id) || player.isCastingAbility || player.isChargingAbility) return false;
+  if (isHardControlled(player.tracksCombat)) return false;
+  const castMs = castWindupMs(authoredMs, player.usesSkills.passives["technique.cast-speed-pct"] ?? 0);
+  if (castMs <= 0) return false;
+  attachComponent(world, player, "isCastingAbility", {
+    abilityId: id,
+    endsAt: now + castMs,
+    castMs,
+    targetId: "",
+  });
+  world.pushEvent(player.hasPosition.nodeId, {
+    kind: "player-cast-start",
+    playerId: player.isPlayer.id,
+    ability: id,
+    castMs,
+  });
+  return true;
+}
+
+/** Advance a class cast: a stun breaks it (nothing resolves), the end resolves it. */
+function updateClassCast(
+  world: World,
+  player: PlayerEntity,
+  cast: ClassCast,
+  abilityId: string,
+  endsAt: number,
+  now: number,
+): void {
+  if (isHardControlled(player.tracksCombat)) {
+    detachComponent(world, player, "isCastingAbility");
+    world.pushEvent(player.hasPosition.nodeId, {
+      kind: "player-cast-end",
+      playerId: player.isPlayer.id,
+      ability: abilityId,
+      fired: false,
+    });
+    return;
+  }
+  if (now < endsAt) return;
+  detachComponent(world, player, "isCastingAbility");
+  cast.resolve(world, player, now);
+  world.pushEvent(player.hasPosition.nodeId, {
+    kind: "player-cast-end",
+    playerId: player.isPlayer.id,
+    ability: abilityId,
+    fired: true,
+  });
+}
+
+/**
  * Begin a wind-up. Returns true when the cast started (claiming the offensive
  * channel), false when it could not — the caller then leaves the slot eligible.
  */
@@ -194,6 +269,12 @@ export function updateAbilityCasts(world: World, now: number): void {
   for (const player of world.livePlayers) {
     const casting = player.isCastingAbility;
     if (!casting) continue;
+
+    const classCast = CLASS_CASTS.get(casting.abilityId);
+    if (classCast) {
+      updateClassCast(world, player, classCast, casting.abilityId, casting.endsAt, now);
+      continue;
+    }
 
     const ability = ABILITY_DATABASE.get(casting.abilityId);
     if (!ability) {

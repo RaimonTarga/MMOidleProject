@@ -99,6 +99,15 @@ export type CombatContext =
   | CombatContextBase<'monster', 'player'>
   | CombatContextBase<'monster', 'monster'>;
 
+/** `ctx.metadata`: the world clock the attack runs at (set by `runPlayerAttack`). */
+export const ATTACK_NOW = 'attackNow';
+
+/** The attack's world clock, or the wall clock for an exchange that didn't record one. */
+export function attackNow(ctx: CombatContext): number {
+  const now = ctx.metadata[ATTACK_NOW];
+  return typeof now === 'number' ? now : Date.now();
+}
+
 // ── Handler type ──────────────────────────────────────────────────────────────
 
 export type CombatEventHandler = (ctx: CombatContext, world: World) => void;

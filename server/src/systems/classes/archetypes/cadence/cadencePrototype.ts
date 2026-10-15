@@ -5,6 +5,7 @@ import type { World } from '../../../../world/World';
 import { initCadenceFrameLoop } from './frameLoop';
 import { initCadenceT3 } from './t3';
 import { relicRatingsFromPassives, resolveCadenceRelicProfile } from '@mmo-idle/shared';
+import { advanceStrikerBeat, initStrikerOrder, runStrikerBeat } from './order';
 
 const CADENCE_THRESHOLD_DEFAULT   = 5;   // cycle length: (N-1) normal hits + 1 empowered
 const CADENCE_DAMAGE_MULT_DEFAULT = 2.0;
@@ -32,6 +33,10 @@ export function initCadenceArchetype(): void {
     emitMechanicFired(world, ctx.attacker, ctx);
   });
 
+  // The Order (class-first build plan CS.1): its casts, swing gate and finisher. After the
+  // empowered multiplier, so the finisher's trophy reads the multiplied hit.
+  initStrikerOrder();
+
   initCadenceT3();
 
   registerCombatListener('onHit', (ctx, world) => {
@@ -42,10 +47,10 @@ export function initCadenceArchetype(): void {
     const entity = ctx.attacker;
     if (!entity.usesCadence) return;
 
-    // Chaotic miss while the finisher is armed: don't advance or consume the
-    // sequence — the empowered attack stays queued for the next real hit. A miss
-    // on a normal (non-armed) hit still advances the count below.
-    if (ctx.metadata['chaoticMiss'] && isEmpoweredAttack(entity)) return;
+    // A swing that left an armed finisher unspent (a chaotic miss, a finisher the Order
+    // holds) is not a beat: the finisher stays queued for the next real hit. A miss on a
+    // normal (non-armed) hit still advances the count below.
+    if (isEmpoweredAttack(entity)) return;
 
     const cadence = entity.usesCadence;
     const passives = entity.usesSkills.passives;
@@ -61,14 +66,10 @@ export function initCadenceArchetype(): void {
       ).threshold.after;
     }
 
-    cadence.count++;
-
-    // Threshold is the full cycle length N. After (N-1) normal hits the counter
-    // arms empowered for the next attack.
-    if (cadence.count >= cadence.threshold - 1) {
-      setEmpoweredAttack(world, entity);
-      cadence.count = 0;
-    }
+    // The beat's technique, price and spark (the Order), then count it. Threshold is the
+    // full cycle length N: after (N-1) beats the counter arms the finisher.
+    runStrikerBeat(world, ctx);
+    advanceStrikerBeat(world, entity);
   });
 
   // The frame loop (progression rework Phase 3) registers LAST: its finisher

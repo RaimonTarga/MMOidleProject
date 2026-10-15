@@ -144,6 +144,20 @@ export function trophyRanks(archetype: ClassArchetype, bossesCleared: readonly s
   return ranks;
 }
 
+/** A piece's numbers at a rank: its own params, overridden by each rank up to it. */
+export function pieceParamsAt(piece: PieceDef, rank: number): Record<string, number> {
+  const params: Record<string, number> = { ...piece.params };
+  for (const step of piece.ranks ?? []) if (step.rank <= rank) Object.assign(params, step.params ?? {});
+  return params;
+}
+
+/** A trophy's numbers at a rank, the same way. */
+export function trophyParamsAt(trophy: TrophyDef, rank: number): Record<string, number> {
+  const params: Record<string, number> = { ...trophy.params };
+  for (const step of trophy.ranks) if (step.rank <= rank) Object.assign(params, step.params ?? {});
+  return params;
+}
+
 /** The class's room at this Global Mastery, in its own words. */
 export function classBudget(archetype: ClassArchetype, globalMasteryValue: number): BudgetReading {
   return readBudget(classKitFor(archetype).budget, globalMasteryValue);

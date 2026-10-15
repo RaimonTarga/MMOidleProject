@@ -371,7 +371,14 @@ const BOSS_DEBUFF_ICON_ALIASES: Record<string, string> = {
   depth: 'boss-depth',
 };
 
+/** Statuses a class piece puts on its caster wear that piece's icon (class-first build plan CS.1). */
+const CLASS_PIECE_STATUS_ICONS: Record<string, string> = {
+  'striker-focus': 'striker-focus',
+};
+
 export function statusIconSource(id: string, instanceKey?: string): AssetIconSource | null {
+  const classPieceIcon = CLASS_PIECE_STATUS_ICONS[id];
+  if (classPieceIcon) return source('class-pieces', classPieceIcon);
   if (BUFF_IDS.has(id)) {
     const abilityIconId = BUFF_ABILITY_ICON_ALIASES[id];
     if (abilityIconId) return conceptAbilityIconSource(abilityIconId);
@@ -431,6 +438,7 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'magma-molten-guard': 'molten-guard',
   'magma-obsidian-shell': 'obsidian-shell',
   'cadence-hemorrhage': 'debuff-dot',
+  'striker-rot': 'debuff-poison',
   'energy-storm': 'energy-storm',
   'energy-ci-tag': 'energy-ac-charge',
   'death-mark': 'reload-snipe-ready',

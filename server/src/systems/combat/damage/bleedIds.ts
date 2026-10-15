@@ -10,8 +10,11 @@
  * without a cycle.
  */
 
-/** The cadence root's Hemorrhage, stacks = remaining ticks. */
+/** The Striker's bleed (Rend; the old cadence Hemorrhage), stacks = remaining ticks. */
 export const CADENCE_BLEED_ID = 'cadence-hemorrhage';
+
+/** Festering Cut's rot: the finisher's wound, dealing part of its damage again. */
+export const STRIKER_ROT_ID = 'striker-rot';
 
 /**
  * How a bleed's `stacks` field behaves, carried in the effect's own data under
@@ -27,6 +30,7 @@ export type BleedMode = 'ticks' | 'intensity';
 
 export const BLEED_EFFECT_IDS: readonly string[] = [
   CADENCE_BLEED_ID,
+  STRIKER_ROT_ID,
 ];
 
 /** Whether this monster state carries any bleed the driver owns. */

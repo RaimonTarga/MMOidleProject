@@ -11,7 +11,7 @@
  */
 import { standardBudgetSteps } from '../budget';
 import { STARTER, learn, rankUp, zone } from '../kitHelpers';
-import type { ClassKit, PieceDef, TrophyDef } from '../types';
+import type { ClassKit, KitParams, PieceDef, TrophyDef } from '../types';
 import { STRIKER_DISCIPLINES, STRIKER_LEAVES, STRIKER_SPECIALIZATIONS } from './tree';
 
 /**
@@ -39,12 +39,12 @@ export type StrikerPiece = PieceDef<StrikerFamily, StrikerPieceExtra>;
 export type StrikerTrophyKind = 'spark' | 'weight';
 export type StrikerTrophy = TrophyDef<StrikerTrophyKind>;
 
-export function technique(piece: Omit<StrikerPiece, 'classId' | 'params'>): StrikerPiece {
-  return { classId: 'cadence', params: {}, ...piece };
+export function technique(piece: Omit<StrikerPiece, 'classId' | 'params'> & { params?: KitParams }): StrikerPiece {
+  return { classId: 'cadence', ...piece, params: piece.params ?? {} };
 }
 
-export function strikerTrophy(entry: Omit<StrikerTrophy, 'classId' | 'params'>): StrikerTrophy {
-  return { classId: 'cadence', params: {}, ...entry };
+export function strikerTrophy(entry: Omit<StrikerTrophy, 'classId' | 'params'> & { params?: KitParams }): StrikerTrophy {
+  return { classId: 'cadence', ...entry, params: entry.params ?? {} };
 }
 
 const PIECES: readonly StrikerPiece[] = [
@@ -61,6 +61,8 @@ const PIECES: readonly StrikerPiece[] = [
     name: 'Sweep',
     family: 'damage',
     text: 'You hit every enemy around you.',
+    // Each other enemy within `radius` px takes `splashPct` of the beat's full swing.
+    params: { radius: 90, splashPct: 0.6 },
   }),
   technique({
     id: 'striker-hamstring',
@@ -69,13 +71,16 @@ const PIECES: readonly StrikerPiece[] = [
     family: 'attack-setup',
     control: true,
     text: 'The target attacks and moves slower for a moment.',
+    params: { moveSlowPct: 0.3, attackSlowPct: 0.2, durationMs: 2500 },
   }),
   technique({
     id: 'striker-rend',
     name: 'Rend',
     family: 'damage',
     text: 'You open a bleed on the target.',
-    ranks: [{ rank: 2, text: 'The bleed lasts longer and cuts deeper.' }],
+    // `ticks` ticks of `tickPct` of the beat's full swing, one every `tickMs`.
+    params: { ticks: 4, tickMs: 1000, tickPct: 0.15 },
+    ranks: [{ rank: 2, text: 'The bleed lasts longer and cuts deeper.', params: { ticks: 6, tickPct: 0.2 } }],
   }),
   technique({
     id: 'striker-coil',
@@ -83,6 +88,7 @@ const PIECES: readonly StrikerPiece[] = [
     family: 'finisher-setup',
     cast: 'windup',
     text: 'You wind up before the finisher, and the finisher hits much harder.',
+    params: { castMs: 900, finisherBonusPct: 0.6 },
   }),
   technique({
     id: 'striker-focus',
@@ -90,6 +96,8 @@ const PIECES: readonly StrikerPiece[] = [
     family: 'attack-setup',
     cast: 'opener',
     text: 'You open the combo with a breath of focus, and every beat after it swings faster.',
+    // Lasts until the finisher; `maxMs` only ends one a broken combo left behind.
+    params: { castMs: 700, attackSpeedPct: 0.25, maxMs: 15000 },
   }),
   // ── T2 (§12.16) ──
   technique({
@@ -279,7 +287,8 @@ const TROPHIES: readonly StrikerTrophy[] = [
     name: 'Wide Arc',
     kind: 'spark',
     text: "Your next combo's beats each also strike one enemy beside the target.",
-    ranks: [{ rank: 2, bossTier: 2, text: 'They strike two extra enemies.' }],
+    params: { extraTargets: 1, radius: 110, damagePct: 0.5 },
+    ranks: [{ rank: 2, bossTier: 2, text: 'They strike two extra enemies.', params: { extraTargets: 2 } }],
   }),
   strikerTrophy({
     id: 'striker-relic-forest',
@@ -287,7 +296,8 @@ const TROPHIES: readonly StrikerTrophy[] = [
     name: 'Double Slash',
     kind: 'spark',
     text: 'Every beat of your next combo strikes twice, each strike a bit over half as hard.',
-    ranks: [{ rank: 2, bossTier: 2, text: 'Each strike hits harder.' }],
+    params: { strikePct: 0.55 },
+    ranks: [{ rank: 2, bossTier: 2, text: 'Each strike hits harder.', params: { strikePct: 0.65 } }],
   }),
   strikerTrophy({
     id: 'striker-relic-swamp',
@@ -295,9 +305,11 @@ const TROPHIES: readonly StrikerTrophy[] = [
     name: 'Festering Cut',
     kind: 'weight',
     text: "Your finisher's wound rots, dealing part of its damage again.",
+    // `sharePct` of the finisher's damage, spread over `ticks` ticks `tickMs` apart.
+    params: { sharePct: 0.3, ticks: 3, tickMs: 1000 },
     ranks: [
-      { rank: 2, bossTier: 2, text: 'The rot deals a bigger share.' },
-      { rank: 3, bossTier: 3, text: 'The rot deals a bigger share still.' },
+      { rank: 2, bossTier: 2, text: 'The rot deals a bigger share.', params: { sharePct: 0.4 } },
+      { rank: 3, bossTier: 3, text: 'The rot deals a bigger share still.', params: { sharePct: 0.5 } },
     ],
   }),
   strikerTrophy({
@@ -306,10 +318,11 @@ const TROPHIES: readonly StrikerTrophy[] = [
     name: 'Skyfall',
     kind: 'weight',
     text: 'Your finisher becomes a cast: a longer wind-up, then a blow about twice as big.',
+    params: { castMs: 1500, blowMult: 2 },
     ranks: [
       { rank: 2, bossTier: 2, text: 'The blow also ignores part of the plating.' },
-      { rank: 3, bossTier: 3, text: 'The wind-up is shorter.' },
-      { rank: 4, bossTier: 4, text: 'The blow hits harder still.' },
+      { rank: 3, bossTier: 3, text: 'The wind-up is shorter.', params: { castMs: 1100 } },
+      { rank: 4, bossTier: 4, text: 'The blow hits harder still.', params: { blowMult: 2.5 } },
     ],
   }),
   strikerTrophy({
@@ -318,9 +331,10 @@ const TROPHIES: readonly StrikerTrophy[] = [
     name: 'Sunder',
     kind: 'weight',
     text: 'Your finisher exposes the target: it takes more damage from everyone for a few seconds.',
+    params: { damageTakenPct: 0.12, durationMs: 5000 },
     ranks: [
       { rank: 2, bossTier: 2, text: 'The exposed target also loses plating.' },
-      { rank: 3, bossTier: 3, text: 'The exposure lasts longer.' },
+      { rank: 3, bossTier: 3, text: 'The exposure lasts longer.', params: { durationMs: 7000 } },
     ],
   }),
   // ── New lineages from T2 on (§12.16). A rank the bible names without its twist says only

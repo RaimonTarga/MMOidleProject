@@ -43,6 +43,22 @@ export function attackSlowMult(cs: TracksCombat): number {
 }
 
 /**
+ * A status whose data carries this key hastens its holder's attack cadence by that fraction
+ * (the Striker's Focus, class-first build plan CS.1). Hastes from several statuses add.
+ */
+export const ATTACK_HASTE_PCT_KEY = "attackHastePct";
+
+/** Total temporary HASTE on the attack cadence, as a fraction (0 = none). */
+export function attackHastePct(cs: TracksCombat): number {
+  let total = 0;
+  for (const effect of cs.statusEffects) {
+    if (effect.remainingMs === 0) continue;
+    total += Math.max(0, effect.data[ATTACK_HASTE_PCT_KEY] ?? 0);
+  }
+  return total;
+}
+
+/**
  * The multiplier applied to `attackCooldown` at the cadence gate.
  *
  * Below 1 means attacking FASTER (a shorter interval between swings); above 1
@@ -50,5 +66,5 @@ export function attackSlowMult(cs: TracksCombat): number {
  * the HUD uses to decide whether there is anything worth showing.
  */
 export function attackCadenceMult(cs: TracksCombat): number {
-  return attackSlowMult(cs);
+  return attackSlowMult(cs) / (1 + attackHastePct(cs));
 }
