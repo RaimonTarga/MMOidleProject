@@ -14,12 +14,22 @@ import {
   type ClassSystemSpec,
 } from './common';
 
-/** The T1 default (§9.13): full → Spread with two or more enemies near, else Detonate; winds up → Seize; your HP low → Siphon. */
+/** The default (§9.13; T1, then the T2 pieces): full → Spread with two or more enemies near, else Detonate; winds up → Seize; your HP low → Siphon. */
 const T1_DEFAULTS: readonly PayoffPlacement[] = [
   { moment: 'target-full', pieceId: 'apprentice-spread', conditions: [{ id: 'enemies-near', param: 2 }] },
+  // T2: each discipline's own payoff takes the full-stack moment before Detonate (only one is owned).
+  { moment: 'target-full', pieceId: 'apprentice-wither', conditions: [] },
+  { moment: 'target-full', pieceId: 'apprentice-fuse', conditions: [] },
+  { moment: 'target-full', pieceId: 'apprentice-cold-snap', conditions: [] },
   { moment: 'target-full', pieceId: 'apprentice-detonate', conditions: [] },
   { moment: 'enemy-winds-up', pieceId: 'apprentice-seize', conditions: [] },
   { moment: 'hp-low', pieceId: 'apprentice-siphon', conditions: [] },
+  // T2 lessons, each on the moment it answers.
+  { moment: 'charging-at-me', pieceId: 'apprentice-blast-back', conditions: [] },
+  { moment: 'target-shielded', pieceId: 'apprentice-sear', conditions: [] },
+  { moment: 'target-out-of-reach', pieceId: 'apprentice-seep', conditions: [] },
+  { moment: 'target-flees', pieceId: 'apprentice-snag', conditions: [] },
+  { moment: 'debuff-landed', pieceId: 'apprentice-recoil', conditions: [] },
 ];
 
 export const APPRENTICE_SYSTEM: ClassSystemSpec<PayoffsConfig> = {
