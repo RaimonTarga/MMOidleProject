@@ -236,6 +236,13 @@ export const STRIKER_KEYS = [
   'striker.closing-recovery-x',    // Chase: Recovery is multiplied by this while you close on a target
   'striker.close-in-speed-pct',    // Close In: while a ranged enemy hits you, you move this much faster toward it
   'striker.shake-off-interval-ms', // Shake Off: every interval, a mark or slow on you ends
+  // ── Tier 3 jobs and lines (§12.16) ──
+  'striker.cold-pct',              // Rimeblade: beats hit this much harder against slowed, rooted or chilled enemies
+  'striker.low-hp-pct',            // Bloodfire Axe: beats hit up to this much harder as your HP runs out
+  'striker.chill-build-cut-pct',   // Winter Coat: the Chill builds this much slower while you keep attacking
+  'striker.chilled-recovery-x',    // Frostbite Mend: Recovery is multiplied by this while you are chilled or slowed
+  'striker.heat-ward',             // Cinderskin: the Heat's extra damage taken is off while you keep attacking
+  'striker.heat-recovery-pct',     // Fuel: Recovery rises this much per stack of Heat
 ] as const;
 
 /**

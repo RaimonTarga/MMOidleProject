@@ -188,6 +188,12 @@ export const MECHANIC_LABELS: Partial<Record<PassiveKey, MechanicLabel>> = {
   'striker.closing-recovery-x':           { label: 'Recovery while closing' },
   'striker.close-in-speed-pct':           { label: 'Speed toward ranged enemies' },
   'striker.shake-off-interval-ms':        { label: 'Shake off marks and slows' },
+  'striker.cold-pct':                     { label: 'Damage vs slowed, rooted or chilled' },
+  'striker.low-hp-pct':                   { label: 'Damage as your HP runs low' },
+  'striker.chill-build-cut-pct':          { label: 'Slower Chill while attacking' },
+  'striker.chilled-recovery-x':           { label: 'Recovery while chilled or slowed' },
+  'striker.heat-ward':                    { label: 'No Heat damage taken while attacking' },
+  'striker.heat-recovery-pct':            { label: 'Recovery per stack of Heat' },
   // ── The Squire's weapon jobs and lines (class-first build plan CQ.4) ───────
   'squire.slam-damage-pct':               { label: 'Slam damage' },
   'squire.slam-radius-pct':               { label: 'Wider slam' },

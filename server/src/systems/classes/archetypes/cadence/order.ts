@@ -18,6 +18,7 @@
  */
 import {
   ABILITY_SLOW_EFFECT_ID,
+  DAMAGE_TAKEN_PCT_KEY,
   applyStatusEffect,
   getStatusEffect,
   pieceParamsAt,
@@ -42,7 +43,7 @@ import { attackNow, registerCombatListener, type CombatContext } from '../../../
 import { HOLD_EMPOWERED_ATTACK, isEmpoweredAttack, setEmpoweredAttack } from '../../../combat/engine/empoweredAttacks';
 import { runPlayerAttack } from '../../../combat/engine/combat';
 import { conditionsHold } from '../../../combat/moments/moments';
-import { applyMonsterRoot, applyMonsterSlow } from '../../../combat/status/monsterControl';
+import { applyMonsterRoot, applyMonsterSlow, monsterIsHeld } from '../../../combat/status/monsterControl';
 import { monsterIgnoresControl } from '../../../combat/status/controlImmunity';
 import { applyStun } from '../../../combat/status/stun';
 import { isHardControlled } from '../../../combat/status/playerHardControl';
@@ -55,8 +56,10 @@ import { classConfigContextOf } from '../../../player/progression/classConfig';
 import { beginClassCast, registerClassCast } from '../../../player/abilities/abilityCasting';
 import { applyPlayerDebuff } from '../../shared/applyPlayerDebuff';
 import { ATTACK_HASTE_PCT_KEY } from '../../../combat/engine/attackCadence';
+import { evadeBlocksDebuffs } from '../../../defense/mitigation/evasion';
 import { runStrikerWeaponStrikes, strikerWeaponDamageMult } from './strikerGear';
 import {
+  buildWaitingMomentum,
   disciplineBeatMult,
   disciplineFinisherMult,
   isSetupFamily,
@@ -65,6 +68,19 @@ import {
   strikerAmbushGuard,
   strikerT2,
 } from './strikerT2';
+import {
+  AFTERIMAGE,
+  AFTERIMAGE_HOLD_PCT,
+  FRENZY,
+  FRENZY_AFTER_FINISHERS,
+  FRENZY_SECOND_PCT,
+  SUBJUGATOR,
+  SUBJUGATOR_FINISHER_PCT,
+  THOUSAND_CUTS,
+  isShelledTarget,
+  strikerGearBeatMult,
+  strikerSpecOf,
+} from './strikerT3';
 import { defineBuff } from '../../../combat/buffs/descriptor';
 
 /** Focus's combo haste on the player (self only; one copy). */
@@ -133,7 +149,14 @@ type BeatHandler = (
   params: Record<string, number>,
   /** The beat's full swing, before the price. */
   swing: number,
+  /** The hit this beat rides (its damage is the priced swing). */
+  ctx: CombatContext,
 ) => void;
+
+/** Multiply the on-hit damage this hit pays (Thousand Cuts, Triple Cut: "sets off its hit effects again"). */
+function multiplyOnHit(ctx: CombatContext, times: number): void {
+  ctx.metadata['onHitDamageMult'] = Number(ctx.metadata['onHitDamageMult'] ?? 1) * times;
+}
 
 /**
  * A player bleed record on the target, through the bleed driver (`updateHemorrhages`):
@@ -237,6 +260,35 @@ const BEATS: Readonly<Record<string, BeatHandler>> = {
   },
   // The opener's strike: the dash happened on the cast; the beat pays the price like any technique.
   'striker-charge': () => {},
+  // ── Tier 3 (§12.16) ──
+  // The ground erupts: the target and every enemy touching it are knocked down (a short stun;
+  // control-immune bosses refuse it).
+  'striker-upheaval': (world, player, target, p, _swing, ctx) => {
+    if (evadeBlocksDebuffs(ctx) || target.hasHealth.hp <= 0) return;
+    const ms = setupDuration(player, p.knockdownMs);
+    const touching = playerAoeTargets(world, player, target.hasPosition.current, p.radius, target.isMonster.id);
+    for (const monster of [target, ...touching]) {
+      if (monster.hasHealth.hp > 0 && !monsterIgnoresControl(monster)) applyStun(monster.tracksCombat, ms, player.isPlayer.id);
+    }
+  },
+  // A deep bleed that outlasts Rend (same record: the stronger of the two stays).
+  'striker-hemorrhage': (world, player, target, p, swing, ctx) => {
+    if (evadeBlocksDebuffs(ctx)) return;
+    applyBleed(world, player, target, CADENCE_BLEED_ID, swing * p.tickPct, p.ticks * dotDurationMult(player), p.tickMs);
+  },
+  // Three cuts: the beat is the first, the rest follow at a share of the swing, and the beat
+  // pays its on-hit damage three times.
+  'striker-triple-cut': (world, player, target, p, swing, ctx) => {
+    for (let cut = 1; cut < Math.max(1, Math.round(p.cuts)); cut++) {
+      if (!world.hasMonster(target.isMonster.id) || target.hasHealth.hp <= 0) break;
+      applyPlayerAoeTo(world, player, [target], swing * p.cutPct, 'player', {}, { feedsWeaponReservoir: true });
+    }
+    multiplyOnHit(ctx, Math.max(1, Math.round(p.cuts)));
+  },
+  // Much harder against a shield or shell (no freeze is consumed: shatter stays the Apprentice's).
+  'striker-icebreaker': (_world, _player, target, p, _swing, ctx) => {
+    if (isShelledTarget(target, attackNow(ctx))) ctx.damage = Math.max(1, Math.round(ctx.damage * (1 + p.shellBonusPct)));
+  },
 };
 
 /** The casts, resolved on the player cast machine; each counts its beat when it lands. */
@@ -260,7 +312,80 @@ const CASTS: Readonly<Record<string, (world: World, player: PlayerEntity, o: Ord
     player.usesCadence.coiled = true;
     markSliceDirty(world, player, 'usesCadence');
   },
+  // ── Tier 3 (§12.16) ──
+  // The wind-up that slams down a line of enemies through the target.
+  'striker-earthsplitter': (world, player, o, p) => slamLine(world, player, o, p),
+  // The opener that steps behind the target: the next beat is a sure critical hit.
+  'striker-shadowstep': (world, player, _o, p) => {
+    const target = currentTarget(world, player);
+    if (target) {
+      const gap = gapToTarget(player, target);
+      const from = { ...player.hasPosition.current };
+      if (repositionPlayer(world, player, target.hasPosition.current, gap + p.behindPx, true) !== null) {
+        world.pushEvent(player.hasPosition.nodeId, {
+          kind: 'player-reposition',
+          playerId: player.isPlayer.id,
+          ability: 'striker-shadowstep',
+          from,
+          to: { ...player.hasPosition.current },
+        });
+      }
+    }
+    strikerT2(player).critMult = p.critMult;
+  },
+  // The opener that overheats: every beat swings much faster, and you take more damage, until
+  // the finisher. Rides the Focus status (one opener per combo), carrying the damage taken.
+  'striker-overheat': (_world, player, _o, p) => {
+    applyStatusEffect(player.tracksCombat, {
+      id: STRIKER_FOCUS_EFFECT_ID,
+      maxStacks: 1,
+      remainingMs: p.maxMs,
+      refreshable: true,
+      sourceId: player.isPlayer.id,
+      data: { [ATTACK_HASTE_PCT_KEY]: p.attackSpeedPct, [DAMAGE_TAKEN_PCT_KEY]: p.damageTakenPct, totalMs: p.maxMs },
+    });
+  },
 };
+
+/** Who the player is fighting right now, if it still lives. */
+function currentTarget(world: World, player: PlayerEntity): MonsterEntity | undefined {
+  const targetId = player.hasAttackTarget?.targetId;
+  const target = targetId ? world.getMonsterEntity(targetId) : undefined;
+  return target && target.hasHealth.hp > 0 ? target : undefined;
+}
+
+/**
+ * Earthsplitter's slam: everything within `widthPx` of a line `lengthPx` long from you through
+ * the target takes `slamMult` times the beat's full swing. A cast beat does not swing, so the
+ * damage is built here from the attack stat with the beat's own layers (the discipline, the
+ * weapon, the technique's price).
+ */
+function slamLine(world: World, player: PlayerEntity, o: Order, p: Record<string, number>): void {
+  const cadence = player.usesCadence;
+  const target = currentTarget(world, player);
+  if (!cadence || !target) return;
+  const index = cadence.count;
+  const from = player.hasPosition.current;
+  const to = target.hasPosition.current;
+  const reach = Math.max(1, Math.hypot(to.x - from.x, to.y - from.y));
+  const ux = (to.x - from.x) / reach;
+  const uy = (to.y - from.y) / reach;
+  const victims = [...world.monsterEntitiesInNode(player.hasPosition.nodeId)].filter((m) => {
+    if (m.hasHealth.hp <= 0) return false;
+    const dx = m.hasPosition.current.x - from.x;
+    const dy = m.hasPosition.current.y - from.y;
+    const along = dx * ux + dy * uy;
+    return along >= 0 && along <= p.lengthPx && Math.abs(dx * uy - dy * ux) <= p.widthPx;
+  });
+  if (!victims.includes(target)) victims.push(target);
+  const { mastered } = strikerSlots(o.ctx.budget, o.order.beats.length);
+  const price = strikerMasteredBeats(o.order.beats, mastered).has(index) ? 1 : STRIKER_TECHNIQUE_SWING;
+  const base = player.dealsDamage.attack * p.slamMult * price
+    * disciplineBeatMult(player, o.ctx.disciplineId, true, true)
+    * strikerWeaponDamageMult(player, target, { finisher: false, damageTechnique: true })
+    * strikerGearBeatMult(player, target);
+  applyPlayerAoeTo(world, player, victims, base, 'player', {}, { feedsWeaponReservoir: true });
+}
 
 // ── Trophies (CS.2: T1) ──────────────────────────────────────────────────────
 
@@ -288,9 +413,21 @@ const WEIGHTS: Readonly<Record<string, (world: World, player: PlayerEntity, targ
     }, ['damageMultiplier', 'totalMs']);
   },
   // Pounce: the finisher leapt to its target, and hits harder the farther it leapt.
-  'striker-relic-jungle': (_world, _player, _target, ctx, p) => {
+  // Rank 2: the landing also hits the enemies around the target.
+  'striker-relic-jungle': (world, player, target, ctx, p) => {
     const leapt = Number(ctx.metadata[LEAP_DISTANCE] ?? 0);
-    if (leapt > 0) ctx.damage = Math.round(ctx.damage * (1 + p.bonusPct * Math.min(1, leapt / p.maxLeapPx)));
+    if (leapt <= 0) return;
+    ctx.damage = Math.round(ctx.damage * (1 + p.bonusPct * Math.min(1, leapt / p.maxLeapPx)));
+    if (p.landingPct) {
+      applyPlayerAoe(world, player, target.hasPosition.current, p.landingRadius, ctx.damage * p.landingPct,
+        target.isMonster.id, 'player', {}, { feedsWeaponReservoir: true });
+    }
+  },
+  // Eruption: the finisher hits the target and everything around it, harder against a shell.
+  'striker-relic-volcanic': (world, player, target, ctx, p) => {
+    if (isShelledTarget(target, attackNow(ctx))) ctx.damage = Math.round(ctx.damage * (1 + p.shellBonusPct));
+    applyPlayerAoe(world, player, target.hasPosition.current, p.radius, ctx.damage * p.splashPct,
+      target.isMonster.id, 'player', {}, { feedsWeaponReservoir: true });
   },
   // Verdict: the finisher kills a target at or below the threshold outright.
   'striker-relic-desert': (_world, _player, target, ctx, p) => {
@@ -308,6 +445,12 @@ const SPARKS: Readonly<Record<string, (world: World, player: PlayerEntity, targe
       .sort((a, b) => dist2(a, at) - dist2(b, at))
       .slice(0, Math.max(0, Math.round(p.extraTargets)));
     if (beside.length > 0) applyPlayerAoeTo(world, player, beside, ctx.damage * p.damagePct, 'player', {}, { feedsWeaponReservoir: true });
+  },
+  // Hoarfrost: each beat slows the target a little more (bosses that accept no control ignore it).
+  'striker-relic-tundra': (world, player, target, ctx, p) => {
+    if (evadeBlocksDebuffs(ctx) || target.hasHealth.hp <= 0 || monsterIgnoresControl(target)) return;
+    const prior = getStatusEffect(target.tracksCombat, ABILITY_SLOW_EFFECT_ID)?.data['moveSlowPct'] ?? 0;
+    applyMonsterSlow(world, target, Math.min(p.maxPct, prior + p.stepPct), p.durationMs, player.isPlayer.id);
   },
   // Each beat strikes twice, each strike a bit over half.
   'striker-relic-forest': (world, player, target, ctx, p) => {
@@ -435,17 +578,23 @@ export const STRIKER_ORDER_BUFFS = [
       const effect = getStatusEffect(player.tracksCombat, STRIKER_FOCUS_EFFECT_ID);
       if (!effect || effect.remainingMs === 0) return null;
       const pct = Math.round((effect.data[ATTACK_HASTE_PCT_KEY] ?? 0) * 100);
+      // Overheat rides this status too (one opener per combo), adding the damage taken.
+      const takenPct = Math.round((effect.data[DAMAGE_TAKEN_PCT_KEY] ?? 0) * 100);
+      const label = takenPct > 0 ? 'Overheat' : 'Focus';
       return {
         id: STRIKER_FOCUS_EFFECT_ID,
-        label: 'Focus',
+        label,
         stacks: 1,
         // It lasts until the finisher, not a clock.
         durationPct: -1,
         remainingMs: effect.remainingMs,
         color: '#9fd8ff',
-        logSourceName: 'Focus',
-        logDetail: `+${pct}% attack speed`,
-        values: [{ label: 'Attack speed', value: `+${pct}%`, good: true }],
+        logSourceName: label,
+        logDetail: takenPct > 0 ? `+${pct}% attack speed, +${takenPct}% damage taken` : `+${pct}% attack speed`,
+        values: [
+          { label: 'Attack speed', value: `+${pct}%`, good: true },
+          ...(takenPct > 0 ? [{ label: 'Damage taken', value: `+${takenPct}%`, good: false }] : []),
+        ],
       };
     },
     { label: 'Focus', color: '#9fd8ff', category: 'cadence', shape: 'circle' },
@@ -500,6 +649,8 @@ function beforeStrikerSwing(ctx: CombatContext, world: World): void {
     // Heavy's rule (and any rule): don't spend the finisher while these hold.
     if (o.order.holdFinisher.length > 0 && conditionsHold(world, player, o.order.holdFinisher, now)) {
       ctx.metadata[HOLD_EMPOWERED_ATTACK] = true;
+      // Crescendo: a swing spent waiting for the release builds Momentum.
+      buildWaitingMomentum(player);
       return;
     }
     // Skyfall: the finisher becomes a cast.
@@ -535,12 +686,18 @@ export function runStrikerBeat(world: World, ctx: CombatContext): void {
 
   // What rides the swing before the technique reads it: Feint's critical hit, Hunter's Blade's
   // first strike on a new target, and the discipline (the shine, the edge).
-  let mult = disciplineBeatMult(player, discipline, piece?.family === 'damage');
+  const castTechnique = piece?.cast !== undefined;
+  const spec = strikerSpecOf(player);
+  let mult = disciplineBeatMult(player, discipline, piece?.family === 'damage', castTechnique);
   if (t2.critMult > 0) { mult *= t2.critMult; t2.critMult = 0; }
   const firstStrike = player.usesSkills.passives['striker.first-strike-pct'] ?? 0;
   if (firstStrike > 0 && t2.lastTargetId !== ctx.defender.isMonster.id) mult *= 1 + firstStrike;
   t2.lastTargetId = ctx.defender.isMonster.id;
+  // Rimeblade and Bloodfire Axe: every beat reads the target's cold and your missing HP.
+  mult *= strikerGearBeatMult(player, ctx.defender);
   if (mult !== 1) ctx.damage = Math.max(1, Math.round(ctx.damage * mult));
+  // Thousand Cuts: a lit beat sets off its hit effects twice.
+  if (spec === THOUSAND_CUTS && t2.lit) multiplyOnHit(ctx, 2);
 
   if (piece && handler) {
     // Bastard Sword: damage techniques hit harder, their swing and their effect.
@@ -550,7 +707,7 @@ export function runStrikerBeat(world: World, ctx: CombatContext): void {
     if (!strikerMasteredBeats(o.order.beats, mastered).has(index)) {
       ctx.damage = Math.max(1, Math.round(ctx.damage * STRIKER_TECHNIQUE_SWING));
     }
-    handler(world, player, ctx.defender, pieceParams(o, piece), swing);
+    handler(world, player, ctx.defender, pieceParams(o, piece), swing, ctx);
   }
   // A feint deals no damage, rides no strikes and sparks nothing: it only sets up the next beat.
   if (piece && NO_SWING.has(piece.id)) {
@@ -558,9 +715,21 @@ export function runStrikerBeat(world: World, ctx: CombatContext): void {
     landStrikerBeat(player, discipline, true);
     return;
   }
+  // Afterimage: the beat holds back part of its damage; the finisher replays it.
+  if (spec === AFTERIMAGE && ctx.damage > 1) {
+    const held = Math.floor(ctx.damage * AFTERIMAGE_HOLD_PCT);
+    if (held > 0) {
+      t2.held.push(held);
+      ctx.damage = Math.max(1, ctx.damage - held);
+    }
+  }
   runStrikerWeaponStrikes(world, player, ctx);
   runSpark(world, player, ctx, o);
-  landStrikerBeat(player, discipline, piece ? isSetupFamily(piece.family) : false);
+  landStrikerBeat(player, discipline, piece ? isSetupFamily(piece.family) : false, {
+    damageTechnique: piece?.family === 'damage',
+    cast: castTechnique,
+    control: piece?.control === true,
+  });
 }
 
 function runSpark(world: World, player: PlayerEntity, ctx: CombatContext, o: Order): void {
@@ -586,18 +755,43 @@ function onStrikerFinisher(ctx: CombatContext, world: World): void {
   const t2 = strikerT2(player);
   ctx.damage = Math.round(ctx.damage * disciplineFinisherMult(player, o.ctx.disciplineId));
   if (t2.critMult > 0) { ctx.damage = Math.round(ctx.damage * t2.critMult); t2.critMult = 0; }
-  // Maul, Bastard Sword and Hooked Sickle on the finisher.
+  // Maul, Bastard Sword and Hooked Sickle on the finisher; Rimeblade and Bloodfire Axe on every blow.
   ctx.damage = Math.round(ctx.damage * strikerWeaponDamageMult(player, ctx.defender, { finisher: true, damageTechnique: false }));
-  if (o.trophy && o.trophy.kind === 'weight') {
-    WEIGHTS[o.trophy.id]?.(world, player, ctx.defender, ctx, trophyParams(o, o.trophy));
+  ctx.damage = Math.round(ctx.damage * strikerGearBeatMult(player, ctx.defender));
+  const spec = strikerSpecOf(player);
+  const target = ctx.defender;
+  // Subjugator: the finisher hits a controlled enemy much harder.
+  if (spec === SUBJUGATOR && monsterIsHeld(target)) ctx.damage = Math.round(ctx.damage * (1 + SUBJUGATOR_FINISHER_PCT));
+  // Frenzy: the second finisher of the combo is the lighter one.
+  const second = t2.secondFinisher;
+  if (second) ctx.damage = Math.max(1, Math.round(ctx.damage * FRENZY_SECOND_PCT));
+  // Afterimage: the finisher arrives as a multi-cut, replaying every held slash with its share.
+  // The replays set off no hit effects (no on-hit damage, no weapon reservoir), then the twist lands.
+  for (const slash of t2.held.splice(0)) {
+    if (!world.hasMonster(target.isMonster.id) || target.hasHealth.hp <= 0) break;
+    applyPlayerAoeTo(world, player, [target], slash, 'player', {}, {});
   }
-  runStrikerWeaponStrikes(world, player, ctx);
-  runSpark(world, player, ctx, o);
+  if (world.hasMonster(target.isMonster.id)) {
+    if (o.trophy && o.trophy.kind === 'weight') {
+      WEIGHTS[o.trophy.id]?.(world, player, target, ctx, trophyParams(o, o.trophy));
+    }
+    runStrikerWeaponStrikes(world, player, ctx);
+    runSpark(world, player, ctx, o);
+  }
   // The combo ends: the next one rides this trophy's spark, and starts unfocused, uncoiled.
   cadence.sparkTrophyId = o.trophy?.kind === 'spark' ? o.trophy.id : null;
   cadence.coiled = false;
-  t2.lastTargetId = ctx.defender.isMonster.id;
-  spendStrikerFinisher(player, o.ctx.disciplineId);
+  t2.lastTargetId = target.isMonster.id;
+  if (second) {
+    t2.secondFinisher = false;
+  } else {
+    spendStrikerFinisher(player, o.ctx.disciplineId);
+    // Frenzy: as the fight goes on, a second, lighter finisher follows this one at once.
+    if (spec === FRENZY && t2.fightFinishers >= FRENZY_AFTER_FINISHERS) {
+      t2.secondFinisher = true;
+      setEmpoweredAttack(world, player);
+    }
+  }
   removeStatusEffect(player.tracksCombat, STRIKER_FOCUS_EFFECT_ID);
   markSliceDirty(world, player, 'usesCadence');
 }
@@ -622,7 +816,11 @@ export function initStrikerOrder(): void {
           chargeAndStrike(world, player, o, piece, now);
           return;
         }
-        landStrikerBeat(player, o.ctx.disciplineId, isSetupFamily(piece.family));
+        landStrikerBeat(player, o.ctx.disciplineId, isSetupFamily(piece.family), {
+          damageTechnique: piece.family === 'damage',
+          cast: true,
+          control: piece.control === true,
+        });
         advanceStrikerBeat(world, player);
         markSliceDirty(world, player, 'usesCadence');
       },
