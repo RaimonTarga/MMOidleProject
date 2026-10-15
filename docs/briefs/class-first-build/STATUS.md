@@ -28,6 +28,13 @@ Recorded in the bible (§4 Armor/charm row, §5) where they are design.
 
 All delegate tasks are merged (2026-10-15 night): CD6, CD7, CD8, CL5, CL6, CL7, SP5, SP6, SP7, AP5, AP6, AP7.
 
+## T2 wave 1 merge state (2026-10-15)
+
+Merged: T2-STRIKER, T2-SPIRIT, T2-CONDUIT, T2-SLINGER, T2-SQUIRE. Waiting: T2-APPRENTICE (Grok).
+Suite after the five: 354/355. **Known failing until Wave 2:** `statusRegistry.test.ts` lists the new
+statuses with no client tile/help/badge/icon: `ability-sidestep` (Close In stand-in), `conduit-bark`,
+`conduit-mark`, `squire-parry`. Wave 2 UI adds them (icons are the designer's).
+
 ## Tier 2 prompts (wave 1)
 
 Plan: [T2-plan.md](T2-plan.md). One agent per class (Codex or Grok), each in its own folder.
