@@ -15,6 +15,7 @@
  * its cost. Every number is in the kit's `params` or `SQUIRE_RESOLVE` (placeholders).
  */
 import {
+  ABILITY_UNYIELDING_EFFECT_ID,
   getCounter,
   getString,
   getStatusEffect,
@@ -34,6 +35,7 @@ import {
 } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../../ecs/entity';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
+import { attachMarker } from '../../../../ecs/markerHelpers';
 import type { World } from '../../../../world/World';
 import { applyPlayerAoe, applyPlayerAoeTo, playerAoeTargets } from '../../../combat/damage/aoeDamage';
 import { applyKnockback } from '../../../combat/damage/knockback';
@@ -45,6 +47,8 @@ import { conditionsHold, momentActive, momentTick, momentValue } from '../../../
 import { applyStun } from '../../../combat/status/stun';
 import { classConfigContextOf } from '../../../player/progression/classConfig';
 import { applyPlayerDebuff } from '../../shared/applyPlayerDebuff';
+import { CADENCE_BLEED_ID } from '../../../combat/damage/bleedIds';
+import { applyHealToPlayer } from '../../../defense/regen/healing';
 import { EXECUTION_MULTIPLIER } from './cooldownPrototype';
 
 /** The brace a Guard puts up, until the blow it was raised for lands. */
@@ -59,6 +63,13 @@ const LAST_SLAM_AT = 'squire.lastSlamAt';
 const SLAM_CHAIN = 'squire.slamChain';
 const REPEAT_COUNT_KEY = 'moment.repeat-hits.count';
 const REPEAT_BY_KEY = 'moment.repeat-hits.by';
+const RAMPART_UNTIL = 'squire.rampart.untilTick.';  // on the shoved monster, per Squire
+const RAMPART_PCT = 'squire.rampart.pct.';
+const LAST_CAUGHT_TICK = 'squire.lastCaughtTick';
+const SHRED_LAST = 'squire.shred.lastStacks';
+const SHRED_REGROW = 'squire.shred.regrowMs';
+/** World ticks per second (the logic rate), for windows kept in ticks. */
+const TICKS_PER_SEC = 10;
 
 // ── The player's rules ───────────────────────────────────────────────────────
 
@@ -133,13 +144,25 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
   // Three or more enemies on you: shove them all back a step. Lands if it moves enough.
   'squire-shove': (world, player, p) => {
     const at = player.hasPosition.current;
+    const passives = player.usesSkills.passives;
+    const weaken = passives['squire.shove-weaken-pct'] ?? 0;
+    const weakenTicks = ((passives['squire.shove-weaken-ms'] ?? 0) / 1000) * TICKS_PER_SEC;
     let moved = 0;
     for (const monster of playerAoeTargets(world, player, at, p.radius)) {
       if (monster.isRooted || monster.isMonster.isBoss) continue;
       applyKnockback(world, monster.isMonster.id, at, p.distance);
+      // Rampart: the shoved enemy deals this Squire less damage for a few seconds.
+      if (weaken > 0) {
+        setCounter(monster.tracksCombat, RAMPART_UNTIL + player.isPlayer.id, world.tickCounter + weakenTicks);
+        setCounter(monster.tracksCombat, RAMPART_PCT + player.isPlayer.id, weaken);
+      }
       moved++;
     }
-    return moved >= p.minMoved ? 'landed' : 'wasted';
+    if (moved < p.minMoved) return 'wasted';
+    // Breather: a landed Shove heals a little per enemy shoved.
+    const heal = player.hasHealth.maxHp * (passives['squire.shove-heal-pct'] ?? 0) * moved;
+    if (heal > 0) applyHealToPlayer(player, player.tracksCombat, heal, world);
+    return 'landed';
   },
   // The third hit in a row from one enemy: strike it back at once (a full swing).
   'squire-riposte': (world, player, p) => {
@@ -152,14 +175,21 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
     return 'landed';
   },
   // A poison or bleed landed: shake it off (the one with the most time left).
-  'squire-steel-will': (_world, player) => {
+  'squire-steel-will': (world, player) => {
     const cs = player.tracksCombat;
-    let longest: { id: string; remainingMs: number } | undefined;
+    let longest: (typeof cs.statusEffects)[number] | undefined;
     for (const effect of cs.statusEffects) {
       if (!isMonsterDotStatusEffectId(effect.id) || effect.remainingMs <= 0) continue;
       if (!longest || effect.remainingMs > longest.remainingMs) longest = effect;
     }
     if (!longest) return 'wasted';
+    // Purifying Breath: heal part of the damage it still had to deal.
+    const healPct = player.usesSkills.passives['squire.cleanse-heal-pct'] ?? 0;
+    if (healPct > 0) {
+      const ticksLeft = Math.ceil(longest.remainingMs / Math.max(1, longest.data['tickIntervalMs'] ?? 1000));
+      const owed = (longest.data['damagePerStack'] ?? 0) * Math.max(1, longest.stacks) * ticksLeft;
+      if (owed > 0) applyHealToPlayer(player, cs, owed * healPct, world);
+    }
     removeStatusEffect(cs, longest.id);
     return 'landed';
   },
@@ -173,14 +203,26 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
       }
     }
     const windowMs = Math.min(p.maxWindowMs, Math.max(0, endsAt - now) + 500);
+    // Planted: while braced, knockback and stuns don't move you.
+    const steadfast = (player.usesSkills.passives['squire.guard-steadfast'] ?? 0) > 0;
     applyStatusEffect(player.tracksCombat, {
       id: SQUIRE_GUARD_EFFECT_ID,
       maxStacks: 1,
       remainingMs: windowMs,
       refreshable: true,
       sourceId: player.isPlayer.id,
-      data: { cut: p.cut, refund: p.refund, totalMs: windowMs },
+      data: { cut: p.cut, refund: p.refund, totalMs: windowMs, knockbackResistPct: steadfast ? 1 : 0 },
     });
+    if (steadfast) {
+      applyStatusEffect(player.tracksCombat, {
+        id: ABILITY_UNYIELDING_EFFECT_ID,
+        maxStacks: 1,
+        remainingMs: windowMs,
+        refreshable: true,
+        sourceId: player.isPlayer.id,
+        data: { totalMs: windowMs },
+      });
+    }
     return 'braced';
   },
   // The enemy you fight winds up: bash it; the stun interrupts the cast. A boss pattern's
@@ -281,6 +323,12 @@ function onSquireSlam(ctx: CombatContext, world: World): void {
     setCounter(cs, SLAM_CHAIN, chain);
     mult *= tp.sizePct * (1 + tp.chainPct * chain);
   }
+  // Warhammer: a slam soon after a caught telegraph hits much harder.
+  const caughtWindow = ((passives['squire.slam-after-guard-ms'] ?? 0) / 1000) * TICKS_PER_SEC;
+  const caughtAt = getCounter(cs, LAST_CAUGHT_TICK);
+  if (caughtAt > 0 && world.tickCounter + 1 - caughtAt <= caughtWindow) {
+    mult *= 1 + (passives['squire.slam-after-guard-pct'] ?? 0);
+  }
   ctx.damage = Math.max(1, Math.round(ctx.damage * mult));
   setCounter(cs, LAST_SLAM_AT, now);
 
@@ -293,6 +341,22 @@ function onSquireSlam(ctx: CombatContext, world: World): void {
   } else {
     struck = applyPlayerAoe(world, player, player.hasPosition.current, radius, ctx.damage,
       ctx.defender.isMonster.id, 'player', {}, { feedsWeaponReservoir: true });
+  }
+
+  // Spiked Flail: the slam leaves a bleed on everything it hits.
+  const bleedPct = passives['squire.slam-bleed-pct'] ?? 0;
+  if (bleedPct > 0) {
+    for (const monster of [ctx.defender, ...struck]) {
+      const bleed = applyPlayerDebuff(player, monster.tracksCombat, {
+        id: CADENCE_BLEED_ID,
+        instanced: false,
+        remainingMs: -1,
+        sourceId: player.isPlayer.id,
+        data: { damagePerTick: Math.max(1, Math.round((ctx.damage * bleedPct) / 4)), nextTickIn: 1000, tickIntervalMs: 1000 },
+      }, { origin: 'mechanic' });
+      bleed.stacks = 4; // one stack per remaining tick
+      attachMarker(world, monster, 'hasHemorrhage');
+    }
   }
 
   // Corrode: every slam strips more plating from everything it hits.
@@ -342,7 +406,8 @@ export function initSquire(): void {
     if (ctx.attackerType !== 'monster' || ctx.defenderType !== 'player') return;
     const player = ctx.defender;
     if (!player.usesCooldown || !squireRulesOf(world, player)) return;
-    if (ctx.metadata['evadeFull'] === true) return;
+    // A full dodge fills nothing, unless Turn Aside says it fills as if it had landed.
+    if (ctx.metadata['evadeFull'] === true && !((player.usesSkills.passives['squire.dodge-fills'] ?? 0) > 0)) return;
     const raw = Number(ctx.metadata['incomingGross'] ?? ctx.damage);
     if (raw > 0) addResolve(world, player, rawHitPips(player, raw));
   });
@@ -360,10 +425,45 @@ export function initSquire(): void {
     ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - (brace.data['cut'] ?? 0))));
     ctx.metadata['squireGuarded'] = true;
     removeStatusEffect(player.tracksCombat, SQUIRE_GUARD_EFFECT_ID);
+    if ((brace.data['knockbackResistPct'] ?? 0) > 0) removeStatusEffect(player.tracksCombat, ABILITY_UNYIELDING_EFFECT_ID);
+    setCounter(player.tracksCombat, LAST_CAUGHT_TICK, world.tickCounter + 1);
     addResolve(world, player, brace.data['refund'] ?? 0);
   });
 
+  // Rampart: an enemy you shoved deals you less damage for a few seconds.
+  registerCombatListener('onDamageTaken', (ctx, world) => {
+    if (ctx.attackerType !== 'monster' || ctx.defenderType !== 'player' || ctx.damage <= 0) return;
+    const id = ctx.defender.isPlayer.id;
+    const monsterCs = ctx.attacker.tracksCombat;
+    if (world.tickCounter >= getCounter(monsterCs, RAMPART_UNTIL + id)) return;
+    ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - getCounter(monsterCs, RAMPART_PCT + id))));
+  });
+
   registerCombatListener('onHit', onSquireSlam);
+}
+
+/** Reforged: corrosion stripped from you fills Resolve, and comes back off over time. */
+function reforged(world: World, player: PlayerEntity, dt: number): void {
+  const passives = player.usesSkills.passives;
+  const regrowMs = passives['squire.shred-regrow-ms'] ?? 0;
+  const fill = passives['squire.shred-fill-pips'] ?? 0;
+  if (regrowMs <= 0 && fill <= 0) return;
+  const cs = player.tracksCombat;
+  const shred = getStatusEffect(cs, 'plating-shred');
+  const stacks = shred?.stacks ?? 0;
+  const last = getCounter(cs, SHRED_LAST);
+  if (stacks > last && fill > 0) addResolve(world, player, (stacks - last) * fill);
+  if (shred && regrowMs > 0) {
+    const elapsed = getCounter(cs, SHRED_REGROW) + dt;
+    if (elapsed >= regrowMs) {
+      setCounter(cs, SHRED_REGROW, elapsed - regrowMs);
+      shred.stacks -= 1;
+      if (shred.stacks <= 0) removeStatusEffect(cs, 'plating-shred');
+    } else {
+      setCounter(cs, SHRED_REGROW, elapsed);
+    }
+  }
+  setCounter(cs, SHRED_LAST, getStatusEffect(cs, 'plating-shred')?.stacks ?? 0);
 }
 
 /** Each tick: the bar's size, Muster, the trickle, the responses, then the slam. */
@@ -390,6 +490,7 @@ export function updateSquire(world: World, dt: number, now: number): boolean {
       }
     }
     trickle(world, player, dt);
+    reforged(world, player, dt);
     runResponses(world, player, r, now);
     armSlam(world, player, r, now);
   }

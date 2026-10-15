@@ -209,7 +209,8 @@ export function updateKnockback(world: World, dt: number): void {
  */
 export function playerForcedMovementResistPct(player: PlayerEntity): number {
   let best = 0;
-  for (const effectId of ABILITY_GUARD_EFFECT_IDS) {
+  // The Squire's brace counts too (its Planted line, class-first build plan CQ.4).
+  for (const effectId of [...ABILITY_GUARD_EFFECT_IDS, 'squire-guard']) {
     const guard = getStatusEffect(player.tracksCombat, effectId);
     if (!guard || guard.remainingMs <= 0) continue;
     best = Math.max(best, guard.data['knockbackResistPct'] ?? 0);

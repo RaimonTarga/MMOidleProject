@@ -145,6 +145,17 @@ export const SQUIRE_KEYS = [
   'squire.bash-stun-pct',            // Tower Shield: Shield Bash stuns longer
   'squire.bash-cost-cut-pct',        // Tower Shield: Shield Bash costs less
   'squire.steel-will-cost-cut-pct',  // Iron Gut: Steel Will costs less
+  'squire.slam-bleed-pct',           // Spiked Flail: the slam leaves a bleed (this share of it)
+  'squire.slam-after-guard-pct',     // Warhammer: a slam soon after a caught telegraph hits harder
+  'squire.slam-after-guard-ms',      // Warhammer: how soon
+  'squire.shove-weaken-pct',         // Rampart: enemies you shoved deal less damage
+  'squire.shove-weaken-ms',          // Rampart: for this long
+  'squire.dodge-fills',              // Turn Aside: a dodged hit fills Resolve as if it had landed
+  'squire.guard-steadfast',          // Planted: while braced, no knockback or stun
+  'squire.shred-regrow-ms',          // Reforged: one stack of corrosion on you comes off this often
+  'squire.shred-fill-pips',          // Reforged: each stack stripped from you fills this much Resolve
+  'squire.shove-heal-pct',           // Breather: a landed Shove heals this share of max HP per enemy
+  'squire.cleanse-heal-pct',         // Purifying Breath: a shaken-off DoT heals this share of what it had left
 ] as const;
 
 export const CADENCE_KEYS = [

@@ -1,7 +1,9 @@
 /**
  * The Squire's gear (`cooldown`): its weapons and its lines on the shared armor and charm
- * bases, from bible §8.4 (T1) and §8.16 (T2–T4). Placeholder numbers are copied from the biome's first
- * generic weapon at that tier; mechanic keys stay empty until the class runtime.
+ * bases, from bible §8.4 (T1) and §8.16 (T2–T4). Stats are copied from the biome's first
+ * generic weapon at that tier. The T1 jobs and lines carry their `squire.*` / `defense.*` keys
+ * (CQ.4: placeholders, a little stronger each tier the job recurs); the T2+ jobs and the two
+ * Recovery lines (Counterbalance, Stone Patience) stay empty until their runtime.
  */
 import type { ClassGearDef } from './types';
 
@@ -23,7 +25,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { yellow: 10 }, stats: { attack: 19 }, attacksPerSecond: 0.90, tier: 1,
       icon: 'items/weapons/iron-broadsword.png',
       description: "The slam's circle is wider.",
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-radius-pct': 0.3 },
     },
     {
       id: 'squire-arming-sword-t1', name: 'Arming Sword',
@@ -31,7 +33,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { green: 20 }, stats: { attack: 12 }, attacksPerSecond: 1.60, tier: 1,
       icon: 'items/weapons/flash-rapier.png',
       description: 'Quick, light swings, and counters hit harder.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.counter-damage-pct': 0.3 },
     },
     {
       id: 'squire-spiked-flail-t1', name: 'Spiked Flail',
@@ -39,7 +41,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { purple: 22 }, stats: { attack: 18 }, attacksPerSecond: 0.90, tier: 1,
       icon: 'items/weapons/poison-dagger.png',
       description: 'The slam leaves a bleed on everything it hits.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-bleed-pct': 0.3 },
     },
     {
       id: 'squire-warhammer-t1', name: 'Warhammer',
@@ -47,7 +49,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { blue: 22 }, stats: { attack: 38 }, attacksPerSecond: 0.55, tier: 1,
       icon: 'items/weapons/heavy-hammer.png',
       description: 'Slow, heavy swings and a bigger slam. A slam soon after a caught telegraph hits much harder.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-damage-pct': 0.3, 'squire.slam-after-guard-pct': 0.5, 'squire.slam-after-guard-ms': 4000 },
     },
     {
       id: 'squire-tower-shield-t1', name: 'Tower Shield',
@@ -55,7 +57,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { red: 26 }, stats: { attack: 29 }, attacksPerSecond: 1.10, tier: 1,
       icon: 'items/weapons/chaotic-axe.png',
       description: 'You fight with the shield: lighter swings, Shield Bash costs half, and the stun lasts longer.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.bash-cost-cut-pct': 0.5, 'squire.bash-stun-pct': 0.5 },
     },
     // ── T2 ──
     {
@@ -64,7 +66,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { yellow: 45 }, stats: { attack: 51 }, attacksPerSecond: 1.00, tier: 2,
       icon: 'items/weapons/knight-steelsword.png',
       description: "The slam's circle is wider.",
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-radius-pct': 0.375 },
     },
     {
       id: 'squire-arming-sword-t2', name: 'Arming Sword',
@@ -72,7 +74,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { green: 60 }, stats: { attack: 35 }, attacksPerSecond: 1.70, tier: 2,
       icon: 'items/weapons/gale-needle.png',
       description: 'Quick, light swings, and counters hit harder.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.counter-damage-pct': 0.375 },
     },
     {
       id: 'squire-spiked-flail-t2', name: 'Spiked Flail',
@@ -80,7 +82,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { purple: 52 }, stats: { attack: 47 }, attacksPerSecond: 1.0, tier: 2,
       icon: 'items/weapons/venom-knife.png',
       description: 'The slam leaves a bleed on everything it hits.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-bleed-pct': 0.375 },
     },
     {
       id: 'squire-warhammer-t2', name: 'Warhammer',
@@ -88,7 +90,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { blue: 52 }, stats: { attack: 85 }, attacksPerSecond: 0.55, tier: 2,
       icon: 'items/weapons/quake-hammer.png',
       description: 'Slow, heavy swings and a bigger slam. A slam soon after a caught telegraph hits much harder.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-damage-pct': 0.375, 'squire.slam-after-guard-pct': 0.625, 'squire.slam-after-guard-ms': 4000 },
     },
     {
       id: 'squire-tower-shield-t2', name: 'Tower Shield',
@@ -96,7 +98,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { red: 60 }, stats: { attack: 60 }, attacksPerSecond: 1.20, tier: 2,
       icon: 'items/weapons/ruinous-axe.png',
       description: 'You fight with the shield: lighter swings, Shield Bash costs half, and the stun lasts longer.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.bash-cost-cut-pct': 0.5, 'squire.bash-stun-pct': 0.625 },
     },
     {
       id: 'squire-hooked-glaive-t2', name: 'Hooked Glaive',
@@ -121,7 +123,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { purple: 116 }, stats: { attack: 86 }, attacksPerSecond: 1.00, tier: 3,
       icon: 'items/weapons/plague-fang.png',
       description: 'The slam leaves a bleed on everything it hits.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-bleed-pct': 0.45 },
     },
     {
       id: 'squire-warhammer-t3', name: 'Warhammer',
@@ -129,7 +131,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { blue: 116 }, stats: { attack: 164 }, attacksPerSecond: 0.55, tier: 3,
       icon: 'items/weapons/avalanche-maul.png',
       description: 'Slow, heavy swings and a bigger slam. A slam soon after a caught telegraph hits much harder.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-damage-pct': 0.45, 'squire.slam-after-guard-pct': 0.75, 'squire.slam-after-guard-ms': 4000 },
     },
     {
       id: 'squire-tower-shield-t3', name: 'Tower Shield',
@@ -137,7 +139,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { red: 120 }, stats: { attack: 112 }, attacksPerSecond: 1.20, tier: 3,
       icon: 'items/weapons/cataclysm-axe.png',
       description: 'You fight with the shield: lighter swings, Shield Bash costs half, and the stun lasts longer.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.bash-cost-cut-pct': 0.5, 'squire.bash-stun-pct': 0.75 },
     },
     {
       id: 'squire-hooked-glaive-t3', name: 'Hooked Glaive',
@@ -154,7 +156,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { green: 120 }, stats: { attack: 50, onHitDamage: 38 }, attacksPerSecond: 1.65, tier: 3,
       icon: 'items/weapons/venomthorn-rapier.png',
       description: 'Quick, light swings, and counters hit harder.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.counter-damage-pct': 0.45 },
     },
     {
       id: 'squire-throwing-shield-t3', name: 'Throwing Shield',
@@ -187,7 +189,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { red: 140 }, stats: { attack: 70 }, attacksPerSecond: 1.65, tier: 3,
       icon: 'items/weapons/cinderlash.png',
       description: "The slam's circle is wider.",
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-radius-pct': 0.45 },
     },
     // ── T4 ──
     {
@@ -196,7 +198,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { blue: 256 }, stats: { attack: 486 }, attacksPerSecond: 0.40, tier: 4,
       icon: 'items/weapons/earthsunder-maul.png',
       description: 'Slow, heavy swings and a bigger slam. A slam soon after a caught telegraph hits much harder.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-damage-pct': 0.525, 'squire.slam-after-guard-pct': 0.875, 'squire.slam-after-guard-ms': 4000 },
     },
     {
       id: 'squire-hooked-glaive-t4', name: 'Hooked Glaive',
@@ -213,7 +215,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { green: 264 }, stats: { attack: 108, onHitDamage: 70 }, attacksPerSecond: 1.75, tier: 4,
       icon: 'items/weapons/deathfang-rapier.png',
       description: 'Quick, light swings, and counters hit harder.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.counter-damage-pct': 0.525 },
     },
     {
       id: 'squire-throwing-shield-t4', name: 'Throwing Shield',
@@ -246,7 +248,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { red: 308 }, stats: { attack: 119 }, attacksPerSecond: 1.80, tier: 4,
       icon: 'items/weapons/eruption-lash.png',
       description: "The slam's circle is wider.",
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-radius-pct': 0.525 },
     },
     {
       id: 'squire-bone-maul-t4', name: 'Bone Maul',
@@ -263,7 +265,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { purple: 270 }, stats: { attack: 258 }, attacksPerSecond: 1.10, tier: 4,
       icon: 'items/weapons/plague-axe.png',
       description: 'The slam leaves a bleed on everything it hits.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-bleed-pct': 0.525 },
     },
     {
       id: 'squire-pressure-hammer-t4', name: 'Pressure Hammer',
@@ -280,43 +282,43 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { green: 270 }, stats: { attack: 257 }, attacksPerSecond: 1.15, tier: 4,
       icon: 'items/weapons/abyssal-axe.png',
       description: 'You fight with the shield: lighter swings, Shield Bash costs half, and the stun lasts longer.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.bash-cost-cut-pct': 0.5, 'squire.bash-stun-pct': 0.875 },
     },
   ],
   lines: {
     // ── T1 ──
-    'plains-vest-t1': { name: 'Rampart', text: 'Enemies you shoved deal less damage for a few seconds.', effects: {} },
-    'plains-charm-t1': { name: 'Breather', text: 'Each Shove that lands heals a little per enemy shoved.', effects: {} },
-    'forest-vest-t1': { name: 'Turn Aside', text: 'A dodged hit fills Resolve as if it had landed.', effects: {} },
+    'plains-vest-t1': { name: 'Rampart', text: 'Enemies you shoved deal less damage for a few seconds.', effects: { 'squire.shove-weaken-pct': 0.2, 'squire.shove-weaken-ms': 4000 } },
+    'plains-charm-t1': { name: 'Breather', text: 'Each Shove that lands heals a little per enemy shoved.', effects: { 'squire.shove-heal-pct': 0.01 } },
+    'forest-vest-t1': { name: 'Turn Aside', text: 'A dodged hit fills Resolve as if it had landed.', effects: { 'squire.dodge-fills': 1 } },
     'forest-charm-t1': { name: 'Counterbalance', text: 'After a Riposte, Recovery doubles for a few seconds.', effects: {} },
-    'swamp-vest-t1': { name: 'Iron Gut', text: 'Steel Will costs half.', effects: {} },
-    'swamp-charm-t1': { name: 'Purifying Breath', text: 'A poison or bleed you shake off heals you for part of the damage it had left.', effects: {} },
-    'mountain-vest-t1': { name: 'Planted', text: "While guarding you can't be knocked back or stunned.", effects: {} },
+    'swamp-vest-t1': { name: 'Iron Gut', text: 'Steel Will costs half.', effects: { 'squire.steel-will-cost-cut-pct': 0.5 } },
+    'swamp-charm-t1': { name: 'Purifying Breath', text: 'A poison or bleed you shake off heals you for part of the damage it had left.', effects: { 'squire.cleanse-heal-pct': 0.5 } },
+    'mountain-vest-t1': { name: 'Planted', text: "While guarding you can't be knocked back or stunned.", effects: { 'squire.guard-steadfast': 1 } },
     'mountain-charm-t1': { name: 'Stone Patience', text: 'After a caught telegraph, Recovery triples for a few seconds.', effects: {} },
-    'cave-vest-t1': { name: 'Reforged', text: 'Stripped plating comes back faster, and each stack stripped fills Resolve.', effects: {} },
-    'cave-charm-t1': { name: 'Old Guard', text: 'Part of your Recovery stays on in combat.', effects: {} },
+    'cave-vest-t1': { name: 'Reforged', text: 'Stripped plating comes back faster, and each stack stripped fills Resolve.', effects: { 'squire.shred-regrow-ms': 3000, 'squire.shred-fill-pips': 0.25 } },
+    'cave-charm-t1': { name: 'Old Guard', text: 'Part of your Recovery stays on in combat.', effects: { 'defense.recovery-active-pct': 0.1 } },
     // ── T2 ──
-    'plains-vest-t2': { name: 'Rampart', text: 'Enemies you shoved deal less damage for a few seconds.', effects: {} },
-    'plains-charm-t2': { name: 'Breather', text: 'Each Shove that lands heals a little per enemy shoved.', effects: {} },
-    'forest-vest-t2': { name: 'Turn Aside', text: 'A dodged hit fills Resolve as if it had landed.', effects: {} },
+    'plains-vest-t2': { name: 'Rampart', text: 'Enemies you shoved deal less damage for a few seconds.', effects: { 'squire.shove-weaken-pct': 0.25, 'squire.shove-weaken-ms': 4000 } },
+    'plains-charm-t2': { name: 'Breather', text: 'Each Shove that lands heals a little per enemy shoved.', effects: { 'squire.shove-heal-pct': 0.013 } },
+    'forest-vest-t2': { name: 'Turn Aside', text: 'A dodged hit fills Resolve as if it had landed.', effects: { 'squire.dodge-fills': 1 } },
     'forest-charm-t2': { name: 'Counterbalance', text: 'After a Riposte, Recovery doubles for a few seconds.', effects: {} },
-    'swamp-vest-t2': { name: 'Iron Gut', text: 'Steel Will costs half.', effects: {} },
-    'swamp-charm-t2': { name: 'Purifying Breath', text: 'A poison or bleed you shake off heals you for part of the damage it had left.', effects: {} },
-    'mountain-vest-t2': { name: 'Planted', text: "While guarding you can't be knocked back or stunned.", effects: {} },
+    'swamp-vest-t2': { name: 'Iron Gut', text: 'Steel Will costs half.', effects: { 'squire.steel-will-cost-cut-pct': 0.5 } },
+    'swamp-charm-t2': { name: 'Purifying Breath', text: 'A poison or bleed you shake off heals you for part of the damage it had left.', effects: { 'squire.cleanse-heal-pct': 0.625 } },
+    'mountain-vest-t2': { name: 'Planted', text: "While guarding you can't be knocked back or stunned.", effects: { 'squire.guard-steadfast': 1 } },
     'mountain-charm-t2': { name: 'Stone Patience', text: 'After a caught telegraph, Recovery triples for a few seconds.', effects: {} },
-    'cave-vest-t2': { name: 'Reforged', text: 'Stripped plating comes back faster, and each stack stripped fills Resolve.', effects: {} },
-    'cave-charm-t2': { name: 'Old Guard', text: 'Part of your Recovery stays on in combat.', effects: {} },
+    'cave-vest-t2': { name: 'Reforged', text: 'Stripped plating comes back faster, and each stack stripped fills Resolve.', effects: { 'squire.shred-regrow-ms': 3000, 'squire.shred-fill-pips': 0.312 } },
+    'cave-charm-t2': { name: 'Old Guard', text: 'Part of your Recovery stays on in combat.', effects: { 'defense.recovery-active-pct': 0.125 } },
     'jungle-vest-t2': { name: 'Unflinching', text: "An ambush can't stun or knock you down.", effects: {} },
     'jungle-charm-t2': { name: "Watchman's Ease", text: 'An ambush Watchful catches heals you for the hit it stopped.', effects: {} },
     'desert-vest-t2': { name: 'Arrow Catcher', text: 'Ranged hits on you fill double Resolve.', effects: {} },
     'desert-charm-t2': { name: 'Called Out', text: 'Each enemy a Challenge pulls heals you a little.', effects: {} },
     // ── T3 ──
-    'swamp-vest-t3': { name: 'Iron Gut', text: 'Steel Will costs half.', effects: {} },
-    'swamp-charm-t3': { name: 'Purifying Breath', text: 'A poison or bleed you shake off heals you for part of the damage it had left.', effects: {} },
-    'mountain-vest-t3': { name: 'Planted', text: "While guarding you can't be knocked back or stunned.", effects: {} },
+    'swamp-vest-t3': { name: 'Iron Gut', text: 'Steel Will costs half.', effects: { 'squire.steel-will-cost-cut-pct': 0.5 } },
+    'swamp-charm-t3': { name: 'Purifying Breath', text: 'A poison or bleed you shake off heals you for part of the damage it had left.', effects: { 'squire.cleanse-heal-pct': 0.75 } },
+    'mountain-vest-t3': { name: 'Planted', text: "While guarding you can't be knocked back or stunned.", effects: { 'squire.guard-steadfast': 1 } },
     'mountain-charm-t3': { name: 'Stone Patience', text: 'After a caught telegraph, Recovery triples for a few seconds.', effects: {} },
-    'cave-vest-t3': { name: 'Reforged', text: 'Stripped plating comes back faster, and each stack stripped fills Resolve.', effects: {} },
-    'cave-charm-t3': { name: 'Old Guard', text: 'Part of your Recovery stays on in combat.', effects: {} },
+    'cave-vest-t3': { name: 'Reforged', text: 'Stripped plating comes back faster, and each stack stripped fills Resolve.', effects: { 'squire.shred-regrow-ms': 3000, 'squire.shred-fill-pips': 0.375 } },
+    'cave-charm-t3': { name: 'Old Guard', text: 'Part of your Recovery stays on in combat.', effects: { 'defense.recovery-active-pct': 0.15 } },
     'jungle-vest-t3': { name: 'Unflinching', text: "An ambush can't stun or knock you down.", effects: {} },
     'jungle-charm-t3': { name: "Watchman's Ease", text: 'An ambush Watchful catches heals you for the hit it stopped.', effects: {} },
     'desert-vest-t3': { name: 'Arrow Catcher', text: 'Ranged hits on you fill double Resolve.', effects: {} },
@@ -326,7 +328,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
     'volcanic-vest-t3': { name: 'Stoked', text: "The Heat's extra damage on you fills extra Resolve.", effects: {} },
     'volcanic-charm-t3': { name: 'Cooling Breath', text: 'Each Backdraft that lands heals you a little.', effects: {} },
     // ── T4 ──
-    'mountain-vest-t4': { name: 'Planted', text: "While guarding you can't be knocked back or stunned.", effects: {} },
+    'mountain-vest-t4': { name: 'Planted', text: "While guarding you can't be knocked back or stunned.", effects: { 'squire.guard-steadfast': 1 } },
     'mountain-charm-t4': { name: 'Stone Patience', text: 'After a caught telegraph, Recovery triples for a few seconds.', effects: {} },
     'jungle-vest-t4': { name: 'Unflinching', text: "An ambush can't stun or knock you down.", effects: {} },
     'jungle-charm-t4': { name: "Watchman's Ease", text: 'An ambush Watchful catches heals you for the hit it stopped.', effects: {} },
