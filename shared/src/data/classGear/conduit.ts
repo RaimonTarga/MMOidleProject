@@ -103,7 +103,7 @@ export const CONDUIT_GEAR: ClassGearDef = {
       cost: { green: 55 }, stats: { attack: 24, onHitDamage: 23 }, attacksPerSecond: 1.55, tier: 2,
       icon: 'items/weapons/stinger-rapier.png',
       description: "Each summon's first hit on a new target hits much harder.",
-      mechanicEffects: {},
+      mechanicEffects: { 'conduit.first-strike-pct': 1 },
     },
     {
       id: 'conduit-longshot-t2', name: 'Longshot',
@@ -111,7 +111,7 @@ export const CONDUIT_GEAR: ClassGearDef = {
       cost: { yellow: 70 }, stats: { attack: 65 }, attacksPerSecond: 0.80, tier: 2,
       icon: 'items/weapons/sunsteel-falchion.png',
       description: 'Ranged summons fire from much further back and hit harder at range. Melee summons hit softer.',
-      mechanicEffects: {},
+      mechanicEffects: { 'conduit.longshot-pct': 0.25 },
     },
     // ── T3 ──
     {
@@ -305,10 +305,10 @@ export const CONDUIT_GEAR: ClassGearDef = {
     'mountain-charm-t2': { name: 'Cairnstone', text: 'After a big hit on you, your Recovery triples for a few seconds.', effects: { 'defense.recovery-hit-pct': 0.25, 'defense.recovery-hit-x': 3 } },
     'cave-vest-t2': { name: 'You Tank', text: 'You tank, with your own health and damage reduction, so the summons can all deal damage.', effects: { 'conduit.hp-pct': -0.3, 'conduit.damage-pct': 0.2 } },
     'cave-charm-t2': { name: 'Deep Reserve', text: 'The rebuild queue works on two summons at once.', effects: { 'conduit.rebuild-speed-pct': 1 } },
-    'jungle-vest-t2': { name: 'Sentinel', text: 'The first hit each enemy lands on you is taken by the nearest summon.', effects: {} },
-    'jungle-charm-t2': { name: 'Bloomlink', text: "A support summon's heal also heals you for half.", effects: {} },
-    'desert-vest-t2': { name: 'Sandveil', text: 'Ranged hits deal less to you and your summons.', effects: {} },
-    'desert-charm-t2': { name: 'Purge', text: 'Every few seconds, the most debuffed body, a summon or you, loses one debuff.', effects: {} },
+    'jungle-vest-t2': { name: 'Sentinel', text: 'The first hit each enemy lands on you is taken by the nearest summon.', effects: { 'conduit.sentinel': 1 } },
+    'jungle-charm-t2': { name: 'Bloomlink', text: "A support summon's heal also heals you for half.", effects: { 'conduit.bloomlink-pct': 0.5 } },
+    'desert-vest-t2': { name: 'Sandveil', text: 'Ranged hits deal less to you and your summons.', effects: { 'conduit.sandveil-pct': 0.3 } },
+    'desert-charm-t2': { name: 'Purge', text: 'Every few seconds, the most debuffed body, a summon or you, loses one debuff.', effects: { 'conduit.purge-ms': 5000 } },
     // ── T3 ──
     'swamp-vest-t3': { name: 'Poison Shift', text: 'Poison on you moves to a summon.', effects: { 'conduit.poison-shift': 1 } },
     'swamp-charm-t3': { name: 'Bloodtithe', text: 'When a summon dies, you get back part of the HP you paid to build it.', effects: { 'conduit.bloodtithe-pct': 0.5 } },

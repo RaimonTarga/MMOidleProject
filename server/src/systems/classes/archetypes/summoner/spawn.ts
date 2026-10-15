@@ -28,7 +28,8 @@ import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
 import { attachComponent, detachComponent } from '../../../../ecs/markerHelpers';
 import { setAttackTarget } from '../../../combat/ai/targeting';
 import { stopEntity } from '../../../world/movement';
-import { summonerProfileFor } from './profile';
+import { slotAttackRange, summonerProfileFor } from './profile';
+import { chaseBonus } from './souls';
 import { emitSummonObservation } from './observation';
 
 /**
@@ -79,8 +80,8 @@ export function computeMinionSpeed(owner: PlayerEntity): number {
   const inheritedSpeed = Math.round(
     (owner.hasPosition.speed + 40) * speedMult * profile.summonMoveSpeedMult,
   );
-  // A summon can be faster, but must never lag behind its Conduit.
-  return Math.max(owner.hasPosition.speed, 160, inheritedSpeed);
+  // A summon can be faster, but must never lag behind its Conduit. The Dread-Gorger Soul quickens the formation.
+  return Math.round(Math.max(owner.hasPosition.speed, 160, inheritedSpeed) * (1 + chaseBonus(owner).speed));
 }
 
 export function computeMinionSizeMult(owner: PlayerEntity, slot = 0): number {
@@ -179,7 +180,7 @@ export function spawnMinionForOwner(
   const profile = summonerProfileFor(owner);
   const slotProfile = profile.slots[slot] ?? profile.slots[0];
   const damagePct = passives['summoner.minion-damage-pct'] ?? 1.0;
-  const attackRange = slotProfile.attackRange ?? profile.attackRange;
+  const attackRange = slotAttackRange(owner, slotProfile, profile);
   const attackCooldown = Math.max(
     100,
     Math.round(owner.performsAttack.attackCooldown * profile.summonAttackCooldownMult * (slotProfile.cooldownMult ?? 1)),

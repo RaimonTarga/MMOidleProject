@@ -148,8 +148,11 @@ const PIECES: readonly ConduitPiece[] = [
   }),
 
   // ── T2 (§7.16). Bodies from here on are stand-ins; see the K6 report. ──
+  // T2 `params` are PLACEHOLDERS (T2-CONDUIT): the bible gives the jobs, not the numbers.
   summon({
     id: 'conduit-ironhorn',
+    // The taunt copies the Plains Warden's (a tank holds enemies, §7.3); the bible gives only the brace.
+    params: { tauntEveryMs: 6000, tauntMs: 3000, tauntRadius: 120, braceStunMs: 1500 },
     name: 'Ironhorn',
     family: 'tank',
     command: 1,
@@ -160,6 +163,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-barkward',
+    params: { barkEveryMs: 5000, barkAbsorbPct: 0.3 },
     name: 'Barkward',
     family: 'support',
     command: 1,
@@ -170,6 +174,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-rockhurler',
+    params: { splashRadius: 70, splashShare: 0.5 },
     name: 'Rockhurler',
     family: 'damage',
     command: 1,
@@ -180,6 +185,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-bog-leech',
+    params: { drainShare: 0.5 },
     name: 'Bog Leech',
     family: 'damage',
     command: 1,
@@ -190,6 +196,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-bonecrusher',
+    params: { hpDamagePct: 0.08 },
     name: 'Bonecrusher',
     family: 'damage',
     command: 2,
@@ -200,6 +207,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-bloomtender',
+    params: { healPct: 0.05 },
     name: 'Bloomtender',
     family: 'support',
     command: 1,
@@ -210,6 +218,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-executioner',
+    params: { executeBelow: 0.3, executeMult: 2 },
     name: 'Executioner',
     family: 'damage',
     command: 1,

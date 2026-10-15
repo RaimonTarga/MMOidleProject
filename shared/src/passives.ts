@@ -122,6 +122,13 @@ export const DEFENSE_KEYS = [
   'conduit.poison-shift',  // Poison Shift: poison on you moves to a summon
   'conduit.bloodtithe-pct',  // Bloodtithe: share of the rebuild HP cost returned when a summon dies
   'conduit.intercept-pct',  // Big-Hit Intercept: a hit over this share of your HP goes to the nearest tank
+  // Conduit T2 (T2-CONDUIT)
+  'conduit.first-strike-pct',  // First Strike: a summon's first hit on a new target hits this much harder
+  'conduit.longshot-pct',  // Longshot: ranged summons hit this much harder and fire from further back; melee summons hit this much softer
+  'conduit.sentinel',  // Sentinel: the first hit each enemy lands on you is taken by the nearest summon
+  'conduit.bloomlink-pct',  // Bloomlink: a support summon's heal also heals you for this share
+  'conduit.sandveil-pct',  // Sandveil: ranged hits deal this much less to you and your summons
+  'conduit.purge-ms',  // Purge: every this long, the most debuffed body loses one debuff
   'slinger.reload-walk-pct',  // Quickdraw: walk at this share of speed while reloading
   'slinger.elbow-room',  // Elbow Room: reload faster while three or more enemies are near
   'slinger.breathing-room',  // Breathing Room: Recovery rises with the distance to the nearest enemy

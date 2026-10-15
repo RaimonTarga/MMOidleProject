@@ -1,12 +1,15 @@
 import {
+  CONDUIT_DISCIPLINE_TUNING,
   CONDUIT_KIT,
   resolveSummonerProfile,
   summonerProfileWeightTotals,
   type RosterBody,
   type SummonerProfile,
+  type SummonerSlotProfile,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../../ecs/entity';
-import { SOUL_BODY, soulOf } from './souls';
+import { SOUL_BODY, soulOf, soulPower } from './souls';
+import { disciplineOf } from './disciplines';
 
 /**
  * The Formation's roster (class-first §7.3), resolved from the class config: one body per roster
@@ -18,6 +21,11 @@ function rosterOf(owner: PlayerEntity): readonly RosterBody[] | undefined {
   const damageMult = 1 + (passives['conduit.damage-pct'] ?? 0);
   const hpMult = 1 + (passives['conduit.hp-pct'] ?? 0);
   const cooldownMult = 1 + (passives['conduit.cooldown-pct'] ?? 0);
+  // Elite (§7.5): modest bulk and stats on every summon. Longshot (T2 weapon): ranged hit harder, melee softer.
+  const elite = disciplineOf(owner) === 'conduit-elite';
+  const eliteHp = elite ? CONDUIT_DISCIPLINE_TUNING.eliteHpMult : 1;
+  const eliteDamage = elite ? CONDUIT_DISCIPLINE_TUNING.eliteDamageMult : 1;
+  const longshot = passives['conduit.longshot-pct'] ?? 0;
   const system = owner.configuresClass?.config.system;
   if (system?.kind !== 'formation') return undefined;
   const bodies: RosterBody[] = [];
@@ -31,8 +39,9 @@ function rosterOf(owner: PlayerEntity): readonly RosterBody[] | undefined {
       mode: piece.mode,
       row: piece.row,
       body: piece.body,
-      hpMult: (piece.params.hpMult ?? 1) * hpMult,
-      damageMult: (piece.params.damageMult ?? 1) * damageMult,
+      hpMult: (piece.params.hpMult ?? 1) * hpMult * eliteHp,
+      damageMult: (piece.params.damageMult ?? 1) * damageMult * eliteDamage
+        * (piece.mode === 'ranged' ? 1 + longshot : piece.mode === 'melee' ? Math.max(0, 1 - longshot) : 1),
       cooldownMult: (piece.params.cooldownMult ?? 1) * cooldownMult,
     });
   }
@@ -46,12 +55,19 @@ function rosterOf(owner: PlayerEntity): readonly RosterBody[] | undefined {
       mode: 'melee',
       row: 'middle',
       body: soul.body,
-      hpMult: SOUL_BODY.hpMult * hpMult,
-      damageMult: SOUL_BODY.damageMult * damageMult,
+      hpMult: SOUL_BODY.hpMult * hpMult * soulPower(owner),
+      damageMult: SOUL_BODY.damageMult * damageMult * soulPower(owner),
       cooldownMult,
     });
   }
   return bodies;
+}
+
+/** A slot's attack range: its mode's range, and the Longshot weapon pushes a ranged body further back. */
+export function slotAttackRange(owner: PlayerEntity, slot: SummonerSlotProfile, profile: SummonerProfile): number {
+  const range = slot.attackRange ?? profile.attackRange;
+  const longshot = owner.usesSkills.passives['conduit.longshot-pct'] ?? 0;
+  return slot.mode === 'ranged' && longshot > 0 ? Math.round(range * (1 + 2 * longshot)) : range;
 }
 
 export function summonerProfileFor(owner: PlayerEntity): SummonerProfile {

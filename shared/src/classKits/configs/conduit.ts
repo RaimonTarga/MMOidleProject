@@ -4,6 +4,7 @@
  */
 import type { FormationConfig, FormationOrders } from '../configTypes';
 import { CONDUIT_KIT, type ConduitPiece } from '../conduit/kit';
+import { disciplineCommandCost } from '../conduit/discipline';
 import {
   conditionProblems,
   conditionRefs,
@@ -33,9 +34,16 @@ export const DEFAULT_FORMATION_ORDERS: FormationOrders = {
   rebuildFirst: 'tanks',
 };
 
-export function rosterCommand(roster: readonly string[]): number {
+/** A roster's Command under the discipline (§7.5); with none, the plain sum of the pieces' costs. */
+export function rosterCommand(roster: readonly string[], disciplineId: string | null = null): number {
   let total = 0;
-  for (const id of roster) total += CONDUIT_KIT.pieces.find((piece) => piece.id === id)?.command ?? 0;
+  const seen = new Set<string>();
+  for (const id of roster) {
+    const piece = CONDUIT_KIT.pieces.find((candidate) => candidate.id === id);
+    if (!piece) continue;
+    total += disciplineCommandCost(piece.command, disciplineId, !seen.has(id));
+    seen.add(id);
+  }
   return total;
 }
 
@@ -66,15 +74,14 @@ export const CONDUIT_SYSTEM: ClassSystemSpec<FormationConfig> = {
       ...heavies.slice(0, 1),
     ];
     const roster: string[] = [];
-    let command = 0;
+    // Each body is priced by the discipline, given what is already fielded (Pack's first-of-a-type discount).
+    const costOf = (piece: ConduitPiece) => rosterCommand([...roster, piece.id], ctx.disciplineId) - rosterCommand(roster, ctx.disciplineId);
     for (const piece of wanted) {
-      if (command + piece.command > ctx.budget || roster.length >= CONDUIT_ROSTER_BODY_CAP) continue;
+      if (rosterCommand([...roster, piece.id], ctx.disciplineId) > ctx.budget || roster.length >= CONDUIT_ROSTER_BODY_CAP) continue;
       roster.push(piece.id);
-      command += piece.command;
     }
-    while (thrall && command + thrall.command <= ctx.budget && roster.length < CONDUIT_ROSTER_BODY_CAP) {
+    while (thrall && costOf(thrall) > 0 && rosterCommand([...roster, thrall.id], ctx.disciplineId) <= ctx.budget && roster.length < CONDUIT_ROSTER_BODY_CAP) {
       roster.push(thrall.id);
-      command += thrall.command;
     }
     return { kind: 'formation', roster, orders: { ...DEFAULT_FORMATION_ORDERS, recallWhen: [...DEFAULT_FORMATION_ORDERS.recallWhen] } };
   },
@@ -84,7 +91,7 @@ export const CONDUIT_SYSTEM: ClassSystemSpec<FormationConfig> = {
     for (const id of config.roster) {
       if (!ownedPiece(CONDUIT_KIT, ctx, id)) problems.push(`"${id}" is not a summon you have bound`);
     }
-    const command = rosterCommand(config.roster);
+    const command = rosterCommand(config.roster, ctx.disciplineId);
     if (command > ctx.budget) problems.push(`this formation needs ${command} Command; you have ${ctx.budget}`);
     if (config.roster.length > CONDUIT_ROSTER_BODY_CAP) problems.push(`at most ${CONDUIT_ROSTER_BODY_CAP} summons in the formation`);
     problems.push(...conditionProblems(config.orders.recallWhen, 'summoner', 'the Recall rule'));
