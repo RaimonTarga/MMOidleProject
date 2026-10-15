@@ -219,12 +219,11 @@ for (const monsterId of [T3_BOSS, T4_BOSS]) {
   assert(!player.cannotAttack, `${monsterId}: natural expiry must lift the attack lock`);
 }
 
-// `debuff-frozen` is a distinct id, and the DoT archetype's target-facing tile is
-// untouched: both must remain on the wire allowlist.
+// Deep Freeze keeps its player-facing tile; the old Apprentice target tile is retired.
 {
   const ids: readonly string[] = BUFF_IDS;
   assert(ids.includes('debuff-frozen'), 'debuff-frozen must be a networked buff id');
-  assert(ids.includes('dot-frozen'), 'the target-facing Frozen tile must survive');
+  assert(!ids.includes('dot-frozen'), 'the retired Apprentice target tile must stay off the wire');
 }
 
 // ── 3. Break Free strips Frozen and the locks it owns ────────────────────────
