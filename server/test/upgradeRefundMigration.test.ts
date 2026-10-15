@@ -101,7 +101,8 @@ for (const [itemId, steps] of Object.entries(WEAPON_UPGRADE_REFUND_TABLE)) {
 //    step), five essence-only steps each.
 {
   const ladderEra = [...RECIPE_DATABASE.values()]
-    .filter((r) => GEAR_SLOTS.has(r.slot) && r.tier >= 1)
+    // Second bases (`<base>-b`, the moved class lines) are new, not ladder-era.
+    .filter((r) => GEAR_SLOTS.has(r.slot) && r.tier >= 1 && !r.id.endsWith("-b"))
     .map((r) => r.id)
     .sort();
   const frozen = Object.keys(GEAR_UPGRADE_REFUND_TABLE).sort();

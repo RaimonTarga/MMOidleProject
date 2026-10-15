@@ -35,6 +35,17 @@ for (const [archetype, gear] of Object.entries(CLASS_GEAR) as [ClassArchetype, (
     if (!line.name.trim() || !line.text.trim()) problems.push(`${archetype} line on ${baseId}: needs a name and a text`);
     if (ITEM_DATABASE.get(baseId)?.classLines?.[archetype]?.name !== line.name) problems.push(`${archetype} line on ${baseId}: not on the item`);
   }
+  // Moved lines ride a second base (`<receiving base>-b`), a copy of the receiving base.
+  for (const [baseId, line] of Object.entries(gear.movedLines ?? {})) {
+    const base = RECIPE_DATABASE.get(baseId);
+    const second = RECIPE_DATABASE.get(`${baseId}-b`);
+    if (!base || !second) { problems.push(`${archetype} moved line on ${baseId}: no base or no second base`); continue; }
+    if (base.slot !== 'armor' && base.slot !== 'recovery') problems.push(`${archetype} moved line on ${baseId}: lines go on armor and charm bases`);
+    if (second.slot !== base.slot || second.tier !== base.tier) problems.push(`${baseId}-b: not a copy of its base`);
+    if (second.classLines?.[archetype]?.name !== line.name) problems.push(`${archetype} moved line on ${baseId}-b: not on the second base`);
+    if (ITEM_DATABASE.get(`${baseId}-b`)?.classLines?.[archetype]?.name !== line.name) problems.push(`${archetype} moved line on ${baseId}-b: not on the item`);
+    if (base.classLines?.[archetype]?.name === line.name) problems.push(`${archetype} moved line on ${baseId}: the base already carries it`);
+  }
 }
 
 assert(problems.length === 0, `class gear problems:\n  ${problems.join('\n  ')}`);

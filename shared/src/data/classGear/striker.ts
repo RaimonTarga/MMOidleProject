@@ -343,4 +343,8 @@ export const STRIKER_GEAR: ClassGearDef = {
     'trench-vest-t4': { name: 'Clear Mind', text: "Debuffs can't break your combo or interrupt your casts.", effects: {} },
     'trench-charm-t4': { name: 'Brine Mend', text: 'Each debuff on you raises your Recovery a little.', effects: {} },
   },
+  // Lines that moved here when a biome retired ride a second base (`<base>-b`); G-GEAR-C enters the rest.
+  movedLines: {
+    'jungle-vest-t3': { name: 'Unbroken', text: 'Stuns, knockdowns and slows are shorter and never break your resource.', effects: { 'defense.control-duration-cut-pct': 0.25 } },
+  },
 };

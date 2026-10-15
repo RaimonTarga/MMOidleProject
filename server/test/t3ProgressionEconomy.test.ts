@@ -215,9 +215,10 @@ const T3_NEW_ITEMS = [
   "tundra-boots-t3", "volcanic-cinderlash", "volcanic-boots-t3",
 ];
 
-// The shared and generic gear; class gear (class-first build plan §3.6) has its own suite.
+// The shared and generic gear; class gear (class-first build plan §3.6) has its own suite, and
+// second bases (`<base>-b`, the moved lines) are copies of a base counted here.
 const T3_GEAR = [...RECIPE_DATABASE.values()].filter(
-  (r) => r.tier === 3 && r.slot !== "relic" && !r.classes,
+  (r) => r.tier === 3 && r.slot !== "relic" && !r.classes && !r.id.endsWith("-b"),
 );
 
 assert(T3_GEAR.length === 30, `30 T3 gear items expected, got ${T3_GEAR.length}`);

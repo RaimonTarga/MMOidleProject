@@ -14,4 +14,11 @@ export interface ClassGearDef {
   weapons: readonly Omit<Recipe, 'classes'>[];
   /** The class's line on each shared armor or charm base, keyed by that base's recipe id. */
   lines: Readonly<Record<string, ClassLineDef>>;
+  /**
+   * The lines that moved here when a biome retired (bible §4, decided 2026-10-15), keyed by the
+   * RECEIVING shared base's recipe id (`jungle-vest-t3`). The receiving biome keeps its own line
+   * on that base; the moved line rides a second base, `<baseId>-b`, a copy of it that every class
+   * sees (see `SECOND_BASE_SUFFIX`).
+   */
+  movedLines?: Readonly<Record<string, ClassLineDef>>;
 }

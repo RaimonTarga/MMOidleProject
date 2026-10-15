@@ -14,6 +14,9 @@ import { trenchRecipeEntries } from './trench.recipes';
 import { CLASS_GEAR } from '../classGear';
 import type { ClassArchetype } from '../../classKits/types';
 
+/** Appended to a receiving base's id for its second base. */
+const SECOND_BASE_SUFFIX = '-b';
+
 const recipeEntries: [string, Recipe][] = [
   ...clearingRecipeEntries,
   ...caveRecipeEntries,
@@ -45,4 +48,23 @@ for (const [archetype, gear] of Object.entries(CLASS_GEAR) as [ClassArchetype, (
     base.classLines = { ...base.classLines, [archetype]: line };
   }
 }
+
+// Second bases (bible §4): a base keeps one line per class, so when a retired biome's lines move
+// to a receiving biome they ride a copy of the receiving base, `<baseId>-b`. Each class's
+// `movedLines` entry becomes its line on that copy.
+for (const [archetype, gear] of Object.entries(CLASS_GEAR) as [ClassArchetype, (typeof CLASS_GEAR)[ClassArchetype]][]) {
+  for (const [baseId, line] of Object.entries(gear.movedLines ?? {})) {
+    const base = RECIPE_DATABASE.get(baseId);
+    if (!base) throw new Error(`${archetype} moved line ${line.name} names a missing base ${baseId}`);
+    const secondId = `${baseId}${SECOND_BASE_SUFFIX}`;
+    const second = RECIPE_DATABASE.get(secondId)
+      ?? (() => {
+        const copy: Recipe = { ...base, id: secondId, name: `${base.name} II`, classLines: undefined };
+        RECIPE_DATABASE.set(secondId, copy);
+        return copy;
+      })();
+    second.classLines = { ...second.classLines, [archetype]: line };
+  }
+}
+export { SECOND_BASE_SUFFIX };
 export type { Recipe } from './types';
