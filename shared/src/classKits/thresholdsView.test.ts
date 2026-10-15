@@ -46,4 +46,15 @@ assert(tideView.discipline?.id === 'spirit-tide' && tideView.discipline.name ===
 assert(tideView.pieces.find((p) => p.pieceId === 'spirit-storm-surge')?.automatic === true, 'Storm Surge is automatic');
 assert(view.pieces.every((p) => !p.automatic), 'no T1 piece is automatic');
 
+// T3: the specialization reads back with its rule; before the pick the editor can list the choices.
+const t3: ClassScreenInput = { ...tide, specializationId: 'spirit-breakwater', bossesCleared: ['plains:1', 'plains:2', 'mountain:3'], playerTier: 3 };
+const t3View = composeThresholdsView({ ...t3, classConfig: defaultClassConfig(classConfigContextFromState(t3)!) })!;
+assert(t3View.specialization?.id === 'spirit-breakwater' && t3View.specialization.text.length > 0, 'the picked specialization reads back with its rule');
+assert(tideView.specialization === null && tideView.specializationChoices.map((c) => c.id).join() === 'spirit-spring-tide,spirit-slack-water,spirit-breakwater', "a Tide Spirit is offered Tide's three specializations");
+assert(view.specializationChoices.length === 0, 'no choices before a discipline');
+const wrong: ClassScreenInput = { ...tide, specializationId: 'spirit-stormdancer' };
+assert(composeThresholdsView({ ...wrong, classConfig: defaultClassConfig(classConfigContextFromState(wrong)!) })!.specialization === null, "another discipline's specialization is ignored");
+const tailwind = t3View.pieces.find((p) => p.pieceId === 'spirit-tailwind');
+assert(tailwind === undefined || tailwind.waitsFor.includes('drags'), "Tailwind's moment reads in words");
+
 console.log('thresholdsView.test.ts: ok');

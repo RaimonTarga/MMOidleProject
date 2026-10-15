@@ -8,6 +8,7 @@ import {
   combatArchetypeAtom,
   disciplineIdAtom,
   playerTierAtom,
+  specializationIdAtom,
 } from '../../hud/atoms';
 
 /** The local Spirit's Thresholds, shared by the editor and the shield beside HP. */
@@ -18,6 +19,7 @@ export function useThresholdsView(): ThresholdsView | null {
   const bossesCleared = useAtomValue(bossesClearedAtom);
   const disciplineId = useAtomValue(disciplineIdAtom);
   const playerTier = useAtomValue(playerTierAtom);
+  const specializationId = useAtomValue(specializationIdAtom);
 
   return useMemo(() => composeThresholdsView({
     combatArchetype,
@@ -25,6 +27,7 @@ export function useThresholdsView(): ThresholdsView | null {
     biomeLevel,
     bossesCleared,
     disciplineId,
+    specializationId,
     playerTier,
-  }), [combatArchetype, classConfig, biomeLevel, bossesCleared, disciplineId, playerTier]);
+  }), [combatArchetype, classConfig, biomeLevel, bossesCleared, disciplineId, specializationId, playerTier]);
 }

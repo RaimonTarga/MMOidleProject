@@ -54,6 +54,13 @@ export function ThresholdsEditor({ view }: { view: ClassScreenView }) {
         <p className="class-panel__line">{`${thresholds.discipline.name}. ${stormRule(thresholds, '', 0)}`}</p>
       )}
 
+      {thresholds.specialization && (
+        <p className="class-panel__line">{`${thresholds.specialization.name}. ${thresholds.specialization.text}`}</p>
+      )}
+      {thresholds.discipline && !thresholds.specialization && (
+        <p className="class-panel__line">{`Tier 3: choose ${thresholds.specializationChoices.map((choice) => choice.name).join(', ')} in the Passive Tree.`}</p>
+      )}
+
       <FloorEditor key={thresholds.floorPct} config={config} thresholds={thresholds} />
 
       {thresholds.discipline?.id !== 'spirit-tide' && (<>

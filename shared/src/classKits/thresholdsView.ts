@@ -6,6 +6,7 @@
  */
 import { checkClassConfig, classConfigContextFromState } from './config';
 import type { ClassConfig, ThresholdsConfig } from './configTypes';
+import { MOMENTS, type MomentId } from './moments';
 import { SPIRIT_KIT, type SpiritPiece, type SpiritTrophy } from './spirit/kit';
 import type { ClassScreenInput } from './view';
 
@@ -33,6 +34,10 @@ export interface ThresholdsView {
   phase: ThresholdsConfig['phase'];
   /** The T2 discipline, once picked: it tilts the storm's shape (brim, tide, bank). */
   discipline: { id: string; name: string } | null;
+  /** The T3 pick, once made: its rule in words (the editor shows it under the discipline). */
+  specialization: { id: string; name: string; text: string } | null;
+  /** The specializations the picked discipline opens, for the "choose one" line before the pick. */
+  specializationChoices: { id: string; name: string }[];
   /** Every spend and calm you know, with its band. */
   pieces: SpendView[];
   /** The trophy: a spend relic twists every spend, a storm relic twists the gauge. */
@@ -50,6 +55,11 @@ const WAITS_TEXT: Readonly<Record<string, string>> = {
   touched: 'an enemy is in melee with you',
   'carrying-dot': 'you carry a poison or bleed',
 };
+
+/** The moment in words: the editor's own wording where it has one, else the shared vocabulary's. */
+function waitsText(id: string): string {
+  return WAITS_TEXT[id] ?? MOMENTS[id as MomentId]?.text ?? id;
+}
 
 /** The Thresholds editor for a Spirit's screen, or null for anyone else. */
 export function composeThresholdsView(input: ClassScreenInput): ThresholdsView | null {
@@ -70,7 +80,7 @@ export function composeThresholdsView(input: ClassScreenInput): ThresholdsView |
       family: piece.family,
       rank,
       text: lines.join(' '),
-      waitsFor: piece.waitsFor ? WAITS_TEXT[piece.waitsFor] ?? piece.waitsFor : '',
+      waitsFor: piece.waitsFor ? waitsText(piece.waitsFor) : '',
       atFloor: piece.atFloor === true,
       band: piece.atFloor ? null : bandOf.get(piece.id) ?? null,
       automatic: AUTOMATIC_PIECES.has(piece.id),
@@ -79,11 +89,16 @@ export function composeThresholdsView(input: ClassScreenInput): ThresholdsView |
   const trophy = config.relic[0] ? TROPHIES.get(config.relic[0]) : undefined;
   const check = checkClassConfig(config, ctx);
   const discipline = SPIRIT_KIT.disciplines.find((entry) => entry.id === ctx.disciplineId);
+  const specialization = SPIRIT_KIT.specializations.find((entry) => entry.id === ctx.specializationId && entry.disciplineId === ctx.disciplineId);
   return {
     storm: { pips: ctx.budget },
     floorPct: system.floorPct,
     phase: system.phase,
     discipline: discipline ? { id: discipline.id, name: discipline.name } : null,
+    specialization: specialization ? { id: specialization.id, name: specialization.name, text: specialization.text } : null,
+    specializationChoices: discipline
+      ? SPIRIT_KIT.specializations.filter((entry) => entry.disciplineId === discipline.id).map((entry) => ({ id: entry.id, name: entry.name }))
+      : [],
     pieces,
     relic: trophy
       ? { trophyId: trophy.id, name: trophy.name, kind: trophy.kind, text: trophy.text }

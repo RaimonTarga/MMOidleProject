@@ -447,7 +447,7 @@ function assertSpiritTail(script: TutorialScript): void {
     'zone:cave', 'spirit:thunderbolt', 'spirit:mountain', 'boss:mountain', 'farewell',
   ].join(','), 'the Spirit keeps the seal route order and inserts its lessons');
   // The Tier-2 stretch follows the farewell: the discipline pick, each zone's lesson, each boss's rank-up.
-  const t2 = tail.slice(12);
+  const t2 = tail.slice(12, 33);
   assert(t2.length === 21 && t2.every((beat) => beat.chapter.startsWith('Tier 2')), 'seven Tier-2 zones of three beats each');
   assert(t2[0].say.includes('discipline') && ['Overflow', 'Tide', 'Reservoir'].every((name) => t2[0].say.includes(name)), 'the first Tier-2 beat is the discipline pick');
   for (const [lesson, biome, name] of [
@@ -462,6 +462,24 @@ function assertSpiritTail(script: TutorialScript): void {
     const boss = t2.find((entry) => entry.id === `t2boss:${biome}`)!;
     assert(boss.steps.length === 1 && boss.steps[0].type === 'attemptBoss' && boss.steps[0].tier === 2, `${biome}: a Tier-2 boss beat`);
   }
+  // The Tier-3 stretch (T3-W2): the specialization pick, then lesson and trophy per T3 zone.
+  const t3 = tail.slice(33);
+  assert(t3.length === 21 && t3.every((beat) => beat.chapter.startsWith('Tier 3')), 'seven Tier-3 zones of three beats each');
+  assert(t3[0].say.includes('specialization') && t3[0].say.includes('Passive Tree'), 'the first Tier-3 beat is the specialization pick');
+  for (const [lesson, biome, name] of [
+    ['spirit:downburst-t3', 'mountain', 'Downburst'], ['spirit:updraft-t3', 'cave', 'Updraft'],
+    ['spirit:tailwind-t3', 'swamp', 'Tailwind'], ['spirit:forked-bolt-t3', 'jungle', 'Forked Bolt'],
+    ['spirit:dust-devil-t3', 'desert', 'Dust Devil'], ['spirit:foehn-t3', 'tundra', 'Foehn'],
+    ['spirit:ash-lightning-t3', 'volcanic', 'Ash Lightning'],
+  ] as const) {
+    const beat = t3.find((entry) => entry.id === lesson)!;
+    assert(beat?.say.includes(name), `${lesson} names the piece`);
+    assert(farmGate(beat, biome) === biomeLevelCap(3, biome), `${lesson} continues to the Tier-3 cap`);
+    const boss = t3.find((entry) => entry.id === `t3boss:${biome}`)!;
+    assert(boss.steps.length === 1 && boss.steps[0].type === 'attemptBoss' && boss.steps[0].tier === 3, `${biome}: a Tier-3 boss beat`);
+  }
+  assert(t3.find((beat) => beat.id === 't3boss:tundra')!.say.includes('Ice Storm') && t3.find((beat) => beat.id === 't3boss:volcanic')!.say.includes('Pyrocumulus'),
+    'the new Tundra and Volcanic trophies are named');
   const say = (id: string) => tail.find((beat) => beat.id === id)?.say ?? '';
   for (const text of ['plain rod', 'Storm 4', 'fills itself', 'Bolt band', '30% floor', 'gathers to full', 'breaks down to the floor', 'before HP']) {
     assert(say('open:plains').includes(text), `the Spirit intro teaches ${text}`);
@@ -678,8 +696,14 @@ for (const script of SCRIPTS) {
   for (const biome of ['plains', 'forest', 'mountain', 'swamp', 'cave']) t2Done[biome] = biomeLevelCap(2, biome);
   for (const biome of ['jungle', 'desert']) t2Done[biome] = biomeLevelCap(2, biome);
   const t2Cleared = [...cleared, ...['plains', 'forest', 'mountain', 'swamp', 'cave', 'jungle', 'desert'].map((biome) => bossClearKey(biome, 2))];
-  assert(resolveBeatIndex(script, view({ ...openingDone, playerTier: 2, biomeLevel: t2Done, bossesCleared: t2Cleared })) === script.beats.length,
-    'every Tier-2 boss finishes the Spirit script');
+  assert(resolveBeatIndex(script, view({ ...openingDone, playerTier: 2, biomeLevel: t2Done, bossesCleared: t2Cleared })) === script.beats.findIndex((beat) => beat.id === 't3:mountain'),
+    'every Tier-2 boss hands over to the Tier-3 stretch');
+  const t3Zones = ['mountain', 'cave', 'swamp', 'jungle', 'desert', 'tundra', 'volcanic'];
+  const t3Done = { ...t2Done };
+  for (const biome of t3Zones) t3Done[biome] = biomeLevelCap(3, biome);
+  const t3Cleared = [...t2Cleared, ...t3Zones.map((biome) => bossClearKey(biome, 3))];
+  assert(resolveBeatIndex(script, view({ ...openingDone, playerTier: 3, biomeLevel: t3Done, bossesCleared: t3Cleared })) === script.beats.length,
+    'every Tier-3 boss finishes the Spirit script');
 }
 
 // ── The first-hour checklist ─────────────────────────────────────────────────
