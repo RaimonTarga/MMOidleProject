@@ -22,6 +22,8 @@ function orderHelp(count: number, armed: boolean, beats: number): ReactNode {
         With a discipline, a bar under the strip shows its resource: Light's
         shine (blue beats when lit), Balanced's edge (rises a step per beat) or
         Heavy's Momentum. A stun or a pause in the fight puts it out.
+        A specialization adds a word to the bar: Afterimage's held slashes, Frenzy's
+        finisher count.
       </div>
       <div style={{ marginTop: 6 }}>{next}</div>
     </>

@@ -25,7 +25,7 @@ function gates(condition: Condition | TutorialCondition): (Condition | TutorialC
 function tutorialLevel(biomeGroup: string): number {
   let level = 0;
   for (const beat of tutorialScriptFor(STRIKER_CLASS_ROOT).beats) {
-    if (beat.id.startsWith("striker2:")) continue; // the Tier 2 stretch is strikerT2.test.ts
+    if (beat.id.startsWith("striker2:") || beat.id.startsWith("striker3:")) continue; // the later stretches are strikerT2/T3.test.ts
     for (const step of beat.steps) {
       if (step.type !== "farm") continue;
       for (const gate of gates(step.until)) {

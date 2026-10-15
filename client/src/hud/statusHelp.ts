@@ -63,6 +63,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'squire-frostward': b('Frostward', 'You held the Tundra Chill below the freeze: it cannot climb past the hold while this lasts. Hearth heals you each second it stands.'),
   'squire-rampage': b('Rampage', 'Your slam set you swinging faster: attack speed is raised for a short burst, and each new slam starts it again.'),
   'striker-focus': b('Focus', 'Your opener focused you: every beat of this combo swings faster, until its finisher.'),
+  'striker-overheated': b('Overheat', 'Your opener overheated you: every beat of this combo swings much faster, but you take more damage, until its finisher.'),
   // -- Abilities -------------------------------------------------------------
   'ability-guard': b('Guard', 'Your Guard is up: incoming damage is reduced for the window. Guard potency deepens the reduction and Guard duration lengthens the window.'),
   'ability-guard-2': b('Guard', 'Your second Guard is up. Two equipped Guards layer independently, each with its own window.'),

@@ -13,6 +13,10 @@
  * zone carries on to its cap, then the boss, whose line says which trophy ranks up.
  * The discipline pick is the first line: the player picks it in the Passive Tree, and
  * no step type reads a discipline, so the line only points at it.
+ *
+ * After that comes the Tier 3 stretch (T3-W2, bible §12.6 and §12.16), the same shape over the
+ * seven T3 zones: the specialization pick first (again a pointer), then one lesson and one
+ * boss line per zone, including the two new zones, the Tundra and the Volcanic.
  */
 import { biomeLevelCap } from '../../config/gameConfig';
 import { absoluteZoneLevel } from '../../classKits/registry';
@@ -129,6 +133,7 @@ export function buildStrikerBeats(): TutorialBeat[] {
     { ...sealBeat(seal, 'boss:mountain'), say: COIL_SAY },
     sealBeat(seal, 'farewell'),
     ...buildStrikerTierTwoBeats(),
+    ...buildStrikerTierThreeBeats(),
   ];
 }
 
@@ -186,52 +191,121 @@ const T2_LINES: Readonly<Record<T2Zone, TierTwoLine>> = {
   },
 };
 
-function t2Ref(biomeGroup: T2Zone): TutorialNodeRef {
-  return { kind: 'biome', biomeGroup, tier: 2, pick: 'uncleared' };
+function tierRef(biomeGroup: string, tier: number): TutorialNodeRef {
+  return { kind: 'biome', biomeGroup, tier, pick: 'uncleared' };
+}
+
+function farmTo(biomeGroup: string, tier: number, level: number): TutorialBeat['steps'] {
+  return [{ type: 'farm', at: tierRef(biomeGroup, tier), until: { type: 'biomeLevelAtLeast', biomeGroup, level } }];
+}
+
+/** The biome level (as the game counts it) at which a zone teaches its lesson at `tier`. */
+function lessonLevelAt(biomeGroup: string, tier: number): number {
+  return absoluteZoneLevel({ kind: 'zone', biome: biomeGroup as KitBiome, tier, level: LESSON_ZONE_LEVEL });
 }
 
 /** The biome level (as the game counts it) at which a T2 zone teaches its lesson. */
 export function strikerT2LessonLevel(biomeGroup: T2Zone): number {
-  return absoluteZoneLevel({ kind: 'zone', biome: biomeGroup as KitBiome, tier: 2, level: LESSON_ZONE_LEVEL });
+  return lessonLevelAt(biomeGroup, 2);
 }
 
-function farmTo(biomeGroup: T2Zone, level: number): TutorialBeat['steps'] {
-  return [{ type: 'farm', at: t2Ref(biomeGroup), until: { type: 'biomeLevelAtLeast', biomeGroup, level } }];
-}
-
-/** The Tier 2 stretch, after the farewell. */
-export function buildStrikerTierTwoBeats(): TutorialBeat[] {
+/** One tier's stretch: three beats per zone (arrive, lesson, boss), the ids prefixed `striker<tier>:`. */
+function buildTierBeats(
+  tier: number,
+  zones: readonly string[],
+  lines: Readonly<Record<string, TierTwoLine>>,
+): TutorialBeat[] {
   const beats: TutorialBeat[] = [];
-  for (const biomeGroup of STRIKER_T2_ZONES) {
-    const lines = T2_LINES[biomeGroup];
-    const lessonLevel = strikerT2LessonLevel(biomeGroup);
-    const cap = biomeLevelCap(2, biomeGroup);
-    const chapter = `Tier 2: ${biomeGroup.charAt(0).toUpperCase()}${biomeGroup.slice(1)}`;
+  for (const biomeGroup of zones) {
+    const zoneLines = lines[biomeGroup];
+    const lessonLevel = lessonLevelAt(biomeGroup, tier);
+    const cap = biomeLevelCap(tier, biomeGroup);
+    const chapter = `Tier ${tier}: ${biomeGroup.charAt(0).toUpperCase()}${biomeGroup.slice(1)}`;
     beats.push(
       {
-        id: `striker2:${biomeGroup}`,
+        id: `striker${tier}:${biomeGroup}`,
         chapter,
-        say: lines.arrive,
+        say: zoneLines.arrive,
         waiting: 'Fighting on.',
         progress: [{ type: 'biomeLevel', biomeGroup, level: lessonLevel }],
-        steps: farmTo(biomeGroup, lessonLevel),
+        steps: farmTo(biomeGroup, tier, lessonLevel),
       },
       {
-        id: `striker2:${biomeGroup}-lesson`,
+        id: `striker${tier}:${biomeGroup}-lesson`,
         chapter,
-        say: lines.lesson,
+        say: zoneLines.lesson,
         waiting: 'Fighting on until the boss is open.',
         progress: [{ type: 'biomeLevel', biomeGroup, level: cap }],
-        steps: farmTo(biomeGroup, cap),
+        steps: farmTo(biomeGroup, tier, cap),
       },
       {
-        id: `striker2:${biomeGroup}-boss`,
+        id: `striker${tier}:${biomeGroup}-boss`,
         chapter,
-        say: lines.boss,
+        say: zoneLines.boss,
         waiting: 'Fighting for the boss.',
-        steps: [{ type: 'attemptBoss', biomeGroup, tier: 2 }],
+        steps: [{ type: 'attemptBoss', biomeGroup, tier }],
       },
     );
   }
   return beats;
+}
+
+/** The Tier 2 stretch, after the farewell. */
+export function buildStrikerTierTwoBeats(): TutorialBeat[] {
+  return buildTierBeats(2, STRIKER_T2_ZONES, T2_LINES);
+}
+
+/** The Tier 3 zones in the guide's order: the Plains and Forest have retired; the Tundra and Volcanic are new. */
+export const STRIKER_T3_ZONES = ['mountain', 'swamp', 'cave', 'jungle', 'desert', 'tundra', 'volcanic'] as const;
+type T3Zone = typeof STRIKER_T3_ZONES[number];
+
+const SPECIALIZATION_SAY =
+  'Tier 3. Your next skill point is a specialization: three for your discipline. It bends what the discipline builds. Pick it in the Passive Tree.';
+
+const T3_LINES: Readonly<Record<T3Zone, TierTwoLine>> = {
+  mountain: {
+    arrive: SPECIALIZATION_SAY,
+    lesson: 'Earthsplitter is learned: a wind-up that slams down a line of enemies.',
+    boss: 'The Mountain boss is open again. Win, and Skyfall ranks up: its wind-up is shorter.',
+  },
+  swamp: {
+    arrive: 'The Swamp is tougher now. Fight through it.',
+    lesson: 'Hemorrhage is learned: a deep bleed that outlasts Rend.',
+    boss: 'The Swamp boss is open again. Win, and Festering Cut ranks up for the last time.',
+  },
+  cave: {
+    arrive: 'The Cave is tougher now. Fight through it.',
+    lesson: 'Upheaval is learned: the ground erupts and knocks the target and those touching it down.',
+    boss: 'The Cave boss is open again. Win, and Sunder ranks up: it lasts longer.',
+  },
+  jungle: {
+    arrive: "The Jungle is tougher now, and the Forest's gear jobs have moved here.",
+    lesson: 'Triple Cut is learned: three quick hits, and three times the hit effects.',
+    boss: 'The Jungle boss is open again. Win, and Pounce ranks up: the landing also hits enemies around it.',
+  },
+  desert: {
+    arrive: 'The Desert is tougher now. Fight through it.',
+    lesson: 'Shadowstep is learned: you step behind the target, and your next beat is sure to crit.',
+    boss: 'The Desert boss is open again. Win, and Verdict ranks up: it executes at a higher threshold.',
+  },
+  tundra: {
+    arrive: 'The Tundra is new: the Chill builds on you, ice shells, root casters. Its bosses accept no control. Fight in.',
+    lesson: 'Icebreaker is learned: much harder against a shielded or shelled target.',
+    boss: 'The Tundra boss is open. Win, and you earn Hoarfrost: every beat of your next combo slows the target more.',
+  },
+  volcanic: {
+    arrive: "The Volcanic is new: Heat builds on you, vents, obsidian shells. The Plains' gear jobs have moved here. Fight in.",
+    lesson: 'Overheat is learned: an opener that speeds the whole combo, and you take more damage until the finisher.',
+    boss: 'The Volcanic boss is open. Win, and you earn Eruption: your finisher hits everything around the target too.',
+  },
+};
+
+/** The Tier 3 stretch, after the Tier 2 one. */
+export function buildStrikerTierThreeBeats(): TutorialBeat[] {
+  return buildTierBeats(3, STRIKER_T3_ZONES, T3_LINES);
+}
+
+/** The biome level (as the game counts it) at which a T3 zone teaches its lesson. */
+export function strikerT3LessonLevel(biomeGroup: T3Zone): number {
+  return lessonLevelAt(biomeGroup, 3);
 }

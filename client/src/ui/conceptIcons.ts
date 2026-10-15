@@ -329,6 +329,7 @@ const BOSS_DEBUFF_ICON_ALIASES: Record<string, string> = {
 /** Statuses a class piece puts on its caster wear that piece's icon (class-first build plan CS.1). */
 const CLASS_PIECE_STATUS_ICONS: Record<string, string> = {
   'striker-focus': 'striker-focus',
+  'striker-overheated': 'striker-overheat',
   'squire-guard': 'squire-guard',
   // Parry has no art of its own yet: it wears the Guard icon until the designer swaps it.
   'squire-parry': 'squire-guard',

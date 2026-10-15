@@ -117,6 +117,10 @@ export interface PlayerView {
   cadenceLit: boolean;
   cadenceEdge: number;
   cadenceMomentum: number;
+  /** Striker T3: Afterimage's held slashes, Frenzy's finisher count and whether its second finisher is armed. */
+  cadenceHeld: number;
+  cadenceFightFinishers: number;
+  cadenceFrenzyArmed: boolean;
   ammoCount: number;
   ammoMax: number;
   /** Authoritative milliseconds left in the active reload; 0 while idle. */
@@ -371,6 +375,9 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     cadenceLit: entity.usesCadence?.lit ?? false,
     cadenceEdge: entity.usesCadence?.edge ?? 0,
     cadenceMomentum: entity.usesCadence?.momentum ?? 0,
+    cadenceHeld: entity.usesCadence?.held ?? 0,
+    cadenceFightFinishers: entity.usesCadence?.fightFinishers ?? 0,
+    cadenceFrenzyArmed: entity.usesCadence?.frenzyArmed ?? false,
     ammoCount: entity.usesReload?.ammo ?? 0,
     ammoMax: entity.usesReload?.ammoMax ?? 0,
     reloadRemainingMs: entity.usesReload?.reloadingMs ?? 0,

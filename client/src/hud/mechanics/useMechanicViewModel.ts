@@ -79,6 +79,10 @@ export function useMechanicViewModel(): MechanicViewModel | null {
           lit: playerView?.cadenceLit ?? false,
           edge: playerView?.cadenceEdge ?? 0,
           momentum: playerView?.cadenceMomentum ?? 0,
+          specializationId: playerView?.specializationId ?? null,
+          held: playerView?.cadenceHeld ?? 0,
+          fightFinishers: playerView?.cadenceFightFinishers ?? 0,
+          frenzyArmed: playerView?.cadenceFrenzyArmed ?? false,
         }),
       };
 

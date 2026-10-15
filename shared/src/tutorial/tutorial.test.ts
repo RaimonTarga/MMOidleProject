@@ -211,6 +211,9 @@ const STRIKER_TAIL = [
   // The Tier 2 stretch (T2-W2): zone, lesson, boss for each of the seven T2 zones.
   ...['plains', 'forest', 'mountain', 'swamp', 'cave', 'jungle', 'desert']
     .flatMap((zone) => [`striker2:${zone}`, `striker2:${zone}-lesson`, `striker2:${zone}-boss`]),
+  // The Tier 3 stretch (T3-W2): the same shape over the seven T3 zones.
+  ...['mountain', 'swamp', 'cave', 'jungle', 'desert', 'tundra', 'volcanic']
+    .flatMap((zone) => [`striker3:${zone}`, `striker3:${zone}-lesson`, `striker3:${zone}-boss`]),
 ];
 
 function farmGate(beat: TutorialBeat, biome: string): number | null {
@@ -240,7 +243,15 @@ function assertStrikerTail(script: TutorialScript): void {
   assert(say('striker:hamstring').includes('Hamstring') && say('striker:rend').includes('Rend'), 'Hamstring and Rend have their own beats');
   assert(say('striker:focus').includes('Focus') && say('boss:mountain').includes('Coil'), 'Focus and Coil name the cast');
   assert(tail.find((beat) => beat.id === 'farewell')?.say === TUTORIAL_FAREWELL[0], 'the Striker route still says the farewell line');
-  assert(tail[tail.length - 1].id === 'striker2:desert-boss', 'the Striker route ends on the last Tier 2 boss');
+  assert(tail[tail.length - 1].id === 'striker3:volcanic-boss', 'the Striker route ends on the last Tier 3 boss');
+  assert(say('striker3:mountain').includes('specialization'), 'the first Tier 3 line points at the specialization pick');
+  assert(say('striker3:tundra-lesson').includes('Icebreaker') && say('striker3:volcanic-lesson').includes('Overheat'), 'the new Tier 3 lessons have lines');
+  assert(say('striker3:tundra-boss').includes('Hoarfrost') && say('striker3:volcanic-boss').includes('Eruption'), 'the new trophies are named');
+  for (const beat of tail.filter((entry) => entry.id.startsWith('striker3:'))) {
+    assert(beat.say.length < 200, `${beat.id}: a Tier 3 line stays short`);
+    assert(beat.steps.every((step) => (step.type === 'farm' && step.at.kind === 'biome' && step.at.tier === 3)
+      || (step.type === 'attemptBoss' && step.tier === 3)), `${beat.id}: Tier 3 steps stay in Tier 3`);
+  }
   assert(say('striker2:plains').includes('discipline'), 'the first Tier 2 line points at the discipline pick');
   assert(say('striker2:jungle-lesson').includes('Charge') && say('striker2:desert-lesson').includes('Pin'), 'the new Tier 2 lessons have lines');
   for (const beat of tail.filter((entry) => entry.id.startsWith('striker2:'))) {
