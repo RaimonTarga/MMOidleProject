@@ -254,7 +254,7 @@ export const APPRENTICE_GEAR: ClassGearDef = {
       cost: { purple: 270 }, stats: { attack: 258 }, attacksPerSecond: 1.10, tier: 4,
       icon: 'items/weapons/plague-axe.png',
       description: 'Your hits also lay a sigil on the nearest risen enemy.',
-      mechanicEffects: {},
+      mechanicEffects: { 'apprentice.charnel': 1 },
     },
     // moved from the Swamp
     {
@@ -271,7 +271,8 @@ export const APPRENTICE_GEAR: ClassGearDef = {
       cost: { green: 270 }, stats: { attack: 257 }, attacksPerSecond: 1.15, tier: 4,
       icon: 'items/weapons/abyssal-axe.png',
       description: 'Sigils tick harder for each different debuff on their carrier.',
-      mechanicEffects: {},
+      // PLACEHOLDER: +10% per different debuff (capped in the runtime).
+      mechanicEffects: { 'apprentice.abyssal': 0.1 },
     },
     // moved from the Cave
     {
@@ -336,10 +337,10 @@ export const APPRENTICE_GEAR: ClassGearDef = {
     'tundra-charm-t4': { name: 'Cold Comfort', text: 'Recovery doubles while an enemy carrying your sigils is frozen or brittle.', effects: { 'apprentice.cold-comfort': 2 } },
     'volcanic-vest-t4': { name: 'Ashguard', text: 'A burning hit on you lays a sigil on its shooter.', effects: { 'apprentice.ashguard': 1 } },
     'volcanic-charm-t4': { name: 'Banked Coals', text: 'Recovery rises with the Heat while three or more enemies carry your sigils.', effects: { 'apprentice.banked-coals': 0.02 } },
-    'graveyard-vest-t4': { name: 'Gravewrap', text: "A risen enemy carrying your sigils can't hit you for its first seconds.", effects: {} },
-    'graveyard-charm-t4': { name: 'Last Rites', text: 'Recovery rises for each risen enemy carrying your sigils.', effects: {} },
-    'trench-vest-t4': { name: 'Deep Ward', text: 'While you carry three or more debuffs, each enemy carrying a full bar deals less damage to you.', effects: {} },
-    'trench-charm-t4': { name: 'Tidal Draw', text: 'Each debuff you move or wash off heals you a little.', effects: {} },
+    'graveyard-vest-t4': { name: 'Gravewrap', text: "A risen enemy carrying your sigils can't hit you for its first seconds.", effects: { 'apprentice.gravewrap': 3 } },
+    'graveyard-charm-t4': { name: 'Last Rites', text: 'Recovery rises for each risen enemy carrying your sigils.', effects: { 'apprentice.last-rites': 0.15 } },
+    'trench-vest-t4': { name: 'Deep Ward', text: 'While you carry three or more debuffs, each enemy carrying a full bar deals less damage to you.', effects: { 'apprentice.deep-ward': 0.2 } },
+    'trench-charm-t4': { name: 'Tidal Draw', text: 'Each debuff you move or wash off heals you a little.', effects: { 'apprentice.tidal-draw': 0.03 } },
   },
   // Retired-biome lines on the receiving biome's second base (`<id>-b`).
   // Copied from the origin's last tier: Forest and Plains at T2, Swamp and Cave at T3.

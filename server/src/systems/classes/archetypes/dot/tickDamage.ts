@@ -15,8 +15,11 @@ export function classDotTickDamage(
 ): number {
   const state = monster.tracksCombat;
   // Magma Core: on a shelled enemy the sigils tick at full, past its defenses (`magma` is the multiplier).
-  const magma = getStatusEffect(state, DOT_EFFECT_ID)?.data['magma'] ?? 0;
-  let damage = magma > 0 ? Math.round(rawTick * magma) : mitigatePlayerTickOnMonster(monster, rawTick, 'dot');
+  const sigils = getStatusEffect(state, DOT_EFFECT_ID);
+  const magma = sigils?.data['magma'] ?? 0;
+  // Abyssal Censer: the sigils tick harder for each different debuff on their carrier.
+  const abyss = rawTick * (sigils?.data['abyss'] ?? 1);
+  let damage = magma > 0 ? Math.round(abyss * magma) : mitigatePlayerTickOnMonster(monster, abyss, 'dot');
   damage = Math.max(1, applyMonsterDamageTakenDebuffs(state, damage));
   // Petrify II: the held enemy also takes more from your ticks.
   const held = getStatusEffect(state, HELD_EFFECT_ID);

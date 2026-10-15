@@ -50,6 +50,7 @@ import {
   registerApprenticeT3,
   updateApprenticeT3,
 } from './sigilsT3';
+import { cancelDelayedAttacks, hidersInReach, leafOf, registerApprenticeT4, tidalDraw, updateApprenticeT4, washOffDebuffs } from './sigilsT4';
 
 /** A sigil's tick damage, as a share of the weapon's attack (potency), per tick. PLACEHOLDER. */
 const SIGIL_TICK_PCT = 0.12;
@@ -88,6 +89,8 @@ export interface Payoffs {
   discipline: string | null;
   /** The T3 pick, once made and only while it belongs to the discipline. */
   specialization: string | null;
+  /** The T4 leaf, once picked and only while it belongs to the discipline. */
+  leaf: string | null;
   cap: number;
 }
 
@@ -120,6 +123,7 @@ export function payoffsOf(world: World, player: PlayerEntity): Payoffs | null {
         trophyRank: trophy ? ctx.trophyRanks.get(trophy.id) ?? 1 : 1,
         discipline: ctx.disciplineId,
         specialization: specializationOf(player, ctx.disciplineId),
+        leaf: leafOf(player, ctx.disciplineId),
         cap: Math.max(1, ctx.budget + Math.round(player.usesSkills.passives['apprentice.cap-extra'] ?? 0) + capShift),
       };
     }
@@ -215,6 +219,44 @@ export function payoffMult(player: PlayerEntity): number {
   return 1 + (player.usesSkills.passives['apprentice.payoff-pct'] ?? 0);
 }
 
+/**
+ * Seize `target`: spend its sigils to hold it and break its wind-up. Frostcrack (T4) is the same
+ * hold on a shielded or shelled enemy; Seize III also cancels the delayed attacks it had laid.
+ * False when it carries no sigils.
+ */
+export function seize(world: World, player: PlayerEntity, p: Payoffs, target: MonsterEntity, now: number): boolean {
+  const params = PIECES.get('apprentice-seize')?.params ?? {};
+  const passives = player.usesSkills.passives;
+  const cs = player.tracksCombat;
+  const n = spend(target);
+  if (n <= 0) return false;
+  let hold = Math.min(HOLD_MAX_MS, (params['holdBase'] ?? 500) + n * (params['holdPerSigil'] ?? 150));
+  // Petrify: the Seize holds longer, and the held enemy takes more damage.
+  if (p.trophy?.id === 'apprentice-relic-mountain') hold *= trophyParam(p, 'holdMult', 1.6);
+  const wasCasting = momentActive(world, player, 'enemy-winds-up', undefined, now);
+  if (p.discipline === FROST_DISCIPLINE) {
+    // Frost: Seize is a real freeze; a boss that accepts no control turns brittle instead.
+    freezeOrBrittle(world, player, p, target, Math.round(hold));
+  } else {
+    applyStun(target.tracksCombat, Math.round(hold), player.isPlayer.id);
+  }
+  // Petrify: the held enemy takes more damage (rank 2: from your ticks too).
+  if (p.trophy?.id === 'apprentice-relic-mountain') {
+    applyStatusEffect(target.tracksCombat, {
+      id: HELD_EFFECT_ID, maxStacks: 1, remainingMs: Math.round(hold), refreshable: true, sourceId: player.isPlayer.id,
+      data: { totalMs: Math.round(hold), damageTakenPct: trophyParam(p, 'damageTakenPct', 0.2), tickPct: trophyParam(p, 'tickDamageTakenPct', 0) },
+    });
+  }
+  abortMonsterCast(world, target);
+  // Seize III: its delayed attacks (fault lines) are cancelled too.
+  if ((p.ranks.get('apprentice-seize') ?? 1) >= 3) cancelDelayedAttacks(world, target);
+  setResource(target.tracksCombat, SEIZED_UNTIL, now + hold);
+  noteSeize(world, player, p, target, Math.round(hold), now);
+  // Still Mind: after a Seize breaks a wind-up, Recovery triples for a few seconds.
+  if (wasCasting) activateRecoveryBoost(cs, passives['apprentice.still-mind'] ?? 0);
+  return true;
+}
+
 /** Fire one payoff on `target`; false when it had nothing to do (no cooldown is spent). */
 function firePayoff(world: World, player: PlayerEntity, p: Payoffs, piece: ApprenticePiece, target: MonsterEntity, now: number): boolean {
   const params = piece.params;
@@ -243,6 +285,8 @@ function firePayoff(world: World, player: PlayerEntity, p: Payoffs, piece: Appre
       if (n <= 0) return false;
       const heal = (n * (params['healPerSigil'] ?? 0.02) * player.hasHealth.maxHp) * (1 + (passives['apprentice.siphon-pct'] ?? 0)) * payoffMult(player);
       applyHealToPlayer(player, cs, heal, world);
+      // Siphon II: it also washes a poison, bleed or Corrosion off you.
+      if ((p.ranks.get('apprentice-siphon') ?? 1) >= 2) tidalDraw(world, player, washOffDebuffs(player));
       // Glut: the Siphon also drains every enemy near the target.
       if (p.trophy?.id === 'apprentice-relic-swamp') {
         for (const other of playerAoeTargets(world, player, target.hasPosition.current, trophyParam(p, 'radius', 160), target.isMonster.id)) {
@@ -252,33 +296,8 @@ function firePayoff(world: World, player: PlayerEntity, p: Payoffs, piece: Appre
       }
       return true;
     }
-    case 'apprentice-seize': {
-      const n = spend(target);
-      if (n <= 0) return false;
-      let hold = Math.min(HOLD_MAX_MS, (params['holdBase'] ?? 500) + n * (params['holdPerSigil'] ?? 150));
-      // Petrify: the Seize holds longer, and the held enemy takes more damage.
-      if (p.trophy?.id === 'apprentice-relic-mountain') hold *= trophyParam(p, 'holdMult', 1.6);
-      const wasCasting = momentActive(world, player, 'enemy-winds-up', undefined, now);
-      if (p.discipline === FROST_DISCIPLINE) {
-        // Frost: Seize is a real freeze; a boss that accepts no control turns brittle instead.
-        freezeOrBrittle(world, player, p, target, Math.round(hold));
-      } else {
-        applyStun(target.tracksCombat, Math.round(hold), player.isPlayer.id);
-      }
-      // Petrify: the held enemy takes more damage (rank 2: from your ticks too).
-      if (p.trophy?.id === 'apprentice-relic-mountain') {
-        applyStatusEffect(target.tracksCombat, {
-          id: HELD_EFFECT_ID, maxStacks: 1, remainingMs: Math.round(hold), refreshable: true, sourceId: player.isPlayer.id,
-          data: { totalMs: Math.round(hold), damageTakenPct: trophyParam(p, 'damageTakenPct', 0.2), tickPct: trophyParam(p, 'tickDamageTakenPct', 0) },
-        });
-      }
-      abortMonsterCast(world, target);
-      setResource(target.tracksCombat, SEIZED_UNTIL, now + hold);
-      noteSeize(world, player, p, target, Math.round(hold), now);
-      // Still Mind: after a Seize breaks a wind-up, Recovery triples for a few seconds.
-      if (wasCasting) activateRecoveryBoost(cs, passives['apprentice.still-mind'] ?? 0);
-      return true;
-    }
+    case 'apprentice-seize':
+      return seize(world, player, p, target, now);
     case 'apprentice-converge': {
       const around = playerAoeTargets(world, player, target.hasPosition.current, params['radius'] ?? 180, target.isMonster.id);
       let pulled = 0;
@@ -310,6 +329,8 @@ export function updateApprentice(world: World, player: PlayerEntity, dt: number,
   updateApprenticeT2(world, player, p, target, dt, now);
   // T3: the specializations' running rules, Seize II, Frostheart, Magma Core, the Chill watch.
   updateApprenticeT3(world, player, p, dt, now);
+  // T4: the leaves, Pyre, Pressure Fuse, the Abyssal Censer's debuff count.
+  updateApprenticeT4(world, player, p, now);
 
   // Payoff rules: at a moment, the first placement whose conditions hold fires.
   if (target) {
@@ -344,6 +365,8 @@ export function updateApprentice(world: World, player: PlayerEntity, dt: number,
       const far = nearestTo([...world.monsterEntitiesInNode(player.hasPosition.nodeId)].filter((m) => m !== target && m.hasHealth.hp > 0 && sigilsOn(player, m) > 0 && !nearby.includes(m)), target.hasPosition.current);
       nearby.push(...far);
     }
+    // Spread II: it also reaches a hiding or fleeing enemy anywhere within your reach.
+    if ((p.ranks.get('apprentice-spread') ?? 1) >= 2) nearby.splice(0, nearby.length, ...new Set([...hidersInReach(world, player, target.isMonster.id), ...nearby]));
     const others = nearby
       .filter((monster) => sigilsOn(player, monster) < p.cap)
       .slice(0, neighbours);
@@ -371,6 +394,7 @@ export function updateApprentice(world: World, player: PlayerEntity, dt: number,
   let inReachCarrying = 0;
   let frozenCarrier = false;
   let carriers = 0;
+  let risenCarriers = 0;
   const reach = player.performsAttack.attackRange + REACH_SLACK_PX;
   for (const monster of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
     if (monster.hasHealth.hp <= 0) continue;
@@ -378,6 +402,7 @@ export function updateApprentice(world: World, player: PlayerEntity, dt: number,
     const near = Math.hypot(monster.hasPosition.current.x - player.hasPosition.current.x, monster.hasPosition.current.y - player.hasPosition.current.y) <= 260;
     if (n > 0 && near) carrying++;
     if (n > 0) carriers++;
+    if (n > 0 && monster.isRaised) risenCarriers++;
     if (n > 0 && isFrozenOrBrittle(monster)) frozenCarrier = true;
     if (n > 0 && Math.hypot(monster.hasPosition.current.x - player.hasPosition.current.x, monster.hasPosition.current.y - player.hasPosition.current.y) <= 70) touching = true;
     if (near && getResource(monster.tracksCombat, NUMBED_UNTIL) > now) numbed++;
@@ -397,6 +422,8 @@ export function updateApprentice(world: World, player: PlayerEntity, dt: number,
   if ((passives['apprentice.cold-comfort'] ?? 0) > 1 && frozenCarrier) recovery *= passives['apprentice.cold-comfort']!;
   // Banked Coals: Recovery rises with the Heat while three or more enemies carry your sigils.
   if ((passives['apprentice.banked-coals'] ?? 0) > 0 && carriers >= 3) recovery *= 1 + heatOf(player) * passives['apprentice.banked-coals']!;
+  // Last Rites: Recovery rises for each risen enemy carrying your sigils (capped).
+  if ((passives['apprentice.last-rites'] ?? 0) > 0) recovery *= 1 + Math.min(risenCarriers, 5) * passives['apprentice.last-rites']!;
   if (getResource(cs, APPRENTICE_RECOVERY_X) !== recovery) setResource(cs, APPRENTICE_RECOVERY_X, recovery);
   const move = touching && (passives['apprentice.give-ground'] ?? 0) > 0 ? 1 + passives['apprentice.give-ground']! : 1;
   if (getResource(cs, APPRENTICE_MOVE_X) !== move) setResource(cs, APPRENTICE_MOVE_X, move);
@@ -449,5 +476,6 @@ export function registerApprentice(): void {
   });
   registerApprenticeT2();
   registerApprenticeT3();
+  registerApprenticeT4();
   void attackNow;
 }
