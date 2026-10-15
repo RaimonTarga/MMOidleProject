@@ -4,7 +4,7 @@ Kept by the conductor. Plan: [class-first-build-plan-2026-10-14.md](../class-fir
 Integration branch `rework/class-first` (conductor worktree `../mmo-rework`).
 
 **Updated:** 2026-10-15 (morning): the Striker's and the Squire's T1 runtimes are in (CS.1–CS.4, CQ.1–CQ.4, with their editor view models); S1–S3 and F6 done; every overnight delegate task merged. Waiting on the designer: S4 (in-combat Recovery baseline), S7 (charm bases), moved gear lines.
-**Baseline:** `rework/class-first` at `e6cb72ed`: full suite **338/338**, typecheck clean (verified in `../mmo-rw-verify2`).
+**Baseline:** `rework/class-first` at `b3ba6bef` (CS7 merged): full suite **338/338**, typecheck clean (verified in `../mmo-rw-verify2`).
 Codex hit rate limits on 2026-10-14, so D5, K1–K3, D1, T0 and D2 ran as Claude subagents of the conductor (same briefs, same worktrees).
 
 ## Open tasks
@@ -14,8 +14,7 @@ Codex hit rate limits on 2026-10-14, so D5, K1–K3, D1, T0 and D2 ran as Claude
 | F7-PANEL | [The class screen's shell (client)](F7-class-screen-panel.md) | Grok | `../mmo-rw-f7-panel` · `rw/f7-panel` | ready |
 | CS6-ROUTE | [The Striker's guided tutorial and bot route](CS6-striker-route.md) | Codex or Grok | `../mmo-rw-cs6-route` · `rw/cs6-route` | ready |
 | CQ6-ROUTE | [The Squire's guided tutorial and bot route](CQ-squire-delegates.md) | Codex or Grok | `../mmo-rw-cq6-route` · `rw/cq6-route` | ready |
-| CQ7-CLEANUP | [Delete the Squire's old frame and path content](CQ-squire-delegates.md) | Codex or Grok | `../mmo-rw-cq7-cleanup` · `rw/cq7-cleanup` | ready once CS7 is merged (they trim the same key and view files) |
-| CS7-CLEANUP | [Delete the Striker's old frame and path content](CS7-striker-cleanup.md) | Claude subagent | `../mmo-rw-cs7-cleanup` · `rw/cs7-cleanup` | running |
+| CQ7-CLEANUP | [Delete the Squire's old frame and path content](CQ-squire-delegates.md) | Codex or Grok | `../mmo-rw-cq7-cleanup` · `rw/cq7-cleanup` | ready (its prompt fast-forwards to pick up CS7) |
 
 F7-PANEL, CS6-ROUTE and CQ6-ROUTE touch disjoint files and can run at once. CS5-UI and CQ5-UI
 (the two class editors and their HUD pieces) are briefed and wait for F7-PANEL: the conductor
@@ -55,7 +54,7 @@ in this folder; never run pnpm install. When you're done, commit on your branch,
 report where the brief says, and tell me.
 ```
 
-**CQ7-CLEANUP (Codex or Grok, after CS7 is merged)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-cq7-cleanup`:
+**CQ7-CLEANUP (Codex or Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-cq7-cleanup`:
 
 ```text
 You're working on the MMO Idle class-first rework, in this folder, on branch
@@ -122,6 +121,11 @@ report where the brief says, and tell me.
   bible says "can't be knocked back"); stuns are refused outright.
 - **Striker crests:** the three Striker discipline crests are the old frame crests (shield on a
   plate) and look different from the 15 new ones; redraw them in the new crest style?
+- **From CS7 (kept, unsure):** `client/src/fx/bespoke/striker.ts` and the Swiftblade FX branch
+  (keyed to T3 path ids nothing grants; bible §12.14 keeps "its bespoke effects"); the
+  `HasDetonation` marker (no writer); the range-node keys and `rangeMechanics.ts` (§12.14 lists
+  range nodes for removal); relic threshold math in `stats.ts`/`empoweredAttacks.ts` (inert, ratings
+  read zero); two frozen fixtures with `cadenceSpeedStacks`.
 - **From S1:** monster-ability effects (generic slow/antiheal/sunder) and ambient ramps still
   reach players only; summons show no statuses on the client yet (the Conduit HUD decides).
 - **From D2:** `CrestDiamond` (primitive + CSS) is unused; `resolveFinalDamageMultipliers`
@@ -144,6 +148,7 @@ report where the brief says, and tell me.
 | I3 | Bench fights real T1 nodes; `bench:summon-cap` (Grok) | `d1ba3b3b` |
 | K4–K6 | Slinger, Spirit, Conduit kits through T4 (Grok); 11 undesigned trophy ranks given placeholders | `07e6d86f`, `68711dd9`, `29b72c28`, `78d2fbb4` |
 | ICONS-T1 | 60 Tier 1 icons, 52 generated (Codex image generation); full-res sources kept in the main checkout's `art/candidates/openai-icons/` | `d04a6a85` |
+| CS7-CLEANUP | The Striker's frame loop and nine T3 paths deleted (subagent): 55 files, −2k lines; the bleed driver moved to `combat/damage/bleedTicks.ts` | `rw/cs7-cleanup` merge |
 | CQ.1, CQ.2, CQ.4 | The Squire: Resolve (raw hits, trickle, refunds), the slam and its hold rule, the five T1 responses, the five T1 trophies, the T1 gear lines; `C-squire.md` | `8d9ca7b1`, `3fccd177`, `e6cb72ed` |
 | CQ.5 (view model) | `composeResponsesView`, `withRule`, `withGroundTelegraphs`, `withHoldSlam`; Resolve on the player view | `bd30623b`, `2f5db102` |
 | CS.4 | The Striker's T1 gear: weapon jobs, armor and charm lines (`striker.*` keys, three generic `defense.*` keys) | `216e27c3` |
