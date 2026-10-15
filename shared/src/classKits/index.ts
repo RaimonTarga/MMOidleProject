@@ -13,6 +13,7 @@ export * from './view';
 export * from './orderView';
 export * from './responsesView';
 export * from './formationView';
+export * from './loadoutView';
 export { STRIKER_COMBO_LENGTH, STRIKER_TECHNIQUE_SWING, strikerComboLength, strikerMasteredBeats, strikerSlots } from './configs/striker';
 export { CONDUIT_ROSTER_BODY_CAP, DEFAULT_FORMATION_ORDERS, rosterCommand } from './configs/conduit';
 export { SQUIRE_RESOLVE } from './configs/squire';
