@@ -31,6 +31,8 @@ import { pruneFormationTechnique } from './formationTechnique';
 import { registerSummonPieces } from './summonPieces';
 import { registerSummonPiecesT2, updateConduitT2 } from './summonPiecesT2';
 import { registerSummonPiecesT3, updateConduitT3 } from './summonPiecesT3';
+import { registerSummonPiecesT4, updateConduitT4 } from './summonPiecesT4';
+import { onSummonFallen, registerLeavesT4, updateLeavesT4 } from './leavesT4';
 import { syncFormationRecall } from './formationOrders';
 import { onSoulSummonDeath, updateSoul } from './souls';
 import { rebuildCostMult } from './disciplines';
@@ -194,7 +196,7 @@ function runMinionRegen(
 }
 
 
-function collectDeaths(world: World, owner: SummonerPlayerEntity): void {
+function collectDeaths(world: World, owner: SummonerPlayerEntity, now: number): void {
   const summons = owner.summonsMinions;
   for (let index = 0; index < summons.targetCount; index++) {
     const id = summons.minionIds[index];
@@ -204,6 +206,7 @@ function collectDeaths(world: World, owner: SummonerPlayerEntity): void {
     enqueueSummonReconstruction(world, owner, summons.slotIds[index]!);
     if (minion) {
       onSoulSummonDeath(world, owner, minion);
+      onSummonFallen(world, owner, minion, now);
       // Bloodtithe: part of the HP paid to build it comes back.
       const tithe = owner.usesSkills.passives['conduit.bloodtithe-pct'] ?? 0;
       if (tithe > 0) {
@@ -231,6 +234,8 @@ export function initSummonerArchetype(): void {
   registerSummonPieces();
   registerSummonPiecesT2();
   registerSummonPiecesT3();
+  registerSummonPiecesT4();
+  registerLeavesT4();
   registerFormationCycleMoment();
 }
 
@@ -239,7 +244,7 @@ export function updateSummonerArchetype(world: World, dt: number, now: number): 
     const summoner = owner as SummonerPlayerEntity;
     reconcileMinionSlots(world, summoner);
     syncFormationRecall(world, summoner, now);
-    collectDeaths(world, summoner);
+    collectDeaths(world, summoner, now);
     pruneFormationTechnique(world, summoner);
     spawnFreshSlots(world, summoner);
     tickSummonReconstruction(world, summoner, dt, now);
@@ -260,5 +265,7 @@ export function updateSummonerArchetype(world: World, dt: number, now: number): 
     updateSoul(world, summoner, dt, now);
     updateConduitT2(world, summoner, now);
     updateConduitT3(world, summoner, dt, now);
+    updateConduitT4(world, summoner, dt, now);
+    updateLeavesT4(world, summoner, dt, now);
   }
 }

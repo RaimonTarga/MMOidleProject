@@ -29,4 +29,5 @@ export {
 export { SPIRIT_KIT, type SpiritFamily, type SpiritPiece, type SpiritPieceExtra, type SpiritTrophy, type SpiritTrophyKind } from './spirit/kit';
 export { CONDUIT_DISCIPLINE_TUNING, disciplineCommandCost, type ConduitDisciplineId } from './conduit/discipline';
 export { CONDUIT_SPECIALIZATION_TUNING, isConduitSpecialization, type ConduitSpecializationId } from './conduit/specialization';
+export { CONDUIT_GEAR_T4_TUNING, CONDUIT_LEAF_TUNING, CONDUIT_SOUL_T4_TUNING, type ConduitLeafId } from './conduit/leaves';
 export { CONDUIT_KIT, type ConduitRole, type ConduitPiece, type ConduitPieceExtra, type ConduitTrophy, type ConduitTrophyKind } from './conduit/kit';

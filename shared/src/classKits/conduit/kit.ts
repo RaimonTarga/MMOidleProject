@@ -310,8 +310,10 @@ const PIECES: readonly ConduitPiece[] = [
   }),
 
   // ── T4 (§7.16) ──
+  // T4 `params` are PLACEHOLDERS (T4-CONDUIT): the bible gives the jobs, not the numbers.
   summon({
     id: 'conduit-avalanche',
+    params: { chargeEveryMs: 7000, chargeLength: 260, chargeWidth: 55, chargeMult: 1.5, knockMs: 1200 },
     name: 'Avalanche',
     family: 'damage',
     command: 3,
@@ -322,6 +324,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-icewarden',
+    params: { shellEveryMs: 6000, shellPct: 0.25, shellMs: 8000 },
     name: 'Icewarden',
     family: 'support',
     command: 1,
@@ -332,6 +335,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-dartcaller',
+    params: { dartTicks: 3, dartTickShare: 0.2, ricochetReach: 220, ricochetShare: 0.6 },
     name: 'Dartcaller',
     family: 'damage',
     command: 1,
@@ -342,6 +346,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-mirage',
+    params: { mirageEveryMs: 10000, mirageMs: 4000, mirageRadius: 280 },
     name: 'Mirage',
     family: 'support',
     command: 1,
@@ -352,6 +357,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-obsidian-tortoise',
+    params: { tauntEveryMs: 6000, tauntMs: 3000, tauntRadius: 120, withdrawEveryMs: 10000, withdrawMs: 3000, withdrawBlock: 0.95 },
     name: 'Obsidian Tortoise',
     family: 'tank',
     command: 2,
@@ -362,6 +368,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-gravecaller',
+    params: { huskMs: 4000, huskEveryMs: 1000, huskMult: 0.8 },
     name: 'Gravecaller',
     family: 'support',
     command: 1,
@@ -372,6 +379,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-abyssal-warden',
+    params: { tauntEveryMs: 6000, tauntMs: 3000, tauntRadius: 120, wardenEveryMs: 4000, wardenRadius: 200 },
     name: 'Abyssal Warden',
     family: 'tank',
     command: 1,

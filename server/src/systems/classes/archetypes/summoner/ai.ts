@@ -34,6 +34,7 @@ import {
 } from './command';
 import { summonerProfileFor } from './profile';
 import { chaseBonus } from './souls';
+import { fallBackSpot } from './leavesT4';
 import { orderedTarget } from './formationOrders';
 import { getRuneDecisions, RUNE_WAIT_FOR_SUMMONS_FLAG } from '../../../combat/ai/runeConfig';
 import { getAutoTargetId } from '../../../combat/ai/targetPriority';
@@ -192,6 +193,16 @@ export function driveMinion(
   const escape = ownerStepsBack(owner) ? findMinionTelegraphEscape(world, minion) : null;
   if (escape) {
     setEntityMotion(world, minion, escape);
+    return;
+  }
+
+  // Fall Back (T4 leaf): a hurt summon retreats behind the tanks and does not fight until it has mended.
+  const retreat = fallBackSpot(world, owner, minion);
+  if (retreat) {
+    if (distance(minion.hasPosition.current, retreat) > FOLLOW_HOVER_TOL) setEntityMotion(world, minion, retreat);
+    else stopEntity(world, minion);
+    setAttackTarget(world, minion, null);
+    cm.currentTargetId = null;
     return;
   }
 

@@ -35,6 +35,11 @@ export function fightSeconds(owner: PlayerEntity, now: number): number {
   return start > 0 ? Math.max(0, (now - start) / 1_000) : 0;
 }
 
+/** The clock reading when the current fight began; 0 outside a fight. It names the fight (once-per-fight rules compare it). */
+export function fightStartedAt(owner: PlayerEntity): number {
+  return getResource(owner.tracksCombat, FIGHT_START);
+}
+
 /** Whether the formation is in a fight right now (the clock is running, even at second 0). */
 export function inFight(owner: PlayerEntity): boolean {
   return getResource(owner.tracksCombat, FIGHT_START) > 0;

@@ -253,7 +253,7 @@ export const CONDUIT_GEAR: ClassGearDef = {
       cost: { purple: 270 }, stats: { attack: 258 }, attacksPerSecond: 1.10, tier: 4,
       icon: 'items/weapons/plague-axe.png',
       description: 'Summon hits splash part of their damage to the enemies around the target.',
-      mechanicEffects: {},
+      mechanicEffects: { 'conduit.cleave-pct': 0.4 },
     },
     // The Swamp's poison job moves here.
     {
@@ -270,7 +270,7 @@ export const CONDUIT_GEAR: ClassGearDef = {
       cost: { green: 270 }, stats: { attack: 257 }, attacksPerSecond: 1.15, tier: 4,
       icon: 'items/weapons/abyssal-axe.png',
       description: 'Summons hit harder for each different debuff on their target.',
-      mechanicEffects: {},
+      mechanicEffects: { 'conduit.exploit-pct': 0.15 },
     },
     // The Cave's fewer-and-stronger job moves here.
     {
@@ -335,10 +335,10 @@ export const CONDUIT_GEAR: ClassGearDef = {
     'tundra-charm-t4': { name: 'Hibernate', text: 'A badly hurt summon encases itself in ice for a few seconds. It cannot act, takes no damage, and regenerates. Each summon must wait before it can do this again.', effects: { 'conduit.hibernate-ms': 3000 } },
     'volcanic-vest-t4': { name: 'Fireproof', text: 'Damage over time on you and your summons is halved.', effects: { 'conduit.fireproof-pct': 0.5 } },
     'volcanic-charm-t4': { name: 'Emberglow', text: 'Your Recovery also heals the summons near you.', effects: { 'conduit.emberglow-pct': 0.5 } },
-    'graveyard-vest-t4': { name: 'Grave Pact', text: 'When a hit would kill you, a summon dies in your place. It does not happen again for a long while.', effects: {} },
-    'graveyard-charm-t4': { name: 'Requiem', text: 'When a summon dies, the others heal for part of its max HP.', effects: {} },
-    'trench-vest-t4': { name: 'Pressure Seal', text: 'Every few seconds, each body, a summon or you, ignores the next debuff it would receive.', effects: {} },
-    'trench-charm-t4': { name: 'Tidewater', text: 'Your Recovery doubles while you carry three or more debuffs.', effects: {} },
+    'graveyard-vest-t4': { name: 'Grave Pact', text: 'When a hit would kill you, a summon dies in your place. It does not happen again for a long while.', effects: { 'conduit.grave-pact-ms': 60000 } },
+    'graveyard-charm-t4': { name: 'Requiem', text: 'When a summon dies, the others heal for part of its max HP.', effects: { 'conduit.requiem-pct': 0.25 } },
+    'trench-vest-t4': { name: 'Pressure Seal', text: 'Every few seconds, each body, a summon or you, ignores the next debuff it would receive.', effects: { 'conduit.pressure-seal-ms': 8000 } },
+    'trench-charm-t4': { name: 'Tidewater', text: 'Your Recovery doubles while you carry three or more debuffs.', effects: { 'conduit.tidewater-pct': 1 } },
   },
   // Retired-biome lines on the receiving biome's second base (`<id>-b`).
   // Copied from the origin's last tier: Forest and Plains at T2, Swamp and Cave at T3.

@@ -136,6 +136,13 @@ export const DEFENSE_KEYS = [
   'conduit.hibernate-ms',  // Hibernate: a summon under a quarter of its HP encases itself in ice this long
   'conduit.fireproof-pct',  // Fireproof: damage over time on you and your summons is cut by this share
   'conduit.emberglow-pct',  // Emberglow: your Recovery also heals the summons near you at this share
+  // Conduit T4 (T4-CONDUIT)
+  'conduit.cleave-pct',  // Cleave: summon hits splash this share of their damage to the enemies around the target
+  'conduit.exploit-pct',  // Exploit: summons hit this much harder for each different debuff on their target
+  'conduit.grave-pact-ms',  // Grave Pact: a hit that would kill you kills a summon instead; this long between uses
+  'conduit.requiem-pct',  // Requiem: when a summon dies, the others heal this share of its max HP
+  'conduit.pressure-seal-ms',  // Pressure Seal: every this long, each body ignores the next debuff it would receive
+  'conduit.tidewater-pct',  // Tidewater: your Recovery rises this much while you carry three or more debuffs
   'slinger.reload-walk-pct',  // Quickdraw: walk at this share of speed while reloading
   'slinger.elbow-room',  // Elbow Room: reload faster while three or more enemies are near
   'slinger.breathing-room',  // Breathing Room: Recovery rises with the distance to the nearest enemy
