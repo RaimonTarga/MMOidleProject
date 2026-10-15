@@ -214,6 +214,9 @@ const STRIKER_TAIL = [
   // The Tier 3 stretch (T3-W2): the same shape over the seven T3 zones.
   ...['mountain', 'swamp', 'cave', 'jungle', 'desert', 'tundra', 'volcanic']
     .flatMap((zone) => [`striker3:${zone}`, `striker3:${zone}-lesson`, `striker3:${zone}-boss`]),
+  // The Tier 4 stretch (T4-W2): the leaf pick, then the seven T4 zones.
+  ...['mountain', 'tundra', 'jungle', 'desert', 'volcanic', 'graveyard', 'trench']
+    .flatMap((zone) => [`striker4:${zone}`, `striker4:${zone}-lesson`, `striker4:${zone}-boss`]),
 ];
 
 function farmGate(beat: TutorialBeat, biome: string): number | null {
@@ -243,7 +246,15 @@ function assertStrikerTail(script: TutorialScript): void {
   assert(say('striker:hamstring').includes('Hamstring') && say('striker:rend').includes('Rend'), 'Hamstring and Rend have their own beats');
   assert(say('striker:focus').includes('Focus') && say('boss:mountain').includes('Coil'), 'Focus and Coil name the cast');
   assert(tail.find((beat) => beat.id === 'farewell')?.say === TUTORIAL_FAREWELL[0], 'the Striker route still says the farewell line');
-  assert(tail[tail.length - 1].id === 'striker3:volcanic-boss', 'the Striker route ends on the last Tier 3 boss');
+  assert(tail[tail.length - 1].id === 'striker4:trench-boss', 'the Striker route ends on the last Tier 4 boss');
+  assert(say('striker4:mountain').includes('leaf'), 'the first Tier 4 line points at the leaf pick');
+  assert(say('striker4:graveyard-lesson').includes('Reaping Arc') && say('striker4:trench-lesson').includes('Pressure Point'), 'the new Tier 4 lessons have lines');
+  assert(say('striker4:graveyard-boss').includes('Grave Toll') && say('striker4:trench-boss').includes('Deep Pressure'), 'the new trophies are named');
+  for (const beat of tail.filter((entry) => entry.id.startsWith('striker4:'))) {
+    assert(beat.say.length < 200, `${beat.id}: a Tier 4 line stays short`);
+    assert(beat.steps.every((step) => (step.type === 'farm' && step.at.kind === 'biome' && step.at.tier === 4)
+      || (step.type === 'attemptBoss' && step.tier === 4)), `${beat.id}: Tier 4 steps stay in Tier 4`);
+  }
   assert(say('striker3:mountain').includes('specialization'), 'the first Tier 3 line points at the specialization pick');
   assert(say('striker3:tundra-lesson').includes('Icebreaker') && say('striker3:volcanic-lesson').includes('Overheat'), 'the new Tier 3 lessons have lines');
   assert(say('striker3:tundra-boss').includes('Hoarfrost') && say('striker3:volcanic-boss').includes('Eruption'), 'the new trophies are named');
