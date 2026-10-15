@@ -113,9 +113,6 @@ function channelTickFraction(ctx: CombatContext): number | null {
   if (ctx.metadata["reloadLaser"] === true) {
     return passives["reload.laser-damage-per-tick-pct"] ?? DEFAULT_CHANNEL_TICK_FRACTION;
   }
-  if (ctx.metadata["channelBeam"] === true) {
-    return passives["cooldown.channeled-beam-mult"] ?? DEFAULT_CHANNEL_TICK_FRACTION;
-  }
   return null;
 }
 

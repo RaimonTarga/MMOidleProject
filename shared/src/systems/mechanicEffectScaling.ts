@@ -16,7 +16,6 @@ export interface ScalableMechanicEffect {
  * intentionally absent from v1.
  */
 export const SCALABLE_MECHANIC_BUFFS: Readonly<Record<string, ScalableMechanicEffect>> = {
-  'cooldown-overdrive': { fields: { attackSpeedPct: 'fraction' } },
   'dot-frenzy': { fields: { attackSpeedPct: 'fraction', onHitPerTier: 'flat' } },
   'energy-overdrive': { fields: { attackDamagePct: 'fraction' } },
   // Grand Ritual's empowered-attack multiplier. 1.6 means the bonus is the

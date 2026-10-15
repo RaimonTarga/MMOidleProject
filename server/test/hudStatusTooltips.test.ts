@@ -92,7 +92,7 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
   const descriptionChecks: Array<[string, string[], string[]]> = [
     ["debuff-slow", ["magnitude"], ["shortens"]],
     ["defense-stationary-dr", ["over 4 seconds", "under attack", "over 1 second"], ["gradually fades"]],
-    ["cooldown-eternal-charge", ["regular attack", "next execution"], []],
+    ["squire-guard", ["shield", "telegraphed"], []],
     ["reload-momentum", ["completed reload", "shortens reload time"], ["hit streak"]],
   ];
   for (const [id, required, forbidden] of descriptionChecks) {
@@ -176,7 +176,7 @@ function assertLegible(content: Parameters<typeof readableStrings>[0], what: str
     assert(bossEffectIconSource(id) !== null, `${id} needs a boss-effect icon resolver`);
   }
 
-  for (const id of ["cooldown-patience", "sunlight"]) {
+  for (const id of ["squire-guard", "sunlight"]) {
     assert(statusIconSource(id) !== null, `${id} needs a player status icon resolver`);
   }
   for (const id of [

@@ -116,20 +116,9 @@ export const STAT_HELP: Record<string, string> = {
   'cadence.empowered-mult': 'The damage multiplier your armed finisher hits for.',
   'cadence.damage-mult-add': 'Added to the finisher’s multiplier on top of its base value.',
 
-  // ── Cooldown (bank a timer, spend it as an execution) ───────────────────────
+  // ── Cooldown (the slam) ─────────────────────────────────────────────────────
   'cooldown.empowered-cd-ms': 'How long your execution takes to come back up.',
   'cooldown.empowered-mult': 'The damage multiplier your execution hits for.',
-  'cooldown.acceleration-ms': 'Shortens the execution cooldown, so executions come around sooner.',
-  'cooldown.overdrive': 'Firing an execution drops you into overdrive: a burst of attack speed.',
-  'cooldown.eternal-cycle': 'Time spent without executing banks charge that adds to the next one.',
-  'cooldown.temporal-extension': 'Executions extend your active buffs rather than only dealing damage.',
-  'cooldown.battery': 'Waiting between executions charges a battery that adds damage per stack.',
-  'cooldown.channeled-beam': 'The execution becomes a channelled beam that ticks damage over its duration.',
-  'cooldown.channeled-beam-mult': 'Damage per beam tick, as a multiple of your attack.',
-  'cooldown.rupture': 'Executions bypass the target’s plating, and briefly weaken it against your regular attacks too.',
-  'cooldown.reverb': 'Your execution lands again at half strength when its recharge is half done.',
-  'cooldown.patience-paid': 'An uninterrupted cooldown ramps both your attack and your execution damage.',
-  'cooldown.vengeance': 'Damage taken since your last execution is paid back into the next one.',
 
   // ── Reload (magazine and heat management) ──────────────────────────────────
   'reload.max-ammo': 'Shots in your magazine before you must reload.',

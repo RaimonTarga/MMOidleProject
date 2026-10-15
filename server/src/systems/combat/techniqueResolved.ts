@@ -29,26 +29,20 @@ import type { AbilityDef, Vec2 } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../ecs/entity';
 import type { World } from '../../world/World';
 import type { CombatContext } from './engine/combatPipeline';
-import { destroyerOnTechniqueResolved } from '../classes/archetypes/cooldown/t3/pipeline/destroyer';
 
 /**
- * A Technique resolved. Today one thing hangs off that moment: **the Squire's
- * Destroyer** (design §22.5) — a cast delivers the primed execution to its target
- * or area. (An armed shape already carried it on its own hit, decided before the
- * root's multiplier: `t3/pipeline/destroyer.ts`.)
- *
- * `now` is the tick's clock, passed by a resolution that may land an attack of
- * its own (the cast loop's, for the Destroyer's delivery).
+ * A Technique resolved. The seam stays so a later consumer is one line here
+ * rather than five call sites. The Squire's Destroyer was the only consumer
+ * and went with the T3 paths (class-first CQ7).
  *
  * `departedFrom` is the body a backward reposition broke from (Disengage's
- * threat). It is NOT a `target`: nothing was struck, so the Destroyer must not
- * deliver an execution to it.
+ * threat). It is NOT a `target`: nothing was struck.
  */
 export function onTechniqueResolved(
-  world: World,
-  player: PlayerEntity,
+  _world: World,
+  _player: PlayerEntity,
   ability: AbilityDef,
-  site: {
+  _site: {
     ctx?: CombatContext;
     target?: MonsterEntity;
     now?: number;
@@ -63,5 +57,4 @@ export function onTechniqueResolved(
   } = {},
 ): void {
   if (ability.slot !== 'technique') return;
-  destroyerOnTechniqueResolved(world, player, ability, site);
 }

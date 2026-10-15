@@ -4,11 +4,9 @@ import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import { World } from '../src/world/World';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
-import { attachComponent } from '../src/ecs/markerHelpers';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { runPlayerAttack, runMonsterAttack } from '../src/systems/combat/engine/combat';
 import { updateReloadT3Ticks } from '../src/systems/classes/archetypes/reload/t3/ticks/laser';
-import { updateChanneledBeam } from '../src/systems/classes/archetypes/cooldown/t3/ticks/heavy/channeledBeam';
 import { equipItem } from '../src/systems/player/economy/inventory';
 import { applyResistedPlayerDebuff } from '../src/systems/combat/status/debuffGuard';
 import { applyPlatingShredStacks } from '../src/systems/combat/status/platingShred';
@@ -107,24 +105,19 @@ function equip(world: World, player: ReturnType<typeof fixture>['player'], id: s
 }
 
 // Real equipped Axe: each third channel tick pays the same dead hit as a basic attack.
-for(const mode of ['normal','laser','beam'] as const) {
-  const {world,player}=fixture(mode==='laser'?'reload':mode==='beam'?'cooldown':null);
+// The Squire's beam was the third mode; it went with the T3 paths (CQ7).
+for(const mode of ['normal','laser'] as const) {
+  const {world,player}=fixture(mode==='laser'?'reload':null);
   equip(world,player,'graveyard-plague-axe');
   const target=targetFor(world);
   player.dealsDamage.attack=100;
   player.dealsDamage.onHitDamage=20;
   // Control the damage basis; keep the actual equipped weapon's interval and vulnerability rider.
   if(mode==='laser') Object.assign(player.usesSkills.passives,{'reload.laser':1,'reload.laser-damage-per-tick-pct':1});
-  if(mode==='beam') {
-    player.usesSkills.passives['cooldown.channeled-beam-mult']=1;
-    player.usesSkills.passives['cooldown.beam-tick-ms']=100;
-    attachComponent(world,player,'isChanneling',{remainingMs:10000,nextTickMs:0,targetId:target.isMonster.id,pct:0});
-  }
   const losses:number[]=[];
   for(let i=0;i<3;i++) {
     const hp=target.hasHealth.hp;
     if(mode==='laser') updateReloadT3Ticks(world,100,1000+i*100);
-    else if(mode==='beam') updateChanneledBeam(world,100,1000+i*100);
     else attack(world,player,target);
     losses.push(hp-target.hasHealth.hp);
   }

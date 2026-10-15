@@ -833,22 +833,6 @@ function buffSourceSide(buff: PlayerBuff): "ally" | "enemy" | "neutral" {
 
 function buffEffectText(buff: PlayerBuff): string {
   switch (buff.id) {
-    case "cooldown-overdrive":
-      return "+attack speed";
-    case "cooldown-eternal-charge":
-      return "+attack damage now and next-execution damage";
-    case "cooldown-temporal-ext":
-      return "+on-hit damage";
-    case "cooldown-battery":
-      return "+execution damage";
-    case "cooldown-reverb":
-      return "execution echo due";
-    case "cooldown-alignment":
-      return "+attack speed";
-    case "cooldown-rupture":
-      return "regular attacks pierce plating";
-    case "cooldown-channel":
-      return "channeled beam active";
     case "energy-overcharge":
       return "+discharge damage";
     case "energy-ac-charge":

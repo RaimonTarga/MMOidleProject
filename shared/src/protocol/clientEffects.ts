@@ -18,13 +18,3 @@
 export const DOT_RIMESHATTER_FX = 'dot-rimeshatter';
 /** Winter Warden: chill cap converts to Frozen — the shell closes inward. */
 export const DOT_FROZEN_FX = 'dot-frozen';
-/** Sunderer: the execution shatters plating and opens the pierce window. */
-export const COOLDOWN_SUNDER_FX = 'cooldown-sunder';
-
-/**
- * Reverb: this hit is the execution's ECHO (design §22.5), landing at half strength
- * at the recharge's halfway mark — not the execution itself. Both are execution
- * hits on the wire, so the tag is what lets the path draw the bell answering
- * rather than a second strike of it.
- */
-export const COOLDOWN_REVERB_ECHO_FX = 'reverb-echo';

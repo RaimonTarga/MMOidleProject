@@ -178,12 +178,6 @@ export interface RenderState {
     targetId: string | null;
     until: number;
   };
-  /** Devout Priest channeled holy beam (see client/src/fx/holyBeam.ts). */
-  holyBeam: {
-    graphics: Phaser.GameObjects.Graphics | null;
-    targetId: string | null;
-    until: number;
-  };
   /** Cannoneer charge-up ring on the own player (see client/src/fx/cannonFx.ts). */
   cannonCharge: {
     graphics: Phaser.GameObjects.Graphics | null;
@@ -259,11 +253,6 @@ export function createRenderState(): RenderState {
     spriteMeta: new Map(),
     debugRanges: new Map(),
     laserBeam: {
-      graphics: null,
-      targetId: null,
-      until: 0,
-    },
-    holyBeam: {
       graphics: null,
       targetId: null,
       until: 0,

@@ -8,8 +8,6 @@ import {
   ESSENCE_COLORS,
   GAME_CONFIG,
   isRangedPlayerView,
-  COOLDOWN_REVERB_ECHO_FX,
-  COOLDOWN_SUNDER_FX,
   DOT_FROZEN_FX,
   DOT_RIMESHATTER_FX,
   type CombatArchetype,
@@ -21,7 +19,6 @@ import {
 } from "@mmo-idle/shared";
 import { activateLaserBeam } from "../fx/laser";
 import { fxConduitBeam, fxConduitBolt, fxConduitStrike } from "../fx/conduitSummon";
-import { activateHolyBeam, fxHolyFlash } from "../fx/holyBeam";
 import { fxCannonBlast } from "../fx/cannonFx";
 import { fxVoidDischarge } from "../fx/voidDischarge";
 import { fxPoisonExplosion } from "../fx/poisonExplosion";
@@ -37,7 +34,6 @@ import { fxHeavyShell } from "../fx/heavyShell";
 import { fxLightningDagger } from "../fx/lightningDagger";
 import { fxEquinoxArc } from "../fx/equinoxArc";
 import {
-  fxSunderShatter,
   fxRimeshatter,
   fxFrozenShatter,
 } from "../fx/t4Triggers";
@@ -353,8 +349,6 @@ type AttackFxFn = (args: AttackFxArgs) => void;
 
 const FLASH_CLIENT_EFFECT = "flash-teleport";
 const FIRST_STRIKE_CLIENT_EFFECT = "first-strike";
-const CHANNEL_BEAM_CLIENT_EFFECT = "channel-beam";
-const HOLY_FLASH_CLIENT_EFFECT = "holy-flash";
 const ALT_ONHIT_CLIENT_EFFECT = "reload-alt-onhit";
 const DEATH_MARK_BLAST_CLIENT_EFFECT = "death-mark-blast";
 const CANNON_BLAST_CLIENT_EFFECT = "reload-cannon-blast";
@@ -592,7 +586,6 @@ const TRIGGER_FX_BY_EFFECT: Record<
   string,
   (scene: GameScene, at: Vec2, args: AttackFxArgs) => void
 > = {
-  [COOLDOWN_SUNDER_FX]: (scene, at) => fxSunderShatter(scene, at.x, at.y),
   [DOT_RIMESHATTER_FX]: (scene, at) => fxRimeshatter(scene, at.x, at.y),
   [DOT_FROZEN_FX]: (scene, at) => fxFrozenShatter(scene, at.x, at.y),
 };
@@ -1712,7 +1705,7 @@ export function dispatchCombatEvent(
     const to = presentation?.to ?? state.sprite.get(ev.targetId);
     if (shouldRunClientFx() && player && from && to && drawsOwnHit(player, ev)) {
       const usesLocalController = (player.combatArchetype === 'reload' && (player.passives['reload.laser'] ?? 0) > 0)
-        || ev.effects?.some(effect => effect === FLASH_CLIENT_EFFECT || effect === CHANNEL_BEAM_CLIENT_EFFECT);
+        || ev.effects?.some(effect => effect === FLASH_CLIENT_EFFECT);
       if (!usesLocalController) {
         runFxForAttackStyle(state, ev, scene, presentation);
         const gainMult = listenerGain(scene, from.x, from.y);
@@ -1816,8 +1809,6 @@ function runFxForAttackStyle(
   const player = presentation?.player ?? state.view.get(actorId) as PlayerView | undefined;
   const lungeTarget = state.interpolation.get(ev.targetId)?.base ?? presentation?.targetBase;
   const isFlashTeleport = ev.effects?.includes(FLASH_CLIENT_EFFECT) ?? false;
-  const isHolyBeam = ev.effects?.includes(CHANNEL_BEAM_CLIENT_EFFECT) ?? false;
-  const isHolyFlash = ev.effects?.includes(HOLY_FLASH_CLIENT_EFFECT) ?? false;
   const isAltShot = ev.effects?.includes(ALT_ONHIT_CLIENT_EFFECT) ?? false;
   const isDeathMarkBlast = ev.effects?.includes(DEATH_MARK_BLAST_CLIENT_EFFECT) ?? false;
   const isCannonBlast = ev.effects?.includes(CANNON_BLAST_CLIENT_EFFECT) ?? false;
@@ -1886,12 +1877,6 @@ function runFxForAttackStyle(
 
   if (isLaser) {
     activateLaserBeam(state, scene, ev.targetId);
-  } else if (isHolyBeam) {
-    activateHolyBeam(state, scene, ev.targetId);
-  } else if (isHolyFlash) {
-    // Execution "cast" that opens the channel — holy flash instead of melee lunge/ring.
-    fxHolyFlash(scene, from.x, from.y);
-    fxHolyFlash(scene, to.x, to.y, 0.8);
   } else if (isAltShot) {
     // Dualslinger on-hit (odd) round: the spiralling arcane round, the opposite of
     // its gold kinetic round (fx/bespoke/slinger.ts).
@@ -1971,9 +1956,6 @@ function runFxForAttackStyle(
 
   for (const effectId of ev.effects ?? []) {
     if (effectId === FLASH_CLIENT_EFFECT) continue;
-    if (effectId === COOLDOWN_REVERB_ECHO_FX) continue; // drawn by the Reverb path's payoff
-    if (effectId === CHANNEL_BEAM_CLIENT_EFFECT) continue; // handled above
-    if (effectId === HOLY_FLASH_CLIENT_EFFECT) continue; // handled above
     if (effectId === ALT_ONHIT_CLIENT_EFFECT) continue; // handled above
     if (effectId === DEATH_MARK_BLAST_CLIENT_EFFECT) continue; // handled above
     if (effectId === CANNON_BLAST_CLIENT_EFFECT) continue; // handled above
@@ -2019,8 +2001,6 @@ function runFxForAttackStyle(
 
   if (
     !isLaser &&
-    !isHolyBeam &&
-    !isHolyFlash &&
     !isFlashTeleport &&
     !isRangedPlayerView(player) &&
     lungeTarget

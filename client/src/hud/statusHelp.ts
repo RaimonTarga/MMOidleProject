@@ -81,18 +81,6 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'defense-engagement-dr': b('Dawnward', 'Damage reduction for a few seconds (longer at higher tiers) after your first attack or an incoming attack. Attacking a new target does not refresh it. Rearms after 4 quiet seconds.'),
   'defense-reactive-plating': b('Reactive plating', 'Each direct hit adds plating up to a cap and refreshes a short hold window. Heavy hits do not crack it. Once the hold lapses, the stacks fade one at a time.'),
 
-  // -- Cooldown --------------------------------------------------------------
-  'cooldown-patience': m('Patience', 'The longer you let your execution cooldown run its natural course, the more it pays out: attack and execution damage both climb toward a cap as the cooldown fills. Triggering your execution early cuts the ramp short.'),
-  'cooldown-overdrive': m('Overdrive', 'A burst window: your attack speed is raised sharply while it lasts.'),
-  'cooldown-eternal-charge': m('Eternal charge', 'Each regular attack banks a stack and gains the current bonus. Your next execution adds the full bank again, then clears it.'),
-  'cooldown-temporal-ext': m('Temporal extension', 'Flat bonus damage added to every on-hit for the window.'),
-  'cooldown-battery': m('Battery', 'Stored charge raising both your attack damage and your execution damage.'),
-  'cooldown-reverb': m('Reverb', 'Your execution echoes. The clock runs to the halfway mark of its recharge, where it lands again at half strength on whatever you are hitting. With nothing in reach then, the echo is lost.'),
-  'cooldown-alignment': m('Alignment', 'An attack-speed window opened by lining your cooldowns up.'),
-  'cooldown-rupture': m('Rupture', 'Your regular attacks bypass a share of the target’s plating and damage reduction while it holds.'),
-  'cooldown-vengeance': m('Vengeance', 'Damage you have taken is stored and paid back through your next execution.'),
-  'cooldown-channel': m('Channel', 'A sustained beam: it strikes on a fixed interval and every strike applies your on-hit effects.'),
-
   // -- Energy ----------------------------------------------------------------
   'energy-overcharge': m('Overcharge', 'Stacked charge added to your next discharge.'),
   'energy-overdrive': m('Surge', 'A window of raised attack damage.'),
@@ -154,13 +142,6 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'mob-volcanic': b('Volcanic stride', 'Volcanic boots: passive movement speed, active whenever it is not suppressed by a hit.'),
   'mob-suppress': { title: 'Stride suppressed', kind: 'debuff', help: 'A direct hit has switched off your Volcanic boots’ speed bonus. It returns once you go untouched again.' },
 
-  // -- Frame loops -------------------------------------------------------------
-  // Two tiles for all six classes: a frame is either a window or a bank (or, on a
-  // Balanced frame, a little of both), and which one you have is decided by the
-  // frame you picked. The tile is labelled by that frame, so the copy here speaks
-  // about the CONTAINER rather than naming one class's version of it.
-  'frame-window': b('Frame window', 'Your frame’s mechanic just fired and opened its window. It is deliberately shorter than one full cycle, so the faster you attack the more of each cycle you spend inside it — your frame tile says what the window is doing while it counts down.'),
-  'frame-charge': b('Frame charge', 'Your frame is banking charge, one per regular hit, up to the cap shown. Your mechanic spends the whole bank when it fires and makes that one hit bigger — it is not a second multiplier stacked on top, it is the same multiplier grown.'),
 };
 
 // -- Target-frame statuses ---------------------------------------------------

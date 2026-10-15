@@ -31,7 +31,7 @@ export function beginCombatPlayback(state: RenderState, snapshot: DeltaSnapshot,
 function isBufferedPlayer(player: PlayerView, event: CombatEvent): boolean {
   if ((player.summonsMinions ?? 0) > 0 || (player.passives['reload.laser'] ?? 0) > 0) return false;
   return !(event.kind === 'player-hit' && event.effects?.some(effect =>
-    effect === 'flash-teleport' || effect === 'channel-beam' || effect === 'holy-flash'));
+    effect === 'flash-teleport'));
 }
 
 /** True means handled, including a cosmetic drop when the queue is full. */

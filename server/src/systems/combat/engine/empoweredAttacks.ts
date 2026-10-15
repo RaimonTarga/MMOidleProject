@@ -214,9 +214,8 @@ export function registerEmpoweredMultiplier(
     // A HELD hit leaves a pending charge exactly where it is, like a chaotic miss
     // does: the hit is not the one that delivers the mechanic. Set in
     // `beforeAttack` (or on a hit the root runs itself) by a mechanic that decides
-    // WHICH hit spends its charge — the Squire's Destroyer, whose primed execution
-    // waits for a Technique, and Reverb's echo, which must never spend an
-    // execution that is already waiting (design §22.5).
+    // WHICH hit spends its charge. The Squire's Destroyer and Reverb's echo were
+    // the writers (design §22.5); the hold stays for whatever sets it next.
     if (ctx.metadata[HOLD_EMPOWERED_ATTACK]) return;
 
     if (!consumeEmpoweredAttack(world, ctx.attacker)) return;

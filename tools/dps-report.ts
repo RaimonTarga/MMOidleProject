@@ -669,88 +669,10 @@ function estimateClassDamage(
     classMechanicPerSec += (cadenceAveragePerHit - baseWithOnHit) * hitRate;
     directPerHit = baseWithOnHit;
   } else if (archetype === 'cooldown') {
-    const cdSec = Math.max(0.1, (p['cooldown.empowered-cd-ms'] ?? 7000) / 1000);
-    const execRate = 1 / cdSec;
-    const mult = empowered?.effective ?? p['cooldown.empowered-mult'] ?? 2;
-    const exec = directNoOnHit(stats.dealsDamage.attack * mult, targetWithDebuffs, platingMult) + stats.dealsDamage.onHitDamage;
-    if ((p['cooldown.technique-execution'] ?? 0) > 0) {
-      // Design §22.5: the Destroyer's execution waits for a landed Technique; the
-      // recharge rate is its ceiling (Techniques are not modeled here).
-      classMechanicPerSec += Math.max(0, exec - baseWithOnHit) * execRate;
-      notes.push('destroyer: execution delivered by Techniques, modeled at the recharge rate (an upper bound)');
-    } else if ((p['cooldown.channeled-beam'] ?? 0) > 0) {
-      const beamMult = p['cooldown.channeled-beam-mult'] ?? 1;
-      classMechanicPerSec += directNoOnHit(stats.dealsDamage.attack * beamMult, targetWithDebuffs, platingMult) * 6 * execRate;
-      notes.push('channeled beam estimated as six 500 ms ticks');
-    } else {
-      classMechanicPerSec += Math.max(0, exec - baseWithOnHit) * execRate;
-    }
-    if ((p['cooldown.overdrive'] ?? 0) > 0) {
-      const durationSec = Math.max(0.1, (p['cooldown.overdrive-duration-ms'] ?? 2500) / 1000);
-      const attackSpeedPct = Math.max(0, p['cooldown.overdrive-attack-speed-pct'] ?? 1);
-      const uptime = Math.min(1, durationSec / cdSec);
-      classMechanicPerSec += baseWithOnHit * hitRate * attackSpeedPct * uptime;
-      notes.push(`${Math.round(attackSpeedPct * 100)}% overdrive attack speed averaged at ${Math.round(uptime * 100)}% uptime`);
-    }
-    if ((p['cooldown.battery'] ?? 0) > 0) {
-      const intervalSec = Math.max(0.1, (p['cooldown.battery-stack-interval-ms'] ?? 1000) / 1000);
-      const damagePerStack = Math.max(0, p['cooldown.battery-damage-per-stack'] ?? 2);
-      const stacksAtExecution = Math.max(0, Math.floor(cdSec / intervalSec));
-      const averageStacks = stacksAtExecution / 2;
-      classMechanicPerSec += damagePerStack * averageStacks * hitRate;
-      classMechanicPerSec += damagePerStack * stacksAtExecution * execRate;
-      notes.push(`dynamo averaged ${asNumber(averageStacks)} regular-hit stacks, ${stacksAtExecution} on execution`);
-    }
-    if ((p['cooldown.patience-paid'] ?? 0) > 0) {
-      const rampSec = Math.max(0.1, (p['cooldown.patience-ramp-ms'] ?? 7000) / 1000);
-      const attackMax = Math.max(0, p['cooldown.patience-attack-max'] ?? 0.5);
-      const executionMax = Math.max(0, p['cooldown.patience-execution-max'] ?? 0.75);
-      const averageRamp = cdSec <= rampSec
-        ? cdSec / (2 * rampSec)
-        : 1 - rampSec / (2 * cdSec);
-      const executionRamp = Math.min(1, cdSec / rampSec);
-      classMechanicPerSec += baseWithOnHit * hitRate * attackMax * averageRamp;
-      classMechanicPerSec += exec * execRate * executionMax * executionRamp;
-      notes.push(`stalwart linear ramp averaged; ${Math.round(attackMax * 100)}% attack/${Math.round(executionMax * 100)}% execution caps`);
-    }
-    if ((p['cooldown.reverb'] ?? 0) > 0) {
-      // Design §22.5: one echo per execution at the halfway mark, at the authored
-      // share of the execution. Assumes a target is always in reach then.
-      const strength = Math.max(0, p['cooldown.reverb-echo-strength'] ?? 0);
-      classMechanicPerSec += exec * strength * execRate;
-      notes.push(`reverb echo at ${Math.round(strength * 100)}% of the execution, target assumed in reach`);
-    }
-    if ((p['cooldown.vengeance'] ?? 0) > 0) {
-      classMechanicPerSec += (p['cooldown.vengeance-floor'] ?? 30) * execRate;
-      notes.push('vengeance uses floor only; incoming damage is not modeled');
-    }
-    if ((p['cooldown.eternal-cycle'] ?? 0) > 0) {
-      // Transcendant: each normal attack banks a stack and adds (stacks × flat) to
-      // that hit (ramping); the execution adds the full stack total again, then
-      // clears. flat scales per tier above unlock(4), matching live.
-      const flat = Math.round((p['cooldown.eternal-cycle-flat'] ?? 8) * Math.max(1, (stats.playerTier ?? 4) - 4 + 1));
-      const durationSec = Math.max(0.1, (p['cooldown.eternal-charge-duration-ms'] ?? 10000) / 1000);
-      const windowSec = Math.min(cdSec, durationSec);
-      const n = Math.max(0, Math.floor(windowSec * hitRate)); // normal hits between executions
-      const rampBonus = flat * (n * (n + 1)) / 2; // 1×+2×+…+n× across the buildup
-      const execBonus = flat * n;                 // execution spends the full stack total
-      classMechanicPerSec += (rampBonus + execBonus) * execRate;
-      notes.push(`eternal cycle ramps ${n} stacks at ${flat}/stack between executions`);
-    }
-    if ((p['cooldown.rupture'] ?? 0) > 0) {
-      // Duelist: execution ignores plating entirely (platingMult 0). For a window
-      // after, regular attacks get reduced plating + partial DR pierce.
-      const windowSec = Math.max(0, (p['cooldown.rupture-window-ms'] ?? 2000) / 1000);
-      const windowPlatingMult = Math.max(0, p['cooldown.rupture-window-plating-mult'] ?? 0.5);
-      const drPierce = Math.max(0, Math.min(1, p['cooldown.rupture-dr-pierce'] ?? 0.10));
-      const uptime = Math.min(1, cdSec > 0 ? windowSec / cdSec : 1);
-      const windowTarget = { ...targetWithDebuffs, damageReduction: targetWithDebuffs.damageReduction * (1 - drPierce) };
-      const windowHit = directHit(stats.dealsDamage.attack, stats.dealsDamage.onHitDamage, windowTarget, windowPlatingMult);
-      classMechanicPerSec += (windowHit - baseWithOnHit) * uptime * hitRate;
-      const ruptureExec = directNoOnHit(stats.dealsDamage.attack * mult, targetWithDebuffs, 0) + stats.dealsDamage.onHitDamage;
-      classMechanicPerSec += (ruptureExec - exec) * execRate;
-      notes.push(`rupture: ${Math.round(uptime * 100)}% window (plating ×${windowPlatingMult}, ${Math.round(drPierce * 100)}% DR pierce); execution ignores plating`);
-    }
+    // The slam arms on a full Resolve bar (class-first CQ.1). The 7s execution
+    // clock and the T3 path estimates went with the paths (CQ7). Resolve's fill
+    // rate is not modeled here.
+    notes.push('slam (Resolve) is not modeled');
   } else if (archetype === 'energy') {
     const maxEnergy = resolveEnergyMax(p, stats.playerTier ?? 0);
     const perHit = Math.max(1, Math.round(p['energy.per-hit'] ?? 14));
@@ -1579,8 +1501,7 @@ function mechanicFrequency(stats: PlayerStatsTarget): string {
     return `finisher every ${threshold} hits (${asNumber(hitRate / threshold)}/s)`;
   }
   if (archetype === 'cooldown') {
-    const cdSec = Math.max(0.1, (p['cooldown.empowered-cd-ms'] ?? 7000) / 1000);
-    return `empowered every ${asNumber(cdSec)}s (${asNumber(1 / cdSec)}/s)`;
+    return 'slam on a full Resolve bar (fill rate not modeled)';
   }
   if (archetype === 'energy') {
     const maxEnergy = resolveEnergyMax(p, stats.playerTier ?? 0);
@@ -2191,9 +2112,9 @@ function classMechanicFormulaRows(): Array<Array<string | number>> {
     [
       'Squire',
       'Cooldown',
-      'Execution arms on cooldown. Base cooldown from cooldown.empowered-cd-ms.',
+      'The slam arms when Resolve is full. Resolve fill is not a clock.',
       'Final empowered multiplier = (cooldown.empowered-mult + shared.empowered-mult-add) * (1 + weapon.empowered-mult-bonus).',
-      'Frequency = 1 / (cooldown.empowered-cd-ms / 1000).',
+      'The slam is not given a frequency here: Resolve fill depends on the responses.',
     ],
     [
       'Apprentice',

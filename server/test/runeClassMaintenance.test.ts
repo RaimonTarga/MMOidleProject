@@ -13,7 +13,6 @@ import { markEngaged } from "../src/systems/combat/ai/engagement";
 import { setAggroTarget, setAttackTarget } from "../src/systems/combat/ai/targeting";
 import { RUNE_WAIT_FOR_SUMMONS_FLAG, updateRuneDerivedConfig } from "../src/systems/combat/ai/runeConfig";
 import { updateReloadArchetype } from "../src/systems/classes/archetypes/reload/reloadPrototype";
-import { updateCooldownArchetype } from "../src/systems/classes/archetypes/cooldown/cooldownPrototype";
 import { addResolve, updateSquire } from "../src/systems/classes/archetypes/cooldown/squire";
 import { updateSummonerArchetype } from "../src/systems/classes/archetypes/summoner/summonerPrototype";
 import { driveMinion } from "../src/systems/classes/archetypes/summoner/ai";
@@ -123,7 +122,6 @@ function scenario(archetype: CombatArchetype, actionId: string) {
 }
 {
   const { world, player } = scenario("cooldown", "wait-for-execution");
-  updateCooldownArchetype(world, 0);
   updateRuneDerivedConfig(world, 1100);
   setEntityMotion(world, player, { x: 800, y: 400 });
   updateAutoTargets(world, 1100);

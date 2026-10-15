@@ -106,39 +106,6 @@ function flash(
   });
 }
 
-// ── cooldown ───────────────────────────────────────────────────────────────
-
-/**
- * Sunderer — the execution bypasses 100% of plating and opens a 2s window where
- * regular attacks keep piercing half of it.
- *
- * Armor coming apart, so: angular steel shards outward plus a hard white flash.
- * The Squire's orange stays on the ring so it still reads as a cooldown
- * execution rather than a generic break.
- */
-export function fxSunderShatter(scene: GameScene, x: number, y: number): void {
-  const steel = 0xdfe8f5;
-  const squire = 0xffaa22;
-  flash(scene, x, y, steel, 28, 0.85);
-  ring(scene, x, y, squire, { scale: 4.6, width: 3, durationMs: 380 });
-  shards(scene, x, y, {
-    count: 8,
-    color: steel,
-    radius: 58,
-    length: 18,
-    width: 3.5,
-    durationMs: 340,
-  });
-  burstFx(scene, 'ptx-dot', x, y, 16, 520, {
-    tint: steel,
-    speed: { min: 100, max: 300 },
-    angle: { min: 0, max: 360 },
-    scale: { start: 0.85, end: 0 },
-    alpha: { start: 1, end: 0 },
-    gravityY: 300,
-  });
-}
-
 // ── dot ────────────────────────────────────────────────────────────────────
 
 /**

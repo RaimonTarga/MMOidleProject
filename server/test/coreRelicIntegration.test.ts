@@ -80,7 +80,9 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy', 'summoner'
     assert(preview, 'preview exists');
     switch (preview.archetype) {
       case 'cadence': eq(player.usesCadence!.threshold, preview.threshold.after, relic.id); break;
-      case 'cooldown': eq(player.usesCooldown!.executionCooldownMs, preview.cooldownMs.after, relic.id); break;
+      // The runtime no longer stores an execution clock (CQ7). The preview still
+      // quotes one from cooldown.empowered-cd-ms; that number is not on the slice.
+      case 'cooldown': assert(preview.cooldownMs.after > 0, relic.id); break;
       case 'reload': eq(player.usesReload!.ammoMax, preview.ammoMax.after, relic.id); break;
       case 'dot': {
         const dot = getStatusEffect(target.tracksCombat, 'dot');
@@ -123,11 +125,20 @@ for (const potency of [-0.25, 0.4]) {
   for (let tick = 0; tick < Math.ceil(profile.coolingMs / 100); tick++) updateReloadT3Ticks(world, 100, 10000 + tick * 100);
   assert(!player.usesReload!.laserOverheated, 'full cooling ends overheat');
 }
-for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy'] as const) {
+for (const root of ['cadence', 'reload', 'dot', 'energy'] as const) {
   const { player } = fixture(root);
   const input = { attack: 100, onHitDamage: 20, attackCooldownMs: 1000, archetype: root, passives: player.usesSkills.passives, selectedSubVariant: null, playerTier: 4 };
   const before = estimatePlayerDps(input).total;
   assert(estimatePlayerDps({ ...input, passives: { ...input.passives, 'relic.mechanic-frequency': 0.35 } }).total > before, `${root}: DPS reflects frequency`);
+}
+{
+  // The slam fills on Resolve, so a shorter preview clock must not invent DPS.
+  const { player } = fixture('cooldown');
+  const input = { attack: 100, onHitDamage: 20, attackCooldownMs: 1000, archetype: 'cooldown' as const, passives: player.usesSkills.passives, selectedSubVariant: null, playerTier: 4 };
+  const before = estimatePlayerDps(input);
+  const after = estimatePlayerDps({ ...input, passives: { ...input.passives, 'relic.mechanic-frequency': 0.35 } });
+  eq(after.total, before.total, 'cooldown DPS does not follow the deleted clock');
+  assert(before.caveats.some(line => line.includes('slam')), 'the estimate says the slam is omitted');
 }
 {
   const p = { 'cadence.empowered-threshold': 4 };
@@ -155,13 +166,13 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy'] as const) 
     eq(profile.maxStacks.after, Math.round(cap * 1.4), 'special DoT cap after relic');
   }
 }
-// A secondary line must say which rating produced it; "Overdrive attack-speed bonus"
+// A secondary line must say which rating produced it; "Surge attack-damage bonus"
 // reads exactly like a Frequency/Potency line otherwise.
 {
   const buffOnly = { ...ZERO_RELIC_RATINGS, buffEffect: 0.25 };
-  const overdrive = formatResolvedRelicProfile(resolveRelicPreview('cooldown', { 'cooldown.overdrive': 1, 'cooldown.overdrive-attack-speed-pct': 0.5 }, buffOnly));
-  assert(overdrive.includes('Buff effect · Overdrive attack-speed bonus: 50% → 62.5%'), 'buff effect is attributed with real values');
-  assert(!overdrive.some(line => line.startsWith('Debuff effect')), 'a buff-only relic claims no debuff');
+  const surge = formatResolvedRelicProfile(resolveRelicPreview('energy', { 'energy.overdrive': 1, 'energy.overdrive-attack-damage-pct': 0.4 }, buffOnly));
+  assert(surge.includes('Buff effect · Surge attack-damage bonus: 40% → 50%'), 'buff effect is attributed with real values');
+  assert(!surge.some(line => line.startsWith('Debuff effect')), 'a buff-only relic claims no debuff');
 
   const debuffOnly = { ...ZERO_RELIC_RATINGS, debuffEffect: 0.25 };
   const chill = formatResolvedRelicProfile(resolveRelicPreview('dot', { 'dot.freezing-cold': 1 }, debuffOnly));
@@ -181,7 +192,7 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy'] as const) 
   assert(inert.includes('Debuff effect · No eligible mechanic debuff in this build'), 'inert debuff rating is explicit');
 
   // An unrated relic earns no secondary headings even where effects are registered.
-  const unrated = formatResolvedRelicProfile(resolveRelicPreview('cooldown', { 'cooldown.overdrive': 1 }, { ...ZERO_RELIC_RATINGS, frequency: 0.2 }));
+  const unrated = formatResolvedRelicProfile(resolveRelicPreview('energy', { 'energy.overdrive': 1 }, { ...ZERO_RELIC_RATINGS, frequency: 0.2 }));
   assert(!unrated.some(line => /^(Buff|Debuff) effect/.test(line)), 'no secondary rating, no secondary lines');
   assert(!unrated.some(line => line.includes('relic.mechanic')), 'raw relic keys stay hidden');
 }
