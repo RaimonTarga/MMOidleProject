@@ -3,7 +3,7 @@
 Kept by the conductor. Plan: [class-first-build-plan-2026-10-14.md](../class-first-build-plan-2026-10-14.md).
 Integration branch `rework/class-first` (conductor worktree `../mmo-rework`).
 
-**Updated:** 2026-10-15 (night): the Conduit CD.1–CD.5 and the Slinger CL.1–CL.4 done; CD6–CD8 and CL5–CL7 are the open delegate tasks; Spirit and Apprentice next.
+**Updated:** 2026-10-15 (night): the Conduit, Slinger and Spirit T1 runtimes done; CD6–CD8, CL5–CL7 and SP5–SP7 are the open delegate tasks; the Apprentice next.
 **Baseline:** `rework/class-first` after the CQ7 merge: full suite **342/342** (biomeEcology flakes under load), typecheck clean.
 Codex hit rate limits on 2026-10-14, so D5, K1–K3, D1, T0 and D2 ran as Claude subagents of the conductor (same briefs, same worktrees).
 
@@ -30,6 +30,9 @@ Recorded in the bible (§4 Armor/charm row, §5) where they are design.
 | CL5-UI | [The Loadout editor and the ammo ring](CL-slinger-delegates.md) | Grok | `../mmo-rw-cl5-ui` · `rw/cl5-ui` | ready |
 | CL6-ROUTE | [The Slinger's guided tutorial and bot route](CL-slinger-delegates.md) | Codex or Grok | `../mmo-rw-cl6-route` · `rw/cl6-route` | ready |
 | CL7-CLEANUP | [Delete the Slinger's old frame, range and T3 content](CL-slinger-delegates.md) | Codex or Grok | `../mmo-rw-cl7-cleanup` · `rw/cl7-cleanup` | ready |
+| SP5-UI | [The Thresholds editor and the storm gauge](SP-spirit-delegates.md) | Grok | `../mmo-rw-sp5-ui` · `rw/sp5-ui` | ready |
+| SP6-ROUTE | [The Spirit's guided tutorial and bot route](SP-spirit-delegates.md) | Codex or Grok | `../mmo-rw-sp6-route` · `rw/sp6-route` | ready |
+| SP7-CLEANUP | [Delete the Spirit's old frame, range and T3 content](SP-spirit-delegates.md) | Codex or Grok | `../mmo-rw-sp7-cleanup` · `rw/sp7-cleanup` | ready |
 | ICONS-3 | Redraw the Striker crests and flat T1 icons | the designer, via Codex | `../mmo-rw-icons-3` · `rw/icons-3` | **not merged**: superseded by the 74 style-recovery icons, wired in `ce68c66f` |
 
 ## Paste-ready prompts
@@ -102,6 +105,39 @@ run pnpm install. When you're done, commit on your branch, write your report whe
 brief says, and tell me.
 ```
 
+**SP5-UI (Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-sp5-ui`:
+
+```text
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/sp5-ui. First read docs/briefs/class-first-build/AGENT-RULES.md and
+CS5-striker-ui.md, then do the task marked SP5-UI in
+docs/briefs/class-first-build/SP-spirit-delegates.md. Work only in this folder; never
+run pnpm install. When you're done, commit on your branch, write your report where the
+brief says, and tell me.
+```
+
+**SP6-ROUTE (Codex or Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-sp6-route`:
+
+```text
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/sp6-route. First read docs/briefs/class-first-build/AGENT-RULES.md and
+CS6-striker-route.md, then do the task marked SP6-ROUTE in
+docs/briefs/class-first-build/SP-spirit-delegates.md. Work only in this folder; never
+run pnpm install. When you're done, commit on your branch, write your report where the
+brief says, and tell me.
+```
+
+**SP7-CLEANUP (Codex or Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-sp7-cleanup`:
+
+```text
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/sp7-cleanup. First read docs/briefs/class-first-build/AGENT-RULES.md and
+CS7-striker-cleanup.md, then do the task marked SP7-CLEANUP in
+docs/briefs/class-first-build/SP-spirit-delegates.md. Work only in this folder; never
+run pnpm install. When you're done, commit on your branch, write your report where the
+brief says, and tell me.
+```
+
 ## Queued (briefs written when their inputs land)
 
 | ID | Task | Agent | Waits for |
@@ -109,6 +145,14 @@ brief says, and tell me.
 | Next class | The Conduit ([C-conduit](C-conduit.md): CD.1–CD.5 done, CD6–CD8 are delegate tasks), then Slinger, Spirit, Apprentice | Conductor | — |
 
 ## Known follow-ups (not yet a task)
+
+- **Spirit stand-ins and gaps:** Slipstream (glide after a dodge) is key-only; Grounded stops forced
+  movement but not stuns; the storm pip (12 x tier scale), flow (10%/s, x2 out of combat), spend gap
+  (0.7 s), zap share (25%) and every piece and trophy number are placeholders; Drenching Staff's soak
+  is a timestamp, not a status; the barrier engine stays for no one now (XC1 moved the Mountain and
+  Tundra charms to timed wards); disciplines (Overflow, Reservoir, Tide), T2+ pieces and trophies
+  (Running Storm, Sandstorm...) and the gauge's crackle FX are T2+; spends pick their target from the
+  player's current attack target within 260 px.
 
 - **Slinger stand-ins and gaps:** the "never reload inside a telegraph" free rule is stored but not
   enforced (the reload still starts when the clip empties); double loads (T3) and the Gunslinger /
@@ -176,6 +220,7 @@ brief says, and tell me.
 
 | ID | Task | Merged |
 |---|---|---|
+| SP.1–SP.4 | The Spirit: the storm (one bar of damage and shield, constant flow, hits and DoT drain it, Eye of the Storm, Sealed Vessel); the bands, floor and gather/hover phases; Bolt, Chain Lightning, Thunderclap, Downpour, Thunderbolt; the five T1 trophies; weapon shapes and the T1 lines; plain zaps at a quarter; `composeThresholdsView`; `spiritStorm.test.ts` | `e60d8053`, `8e43ce0f`; 347/347 |
 | CL.1–CL.4 | The Slinger: fire rate is the gun's stat (half-damage and double-speed layers gone); the Loadout picks the clip at each reload; per-round effects (Scatter, Snare, Venom, Stopping, Breaching); trophy rounds (Stampede, Twin, Rot, Quake, Splinter); the stationary reload; the six T1 guns and the T1 lines; `composeLoadoutView`; `slingerLoadout.test.ts` | `0d3e7ad6`, `6d975cf9`; 345/345 |
 | CS5-UI, CQ5-UI, G-GEAR-C | The Striker's Order editor and beat strip; the Squire's Response rules editor and Resolve pips; every class's moved lines on second bases (Grok); census tests skip `-b` bases | merges `5f44dbda`, `8791410c`, `75958acc` |
 | ICONS (designer) | The 74 style-recovery class-piece and trophy icons wired over the earlier versions; cache-busting v2 | `ce68c66f` |
