@@ -18,6 +18,10 @@ import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { attachComponent } from '../src/ecs/markerHelpers';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
 import { runFormationAttack } from '../src/systems/classes/archetypes/summoner/formationAttack';
+import { isSummonerRecalling } from '../src/systems/classes/archetypes/summoner/command';
+import { orderedTarget, rebuildRank, syncFormationRecall } from '../src/systems/classes/archetypes/summoner/formationOrders';
+import { updatePlayerMoments } from '../src/systems/combat/moments/moments';
+import { setAggroTarget } from '../src/systems/combat/ai/targeting';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
 import { summonerProfileFor } from '../src/systems/classes/archetypes/summoner/profile';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
@@ -131,6 +135,57 @@ const piece = (id: string) => CONDUIT_KIT.pieces.find((p) => p.id === id)!;
     dmg.push(before - target.hasHealth.hp);
   }
   assert.ok(dmg[2]! > dmg[0]! * 1.5, `the third shot is the heavy one: ${dmg.join(', ')}`);
+}
+
+// CD.3: the orders steer targets, rebuilds and Recall.
+{
+  const { world, player } = setup(['conduit-plains-tank', 'conduit-forest-bruiser', 'conduit-swamp-spitter']);
+  const orders = (player.configuresClass!.config.system as unknown as { orders: Record<string, unknown> }).orders;
+  updateSummonerArchetype(world, 100, 1_000);
+  updateSummonerArchetype(world, 100, 1_100);
+  const [warden, bruiser, spitter] = player.summonsMinions!.minionIds.map((id) => world.getMinionEntity(id)!);
+  const near = world.createMonster('node-5-5', 'bone-crawler', { x: 440, y: 400 })!;
+  const weak = world.createMonster('node-5-5', 'bone-crawler', { x: 520, y: 400 })!;
+  const attacker = world.createMonster('node-5-5', 'bone-crawler', { x: 560, y: 400 })!;
+  for (const m of [near, weak, attacker]) m.hasHealth.hp = m.hasHealth.maxHp = 1_000;
+  weak.hasHealth.hp = 100;
+  setAggroTarget(world, attacker, { kind: 'player', id: player.isPlayer.id }, 0);
+
+  orders.attackFirst = 'closest';
+  assert.equal(orderedTarget(world, player, bruiser, 320), near, 'closest');
+  bruiser.controlsMinion.currentTargetId = null;
+  orders.attackFirst = 'weakest';
+  assert.equal(orderedTarget(world, player, bruiser, 320), weak, 'weakest');
+  orders.attackFirst = 'attacking-me';
+  assert.equal(orderedTarget(world, player, spitter, 320), attacker, 'what attacks the Conduit');
+  // A tank guards the Conduit first, whatever the others do.
+  orders.attackFirst = 'closest';
+  assert.equal(orderedTarget(world, player, warden, 320), attacker, 'the tank takes whoever is on the Conduit');
+  // Sticky: a valid current target is kept.
+  bruiser.controlsMinion.currentTargetId = weak.isMonster.id;
+  assert.equal(orderedTarget(world, player, bruiser, 320), weak, 'a valid target is kept');
+
+  // Rebuild order: tanks first puts a fallen tank ahead of a fallen damage dealer.
+  orders.rebuildFirst = 'tanks';
+  assert.ok(rebuildRank(player, bruiser.isMinion.slotId) > rebuildRank(player, warden.isMinion.slotId), 'tanks rebuild first');
+  orders.rebuildFirst = 'damage';
+  assert.ok(rebuildRank(player, bruiser.isMinion.slotId) < rebuildRank(player, warden.isMinion.slotId), 'damage rebuilds first');
+  orders.rebuildFirst = 'as-fallen';
+  assert.equal(rebuildRank(player, bruiser.isMinion.slotId), rebuildRank(player, warden.isMinion.slotId), 'as fallen is one rank');
+
+  // Recall: the free rule sets the flag while its conditions hold.
+  orders.recallWhen = [{ id: 'hp-low' }];
+  player.hasHealth.hp = player.hasHealth.maxHp;
+  updatePlayerMoments(world, player, 2_000);
+  syncFormationRecall(world, player, 2_000);
+  assert.equal(isSummonerRecalling(player), false, 'no recall at full HP');
+  player.hasHealth.hp = Math.round(player.hasHealth.maxHp * 0.1);
+  updatePlayerMoments(world, player, 2_100);
+  syncFormationRecall(world, player, 2_100);
+  assert.equal(isSummonerRecalling(player), true, 'low HP recalls the formation');
+  orders.recallWhen = [];
+  syncFormationRecall(world, player, 2_200);
+  assert.equal(isSummonerRecalling(player), false, 'an empty rule never recalls');
 }
 
 console.log('conduitFormation: ok');

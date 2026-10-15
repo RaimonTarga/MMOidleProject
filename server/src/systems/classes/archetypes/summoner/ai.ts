@@ -35,6 +35,7 @@ import {
   resolveCommandedMoveDestination,
 } from './command';
 import { summonerProfileFor } from './profile';
+import { orderedTarget } from './formationOrders';
 import { getRuneDecisions, RUNE_WAIT_FOR_SUMMONS_FLAG } from '../../../combat/ai/runeConfig';
 import { getAutoTargetId } from '../../../combat/ai/targetPriority';
 import {
@@ -296,11 +297,13 @@ export function driveMinion(
   }
 
   const inherited = inheritedRuneTarget(world, owner, leashRadius);
+  // The Formation's orders (what to attack first, who the tanks guard) replace the owner's rune targeting.
+  const ordered = orderedTarget(world, owner, minion, leashRadius);
   const rebuilding = owner.usesAutocombat.auto && getFlag(owner.tracksCombat, RUNE_WAIT_FOR_SUMMONS_FLAG);
-  const target = focusOverride ?? (rebuilding ? null : inherited !== undefined ? inherited : isSwarm
+  const target = focusOverride ?? (rebuilding ? null : ordered !== undefined ? ordered : inherited !== undefined ? inherited : isSwarm
     ? findSwarmMinionTarget(world, owner, minion, leashRadius)
     : findMinionTarget(world, owner, leashRadius));
-  const stickyTarget = isSwarm || !!focusOverride || !!inherited;
+  const stickyTarget = isSwarm || !!focusOverride || !!inherited || !!ordered;
 
   if (target) {
     if (stickyTarget) {

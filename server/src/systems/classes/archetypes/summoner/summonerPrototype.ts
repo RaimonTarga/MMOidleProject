@@ -29,6 +29,7 @@ import { pruneFormationTechnique } from './formationTechnique';
 import { registerSummonerFrameLoop, summonerFrenzyApsPct } from './frameLoop';
 import { registerSummonPieces } from './summonPieces';
 import { summonerLineBonus, syncSummonerLine } from './lineHolds';
+import { syncFormationRecall } from './formationOrders';
 
 type SummonerPlayerEntity = PlayerEntity & {
   summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
@@ -238,6 +239,7 @@ export function updateSummonerArchetype(world: World, dt: number, now: number): 
   for (const owner of world.summonerPlayers) {
     const summoner = owner as SummonerPlayerEntity;
     reconcileMinionSlots(world, summoner);
+    syncFormationRecall(world, summoner, now);
     if (summoner.controlsSummons) {
       tickSummonerSpecializations(
         world,

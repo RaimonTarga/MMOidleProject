@@ -22,6 +22,7 @@ import type { MinionEntity, MonsterEntity, PlayerEntity } from '../../../../ecs/
 import { attachComponent, detachComponent } from '../../../../ecs/markerHelpers';
 import { getFollowOffset } from './spawn';
 import { RUNE_RECALL_SUMMONS_FLAG } from '../../../combat/ai/runeConfig';
+import { FORMATION_RECALL_FLAG, ordersOf } from './formationOrders';
 
 const LEASH_MARGIN = 4;
 const ARRIVE_TOL = 10;
@@ -56,6 +57,7 @@ export function isSummonerRepositioning(owner: PlayerEntity): boolean {
 /** The R recall, or a Recall Summons rune whose situation holds (owner on auto). */
 export function isSummonerRecalling(owner: PlayerEntity): boolean {
   return owner.hasSummonerCommand?.kind === 'recall'
+    || getFlag(owner.tracksCombat, FORMATION_RECALL_FLAG)
     || (owner.usesAutocombat.auto && getFlag(owner.tracksCombat, RUNE_RECALL_SUMMONS_FLAG));
 }
 
@@ -99,6 +101,8 @@ export function clearSummonerCommand(world: World, owner: PlayerEntity): void {
 
 export function applySummonerCommand(world: World, owner: PlayerEntity, pos: Vec2): void {
   if (!owner.summonsMinions) return;
+  // The Formation's orders replace focus and move (§7.3: Recall is the Conduit's only action); the client's shift-click is removed in CD.6.
+  if (ordersOf(owner)) return;
   if (owner.usesSkills.combatArchetype !== 'summoner') return;
 
   const rounded: Vec2 = { x: Math.round(pos.x), y: Math.round(pos.y) };

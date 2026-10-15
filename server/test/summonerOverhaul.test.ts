@@ -8,6 +8,7 @@ import {
   resolveSummonerProfile,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
+import { detachComponent } from '../src/ecs/markerHelpers';
 import { World } from '../src/world/World';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
@@ -173,6 +174,8 @@ function attachSummoner(world: World, persisted: PersistedPlayerSlices) {
   assert(summoner.summonsMinions.formationTargetId === targetB!.isMonster.id,
     'split-target formations should retain the previous active display target');
 
+  // The Formation's orders replace manual focus (CD.3); this checks the legacy command, so the config goes.
+  detachComponent(world, player, 'configuresClass');
   applySummonerCommand(world, player, targetA!.hasPosition.current);
   syncSummonerFormationTarget(world, summoner);
   assert(summoner.summonsMinions.formationTargetId === targetA!.isMonster.id,

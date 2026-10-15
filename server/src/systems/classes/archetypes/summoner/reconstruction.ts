@@ -7,6 +7,7 @@ import { computeMinionMaxHp, spawnMinionForOwner } from './spawn';
 import { summonerProfileFor } from './profile';
 import { isPlayerInCombat } from '../../../combat/ai/engagement';
 import { emitSummonObservation } from './observation';
+import { rebuildRank } from './formationOrders';
 
 type SummonerOwner = PlayerEntity & {
   summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
@@ -31,7 +32,11 @@ export function enqueueSummonReconstruction(
   if (slotIndex(owner, slotId) < 0) return;
   if (summons.activeReconstruction?.slotId === slotId) return;
   if (summons.reconstructionQueue.includes(slotId)) return;
-  summons.reconstructionQueue.push(slotId);
+  // The Formation's rebuild order: ahead of anything of a lower priority already waiting.
+  const rank = rebuildRank(owner, slotId);
+  const at = summons.reconstructionQueue.findIndex((queued) => rebuildRank(owner, queued) > rank);
+  if (at < 0) summons.reconstructionQueue.push(slotId);
+  else summons.reconstructionQueue.splice(at, 0, slotId);
   if (owner.controlsSummons && !owner.controlsSummons.pendingDeadSlotIds.includes(slotId)) {
     owner.controlsSummons.pendingDeadSlotIds.push(slotId);
   }
