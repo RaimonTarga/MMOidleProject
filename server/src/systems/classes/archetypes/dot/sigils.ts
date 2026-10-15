@@ -26,6 +26,7 @@ import { attachMarker } from '../../../../ecs/markerHelpers';
 import type { World } from '../../../../world/World';
 import { applyPlayerAoeTo, playerAoeTargets } from '../../../combat/damage/aoeDamage';
 import { abortMonsterCast } from '../../../combat/engine/combat';
+import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
 import { attackNow, registerCombatListener } from '../../../combat/engine/combatPipeline';
 import { conditionsHold, momentActive } from '../../../combat/moments/moments';
 import { applyMonsterSlow } from '../../../combat/status/monsterControl';
@@ -125,6 +126,15 @@ export function laySigils(world: World, player: PlayerEntity, target: MonsterEnt
   effect.remainingMs = lifeMs;
   effect.data['sigil'] = 1;
   attachMarker(world, target, 'hasDot');
+  // `mechanic-fired`: a full bar is the class's moment, once per target per fill.
+  if (cap > 0 && effect.stacks >= cap) {
+    if (effect.data['maxStackFired'] !== 1) {
+      effect.data['maxStackFired'] = 1;
+      emitMechanicFired(world, player);
+    }
+  } else if (effect.data['maxStackFired'] === 1) {
+    effect.data['maxStackFired'] = 0;
+  }
 }
 
 function sigilsOn(player: PlayerEntity, monster: MonsterEntity): number {

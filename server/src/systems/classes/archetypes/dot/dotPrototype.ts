@@ -120,7 +120,7 @@ export function applyClassDotStack(
   world: World,
   attacker: PlayerEntity,
   defender: MonsterEntity,
-  application = resolveClassDotStackApplication(attacker),
+  explicitApplication?: ClassDotStackApplication,
   /**
    * The exchange this stack rode in on, when there was one. Only used as the
    * `mechanic-fired` latch below — the stack itself never reads it.
@@ -130,9 +130,10 @@ export function applyClassDotStack(
   // A character with Payoff rules lays a sigil instead (`sigils.ts`).
   const payoffs = payoffsOf(world, attacker);
   if (payoffs) {
-    laySigils(world, attacker, defender, 1, payoffs.cap);
+    laySigils(world, attacker, defender, 1, explicitApplication ? explicitApplication.maxStacks : payoffs.cap);
     return;
   }
+  const application = explicitApplication ?? resolveClassDotStackApplication(attacker);
   const effect = applyStatusEffect(defender.tracksCombat, {
     id: DOT_EFFECT_ID,
     maxStacks: application.maxStacks,

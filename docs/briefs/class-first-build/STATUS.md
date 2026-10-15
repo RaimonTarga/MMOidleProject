@@ -3,7 +3,7 @@
 Kept by the conductor. Plan: [class-first-build-plan-2026-10-14.md](../class-first-build-plan-2026-10-14.md).
 Integration branch `rework/class-first` (conductor worktree `../mmo-rework`).
 
-**Updated:** 2026-10-15 (night): the Conduit, Slinger and Spirit T1 runtimes done; CD6–CD8, CL5–CL7 and SP5–SP7 are the open delegate tasks; the Apprentice next.
+**Updated:** 2026-10-15 (late night): all six T1 runtimes are in (Striker, Squire, Conduit, Slinger, Spirit, Apprentice); delegate tasks open: CD6–8, CL5–7, SP5–7, AP5–7; 350/350.
 **Baseline:** `rework/class-first` after the CQ7 merge: full suite **342/342** (biomeEcology flakes under load), typecheck clean.
 Codex hit rate limits on 2026-10-14, so D5, K1–K3, D1, T0 and D2 ran as Claude subagents of the conductor (same briefs, same worktrees).
 
@@ -33,6 +33,9 @@ Recorded in the bible (§4 Armor/charm row, §5) where they are design.
 | SP5-UI | [The Thresholds editor and the storm gauge](SP-spirit-delegates.md) | Grok | `../mmo-rw-sp5-ui` · `rw/sp5-ui` | ready |
 | SP6-ROUTE | [The Spirit's guided tutorial and bot route](SP-spirit-delegates.md) | Codex or Grok | `../mmo-rw-sp6-route` · `rw/sp6-route` | ready |
 | SP7-CLEANUP | [Delete the Spirit's old frame, range and T3 content](SP-spirit-delegates.md) | Codex or Grok | `../mmo-rw-sp7-cleanup` · `rw/sp7-cleanup` | ready |
+| AP5-UI | [The Payoff rules editor and the sigil ring](AP-apprentice-delegates.md) | Grok | `../mmo-rw-ap5-ui` · `rw/ap5-ui` | ready |
+| AP6-ROUTE | [The Apprentice's guided tutorial and bot route](AP-apprentice-delegates.md) | Codex or Grok | `../mmo-rw-ap6-route` · `rw/ap6-route` | ready |
+| AP7-CLEANUP | [Delete the Apprentice's old frame, range and T3 content](AP-apprentice-delegates.md) | Codex or Grok | `../mmo-rw-ap7-cleanup` · `rw/ap7-cleanup` | ready |
 | ICONS-3 | Redraw the Striker crests and flat T1 icons | the designer, via Codex | `../mmo-rw-icons-3` · `rw/icons-3` | **not merged**: superseded by the 74 style-recovery icons, wired in `ce68c66f` |
 
 ## Paste-ready prompts
@@ -138,6 +141,39 @@ run pnpm install. When you're done, commit on your branch, write your report whe
 brief says, and tell me.
 ```
 
+**AP5-UI (Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-ap5-ui`:
+
+```text
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/ap5-ui. First read docs/briefs/class-first-build/AGENT-RULES.md and
+CS5-striker-ui.md, then do the task marked AP5-UI in
+docs/briefs/class-first-build/AP-apprentice-delegates.md. Work only in this folder; never
+run pnpm install. When you're done, commit on your branch, write your report where the
+brief says, and tell me.
+```
+
+**AP6-ROUTE (Codex or Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-ap6-route`:
+
+```text
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/ap6-route. First read docs/briefs/class-first-build/AGENT-RULES.md and
+CS6-striker-route.md, then do the task marked AP6-ROUTE in
+docs/briefs/class-first-build/AP-apprentice-delegates.md. Work only in this folder; never
+run pnpm install. When you're done, commit on your branch, write your report where the
+brief says, and tell me.
+```
+
+**AP7-CLEANUP (Codex or Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-ap7-cleanup`:
+
+```text
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/ap7-cleanup. First read docs/briefs/class-first-build/AGENT-RULES.md and
+CS7-striker-cleanup.md, then do the task marked AP7-CLEANUP in
+docs/briefs/class-first-build/AP-apprentice-delegates.md. Work only in this folder; never
+run pnpm install. When you're done, commit on your branch, write your report where the
+brief says, and tell me.
+```
+
 ## Queued (briefs written when their inputs land)
 
 | ID | Task | Agent | Waits for |
@@ -145,6 +181,14 @@ brief says, and tell me.
 | Next class | The Conduit ([C-conduit](C-conduit.md): CD.1–CD.5 done, CD6–CD8 are delegate tasks), then Slinger, Spirit, Apprentice | Conductor | — |
 
 ## Known follow-ups (not yet a task)
+
+- **Apprentice stand-ins and gaps:** Numb slows movement only (no attack slow); Petrify's "takes
+  more damage" and Seize rank II/III are not wired; Stone Sigil is the whole-hit `hit-to-dot` rather
+  than "a hit over a quarter of your HP"; the sigil tick (12% of attack per sigil per second, 6 s
+  life), the payoff numbers and every cooldown are placeholders; the element is raw violet only
+  (T2 disciplines give it a colour and the signature); sigils reuse the class DoT status id (`dot`),
+  flagged `data.sigil`; Spread acts every second while its rule holds; `dotClassProfile.ts` and
+  the old curve stay until AP7.
 
 - **Spirit stand-ins and gaps:** Slipstream (glide after a dodge) is key-only; Grounded stops forced
   movement but not stuns; the storm pip (12 x tier scale), flow (10%/s, x2 out of combat), spend gap
@@ -220,6 +264,7 @@ brief says, and tell me.
 
 | ID | Task | Merged |
 |---|---|---|
+| AP.1–AP.4 | The Apprentice: hits lay linear sigils (weapon potency, never the hit; cap = the budget); the Payoff rules spend them at moments (Detonate, Spread, Numb, Siphon, Seize, Converge); the five T1 trophies; the weapon shapes and T1 lines; `composePayoffsView`; `apprenticeSigils.test.ts` | `93ba0920` + fix; 350/350 |
 | SP.1–SP.4 | The Spirit: the storm (one bar of damage and shield, constant flow, hits and DoT drain it, Eye of the Storm, Sealed Vessel); the bands, floor and gather/hover phases; Bolt, Chain Lightning, Thunderclap, Downpour, Thunderbolt; the five T1 trophies; weapon shapes and the T1 lines; plain zaps at a quarter; `composeThresholdsView`; `spiritStorm.test.ts` | `e60d8053`, `8e43ce0f`; 347/347 |
 | CL.1–CL.4 | The Slinger: fire rate is the gun's stat (half-damage and double-speed layers gone); the Loadout picks the clip at each reload; per-round effects (Scatter, Snare, Venom, Stopping, Breaching); trophy rounds (Stampede, Twin, Rot, Quake, Splinter); the stationary reload; the six T1 guns and the T1 lines; `composeLoadoutView`; `slingerLoadout.test.ts` | `0d3e7ad6`, `6d975cf9`; 345/345 |
 | CS5-UI, CQ5-UI, G-GEAR-C | The Striker's Order editor and beat strip; the Squire's Response rules editor and Resolve pips; every class's moved lines on second bases (Grok); census tests skip `-b` bases | merges `5f44dbda`, `8791410c`, `75958acc` |
