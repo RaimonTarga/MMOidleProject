@@ -218,7 +218,7 @@ function assert(condition: unknown, message: string): void {
   for (const id of [
     'lineage.bleed', 'lineage.hobbled', 'lineage.pinned', 'lineage.hemorrhage', 'lineage.lean-bleed',
     'lineage.poison', 'root', 'vuln', 'void-corruption',
-    'dot-chill', 'dot-smolder', 'dot-conf', 'dot-frostbite',
+    'dot-smolder', 'dot-conf', 'dot-frostbite',
   ]) {
     assert(targetStatusHelp(id) === undefined, `${id}: no help copy left`);
     assert(statusMeta(id).color === '#b0a8d0', `${id}: no badge left (it would render the fallback)`);

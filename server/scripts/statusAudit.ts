@@ -34,8 +34,6 @@ export const ACCEPTED_GAPS: Readonly<Record<string, string>> = {
     'The post-stun ward. The Stunned tile is the hard control the player answers; a second tile for the ward that follows it would be HUD noise (design §26.4: the HUD may not be dense). Its target-side badge and copy exist.',
   'icon key defense-hardening-maxdr: icon registry entry has no descriptor, runtime-id or alias consumer':
     'Authored art kept in the registry for the Hardening family; no status uses it today. Not a status id.',
-  'icon key summoner-howl-banner: icon registry entry has no descriptor, runtime-id or alias consumer':
-    'Kept on purpose as a Summoner icon (docs/conduit-current-state.md §9). Not a status id.',
   'conduit-bark: player: no tile/projection':
     'Barkward coats a SUMMON, never the player, and summons show no statuses yet (the audit cannot tell a minion from a player here, so it reads the carrier as unknown). The client copy, badge and icon exist for the day a summon status strip does.',
   'conduit-bark: target: fallback help':
