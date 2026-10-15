@@ -2,9 +2,6 @@ import type { EssenceType } from '../items';
 import type { Vec2 } from '../systems/spatial';
 import type { DamageElement } from '../systems/dotElements';
 
-/** Dedicated per-tick DoT animations (distinct from element damage-number styling). */
-export type DotTickFx = 'conflagration';
-
 export type DotTickSourceType = 'class' | 'weapon' | 'monster' | 'special';
 
 /**
@@ -52,14 +49,9 @@ type CombatEventPayload =
   // A damage-over-time tick on a monster or player. Amount and element drive
   // an individual number, independently of direct hits in the same snapshot.
   // Non-elemental DoTs use the damage-only event with category `dot`.
-  // `fx` optionally requests a dedicated per-tick animation (beyond the element's
-  // damage-number styling) — e.g. Cinder Lord's Conflagration burns. Omitted for
-  // plain DoT ticks, which only style the number by element. `sourceId` attributes
+  // `sourceId` attributes
   // owned ticks so a player's mechanic HUD never reacts to another player's DoT.
-  // `fromId` names the body the tick RADIATED from (Pyromancer's Radiant: a burn
-  // tick at max stacks strikes every adjacent body), so the client draws the fire
-  // leaping from that body to this one; absent on every ordinary tick.
-  | { kind: 'dot-tick'; targetId: string; targetPos: Vec2; amount: number; absorbed?: number; element: DamageElement; sourceType: DotTickSourceType; sourceId?: string; fx?: DotTickFx; fromId?: string }
+  | { kind: 'dot-tick'; targetId: string; targetPos: Vec2; amount: number; absorbed?: number; element: DamageElement; sourceType: DotTickSourceType; sourceId?: string }
   | { kind: 'monster-dodge'; monsterId: string; targetPos?: Vec2 }
   // Player attack whiffed (chaotic weapon family's every-Nth-hit miss). Direct
   // damage was zeroed but on-hit effects (DoT) still applied; renders a "MISS"

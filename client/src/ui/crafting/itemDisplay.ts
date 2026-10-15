@@ -554,9 +554,6 @@ export function resolvedRelicProfileRows(profile: ResolvedRelicProfile): RelicPr
       pair('Execution cooldown', profile.cooldownMs, seconds);
       pair('Execution damage', profile.empoweredMultiplier, mult);
       break;
-    case 'dot':
-      pair('DoT tick interval', profile.tickIntervalMs, seconds);
-      pair('Maximum DoT stacks', profile.maxStacks);
       break;
     case 'summoner':
       pair('Reconstruction time', profile.respawnMs, seconds);

@@ -16,7 +16,7 @@ import {
   hasStatusEffect,
 } from '@mmo-idle/shared';
 import type { TracksCombat } from '@mmo-idle/shared';
-import { FROZEN_EFFECT } from '../../classes/archetypes/dot/t3/core/constants';
+import { FROZEN_EFFECT } from '../../combat/status/frost';
 import { STUN_EFFECT } from './stun';
 
 /**

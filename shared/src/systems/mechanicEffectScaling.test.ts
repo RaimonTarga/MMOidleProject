@@ -11,37 +11,21 @@ function assert(condition: boolean, message: string): void {
 
 {
   const scaled = scaleMechanicMagnitude(
-    'dot-frenzy',
-    'attackSpeedPct',
-    0.5,
+    'summoner-grand-ritual',
+    'damageMult',
+    1.6,
     1.25,
     SCALABLE_MECHANIC_BUFFS,
   );
-  assert(scaled === 0.625, 'registered state-backed buff magnitude scales');
+  assert(Math.abs(scaled - 1.75) < 1e-9, 'registered state-backed buff magnitude scales');
   const timing = scaleMechanicMagnitude(
-    'dot-frenzy',
+    'summoner-grand-ritual',
     'durationMs',
     5000,
     1.25,
     SCALABLE_MECHANIC_BUFFS,
   );
   assert(timing === 5000, 'unregistered state-backed fields remain unchanged');
-}
-
-{
-  const original = {
-    id: 'dot-chill',
-    sourceId: 'player',
-    remainingMs: 4000,
-    maxStacks: 3,
-    data: { moveSlowPerStack: 0.1, attackSlowPerStack: 0.2, totalMs: 4000 },
-  };
-  const scaled = scaleMechanicEffectConfig(original, 1.25, SCALABLE_MECHANIC_DEBUFFS);
-  assert(scaled.data?.moveSlowPerStack === 0.125, 'registered fraction scales');
-  assert(scaled.data?.attackSlowPerStack === 0.25, 'second registered field scales');
-  assert(scaled.remainingMs === 4000, 'duration does not scale');
-  assert(scaled.maxStacks === 3, 'max stacks do not scale');
-  assert(scaled.data?.totalMs === 4000, 'timing data does not scale');
 }
 
 {
@@ -58,11 +42,11 @@ function assert(condition: boolean, message: string): void {
 
 {
   const scaled = scaleMechanicEffectConfig(
-    { id: 'dot-frenzy', sourceId: 'player', data: { attackSpeedPct: 0.05, baseCd: 1000 } },
+    { id: 'summoner-grand-ritual', sourceId: 'player', data: { damageMult: 1.2, baseCd: 1000 } },
     1.25,
     SCALABLE_MECHANIC_BUFFS,
   );
-  assert(scaled.data?.attackSpeedPct === 0.0625, 'registered mechanic buff scales');
+  assert(Math.abs((scaled.data?.damageMult ?? 0) - 1.25) < 1e-9, 'registered mechanic buff scales');
   assert(scaled.data?.baseCd === 1000, 'unregistered buff field stays unchanged');
 }
 

@@ -24,6 +24,8 @@ import { runPlayerAttack } from '../src/systems/combat/engine/combat';
 import { recordMoment, updatePlayerMoments } from '../src/systems/combat/moments/moments';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { World } from '../src/world/World';
+import { updateDotArchetype } from '../src/systems/classes/archetypes/dot/dotPrototype';
+import { playerDotsOnMonster } from '../src/systems/combat/damage/dotInventory';
 
 initCombatSystems();
 const NODE = 'node-5-5';
@@ -98,11 +100,10 @@ function step(world: World, player: PlayerEntity): void {
   assert.equal(payoffsOf(world, player)!.cap, 6, 'Sigils 6 at Mastery 30');
   const first = hit(world, player, target);
   assert.equal(sigils(target), 1, 'a hit lays a sigil');
-  assert.ok(first > 0, 'the hit still deals its damage');
+  assert.equal(first, player.dealsDamage.attack, 'the hit keeps its full unconverted damage');
   for (let i = 0; i < 10; i++) hit(world, player, target);
   assert.equal(sigils(target), 6, 'sigils stop at the cap');
   const effect = getStatusEffect(target.tracksCombat, SIGIL)!;
-  assert.equal(effect.data['sigil'], 1, 'a sigil is flagged');
   assert.ok(effect.data['damagePerStack']! >= 1, 'its damage comes from the weapon');
 }
 
@@ -162,7 +163,7 @@ function step(world: World, player: PlayerEntity): void {
   const { world, player, spawn } = setup({ edit: (c) => { c.placements = [{ moment: 'target-low', pieceId: 'apprentice-converge', conditions: [] }]; } });
   const target = spawn(430, 400);
   const other = spawn(460, 400);
-  target.hasHealth.hp = 100;
+  target.hasHealth.hp = 1000; // Low enough for Converge, but survives the full unconverted hit.
   laySigils(world, player, other, 4, 6);
   hit(world, player, target);
   step(world, player);
@@ -209,6 +210,37 @@ function step(world: World, player: PlayerEntity): void {
   laySigils(world, player, b, 1, 6);
   step(world, player);
   assert.ok(getResource(player.tracksCombat, 'apprentice.recoveryX') > 1.2, 'Feeding Swarm: Recovery rises for each enemy carrying your sigils');
+}
+
+
+// Sigils are the only class DoT: below-cap ticks and owed damage are linear, without a flag.
+{
+  const { world, player, spawn } = setup();
+  const target = spawn(430, 400);
+  laySigils(world, player, target, 2, payoffsOf(world, player)!.cap);
+  const effect = getStatusEffect(target.tracksCombat, SIGIL)!;
+  assert.equal(effect.data['sigil'], undefined, 'no legacy-vs-sigil sentinel');
+  const rawTick = 2 * effect.data['damagePerStack']!;
+  const owed = playerDotsOnMonster(world, player, target)[0]!;
+  assert.equal(owed.remainingDamage, rawTick * 6, 'the inventory projects six linear ticks below cap');
+  const before = target.hasHealth.hp;
+  target.mitigatesDamage.plating = 1_000_000;
+  updateDotArchetype(world, 1000, clock);
+  assert.equal(before - target.hasHealth.hp, rawTick, 'sigils ignore plating and never front-load');
+
+  const def = MONSTER_DATABASE.get(target.isMonster.monsterTypeId)!;
+  MONSTER_DATABASE.set(def.id, { ...def, dotResistance: 0.25 });
+  try {
+    target.mitigatesDamage.damageReduction = 0.4;
+    const hp = target.hasHealth.hp;
+    effect.remainingMs = 0;
+    updateDotArchetype(world, 1000, clock);
+    assert.equal(hp - target.hasHealth.hp, Math.round(rawTick * 0.8 * 0.75), 'the expiry tick pays half DR and monster DoT resistance');
+    assert.equal(getStatusEffect(target.tracksCombat, SIGIL), undefined, 'the expiry tick removes the sigils');
+    assert.equal(target.hasDot, undefined, 'and the ticker detaches its marker');
+  } finally {
+    MONSTER_DATABASE.set(def.id, def);
+  }
 }
 
 console.log('apprenticeSigils: ok');

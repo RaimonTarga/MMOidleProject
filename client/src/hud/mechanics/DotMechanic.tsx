@@ -20,7 +20,7 @@ export function DotMechanic({ model }: { model: DotMechanicModel }) {
       state={model.element}
     >
       <div
-        className={`mechanic-dot${isActive ? ' mechanic-dot--active' : ' mechanic-dot--idle'}${model.showsChill ? ' mechanic-dot--with-chill' : ''}`}
+        className={`mechanic-dot${isActive ? ' mechanic-dot--active' : ' mechanic-dot--idle'}`}
         style={{ '--dot-tick-pct': `${model.tickPct}%` } as CSSProperties}
       >
         <div
@@ -56,15 +56,6 @@ export function DotMechanic({ model }: { model: DotMechanicModel }) {
           <div className="mechanic-dot__ticks" aria-hidden="true">
             <i /><i /><i /><i />
           </div>
-          {model.showsChill && (
-            <div className={`mechanic-chill${model.frozen ? ' mechanic-chill--frozen' : ''}`}>
-              <div className="mechanic-chill__segments">
-                {Array.from({ length: model.chillMax }, (_, index) => (
-                  <i key={index} className={index < model.chillStacks ? 'mechanic-chill__segment--active' : undefined} />
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </MechanicFrame>

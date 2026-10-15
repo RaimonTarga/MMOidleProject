@@ -2095,7 +2095,6 @@
   background: var(--hud-edge-medium);
 }
 
-.mechanic-dot--with-chill .mechanic-dot__ticks { bottom: 15px; }
 
 .mechanic-dot__core--ticked .mechanic-dot__impact {
   animation: dot-confirmed-impact 390ms ease-out;
@@ -2164,70 +2163,6 @@
 @keyframes dot-ticker-impact {
   0% { filter: brightness(3); transform: scaleX(1.015); }
   100% { filter: brightness(1); transform: scaleX(1); }
-}
-
-.mechanic-chill {
-  position: relative;
-  z-index: 1;
-  margin-top: 5px;
-}
-
-.mechanic-chill__segments {
-  display: flex;
-  gap: 2px;
-}
-
-.mechanic-chill__segments i {
-  display: block;
-  min-width: 2px;
-  height: 4px;
-  flex: 1;
-  background: #15191c;
-  border: 1px solid #263746;
-  clip-path: polygon(0 50%, 16% 0, 84% 0, 100% 50%, 84% 100%, 16% 100%);
-}
-
-.mechanic-chill__segments .mechanic-chill__segment--active {
-  background: linear-gradient(90deg, #4d799a, var(--hud-mechanic-frost), #c7efff);
-  border-color: #8ab8d9;
-  box-shadow: 0 0 3px rgba(111, 159, 199, 0.48);
-}
-
-.mechanic-chill--frozen .mechanic-chill__segments {
-  filter: brightness(1.45);
-  animation: chill-frozen-glint 1.4s ease-in-out infinite;
-}
-
-@keyframes chill-frozen-glint {
-  0%, 100% { filter: brightness(1.25); }
-  50% { filter: brightness(1.9); }
-}
-
-.mechanic-command {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 3px;
-  margin-top: 6px;
-}
-
-.mechanic-command__pip {
-  width: 10px;
-  height: 14px;
-  background: #15130f;
-  border: 1px solid var(--hud-edge-light);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.72);
-}
-
-.mechanic-command__pip--spent {
-  background: linear-gradient(180deg, #d7f3df, var(--hud-mechanic-summoner) 46%, #1d3324);
-  border-color: var(--hud-mechanic-summoner);
-}
-
-.mechanic-formation__queue {
-  margin: 6px 0 0;
-  color: var(--hud-text-muted);
-  font-size: 10px;
-  line-height: 1.35;
 }
 
 .compact-mechanic {
@@ -2466,8 +2401,7 @@
   .mechanic-dot__core--ticked .mechanic-dot__impact,
   .mechanic-dot__core--ticked .mechanic-dot__segment--active,
   .mechanic-dot__core--ticked .mechanic-dot__track > span,
-  .mechanic-dot__core--ticked .mechanic-dot__ticker,
-  .mechanic-chill--frozen .mechanic-chill__segments {
+  .mechanic-dot__core--ticked .mechanic-dot__ticker {
     animation: none;
   }
 

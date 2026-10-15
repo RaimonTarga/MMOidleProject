@@ -90,7 +90,6 @@ function gearScore(recipe: Recipe, slot: Exclude<GearSlot, 'relic'>): number {
 // Relic scoring lives below the shared path-profile helpers because it needs the
 // selected build's passives, not authored magnitude alone.
 const RELIC_BUFF_PASSIVES = [
-  'dot.frenzy',
 ] as const satisfies readonly PassiveKey[];
 
 function mergeFullyUpgradedRecipePassives(target: PassiveMap, recipe: Recipe): void {
@@ -138,9 +137,6 @@ function relicProfileFactor(profile: ResolvedRelicProfile): number {
     case 'cooldown':
       return lowerIsBetter(profile.cooldownMs.before, profile.cooldownMs.after)
         * higherIsBetter(profile.empoweredMultiplier.before, profile.empoweredMultiplier.after);
-    case 'dot':
-      return lowerIsBetter(profile.tickIntervalMs.before, profile.tickIntervalMs.after)
-        * higherIsBetter(profile.maxStacks.before, profile.maxStacks.after);
     case 'summoner':
       return lowerIsBetter(profile.respawnMs.before, profile.respawnMs.after)
         * (profile.summonPower ? higherIsBetter(profile.summonPower.before, profile.summonPower.after) : higherIsBetter(profile.summonCount.before, profile.summonCount.after));

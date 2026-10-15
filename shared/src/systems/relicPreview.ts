@@ -1,9 +1,8 @@
 import { relicEffectPreview, type RelicEffectNote } from './relicEffectPreview';
 import type { PassiveMap } from '../passives';
 import type { SubVariant } from '../data/skillTree';
-import { resolveDotClassProfile, resolveDotStackCap } from './dotClassProfile';
 import { resolveSummonerProfile } from './summonerProfile';
-import { ZERO_RELIC_RATINGS, resolveCadenceRelicProfile, resolveCooldownRelicProfile, resolveDotRelicDeliveryProfile, type RelicRatings, type ResolvedRelicProfile } from './relics';
+import { ZERO_RELIC_RATINGS, resolveCadenceRelicProfile, resolveCooldownRelicProfile, type RelicRatings, type ResolvedRelicProfile } from './relics';
 
 /** Character-specific preview authority used by inventory and Forge. */
 function resolvePrimaryRelicPreview(
@@ -35,10 +34,6 @@ function resolvePrimaryRelicPreview(
       // The magazine and the reload time are the gun's stats. Relic items are gone,
       // and the old reload profile scaled a frame the Loadout replaced.
       return null;
-    case 'dot': {
-      const profile = resolveDotClassProfile(passives, options.subVariant);
-      return resolveDotRelicDeliveryProfile(profile.tickIntervalMs, resolveDotStackCap(passives, profile.maxStacks), ratings);
-    }
     case 'summoner': {
       const input = { selectedSubVariant: options.subVariant ?? null, selectedRange: options.selectedRange ?? null, unlockedSkills: options.unlockedSkills ?? [], passives };
       const before = resolveSummonerProfile({ ...input, relicRatings: ZERO_RELIC_RATINGS });

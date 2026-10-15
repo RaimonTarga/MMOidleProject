@@ -291,80 +291,6 @@ export const ENERGY_KEYS = [
   'energy.range-mid-discharge-stagger-ms',
 ] as const;
 
-export const DOT_KEYS = [
-  'dot.max-stacks',
-  'dot.conversion-pct',
-  'dot.mechanic-mult',
-  'dot.tick-interval-ms',
-  'dot.duration-ms',
-  'dot.poison-explosion',
-  'dot.eternal-doom',
-  'dot.invigorating-toxins',
-  'dot.fan-the-flames',
-  'dot.smoldering-ember',
-  'dot.conflagration',
-  'dot.permafrost',
-  'dot.freezing-cold',
-  'dot.glacial-fracture',
-  'dot.frostbite-dot-taken-pct',
-  'dot.frostbite-max-stacks',
-  'dot.frostbite-duration-ms',
-  'dot.poison-explosion-max-stacks',
-  'dot.poison-explosion-burst-ticks',
-  'dot.eternal-doom-full-stacks',
-  'dot.eternal-doom-diminish-rate',
-  'dot.eternal-doom-max-stacks',
-  'dot.fan-the-flames-stacks-per-hit',
-  'dot.fan-the-flames-stack-damage-mult',
-  // Pyromancer's payoff (design §22.5): a burn tick on a target at max stacks
-  // also strikes every adjacent body for the tick. Presence-gated; its reach is
-  // `RADIANT_REACH` beside the runtime, so the key carries no number of its own.
-  'dot.radiant',
-  'dot.ignition-stack-damage-mult',
-  'dot.conflagration-ticks',
-  'dot.conflagration-tick-ms',
-  'dot.conflagration-damage-factor',
-  'dot.rimeshatter-dr-reduction',
-  'dot.rimeshatter-duration-ms',
-  'dot.chill-max-stacks',
-  'dot.chill-move-slow-per-stack',
-  'dot.chill-attack-slow-per-stack',
-  'dot.chill-duration-ms',
-  'dot.freeze-duration-ms',
-  'dot.freeze-damage-taken-pct',
-  'dot.freeze-move-slow-pct',
-  'dot.freeze-attack-slow-pct',
-  // T4 specs ─────────────────────────────────────────────────────────────────
-  'dot.frenzy',         // poison: attack speed and on-hit damage while at max stacks
-  'dot.frenzy-duration-ms',
-  'dot.frenzy-attack-speed-pct',
-  'dot.frenzy-onhit-per-tier',
-  'dot.ignition',       // fire: front-load all stacks on a fresh target
-  'dot.rimeshatter',    // frost: at max stacks, full direct + DR debuff
-  'dot.wind-spirit',    // frost: max-stack hits apply Frostbite DoT vulnerability
-  // ── Apprentice frame loops (progression rework Phase 3) ─────────────────────
-  // The Apprentice's frames are a VERB each, by element, not a window and a bank:
-  // poison OPENS HARD, fire INTENSIFIES, frost CHILLS (brief §1).
-  // Venom vessel: total stacks the first hit on an unpoisoned target lands.
-  'dot.frame-opener-stacks',
-  // Ember mage: multiplier on a hit into a target already at max burn.
-  'dot.frame-max-stack-mult',
-  // Rime-Bound chills through the EXISTING `dot.chill-*` keys above, at frame
-  // magnitudes — Winter Warden then deepens the same record rather than owning it.
-  // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
-  // Warlock (mid): a class stack landed on a target held at bay also lands
-  // `-spread-stacks` on its nearest neighbour inside `-spread-radius`.
-  'dot.range-mid-spread-stacks',
-  'dot.range-mid-spread-radius',
-  // Harbinger (far): the class DoT's DELIVERY cap rises by `-stack-cap-bonus` and
-  // each application lasts `-duration-pct` longer. Deliberately NOT the damage
-  // reference (`computeDotClassDamagePerStack` still divides by the frame's own
-  // max stacks), so the extra stack is extra damage rather than a thinner one.
-  // Suppresses Warlock's spread.
-  'dot.range-far-stack-cap-bonus',
-  'dot.range-far-duration-pct',
-] as const;
-
 export const SHARED_KEYS = [
   'shared.empowered-mult-add',
   // Multiplicative bonus to the empowered-attack multiplier: final = base * (1 + bonus).
@@ -572,7 +498,6 @@ export type CadencePassiveKey  = typeof CADENCE_KEYS[number];
 export type CooldownPassiveKey = typeof COOLDOWN_KEYS[number];
 export type ReloadPassiveKey   = typeof RELOAD_KEYS[number];
 export type EnergyPassiveKey   = typeof ENERGY_KEYS[number];
-export type DotPassiveKey      = typeof DOT_KEYS[number];
 export type SharedPassiveKey   = typeof SHARED_KEYS[number];
 export type SummonerPassiveKey = typeof SUMMONER_KEYS[number];
 export type MobilityPassiveKey = typeof MOBILITY_KEYS[number];
@@ -584,7 +509,7 @@ export type SquirePassiveKey   = typeof SQUIRE_KEYS[number];
 
 export type PassiveKey =
   | DefensePassiveKey | CadencePassiveKey | CooldownPassiveKey
-  | ReloadPassiveKey  | EnergyPassiveKey  | DotPassiveKey
+  | ReloadPassiveKey  | EnergyPassiveKey
   | SharedPassiveKey  | SummonerPassiveKey | MobilityPassiveKey
   | GuardPassiveKey   | TechniquePassiveKey
   | RelicPassiveKey   | StrikerPassiveKey | SquirePassiveKey;
@@ -595,7 +520,7 @@ export type MechanicEffects = Partial<Record<PassiveKey, number>>;
 /** Flat array of every passive key — useful for client iteration / debug panels. */
 export const ALL_PASSIVE_KEYS = [
   ...DEFENSE_KEYS, ...CADENCE_KEYS, ...COOLDOWN_KEYS,
-  ...RELOAD_KEYS, ...ENERGY_KEYS, ...DOT_KEYS, ...SHARED_KEYS, ...SUMMONER_KEYS,
+  ...RELOAD_KEYS, ...ENERGY_KEYS, ...SHARED_KEYS, ...SUMMONER_KEYS,
   ...MOBILITY_KEYS, ...GUARD_KEYS, ...TECHNIQUE_KEYS,
   ...RELIC_KEYS, ...STRIKER_KEYS, ...SQUIRE_KEYS,
 ] as const;

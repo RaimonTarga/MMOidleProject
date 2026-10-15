@@ -9,11 +9,6 @@ export interface StatusMeta {
 
 const STATUS_META: Record<string, StatusMeta> = {
   dot:             { label: 'DoT',     color: '#7ac74f' },
-  'dot-chill':     { label: 'Chill',   color: '#6fd0ff' },
-  'dot-frozen':    { label: 'Frozen',  color: '#9fe8ff' },
-  'dot-smolder':   { label: 'Smolder', color: '#ff8a3c' },
-  'dot-conf':      { label: 'Conflag', color: '#ff5a2c' },
-  'dot-frostbite': { label: 'Frostbite', color: '#8fd8ff' },
   slow:            { label: 'Slow',    color: '#88aaff' },
   'ability-slowed': { label: 'Slowed', color: '#88aaff' },
   'ability-rooted': { label: 'Bound', color: '#aa77ee' },
@@ -39,7 +34,6 @@ const STATUS_META: Record<string, StatusMeta> = {
   'slinger-rot':        { label: 'Rot', color: '#7a8b2e' },
   'conduit-poison':     { label: 'Poison', color: '#88bb55' },
   'striker-rot':        { label: 'Rot', color: '#7a8b2e' },
-  'energy-storm':       { label: 'Storm', color: '#c77dff' },
   brittle:         { label: 'Brittle', color: '#d88a4a' },
   'dr-shatter':    { label: 'Shattered', color: '#f0c04a' },
   // Weapon reservoir-DoT effects (poison → Poison, fire → Burn, frost → Chill).

@@ -47,7 +47,6 @@ const MONSTER_MARKER_CHECKS: MarkerCheck[] = [
     multi: true,
     hasEffect: (state) => BLEED_EFFECT_IDS.some((id) => getStatusEffects(state, id).length > 0),
   },
-  { marker: "hasConflagration", effectId: "dot-conf" },
   { marker: "hasChill", effectId: "dot-chill" },
   { marker: "hasFrozen", effectId: "dot-frozen" },
   {
@@ -63,7 +62,6 @@ const MONSTER_MARKER_CHECKS: MarkerCheck[] = [
     effectId: ABILITY_ROOT_EFFECT_ID,
     hasEffect: (state) => MONSTER_ROOT_STATUS_IDS.some((id) => !!getStatusEffect(state, id)),
   },
-  { marker: "hasSmolder", effectId: "dot-smolder" },
   { marker: "hasEntropy", effectId: ENT_DOT_FX },
   {
     marker: "hasWeaponDot",
@@ -88,13 +86,6 @@ const ARCHETYPE_SLICE_CHECKS: ArchetypeSliceCheck[] = [
     slice: "appliesDots",
     shouldBePresent: (entity) => entity.usesSkills?.combatArchetype === "dot",
     label: "dot archetype",
-  },
-  {
-    slice: "chillsTarget",
-    shouldBePresent: (entity) =>
-      entity.usesSkills?.combatArchetype === "dot" &&
-      ((entity.usesSkills.passives["dot.freezing-cold"] ?? 0) > 0),
-    label: "freezing-cold passive",
   },
   {
     slice: "usesCooldown",

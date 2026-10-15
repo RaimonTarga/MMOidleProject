@@ -110,7 +110,6 @@ export function buildT1CharacterSnapshot(
       empoweredReady: self.empoweredReady,
       targetDotStacks: self.targetDotStacks,
       targetDotTickPct: self.targetDotTickPct,
-      targetChillStacks: self.targetChillStacks,
       isChanneling: self.isChanneling,
       channelingPct: self.channelingPct,
       aura: self.aura,

@@ -16,7 +16,6 @@ export interface ScalableMechanicEffect {
  * intentionally absent from v1.
  */
 export const SCALABLE_MECHANIC_BUFFS: Readonly<Record<string, ScalableMechanicEffect>> = {
-  'dot-frenzy': { fields: { attackSpeedPct: 'fraction', onHitPerTier: 'flat' } },
   // Grand Ritual's empowered-attack multiplier. 1.6 means the bonus is the
   // 0.6 above ×1, so the field kind is 'multiplier', not 'flat'.
   'summoner-grand-ritual': { fields: { damageMult: 'multiplier' } },
@@ -29,17 +28,11 @@ export const SCALABLE_MECHANIC_DEBUFFS: Readonly<Record<string, ScalableMechanic
   'vulnerability': { fields: { damageMultiplier: 'multiplier' } },
   'plating-shred': { fields: { platingReduction: 'fraction' } },
   'brittle': { fields: { platingPerStack: 'fraction', drPerStack: 'fraction' } },
-  'dot-chill': { fields: { moveSlowPerStack: 'fraction', attackSlowPerStack: 'fraction' } },
-  'dot-frostbite': { fields: { dotTakenPerStack: 'fraction' } },
-
   // Harrier Brood's per-mark damage-taken magnitude, read from specialization
   // tuning rather than status-effect data.
   'summoner-harrier-brood': { fields: { damageTakenPctPerSlot: 'fraction' } },
   // Withering Chorus's per-voice proc-damage magnitude.
   'summoner-withering-chorus': { fields: { damagePctPerSlot: 'fraction' } },
-  // Winter Warden's Frozen payoff: only the damage-taken magnitude, not the
-  // freeze trigger, duration, or Chill threshold that produces it.
-  'dot-frozen': { fields: { damageTakenPct: 'fraction' } },
 } as const;
 
 export function scaleMechanicEffectConfig(

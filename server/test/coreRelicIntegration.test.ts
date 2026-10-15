@@ -67,7 +67,7 @@ for (const [frequency, expected] of [[0.1, 4], [0.2, 3], [0.35, 3], [1, 2], [-0.
 }
 
 // All authored relics reach the runtime, rather than only testing the pure resolver.
-for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'summoner'] as const) {
+for (const root of ['cadence', 'cooldown', 'summoner'] as const) {
   for (const relic of [...ITEM_DATABASE.values()].filter(item => item.slot === 'relic')) {
     const { world, player } = fixture(root);
     player.holdsInventory.inventory = [relic.id];
@@ -82,12 +82,6 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'summoner'] as const
       // The runtime no longer stores an execution clock (CQ7). The preview still
       // quotes one from cooldown.empowered-cd-ms; that number is not on the slice.
       case 'cooldown': assert(preview.cooldownMs.after > 0, relic.id); break;
-      case 'dot': {
-        const dot = getStatusEffect(target.tracksCombat, 'dot');
-        assert(dot, 'dot applied');
-        eq(dot.maxStacks, preview.maxStacks.after, relic.id);
-        eq(dot.data.tickIntervalMs, preview.tickIntervalMs.after, relic.id); break;
-      }
       case 'summoner':
         eq(player.summonsMinions!.targetCount, preview.summonCount.after, relic.id);
         eq(resolveSummonerProfile({ ...player.usesSkills }).reconstructionIntervalMs, preview.respawnMs.after, relic.id); break;
@@ -105,7 +99,7 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'summoner'] as const
   eq(after.slots[0].defenseWeight, before.slots[0].defenseWeight, 'extra bodies do not dilute health');
 }
 
-for (const root of ['cadence', 'dot'] as const) {
+for (const root of ['cadence'] as const) {
   const { player } = fixture(root);
   const input = { attack: 100, onHitDamage: 20, attackCooldownMs: 1000, archetype: root, passives: player.usesSkills.passives, selectedSubVariant: null, playerTier: 4 };
   const before = estimatePlayerDps(input).total;
@@ -141,27 +135,11 @@ for (const root of ['cadence', 'dot'] as const) {
   const ratings = { ...ZERO_RELIC_RATINGS, frequency: 0.1, potency: 0.4 };
   const cadence = formatResolvedRelicProfile(resolveRelicPreview('cadence', { 'cadence.empowered-threshold': 4 }, ratings));
   assert(cadence.some(line => line.includes('every 4 attacks') && line.includes('unchanged')), 'unchanged breakpoint is explicit');
-  for (const [passive, cap] of [['dot.poison-explosion', 10], ['dot.eternal-doom', 50]] as const) {
-    const profile = resolveRelicPreview('dot', { [passive]: 1 }, { ...ZERO_RELIC_RATINGS, potency: 0.4 });
-    assert(profile?.archetype === 'dot', 'special DoT preview');
-    eq(profile.maxStacks.before, cap, 'special DoT cap before relic');
-    eq(profile.maxStacks.after, Math.round(cap * 1.4), 'special DoT cap after relic');
-  }
 }
 // Secondary lines must say which rating produced them.
 {
-  const debuffOnly = { ...ZERO_RELIC_RATINGS, debuffEffect: 0.25 };
-  const chill = formatResolvedRelicProfile(resolveRelicPreview('dot', { 'dot.freezing-cold': 1 }, debuffOnly));
-  assert(chill.includes('Debuff effect · Chill movement slow per stack: 5% → 6.25%'), 'debuff effect is attributed');
-  assert(chill.includes('Debuff effect · Frozen damage taken: 35% → 43.75%'), 'Frozen damage taken is attributed');
-  assert(chill.filter(line => line.startsWith('Debuff effect')).length === 4, 'every eligible debuff is listed');
-  assert(!chill.some(line => line.startsWith('Buff effect')), 'a debuff-only relic claims no buff');
-
   // A rating with both halves (the retired Haunted Prism's shape) shows both categories.
   const prism = { ...ZERO_RELIC_RATINGS, buffEffect: 0.25, debuffEffect: 0.25 };
-  const both = formatResolvedRelicProfile(resolveRelicPreview('dot', { 'dot.frenzy': 1, 'dot.freezing-cold': 1 }, prism, { playerTier: 4 }));
-  assert(both.some(line => line.startsWith('Buff effect')) && both.some(line => line.startsWith('Debuff effect')), 'a two-half rating shows both categories');
-
   // A rated relic whose build registers nothing says so per category instead of going quiet.
   const inert = formatResolvedRelicProfile(resolveRelicPreview('cadence', { 'cadence.empowered-threshold': 5 }, prism));
   assert(inert.includes('Buff effect · No eligible mechanic buff in this build'), 'inert buff rating is explicit');

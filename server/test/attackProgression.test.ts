@@ -67,7 +67,8 @@ for (const node of (SKILL_TREE as Map<string, { id: string; tier: number; name: 
 }
 assert(missing.length === 0, `specializations with no bespoke attack: ${missing.join(', ')}`);
 const covered = REPLACES_ATTACK.size + bespoke.size;
-assert(covered === 27, `expected 27 retained combat specializations, got ${covered}`);
+assert(![...bespoke].some((id) => id.startsWith('dot-')), 'retired Apprentice paths have no bespoke animation');
+assert(covered === 18, `expected 18 remaining legacy combat specializations, got ${covered}`);
 
 const combatFx = readFileSync(join(__dirname, '../../client/src/render/combatFx.ts'), 'utf8');
 assert(combatFx.includes('bespoke.payoff(hit)') && combatFx.includes('bespoke?.hit?.(hit)'),

@@ -1,6 +1,5 @@
 import type {
   AppliesDots,
-  ChillsTarget,
   DealsDamage,
   EvadesHits,
   HasAttackTarget,
@@ -99,7 +98,6 @@ export const NETWORKED_PLAYER_KEYS = [
   "usesCadence",
   "usesEnergy",
   "appliesDots",
-  "chillsTarget",
   "usesCooldown",
   "usesReload",
   "isChanneling",
@@ -173,7 +171,6 @@ export interface NetworkedEntity {
   usesCadence?: UsesCadence;
   usesEnergy?: UsesEnergy;
   appliesDots?: AppliesDots;
-  chillsTarget?: ChillsTarget;
   usesCooldown?: UsesCooldown;
   usesReload?: UsesReload;
   isChanneling?: IsChanneling;

@@ -1,6 +1,6 @@
 // Runtime regressions for the ACTIVE mechanics that were missing Relic
 // Buff/Debuff Effect coverage: Grand Ritual, Harrier Brood, Withering Chorus,
-// the Winter Warden Frozen payoff (Berserker
+// the retired Winter Warden and Tempest blocks (Berserker
 // Rampage's block went with the cadence T3 paths, CS7). Each block compares an otherwise identical build at secondary
 // relic rating 0 vs +25%, using the real runtime call sites (not a
 // reimplementation of the formula).
@@ -30,7 +30,6 @@ import {
   prepareSpecializationAttack,
   tickSummonerSpecializations,
 } from '../src/systems/classes/archetypes/summoner/specs';
-import { FROZEN_EFFECT } from '../src/systems/classes/archetypes/dot/t3/core/constants';
 
 initCombatSystems();
 
@@ -103,50 +102,6 @@ function durableTarget(world: World, x = 520, y = 400) {
 function minions(world: World, player: ReturnType<typeof attachSummoner>['player']) {
   return player.summonsMinions!.minionIds.map((id) => world.getMinionEntity(id)!).filter(Boolean);
 }
-
-// ── Non-summoner (dot) fixture (mirrors coreRelicIntegration.test.ts) ─
-
-function fixture(archetype: 'dot') {
-  const id = `mech-${serial++}`;
-  const world = new World();
-  const slices: PersistedPlayerSlices = {
-    isPlayer: { id, name: id },
-    hasPosition: { current: { x: 400, y: 400 }, nodeId: 'node-clearing', speed: GAME_CONFIG.PLAYER_SPEED },
-    hasHealth: { hp: 1000, maxHp: 1000, recovery: baseRecoveryForTier(0) },
-    tracksProgression: {
-      level: 0, skillPoints: 0, essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
-      
-      biomeXP: {}, biomeLevel: {}, unlockedRecipes: [],
-      questProgress: {}, playerTier: 4, currentSkillTier: 0, bossesCleared: [], clearedNodes: [],
-      runesOwned: [...STARTER_RUNE_IDS], runesEquipped: [],
-    },
-    holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
-    usesSkills: {
-      unlockedSkills: [`${archetype}-root`, `${archetype}-balanced`],
-      passives: {}, selectedClass: `${archetype}-root`,
-      selectedSubVariant: 'balanced', selectedRange: null, combatArchetype: archetype,
-    },
-  } as unknown as PersistedPlayerSlices;
-  const player = world.attachPlayerEntity(slices, id);
-  syncArchetypeSlices(world, player);
-  recalculatePlayerEntityStats(world, player);
-  return { world, player };
-}
-
-function nonSummonerTarget(world: World) {
-  const target = world.createMonster('node-clearing', 'plains-slime', { x: 410, y: 400 });
-  assert(target !== null, 'test target must exist in the monster database');
-  target.hasHealth.hp = target.hasHealth.maxHp = 1_000_000;
-  target.mitigatesDamage.plating = 0;
-  target.mitigatesDamage.damageReduction = 0;
-  return target;
-}
-
-const hit = (world: World, player: ReturnType<typeof fixture>['player'], target: ReturnType<typeof nonSummonerTarget>, now: number) =>
-  runPlayerAttack(world, player, target, now, {
-    attackOrigin: player.hasPosition.current,
-    aggroSource: { id: player.isPlayer.id, kind: 'player' },
-  });
 
 // ── 1/2. Grand Ritual — buff effect scales the empowered-attack multiplier only ──
 {
@@ -277,44 +232,6 @@ const hit = (world: World, player: ReturnType<typeof fixture>['player'], target:
     'a rated build with no eligible mechanic must say so truthfully (debuff)');
 }
 
-// ── 9/10. Winter Warden Frozen payoff — debuff effect scales damageTakenPct only ──
-{
-  function freezeRun(debuffEffect: number) {
-    const { world, player } = fixture('dot');
-    player.usesSkills.passives['dot.freezing-cold'] = 1;
-    if (debuffEffect !== 0) player.usesSkills.passives['relic.mechanic-debuff-effect'] = debuffEffect;
-    const target = nonSummonerTarget(world);
-    for (let i = 0; i < 9; i++) hit(world, player, target, 1_000 + i * 100); // CHILL_MAX = 9
-    const frozen = getStatusEffect(target.tracksCombat, FROZEN_EFFECT);
-    assert(frozen !== undefined, 'nine stacking hits with Freezing Cold must trigger Frozen');
-    return frozen!;
-  }
-  const base = freezeRun(0);
-  const boosted = freezeRun(0.25);
-  close(base.data.damageTakenPct, 0.35, 'sanity: baseline Frozen damage taken matches authored tuning');
-  close(boosted.data.damageTakenPct, 0.4375, '+25% Debuff Effect: 35% -> 43.75%');
-  close(base.remainingMs, boosted.remainingMs, 'Frozen duration must not scale with the relic');
-  close(base.data.moveSlowPct, boosted.data.moveSlowPct, 'Frozen movement slow must not scale with the relic');
-  close(base.data.attackSlowPct, boosted.data.attackSlowPct, 'Frozen attack slow must not scale with the relic');
-
-  // The Chill threshold itself (9 hits) must not move: 8 hits must never freeze.
-  {
-    const { world, player } = fixture('dot');
-    player.usesSkills.passives['dot.freezing-cold'] = 1;
-    player.usesSkills.passives['relic.mechanic-debuff-effect'] = 0.25;
-    const target = nonSummonerTarget(world);
-    for (let i = 0; i < 8; i++) hit(world, player, target, 1_000 + i * 100);
-    assert(getStatusEffect(target.tracksCombat, FROZEN_EFFECT) === undefined,
-      'the Chill threshold must not shrink under a Debuff Effect rating');
-  }
-
-  // Preview parity.
-  const preview = resolveRelicPreview('dot', { 'dot.freezing-cold': 1 }, { ...ZERO_RELIC_RATINGS, debuffEffect: 0.25 });
-  const line = preview?.secondaryEffects?.find((e) => e.label === 'Frozen damage taken');
-  assert(line !== undefined, 'preview must surface a Frozen debuff line');
-  close(line!.before, 0.35, 'preview before must match authored tuning');
-  close(line!.after, 0.4375, 'preview after must match the runtime-scaled magnitude');
-}
 
 // ── 11. A non-mechanic debuff must stay outside the registry's reach ────────────
 {

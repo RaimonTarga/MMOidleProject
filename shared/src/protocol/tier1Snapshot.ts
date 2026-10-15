@@ -58,7 +58,6 @@ export interface T1SnapshotClassResources {
   empoweredReady: boolean;
   targetDotStacks: number;
   targetDotTickPct: number;
-  targetChillStacks: number;
   isChanneling: boolean;
   channelingPct: number;
   aura: string | null;

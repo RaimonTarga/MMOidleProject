@@ -17,7 +17,6 @@ import { GAME_CONFIG, baseRecoveryForTier, poolFactorForTier } from '../index';
 import { mergePassives, makePulseAccumulator, finalizePulse } from '../passives';
 import { relicRatingsFromPassives, resolveCadenceRelicProfile } from './relics';
 import { summonerSpecializationFor } from '../data/summoner';
-import { dotClassProfileForSubVariant } from './dotClassProfile';
 import { weaponDotProfileForWeapon } from './weaponFamilies';
 
 /**

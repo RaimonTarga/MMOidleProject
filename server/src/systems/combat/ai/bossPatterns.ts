@@ -76,7 +76,7 @@ import {
   raiseSourceBarrier,
   sourceBarrierRemaining,
 } from '../engine/sourceBarriers';
-import { isMonsterFrozen } from '../../classes/archetypes/dot/t3/core/selectors';
+import { isMonsterFrozen } from '../../combat/status/frost';
 import { isMonsterStunned } from '../status/stun';
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
 import { monsterIgnoresControl } from '../status/controlImmunity';

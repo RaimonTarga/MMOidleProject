@@ -833,18 +833,6 @@ function buffSourceSide(buff: PlayerBuff): "ally" | "enemy" | "neutral" {
 
 function buffEffectText(buff: PlayerBuff): string {
   switch (buff.id) {
-    case "dot-vigor":
-      return "+attack and attack speed";
-    case "dot-conflag":
-      return "fast burn ticks";
-    case "dot-chill":
-      return "target chill stacks";
-    case "dot-frozen":
-      return "target frozen";
-    case "debuff-frozen":
-      return "frozen solid; movement and attacks disabled";
-    case "dot-frostbite":
-      return "+DoT damage taken";
     case "debuff-slow":
       return "movement speed reduced";
     case "debuff-root":

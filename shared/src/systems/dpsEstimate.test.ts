@@ -32,7 +32,7 @@ const PASSIVES: Record<string, PassiveMap> = {
   cadence: { 'cadence.empowered-threshold': 5, 'cadence.empowered-mult': 3 },
   cooldown: { 'cooldown.empowered-mult': 5 },
   reload: { 'reload.max-ammo': 6, 'reload.reload-time-ms': 2_000, 'reload.empowered-mult': 2 },
-  dot: { 'dot.conversion-pct': 0.6 },
+  dot: {},
   energy: {},
   summoner: { 'summoner.minion-damage-pct': 1 },
 };
@@ -116,20 +116,10 @@ function testMechanicBeatsPlainAutoAttack(): void {
   assert(spirit.caveats.some((line) => line.includes('flow, floor and bands')), 'Spirit states that Threshold spends are omitted');
 }
 
-function testDotCountsConvertedDamage(): void {
-  // The regression this whole module exists for. A DoT build moves 60% of every
-  // hit out of the direct damage; counting only the hit under-reports it badly.
+function testDotDirectHits(): void {
   const estimate = estimatePlayerDps(inputFor('dot'));
-  const direct = estimate.parts.find((p) => p.label === 'Direct hits');
-  const overTime = estimate.parts.find((p) => p.label === 'Damage over time');
-  assert(direct !== undefined, 'dot estimate should name its direct-hit part');
-  assert(overTime !== undefined, 'dot estimate should name its damage-over-time part');
-  assert(overTime!.dps > 0, 'converted damage must be counted, not dropped');
-  // 60% converted means the direct part is the minority of the hit.
-  assert(
-    direct!.dps < estimatePlayerDps(BASE).total,
-    'direct hits should be reduced by conversion',
-  );
+  assert(estimate.total === estimatePlayerDps(BASE).total, 'sigils do not convert the direct hit');
+  assert(estimate.caveats.some((line) => line.includes('Sigils and payoffs')), 'the omitted damage is explicit');
 }
 
 /** The heavy-frame T3 node that is the sole exception to the conduit contract. */
@@ -193,14 +183,7 @@ function testOptionalTargetMitigation(): void {
 
   const rawDot = estimatePlayerDps(inputFor('dot'));
   const dot = estimatePlayerDps({ ...inputFor('dot'), target });
-  const direct = dot.parts.find((part) => part.label === 'Direct hits');
-  const overTime = dot.parts.find((part) => part.label === 'Damage over time');
-  const rawOverTime = rawDot.parts.find((part) => part.label === 'Damage over time');
-  assert(direct !== undefined && overTime !== undefined, 'target-aware DoT keeps both channels');
-  assert(
-    overTime!.dps === rawOverTime?.dps,
-    'DoT throughput bypasses target plating and DR',
-  );
+  assert(dot.total < rawDot.total, 'target defences reduce the direct-hit estimate');
 }
 
 function part(estimate: ReturnType<typeof estimatePlayerDps>, label: string): number {
@@ -276,7 +259,7 @@ testEveryArchetypeReportsDamage();
 testPartsSumToTotal();
 testUnknownArchetypeStillReports();
 testMechanicBeatsPlainAutoAttack();
-testDotCountsConvertedDamage();
+testDotDirectHits();
 testSummonerWithoutAttackingStillReports();
 testScalesWithAttack();
 testOptionalTargetMitigation();

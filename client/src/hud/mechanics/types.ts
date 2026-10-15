@@ -62,10 +62,6 @@ export type DotMechanicModel = {
   tickPct: number;
   tickSerial: number;
   hasTarget: boolean;
-  chillStacks: number;
-  chillMax: number;
-  showsChill: boolean;
-  frozen: boolean;
 };
 
 export type MechanicViewModel =

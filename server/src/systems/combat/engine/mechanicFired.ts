@@ -3,17 +3,17 @@
  * (progression rework Phase 1c, design §6).
  *
  * WHY IT EXISTS. Every class root has a moment its whole loop builds toward: the
- * cadence finisher, the cooldown execution, a full DoT stack, the reload landing,
+ * cadence finisher, the cooldown execution, the reload landing,
  * the energy burst, a completed formation cycle. A payoff hung on "when your
- * mechanic fires" must not have to know which of the six it is looking at —
+ * mechanic fires" must not have to know which root it is looking at —
  * otherwise one payoff is six.
  *
- * So each root calls {@link emitMechanicFired} at its own moment, ONCE, and
+ * The legacy Apprentice full-stack emitter was removed with its conversion runtime (AP7).
+ * Payoff rules read their own target moments. Each remaining root calls {@link emitMechanicFired} at its own moment, ONCE, and
  * everything downstream sees one uniform event. The call sites are:
  *
  *   cadence    the finisher's empowered flag is consumed  (cadencePrototype.ts)
  *   cooldown   the execution's empowered flag is consumed (cooldownPrototype.ts)
- *   dot        a target reaches max stacks                (dotPrototype.ts)
  *   reload     a reload completes                         (reloadLifecycle.ts)
  *   energy     the burst fires                            (energyPrototype.ts)
  *   summoner   a formation cycle completes                (summoner/frameLoop.ts)
@@ -30,8 +30,8 @@
  * {@link registerMechanicFiredListener}.
  *
  * ONE PER HIT. Where an emission rides an attack, the `ctx` is passed in and used
- * as the latch: the five roots whose moment is an on-hit moment (cadence, cooldown,
- * dot, energy, summoner) can register in any order, and an exchange that somehow
+ * as the latch: the roots whose moment is an on-hit moment (cadence, cooldown,
+ * energy, summoner) can register in any order, and an exchange that somehow
  * satisfied two of them still emits exactly once. Reload passes no `ctx` — a reload
  * completes on a timer, so there is no exchange to latch — and is not latched,
  * because its caller already fires once per event.

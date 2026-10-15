@@ -18,7 +18,6 @@ import {
   TECHNIQUE_CAST_SPEED_CAP,
   RECIPE_DATABASE,
   previewEquipmentStats,
-  resolveDotClassProfile,
   type EquipmentPreviewInput,
   type EquipmentSlot,
 } from '@mmo-idle/shared';
@@ -97,11 +96,6 @@ const ROWS: readonly RowDef[] = [
   { key: 'attacksPerSecond', label: 'Swings / s', group: 'offence', value: (p) => p.stats.attacksPerSecond, fmt: (v) => trimmed(v, 2), delta: flat(2), pinned: true },
   { key: 'dps', label: 'DPS (estimate)', group: 'offence', value: (p) => p.stats.dps, fmt: (v) => trimmed(v, v >= 100 ? 0 : 1), delta: flat(1), pinned: true },
   { key: 'damageDealtMult', label: 'Final damage', group: 'offence', value: (p) => p.stats.damageDealtMult, fmt: (v) => `×${trimmed(v, 2)}`, delta: points, neutral: 1 },
-  {
-    key: 'dotMult', label: 'DoT potency', group: 'offence', onlyFor: 'dot',
-    value: (p, input) => resolveDotClassProfile(p.passives, input.build.usesSkills.selectedSubVariant).dotMechanicMultiplier,
-    fmt: (v) => `×${trimmed(v, 2)}`, delta: points, pinned: true,
-  },
   { key: 'techniquePower', label: 'Technique power', group: 'offence', value: (p) => p.passives['technique.power-pct'] ?? 0, fmt: (v) => signed(pct(v)), delta: points, neutral: 0 },
   // The Technique lane's own second number (design §22.9: "cast speed is the
   // Technique lane's stat ... shown beside Technique Power"), capped as the cast

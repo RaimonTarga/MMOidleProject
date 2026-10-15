@@ -127,32 +127,6 @@ export const STAT_HELP: Record<string, string> = {
 
   // ── Energy (charge on hits, spend on a discharge) ───────────────────────────
 
-  // ── Damage over time ───────────────────────────────────────────────────────
-  'dot.max-stacks': 'How many stacks of your damage-over-time a single target can carry.',
-  'dot.conversion-pct':
-    'The share of each direct hit converted into damage over time instead of landing immediately. Damage per stack is derived from your attack, this percentage, and your max stacks.',
-  'dot.mechanic-mult': 'Overall multiplier on your damage-over-time output.',
-  'dot.tick-interval-ms': 'How often your damage-over-time deals a tick.',
-  'dot.duration-ms': 'How long your damage-over-time lasts before falling off.',
-  'dot.chill-max-stacks': 'How many stacks of Chill a target can hold. Each stack slows its movement and attacks.',
-  'dot.chill-move-slow-per-stack': 'Movement speed removed from the target per stack of Chill.',
-  'dot.chill-attack-slow-per-stack': 'Attack speed removed from the target per stack of Chill.',
-  'dot.freeze-duration-ms': 'How long a fully-chilled target stays frozen.',
-  'dot.freeze-damage-taken-pct': 'Extra damage a frozen target takes.',
-  'dot.poison-explosion': 'A target at max stacks bursts, spreading its poison to nearby enemies.',
-  'dot.eternal-doom': 'Stacks past the normal cap keep applying, with diminishing returns.',
-  'dot.invigorating-toxins': 'Your poison feeds you as it ticks.',
-  'dot.fan-the-flames': 'Hitting a burning target adds stacks faster and burns hotter.',
-  'dot.smoldering-ember': 'Burns keep smoldering after the target would normally shake them off.',
-  'dot.conflagration': 'A fully-burning target erupts, dealing a burst of its remaining burn at once.',
-  'dot.permafrost': 'Chill no longer decays on its own — it has to be broken.',
-  'dot.freezing-cold': 'Chill reaches freeze faster and holds the target longer.',
-  'dot.glacial-fracture': 'Frozen targets shatter for bonus damage when the freeze breaks.',
-  'dot.frenzy': 'While a target is at max stacks you gain attack speed and on-hit damage.',
-  'dot.ignition': 'A fresh target takes your full stack count immediately instead of building up.',
-  'dot.rimeshatter': 'At max stacks the target takes the whole remaining burn as direct damage and loses damage reduction.',
-  'dot.wind-spirit': 'Hits at max stacks leave the target more vulnerable to further damage over time.',
-
   // ── Summoner ───────────────────────────────────────────────────────────────
   // Keyed on the feature stem as well as the authored key, so a node that tunes
   // `-mult` and a node that tunes `-pct` both find the same explanation.

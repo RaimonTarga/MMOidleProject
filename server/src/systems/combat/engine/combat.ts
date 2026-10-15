@@ -66,7 +66,7 @@ import {
   cancelLowHealthWard,
   consumeMonsterAttackSpeedCharge,
 } from "./monsterMechanics";
-import { isMonsterFrozen } from "../../classes/archetypes/dot/t3/core/selectors";
+import { isMonsterFrozen } from "../../combat/status/frost";
 import {
   getCounter,
   setCounter,

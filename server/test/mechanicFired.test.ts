@@ -19,8 +19,6 @@ import {
   GAME_CONFIG,
   baseRecoveryForTier,
   emptyEquipment,
-  getStatusEffect,
-  removeStatusEffect,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
 import type { PlayerEntity } from '../src/ecs/entity';
@@ -33,7 +31,6 @@ import {
 import {
   registerMechanicFiredListener,
 } from '../src/systems/combat/engine/mechanicFired';
-import { applyClassDotStack } from '../src/systems/classes/archetypes/dot/dotPrototype';
 import { completeReload } from '../src/systems/classes/archetypes/reload/reloadLifecycle';
 import { applySummonerCommand } from '../src/systems/classes/archetypes/summoner/command';
 import { runFormationAttack } from '../src/systems/classes/archetypes/summoner/formationAttack';
@@ -169,59 +166,6 @@ function exchange(player: PlayerEntity, defender: ReturnType<typeof monster>, me
   assert(
     countFor('mf-both') === 1,
     `cadence and cooldown must not both fire on one hit, got ${countFor('mf-both')}`,
-  );
-}
-
-// ── dot: max stacks, once per target per fill ────────────────────────────────
-
-{
-  const player = spawn('mf-dot', 'dot');
-  const target = monster(560);
-  const application = {
-    conversionPct: 0,
-    durationMs: 5000,
-    maxStacks: 3,
-    tickIntervalMs: 1000,
-    damagePerStack: 5,
-  };
-
-  applyClassDotStack(world, player, target, application);
-  applyClassDotStack(world, player, target, application);
-  assert(countFor('mf-dot') === 0, 'a partial stack is not the mechanic firing');
-
-  applyClassDotStack(world, player, target, application);
-  assert(countFor('mf-dot') === 1, `reaching the cap should fire once, got ${countFor('mf-dot')}`);
-
-  // Every further hit into a capped stack is the SAME fill.
-  applyClassDotStack(world, player, target, application);
-  applyClassDotStack(world, player, target, application);
-  assert(
-    countFor('mf-dot') === 1,
-    `a capped stack must not keep firing, got ${countFor('mf-dot')}`,
-  );
-
-  // A fresh fill is a fresh moment: the latch lives on the effect, so it is gone
-  // with the effect.
-  removeStatusEffect(target.tracksCombat, 'dot');
-  applyClassDotStack(world, player, target, application);
-  applyClassDotStack(world, player, target, application);
-  assert(countFor('mf-dot') === 1, 'the refill has not reached the cap yet');
-  applyClassDotStack(world, player, target, application);
-  assert(
-    countFor('mf-dot') === 2,
-    `a second fill should fire again, got ${countFor('mf-dot')}`,
-  );
-
-  // Per TARGET, not per player.
-  const other = monster(580);
-  for (let i = 0; i < 3; i++) applyClassDotStack(world, player, other, application);
-  assert(
-    countFor('mf-dot') === 3,
-    `a second target's fill is its own moment, got ${countFor('mf-dot')}`,
-  );
-  assert(
-    getStatusEffect(other.tracksCombat, 'dot')?.stacks === 3,
-    'the second target should be at its cap',
   );
 }
 

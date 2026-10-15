@@ -520,22 +520,6 @@
 .buff-cat-energy {
   animation: buff-energy 0.85s ease-in-out infinite alternate;
 }
-/* DoT Poison — slow organic breathe */
-.buff-cat-dot-poison {
-  animation: buff-poison 2.2s ease-in-out infinite;
-}
-/* DoT Fire — rapid flicker */
-.buff-cat-dot-fire {
-  animation: buff-fire 0.45s ease-in-out infinite alternate;
-}
-/* DoT Frost — cold slow shimmer */
-.buff-cat-dot-frost {
-  animation: buff-frost 2.1s ease-in-out infinite;
-}
-/* DoT Frozen — icy white pulse */
-.buff-cat-dot-frozen {
-  animation: buff-frozen 0.85s ease-in-out infinite alternate;
-}
 /* Weapon — golden gleam */
 .buff-cat-weapon {
   animation: buff-weapon 1.3s ease-in-out infinite alternate;
@@ -552,22 +536,6 @@
 @keyframes buff-energy {
   from { filter: brightness(0.78) saturate(0.82); }
   to   { filter: brightness(1.42) saturate(1.18); }
-}
-@keyframes buff-poison {
-  0%, 100% { transform: scale(0.97); filter: brightness(0.85) saturate(0.82); }
-  50%      { transform: scale(1.03); filter: brightness(1.18) saturate(1.08); }
-}
-@keyframes buff-fire {
-  from { filter: brightness(0.72) saturate(0.88); }
-  to   { filter: brightness(1.48) saturate(1.14); }
-}
-@keyframes buff-frost {
-  0%, 100% { filter: brightness(0.88) saturate(0.82); }
-  50%      { filter: brightness(1.22) saturate(0.62) hue-rotate(-8deg); }
-}
-@keyframes buff-frozen {
-  from { filter: brightness(0.92) saturate(0.38); opacity: 0.75; }
-  to   { filter: brightness(1.7)  saturate(0.18); opacity: 1.0;  }
 }
 @keyframes buff-weapon {
   from { filter: brightness(0.82) saturate(0.88); }

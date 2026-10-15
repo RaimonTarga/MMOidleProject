@@ -120,9 +120,8 @@ export function useMechanicHelp(model: MechanicViewModel): ReactNode {
       return (
         <>
           <div>
-            Your hits convert part of their damage into {model.stackLabel} rather
-            than dealing it up front. Each stack ticks on its own timer, and
-            stacks refresh as you keep hitting the same target.
+            Your hits lay sigils without reducing their direct damage. Sigils tick
+            linearly and refresh as you keep hitting the same target.
           </div>
           <div style={{ marginTop: 6 }}>
             {model.hasTarget
@@ -130,16 +129,9 @@ export function useMechanicHelp(model: MechanicViewModel): ReactNode {
               : 'No target — stacks show once you are fighting something.'}
           </div>
           <div style={{ marginTop: 6 }}>
-            Damage per stack comes from your attack, your conversion percentage
-            and your max stacks together, so raising max stacks alone does not
-            raise total damage.
+            Sigil damage comes from your weapon. Payoff rules spend sigils when
+            their moments and conditions are met.
           </div>
-          {model.showsChill && (
-            <div style={{ marginTop: 6 }}>
-              Chill stacks slow the target's movement and attacks; filling them
-              freezes it.
-            </div>
-          )}
         </>
       );
 

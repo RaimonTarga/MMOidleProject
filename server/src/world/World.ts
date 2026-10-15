@@ -181,15 +181,12 @@ export class World {
   readonly detonatedMonsters = this.monsterEntities.with("hasDetonation");
   readonly hemorrhagedMonsters = this.monsterEntities.with("hasHemorrhage");
   readonly dottedMonsters = this.monsterEntities.with("hasDot");
-  readonly conflagrationMonsters =
-    this.monsterEntities.with("hasConflagration");
   readonly chilledMonsters = this.monsterEntities.with("hasChill");
   readonly frozenMonsters = this.monsterEntities.with("hasFrozen");
   readonly abilitySlowedMonsters = this.monsterEntities.with("hasAbilitySlow");
   readonly abilityRootedMonsters = this.monsterEntities.with("hasAbilityRoot");
   readonly entropyMonsters = this.monsterEntities.with("hasEntropy");
   readonly weaponDotMonsters = this.monsterEntities.with("hasWeaponDot");
-  readonly smolderMonsters = this.monsterEntities.with("hasSmolder");
   readonly dungeonMonsters = this.monsterEntities.with("tracksDungeon");
 
   /**
@@ -219,7 +216,6 @@ export class World {
   readonly cadencePlayers = this.livePlayers.with("usesCadence");
   readonly energyPlayers = this.livePlayers.with("usesEnergy");
   readonly dotPlayers = this.livePlayers.with("appliesDots");
-  readonly chillingPlayers = this.livePlayers.with("chillsTarget");
   readonly cooldownPlayers = this.livePlayers.with("usesCooldown");
   readonly summonerPlayers = this.livePlayers.with("summonsMinions");
 

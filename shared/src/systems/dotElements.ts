@@ -13,35 +13,14 @@ export type DamageElement = 'poison' | 'fire' | 'frost' | 'lightning' | 'bleed' 
 export type DotPathElement = Extract<DamageElement, 'poison' | 'fire' | 'frost' | 'doom'>;
 
 /**
- * Resolve a player's DoT-class element from unlocked path passives, falling back to
- * the chosen sub-variant (balanced → fire, heavy → frost, else poison). Shared by the
+ * Resolve the sigil tint: raw magic at the root, elemental flavor for a discipline. Shared by the
  * server (tagging dot-tick events) and the client (selecting on-hit FX).
  */
 export function dotElementForPlayer(
-  passives: Record<string, number>,
+  _passives: Record<string, number>,
   subVariant: string | null | undefined,
 ): DotPathElement {
-  if (
-    (passives['dot.fan-the-flames'] ?? 0) > 0 ||
-    (passives['dot.smoldering-ember'] ?? 0) > 0 ||
-    (passives['dot.conflagration'] ?? 0) > 0
-  )
-    return 'fire';
-  if (
-    (passives['dot.permafrost'] ?? 0) > 0 ||
-    (passives['dot.freezing-cold'] ?? 0) > 0 ||
-    (passives['dot.glacial-fracture'] ?? 0) > 0 ||
-    (passives['dot.wind-spirit'] ?? 0) > 0
-  )
-    return 'frost';
-  // Cultist (eternal-doom) is a purple "doom" flavor of the poison path.
-  if ((passives['dot.eternal-doom'] ?? 0) > 0) return 'doom';
-  if (
-    (passives['dot.poison-explosion'] ?? 0) > 0 ||
-    (passives['dot.invigorating-toxins'] ?? 0) > 0
-  )
-    return 'poison';
   if (subVariant === 'balanced') return 'fire';
   if (subVariant === 'heavy') return 'frost';
-  return 'poison';
+  return subVariant === 'light' ? 'poison' : 'doom';
 }

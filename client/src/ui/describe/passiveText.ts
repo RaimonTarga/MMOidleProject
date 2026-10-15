@@ -105,7 +105,6 @@ const PERCENT_KEYS = new Set([
   'defense.debuff-resistance',
   'defense.dot-resistance',
   'defense.evade-mitigation',
-  'dot.rimeshatter-dr-reduction',
   'weapon.brittle-dr',
 ]);
 

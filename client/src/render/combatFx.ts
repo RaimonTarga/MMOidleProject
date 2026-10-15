@@ -24,7 +24,6 @@ import { fxCannonBlast } from "../fx/cannonFx";
 import { fxVoidDischarge } from "../fx/voidDischarge";
 import { fxPoisonExplosion } from "../fx/poisonExplosion";
 import { fxFirebrand } from "../fx/firebrand";
-import { fxConflagrationTick } from "../fx/conflagrationTick";
 import { fxDoomTick, fxDoomCloud } from "../fx/doom";
 import {
   playOneShotEffect,
@@ -205,7 +204,6 @@ import { bespokePathFor, playAscensionRing } from "../fx/bespokePaths";
 import { fxDualBlueRound } from "../fx/bespoke/slinger";
 import { championTether, fxSummonShatter } from "../fx/conduitPaths";
 import { abilityCallout, playAbilityRank } from "../fx/abilityRank";
-import { fxRadiantArc } from "../fx/bespoke/apprentice";
 import {
   fxCharnelMaul, fxConstrict, fxHindKick, fxOozeEngulf, fxSnap, fxSpiderFang, fxSting,
   fxStoneFist, fxTongueLash, fxWispTouch,
@@ -980,10 +978,7 @@ export function dispatchCombatEvent(
       const spr = state.sprite.get(ev.targetId);
       const tx = spr?.x ?? ev.targetPos.x;
       const ty = spr?.y ?? ev.targetPos.y;
-      // Pyromancer's Radiant: the fire leaps from the burning body to this one.
-      if (ev.fromId) fxRadiantArc(scene, ev.fromId, { x: tx, y: ty });
-      if (ev.fx === "conflagration") fxConflagrationTick(scene, tx, ty);
-      else if (ev.element === "lightning") fxLightning(scene, tx, ty - 130, tx, ty, true);
+      if (ev.element === "lightning") fxLightning(scene, tx, ty - 130, tx, ty, true);
       else if (ev.element === "doom") fxDoomTick(scene, tx, ty);
       // Everything else — bleed, poison, frost, fire — used to render as a bare
       // damage number.

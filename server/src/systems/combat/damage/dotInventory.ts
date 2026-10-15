@@ -2,8 +2,8 @@
  * The DoT inventory — one enumeration seam over every damage-over-time effect a
  * player owns on a monster.
  *
- * WHY THIS EXISTS. The game grew four unrelated DoT families (the Apprentice core
- * `dot` stack, the T3 path DoTs, the weapon reservoirs, and the specials), each
+ * WHY THIS EXISTS. The game grew several DoT families (the Apprentice core
+ * `dot` stack, the weapon reservoirs, and the specials), each
  * with its own damage model, its own tick driver and its own effect ids. Nothing
  * could ask the simple question every DoT-facing tool needs to ask: *what
  * damage-over-time is on this target right now, whose is it, what element is it,
@@ -19,25 +19,12 @@
  * effect, stays with the consumer so ownership of world state is unambiguous.
  */
 import {
-  computeEternalDoomDamage,
-  computeScaledDotDamage,
+  computeLinearDotDamage,
   weaponDotProfileForEffect,
   type DamageElement,
   type StatusEffect,
 } from "@mmo-idle/shared";
-import {
-  DOT_EFFECT_ID,
-  CONF_EFFECT_ID,
-} from "../../classes/archetypes/dot/t3/core/constants";
-import {
-  PERM_MAX_HITS,
-  PERM_PCT_PER_HIT,
-} from "../../classes/archetypes/dot/t3/paths/_constants";
-import {
-  getFrostbiteDotTakenMult,
-  getFrozenMult,
-  getSmolderMult,
-} from "../../classes/archetypes/dot/t3/core/selectors";
+import { DOT_EFFECT_ID } from "../../classes/archetypes/dot/constants";
 import { applyMonsterDamageTakenDebuffs } from "../../classes/shared/debuffs";
 import { dotElementForSource } from "./dotTickEvent";
 import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
@@ -53,7 +40,6 @@ import type { World } from "../../../world/World";
  */
 export type DotMarkerKey =
   | "hasDot"
-  | "hasConflagration"
   | "hasWeaponDot"
   | "hasHemorrhage";
 
@@ -207,48 +193,20 @@ function ticksRemaining(effect: StatusEffect): number {
 }
 
 /**
- * The target's current DoT vulnerability stack (Smoulder, Frozen, Frostbite and
- * the shared damage-taken debuffs), applied exactly as the real tick drivers
+ * The target's shared damage-taken debuffs, applied exactly as the real tick drivers
  * apply it so a projection matches what the ticks would actually deal.
  */
 function withVulnerability(monster: MonsterEntity, perTick: number): number {
   const state = monster.tracksCombat;
-  const withPathVuln =
-    perTick *
-    getSmolderMult(state) *
-    getFrozenMult(state) *
-    getFrostbiteDotTakenMult(state);
-  return Math.max(1, applyMonsterDamageTakenDebuffs(state, Math.round(withPathVuln)));
+  return Math.max(1, applyMonsterDamageTakenDebuffs(state, Math.round(perTick)));
 }
 
-/**
- * A permanent DoT owes unbounded damage, so "the rest of its duration" is not a
- * number. Detonate projects a bounded window instead — long enough that
- * detonating a ramped Permafrost is worth doing, short enough that a permanent
- * effect can never out-earn a timed one purely by never ending.
- */
-const PERMANENT_DOT_PROJECTED_TICKS = 5;
-
-// ── Built-in families ────────────────────────────────────────────────────────
-
-/**
- * Apprentice core DoT stack (`dot`), including the Eternal Doom curve. Excludes
- * Permafrost, which shares the effect id but has its own tick driver and damage
- * model — see {@link PERMAFROST_FAMILY}.
- */
 const CLASS_DOT_FAMILY: DotFamily = {
   id: "class-dot",
-  owns: (effect) => effect.id === DOT_EFFECT_ID && !effect.data["t3Perm"],
+  owns: (effect) => effect.id === DOT_EFFECT_ID,
   describe({ world, monster, effect }) {
     if (effect.stacks <= 0) return null;
-    const perTick = effect.data["isEternalDoom"]
-      ? computeEternalDoomDamage(
-          effect.stacks,
-          effect.data["damagePerStack"] ?? 0,
-          effect.data["edFullStacks"],
-          effect.data["edDiminishRate"],
-        )
-      : computeScaledDotDamage(effect);
+    const perTick = computeLinearDotDamage(effect);
     return {
       element: dotElementForSource(world, effect.sourceId),
       remainingDamage: withVulnerability(monster, perTick) * ticksRemaining(effect),
@@ -256,52 +214,6 @@ const CLASS_DOT_FAMILY: DotFamily = {
       detonatable: true,
       stackCap: effect.maxStacks,
       marker: "hasDot",
-    };
-  },
-};
-
-/**
- * Permafrost — the permanent frost DoT whose damage ramps with accumulated hits
- * and derives from the OWNER's attack stat, not from stored stack damage.
- */
-const PERMAFROST_FAMILY: DotFamily = {
-  id: "permafrost",
-  owns: (effect) => effect.id === DOT_EFFECT_ID && !!effect.data["t3Perm"],
-  describe({ owner, monster, effect }) {
-    const hits = Math.min(PERM_MAX_HITS, effect.data["hits"] ?? 0);
-    const perTick = Math.max(
-      1,
-      Math.round(owner.dealsDamage.attack * hits * PERM_PCT_PER_HIT),
-    );
-    return {
-      element: "frost",
-      remainingDamage:
-        withVulnerability(monster, perTick) * PERMANENT_DOT_PROJECTED_TICKS,
-      spreadable: true,
-      detonatable: true,
-      // Permafrost's pressure is its ramp, not a stack count, so it never
-      // satisfies the max-stacks condition.
-      stackCap: 0,
-      marker: "hasDot",
-    };
-  },
-};
-
-/** Conflagration — a finite fast burn counted in `ticksLeft`, not in duration. */
-const CONFLAGRATION_FAMILY: DotFamily = {
-  id: "conflagration",
-  owns: (effect) => effect.id === CONF_EFFECT_ID,
-  describe({ monster, effect }) {
-    const ticksLeft = Math.max(0, Math.floor(effect.data["ticksLeft"] ?? 0));
-    if (ticksLeft <= 0) return null;
-    const perTick = Math.max(1, Math.round(effect.data["damagePerTick"] ?? 0));
-    return {
-      element: "fire",
-      remainingDamage: withVulnerability(monster, perTick) * ticksLeft,
-      spreadable: true,
-      detonatable: true,
-      stackCap: 0,
-      marker: "hasConflagration",
     };
   },
 };
@@ -335,14 +247,8 @@ const WEAPON_RESERVOIR_FAMILY: DotFamily = {
  * Register the built-in families. Called from `initCombatSystems()` so live
  * server and bench agree.
  *
- * Permafrost is registered FIRST: it shares the `dot` effect id with the class
- * family, and first-match-wins means the more specific guard has to be seen
- * first. Both also test `t3Perm`, so the order is belt-and-braces rather than
- * load-bearing — keep it anyway.
  */
 export function initDotInventory(): void {
-  registerDotFamily(PERMAFROST_FAMILY);
   registerDotFamily(CLASS_DOT_FAMILY);
-  registerDotFamily(CONFLAGRATION_FAMILY);
   registerDotFamily(WEAPON_RESERVOIR_FAMILY);
 }
