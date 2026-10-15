@@ -19,7 +19,7 @@ import {
 import { driveMinion } from './ai';
 import { validateSummonerCommand } from './command';
 import { applyHealToMinion, applyHealToPlayer } from '../../../defense/regen/healing';
-import { summonerProfileFor } from './profile';
+import { slotAttackRange, summonerProfileFor } from './profile';
 import {
   enqueueSummonReconstruction,
   tickSummonReconstruction,
@@ -29,8 +29,10 @@ import { isPlayerInCombat } from '../../../combat/ai/engagement';
 import { registerFormationCycleMoment } from './formationAttack';
 import { pruneFormationTechnique } from './formationTechnique';
 import { registerSummonPieces } from './summonPieces';
+import { registerSummonPiecesT2, updateConduitT2 } from './summonPiecesT2';
 import { syncFormationRecall } from './formationOrders';
 import { onSoulSummonDeath, updateSoul } from './souls';
+import { rebuildCostMult } from './disciplines';
 
 type SummonerPlayerEntity = PlayerEntity & {
   summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
@@ -142,7 +144,7 @@ function syncLiveMinionFrameStats(world: World, owner: SummonerPlayerEntity): vo
       100,
       Math.round(owner.performsAttack.attackCooldown * profile.summonAttackCooldownMult * (slot.cooldownMult ?? 1)),
     );
-    const desiredRange = slot.attackRange ?? profile.attackRange;
+    const desiredRange = slotAttackRange(owner, slot, profile);
     if (minion.performsAttack.attackCooldown !== desiredCooldown
       || minion.performsAttack.attackRange !== desiredRange) {
       minion.performsAttack.attackCooldown = desiredCooldown;
@@ -204,7 +206,7 @@ function collectDeaths(world: World, owner: SummonerPlayerEntity): void {
       // Bloodtithe: part of the HP paid to build it comes back.
       const tithe = owner.usesSkills.passives['conduit.bloodtithe-pct'] ?? 0;
       if (tithe > 0) {
-        applyHealToPlayer(owner, owner.tracksCombat, minion.hasHealth.maxHp * summonerProfileFor(owner).reconstructionHpCostRatio * tithe, world);
+        applyHealToPlayer(owner, owner.tracksCombat, minion.hasHealth.maxHp * summonerProfileFor(owner).reconstructionHpCostRatio * rebuildCostMult(owner, summons.slotIds[index]!) * tithe, world);
       }
       despawnMinion(world, minion);
     }
@@ -226,6 +228,7 @@ function spawnFreshSlots(world: World, owner: SummonerPlayerEntity): void {
 
 export function initSummonerArchetype(): void {
   registerSummonPieces();
+  registerSummonPiecesT2();
   registerFormationCycleMoment();
 }
 
@@ -253,5 +256,6 @@ export function updateSummonerArchetype(world: World, dt: number, now: number): 
     }
     syncSummonerFormationTarget(world, summoner);
     updateSoul(world, summoner, dt, now);
+    updateConduitT2(world, summoner, now);
   }
 }

@@ -16,7 +16,7 @@ import { onTankTaunt } from './souls';
 import { CONDUIT_POISON_ID } from '../../../combat/damage/bleedIds';
 import { applyTickDot } from '../../shared/tickDot';
 
-const PIECES = new Map<string, ConduitPiece>(CONDUIT_KIT.pieces.map((piece) => [piece.id, piece]));
+export const PIECES = new Map<string, ConduitPiece>(CONDUIT_KIT.pieces.map((piece) => [piece.id, piece]));
 
 const SHOTS = 'summon.shots';
 /** Poison Staff, per stack of the weapon: ticks added per hit, the cap, a tick's share of the hit, the tick gap. PLACEHOLDERS. */
@@ -27,7 +27,7 @@ const POISON_TICK_MS = 1_000;
 const LAST_TAUNT_AT = 'summon.lastTauntAt';
 
 /** The piece behind a formation hit, with the minion that swung. */
-function swing(ctx: CombatContext, world: World): { owner: PlayerEntity; minion: MinionEntity; piece: ConduitPiece; target: MonsterEntity } | null {
+export function swing(ctx: CombatContext, world: World): { owner: PlayerEntity; minion: MinionEntity; piece: ConduitPiece; target: MonsterEntity } | null {
   if (!ctx.formation || ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return null;
   const minion = world.getMinionEntity(ctx.formation.physicalEntityId);
   const piece = PIECES.get(ctx.formation.slotId.split('#')[0] ?? '');

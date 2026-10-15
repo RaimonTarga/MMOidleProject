@@ -15,6 +15,7 @@ import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import type { World } from '../../../../world/World';
 import type { MinionEntity, PlayerEntity } from '../../../../ecs/entity';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
+import { isRangedHit, sentinelClaims } from './summonPiecesT2';
 
 /** The living tank summon closest to the owner. */
 function nearestTank(world: World, owner: PlayerEntity): MinionEntity | null {
@@ -25,6 +26,20 @@ function nearestTank(world: World, owner: PlayerEntity): MinionEntity | null {
     if (!minion || minion.hasHealth.hp <= 0) continue;
     const piece = CONDUIT_KIT.pieces.find((candidate) => candidate.id === minion.isMinion.slotId.split('#')[0]);
     if (piece?.family !== 'tank') continue;
+    const dx = minion.hasPosition.current.x - owner.hasPosition.current.x;
+    const dy = minion.hasPosition.current.y - owner.hasPosition.current.y;
+    if (dx * dx + dy * dy < bestSq) { bestSq = dx * dx + dy * dy; best = minion; }
+  }
+  return best;
+}
+
+/** The living summon closest to the owner, of any kind. */
+function nearestMinion(world: World, owner: PlayerEntity): MinionEntity | null {
+  let best: MinionEntity | null = null;
+  let bestSq = Infinity;
+  for (const id of owner.summonsMinions?.minionIds ?? []) {
+    const minion = id ? world.getMinionEntity(id) : undefined;
+    if (!minion || minion.hasHealth.hp <= 0) continue;
     const dx = minion.hasPosition.current.x - owner.hasPosition.current.x;
     const dy = minion.hasPosition.current.y - owner.hasPosition.current.y;
     if (dx * dx + dy * dy < bestSq) { bestSq = dx * dx + dy * dy; best = minion; }
@@ -51,6 +66,20 @@ export function registerSummonerDamageSponge(): void {
     if (ctx.metadata['secondarySplash']) return;
     const player = ctx.defender;
     if (!player.summonsMinions) return;
+
+    // Sandveil (Desert vest): ranged hits deal less to you.
+    const sandveil = player.usesSkills.passives['conduit.sandveil-pct'] ?? 0;
+    if (sandveil > 0 && isRangedHit(ctx)) ctx.damage = Math.round(ctx.damage * (1 - sandveil));
+
+    // Sentinel (Jungle vest): the first hit each enemy lands on you is taken by the nearest summon.
+    if (ctx.attackerType === 'monster' && sentinelClaims(player, ctx.attacker.isMonster.id)) {
+      const guard = nearestMinion(world, player);
+      if (guard) {
+        redirectDamageToMinion(guard, ctx.damage, world);
+        ctx.damage = 0;
+        return;
+      }
+    }
 
     // Big-Hit Intercept: a hit that would take a large share of your HP goes to the nearest tank.
     const intercept = player.usesSkills.passives['conduit.intercept-pct'] ?? 0;

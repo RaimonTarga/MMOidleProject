@@ -33,6 +33,7 @@ import {
   recallSpot,
 } from './command';
 import { summonerProfileFor } from './profile';
+import { chaseBonus } from './souls';
 import { orderedTarget } from './formationOrders';
 import { getRuneDecisions, RUNE_WAIT_FOR_SUMMONS_FLAG } from '../../../combat/ai/runeConfig';
 import { getAutoTargetId } from '../../../combat/ai/targetPriority';
@@ -52,7 +53,7 @@ const LEASH_MARGIN = 4;
  * can shift it without touching the AI body.
  */
 export function computeLeashRadius(owner: PlayerEntity): number {
-  return summonerProfileFor(owner).leashRadius;
+  return Math.round(summonerProfileFor(owner).leashRadius * (1 + chaseBonus(owner).leash));
 }
 
 /** Consume the owner's native selection, including channel arbitration and gates.

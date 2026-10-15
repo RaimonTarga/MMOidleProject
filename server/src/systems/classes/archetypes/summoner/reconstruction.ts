@@ -8,6 +8,7 @@ import { summonerProfileFor } from './profile';
 import { isPlayerInCombat } from '../../../combat/ai/engagement';
 import { emitSummonObservation } from './observation';
 import { rebuildRank } from './formationOrders';
+import { rebuildCostMult } from './disciplines';
 
 type SummonerOwner = PlayerEntity & {
   summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
@@ -106,8 +107,9 @@ export function tickSummonReconstruction(
     return;
   }
   const profile = summonerProfileFor(owner);
+  // Swarm (§7.5): the cheapest summons rebuild for free.
   const cost = Math.max(0, Math.round(
-    computeMinionMaxHp(owner, index) * profile.reconstructionHpCostRatio,
+    computeMinionMaxHp(owner, index) * profile.reconstructionHpCostRatio * rebuildCostMult(owner, active.slotId),
   ));
   const floor = owner.hasHealth.maxHp * profile.reconstructionSafetyFloorPct;
   emitSummonObservation(owner, { kind: 'replacement-attempt', slotId: active.slotId,

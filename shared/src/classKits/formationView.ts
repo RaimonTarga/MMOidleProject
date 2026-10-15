@@ -6,6 +6,7 @@
 import { checkClassConfig, classConfigContextFromState } from './config';
 import type { ClassConfig, ConditionRef, FormationConfig, FormationOrders } from './configTypes';
 import { CLASS_STATE_CONDITIONS } from './configTypes';
+import { rosterCommand } from './configs/conduit';
 import { CONDUIT_KIT, type ConduitPiece, type ConduitTrophy } from './conduit/kit';
 import { MOMENTS, isMomentId } from './moments';
 import type { ClassScreenInput } from './view';
@@ -88,7 +89,7 @@ export function composeFormationView(input: ClassScreenInput): FormationView | n
   const soul = config.relic[0] ? SOULS.get(config.relic[0]) : undefined;
   const check = checkClassConfig(config, ctx);
   return {
-    command: { used: roster.reduce((sum, piece) => sum + piece.command, 0), total: ctx.budget },
+    command: { used: rosterCommand(system.roster, ctx.disciplineId), total: ctx.budget },
     roster,
     available,
     orders: {

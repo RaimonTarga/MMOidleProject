@@ -27,4 +27,5 @@ export {
   type SlingerFamily, type SlingerPiece, type SlingerPieceExtra, type SlingerTrophy, type SlingerTrophyKind,
 } from './slinger/kit';
 export { SPIRIT_KIT, type SpiritFamily, type SpiritPiece, type SpiritPieceExtra, type SpiritTrophy, type SpiritTrophyKind } from './spirit/kit';
+export { CONDUIT_DISCIPLINE_TUNING, disciplineCommandCost, type ConduitDisciplineId } from './conduit/discipline';
 export { CONDUIT_KIT, type ConduitRole, type ConduitPiece, type ConduitPieceExtra, type ConduitTrophy, type ConduitTrophyKind } from './conduit/kit';
