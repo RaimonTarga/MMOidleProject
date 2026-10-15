@@ -33,6 +33,8 @@ const STATUS_META: Record<string, StatusMeta> = {
   'slinger-venom':      { label: 'Venom', color: '#8fdc3c' },
   'slinger-rot':        { label: 'Rot', color: '#7a8b2e' },
   'conduit-poison':     { label: 'Poison', color: '#88bb55' },
+  'conduit-mark':       { label: 'Marked', color: '#d86a4a' },
+  'conduit-bark':       { label: 'Bark', color: '#8a6a3a' },
   'striker-rot':        { label: 'Rot', color: '#7a8b2e' },
   brittle:         { label: 'Brittle', color: '#d88a4a' },
   'dr-shatter':    { label: 'Shattered', color: '#f0c04a' },

@@ -7,6 +7,7 @@ import { checkClassConfig, classConfigContextFromState } from './config';
 import type { ClassConfig, ConditionRef, FormationConfig, FormationOrders } from './configTypes';
 import { CLASS_STATE_CONDITIONS } from './configTypes';
 import { rosterCommand } from './configs/conduit';
+import { disciplineCommandCost } from './conduit/discipline';
 import { CONDUIT_KIT, type ConduitPiece, type ConduitTrophy } from './conduit/kit';
 import { MOMENTS, isMomentId } from './moments';
 import type { ClassScreenInput } from './view';
@@ -18,7 +19,10 @@ export interface FormationPieceView {
   /** "Front", "middle" or "back": role sets the row. */
   row: ConduitPiece['row'];
   mode: ConduitPiece['mode'];
+  /** What this body costs under the discipline (Swarm's half, Pack's discount, Elite's extra). */
   command: number;
+  /** The piece's own Command, before the discipline. */
+  baseCommand: number;
   text: string;
 }
 
@@ -41,8 +45,10 @@ export interface FormationView {
     /** The Recall rule's conditions, in words; empty means never. */
     recallWhen: string[];
   };
-  /** The Soul in the relic slot: a free extra body, or none yet. */
-  soul: { trophyId: string | null; name: string; text: string };
+  /** The picked discipline and its rule in words, or null before the pick (T2). */
+  discipline: { id: string; name: string; text: string } | null;
+  /** The Soul in the relic slot: a free extra body, or none yet. `rank` is the trophy's rank, `maxRank` the highest it reaches. */
+  soul: { trophyId: string | null; name: string; text: string; rank: number; maxRank: number };
   problems: string[];
 }
 
@@ -73,8 +79,11 @@ function conditionText(condition: ConditionRef): string {
   return condition.not ? `not when ${text}` : `when ${text}`;
 }
 
-function pieceView(piece: ConduitPiece): FormationPieceView {
-  return { pieceId: piece.id, name: piece.name, family: piece.family, row: piece.row, mode: piece.mode, command: piece.command, text: piece.text };
+function pieceView(piece: ConduitPiece, disciplineId: string | null, firstOfType: boolean): FormationPieceView {
+  return {
+    pieceId: piece.id, name: piece.name, family: piece.family, row: piece.row, mode: piece.mode,
+    command: disciplineCommandCost(piece.command, disciplineId, firstOfType), baseCommand: piece.command, text: piece.text,
+  };
 }
 
 /** The Formation editor for a Conduit's screen, or null for anyone else. */
@@ -84,8 +93,16 @@ export function composeFormationView(input: ClassScreenInput): FormationView | n
   if (!ctx || ctx.archetype !== 'summoner' || config?.system.kind !== 'formation') return null;
   const system = config.system;
 
-  const roster = system.roster.map((id) => PIECES.get(id)).filter((piece): piece is ConduitPiece => !!piece).map(pieceView);
-  const available = CONDUIT_KIT.pieces.filter((piece) => ctx.pieceRanks.has(piece.id)).map(pieceView);
+  const seen = new Set<string>();
+  const roster = system.roster.map((id) => PIECES.get(id)).filter((piece): piece is ConduitPiece => !!piece).map((piece) => {
+    const view = pieceView(piece, ctx.disciplineId, !seen.has(piece.id));
+    seen.add(piece.id);
+    return view;
+  });
+  // A bound summon is priced as if it were added next.
+  const available = CONDUIT_KIT.pieces.filter((piece) => ctx.pieceRanks.has(piece.id))
+    .map((piece) => pieceView(piece, ctx.disciplineId, !seen.has(piece.id)));
+  const picked = CONDUIT_KIT.disciplines.find((entry) => entry.id === ctx.disciplineId);
   const soul = config.relic[0] ? SOULS.get(config.relic[0]) : undefined;
   const check = checkClassConfig(config, ctx);
   return {
@@ -98,9 +115,10 @@ export function composeFormationView(input: ClassScreenInput): FormationView | n
       rebuildFirst: { value: system.orders.rebuildFirst, options: REBUILD_FIRST },
       recallWhen: system.orders.recallWhen.map(conditionText),
     },
+    discipline: picked ? { id: picked.id, name: picked.name, text: picked.text } : null,
     soul: soul
-      ? { trophyId: soul.id, name: soul.name, text: soul.text }
-      : { trophyId: null, name: 'No Soul yet', text: 'Beat a boss and a Soul joins your formation for free.' },
+      ? { trophyId: soul.id, name: soul.name, text: soul.text, rank: ctx.trophyRanks.get(soul.id) ?? 1, maxRank: 1 + soul.ranks.length }
+      : { trophyId: null, name: 'No Soul yet', text: 'Beat a boss and a Soul joins your formation for free.', rank: 0, maxRank: 0 },
     problems: check.ok ? [] : check.reasons,
   };
 }

@@ -30,7 +30,8 @@ function tutorialLevel(biomeGroup: string): number {
   let level = 0;
   for (const beat of tutorialScriptFor(CONDUIT_CLASS_ROOT).beats) {
     for (const step of beat.steps) {
-      if (step.type !== "farm") continue;
+      // Tier 1 only: the Tier 2 stretch farms the same biome groups to higher levels.
+      if (step.type !== "farm" || (step.at.kind === "biome" && step.at.tier !== 1)) continue;
       for (const gate of gates(step.until)) {
         if (gate.type === "biomeLevelAtLeast" && gate.biomeGroup === biomeGroup) {
           level = Math.max(level, gate.level);

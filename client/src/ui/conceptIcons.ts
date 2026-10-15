@@ -393,6 +393,9 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'cadence-hemorrhage': 'debuff-dot',
   'striker-rot': 'debuff-poison',
   'conduit-poison': 'debuff-poison',
+  // Stand-ins until the designer's icons: the mark wears the shatter window, the bark an obsidian shell.
+  'conduit-mark': 'shatter-vulnerable',
+  'conduit-bark': 'obsidian-shell',
   'slinger-venom': 'debuff-poison',
   'slinger-rot': 'debuff-poison',
   brittle: 'dot-frostbite',

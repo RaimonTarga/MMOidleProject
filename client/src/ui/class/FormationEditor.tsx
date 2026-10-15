@@ -26,6 +26,11 @@ function words(id: string): string {
   return id.split('-').join(' ');
 }
 
+/** Command as the player reads it: whole numbers plain, Swarm's half as .5. */
+function commandText(value: number): string {
+  return Number.isInteger(value) ? String(value) : value.toFixed(1);
+}
+
 function sameConfig(a: ClassConfig | null, b: ClassConfig | null): boolean {
   if (a === b) return true;
   if (!a || !b) return false;
@@ -95,7 +100,12 @@ function BodyCard({
           <span className="class-panel__family">{words(piece.mode)}</span>
         </div>
         <p className="class-panel__line">{piece.text}</p>
-        <p className="formation-editor__cost">{`${piece.command} Command`}</p>
+        <p className="formation-editor__cost">
+          {`${commandText(piece.command)} Command`}
+          {piece.command !== piece.baseCommand && (
+            <span className="formation-editor__base-cost">{` (${commandText(piece.baseCommand)} before your discipline)`}</span>
+          )}
+        </p>
       </div>
       <button
         type="button"
@@ -145,7 +155,7 @@ export function FormationEditor({ view }: { view: ClassScreenView }) {
 
   const system = source.system;
   const { used, total } = formation.command;
-  const pipCount = Math.max(0, total);
+  const pipCount = Math.max(0, Math.ceil(total));
   const over = used > total;
 
   const placed: { index: number; piece: FormationPieceView }[] = [];
@@ -193,20 +203,24 @@ export function FormationEditor({ view }: { view: ClassScreenView }) {
   return (
     <div className="formation-editor">
       <p className={`formation-editor__command${over ? ' formation-editor__command--over' : ''}`}>
-        {`Command: ${used} of ${total}`}
+        {`Command: ${commandText(used)} of ${total}`}
       </p>
+      {formation.discipline && (
+        <p className="formation-editor__discipline">
+          <span className="class-panel__name">{formation.discipline.name}</span>
+          {` ${formation.discipline.text}`}
+        </p>
+      )}
       <div
         className="formation-editor__pips"
         role="img"
-        aria-label={`Command ${used} of ${total}`}
+        aria-label={`Command ${commandText(used)} of ${total}`}
       >
-        {Array.from({ length: pipCount }, (_, index) => (
-          <span
-            key={index}
-            className={`formation-editor__pip${index < used ? ' formation-editor__pip--spent' : ''}`}
-            aria-hidden="true"
-          />
-        ))}
+        {Array.from({ length: pipCount }, (_, index) => {
+          // Swarm spends half a pip: the pip shows half filled.
+          const state = index + 1 <= used ? ' formation-editor__pip--spent' : index < used ? ' formation-editor__pip--half' : '';
+          return <span key={index} className={`formation-editor__pip${state}`} aria-hidden="true" />;
+        })}
       </div>
 
       {ROWS.map((row) => {
@@ -293,6 +307,9 @@ export function FormationEditor({ view }: { view: ClassScreenView }) {
         <div>
           <div className="class-panel__card-title">
             <span className="class-panel__name">{formation.soul.name}</span>
+            {formation.soul.maxRank > 1 && (
+              <span className="class-panel__family">{`Rank ${formation.soul.rank} of ${formation.soul.maxRank}`}</span>
+            )}
           </div>
           <p className="class-panel__line">{formation.soul.text}</p>
         </div>
