@@ -59,7 +59,6 @@ const STATUS_HELP: Record<string, StatusHelp> = {
 
   // -- The Striker's Order (class-first build plan CS.1) ------------------------
   'striker-focus': b('Focus', 'Your opener focused you: every beat of this combo swings faster, until its finisher.'),
-  'striker-rot': d('Rot', 'Your finisher’s wound is rotting: it deals part of the blow again over a few seconds.'),
   // -- Abilities -------------------------------------------------------------
   'ability-guard': b('Guard', 'Your Guard is up: incoming damage is reduced for the window. Guard potency deepens the reduction and Guard duration lengthens the window.'),
   'ability-guard-2': b('Guard', 'Your second Guard is up. Two equipped Guards layer independently, each with its own window.'),
@@ -196,6 +195,7 @@ const TARGET_HELP: Record<string, StatusHelp> = {
   'plating-shred': d('Shred', 'Plating stripped from the target. Every hit landed on it — yours and your party’s — has that much less flat damage removed.'),
   'reload-suppress-shred': d('Suppressed', 'Suppressing fire has stripped plating from the target. The shred remains as a separate reload pressure effect, so the target’s flat protection is lower while it lasts.'),
   'cadence-hemorrhage': d('Bleed', 'The target is bleeding: damage over time applied by your rhythm, past its plating.'),
+  'striker-rot': d('Rot', 'Your finisher’s wound is rotting: it deals part of the blow again over a few seconds.'),
   'energy-storm': d('Storm', 'Storm charge is grounding through this target.'),
   brittle: d('Brittle', 'Each Brittle stack can strip the target’s flat plating and damage reduction, so more of your hits get through.'),
   'dr-shatter': d('Shattered', 'Brittle has been stacked to its shatter threshold: the target’s damage reduction is stripped to nothing for the window. Plating still applies, but the percentage reduction is gone.'),

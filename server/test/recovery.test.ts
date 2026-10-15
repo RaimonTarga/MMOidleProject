@@ -335,35 +335,19 @@ const world = new World();
 }
 
 {
-  // The Striker root's pulse survives the frequency-weighted merge with a real
-  // duration attached — the accumulator has to carry all three keys or the pulse
-  // silently falls back to the engine default.
+  // The Striker root carries no Recovery pulse any more (class-first bible §12.2: nothing
+  // defensive rides the combo). The pulse mechanism itself is still tested above.
   const strikerRoot = SKILL_TREE.get("cadence-root");
   assert(strikerRoot !== undefined, "test needs the Striker root in the skill tree");
   const fx = strikerRoot!.mechanicEffects ?? {};
-  assert(
-    (fx["defense.recovery-pulse-pct"] ?? 0) > 0 && (fx["defense.recovery-pulse-interval-ms"] ?? 0) > 0,
-    "the Striker root should author a Recovery pulse",
-  );
+  assert(fx["defense.recovery-pulse-pct"] === undefined, "the Striker root authors no Recovery pulse");
 
   const player = world.attachPlayerEntity(makePlayerSlices("striker"), "striker");
   player.usesSkills.unlockedSkills = ["cadence-root"];
   recalculatePlayerEntityStats(world, player);
-
-  const p = player.usesSkills.passives;
   assert(
-    (p["defense.recovery-pulse-pct"] ?? 0) > 0,
-    "recalc should resolve a pulse fraction for the Striker",
-  );
-  assert(
-    (p["defense.recovery-pulse-duration-ms"] ?? 0) > 0,
-    "the resolved pulse must carry a duration, not fall through to zero",
-  );
-
-  advance(player, 100, true);
-  assert(
-    activeRecoveryFraction(player, true) > 0,
-    "the Striker's pulse should switch Recovery on in combat",
+    (player.usesSkills.passives["defense.recovery-pulse-pct"] ?? 0) === 0,
+    "recalc resolves no pulse for the Striker",
   );
 }
 

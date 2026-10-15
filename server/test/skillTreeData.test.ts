@@ -10,9 +10,8 @@ const mechanics: PassiveMap = {};
 const pulses = makePulseAccumulator();
 mergePassives(mechanics, root.mechanicEffects, pulses);
 finalizePulse(pulses, mechanics);
-assert.ok(Math.abs(mechanics['defense.recovery-pulse-pct']! - .20) < 1e-9);
-assert.equal(mechanics['defense.recovery-pulse-interval-ms'], 6000);
-assert.equal(mechanics['defense.recovery-pulse-duration-ms'], 4000);
+// The Recovery pulse is gone (class-first bible §12.2): nothing defensive rides the combo.
+assert.equal(mechanics['defense.recovery-pulse-pct'], undefined);
 assert.equal(mechanics['defense.max-hit-mult'], undefined, 'Striker no longer carries a damage soft cap');
 
 assert.equal(formatPassiveValue('cadence.debuff-vuln-pct', 25, { signed: true }), '+25%');

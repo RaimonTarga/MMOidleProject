@@ -8,7 +8,7 @@ function assert(condition: unknown, message: string): asserts condition {
 // the authored values in the copy so a balance change cannot silently leave
 // the most important mechanic invisible in the tree.
 const requiredFragments: Record<string, string[]> = {
-  "cadence-root": ["Class mechanic", "20% of your Recovery"],
+  "cadence-root": ["Class mechanic", "finisher"],
   "cooldown-root": ["Class mechanic", "7s reference cycle", "10% of your Recovery"],
   "reload-root": ["Class mechanics", "65% effectiveness", "10% extra damage mitigation", "×2.5"],
   "energy-root": ["Class mechanic", "30% of your max HP"],
