@@ -179,11 +179,7 @@ for (const beat of route) {
 }
 
 // ── Every class root gets the opening, then the seal route or its own builder ─
-assert(Object.keys(TUTORIAL_CLASS_BEATS).join(',') === 'cadence-root,cooldown-root,summoner-root', 'the Striker, Squire and Conduit builders are registered');
-assert(Object.keys(TUTORIAL_CLASS_BEATS).join(',') === 'cadence-root,cooldown-root,reload-root',
-  'the Striker, Squire and Slinger builders are registered');
-assert(Object.keys(TUTORIAL_CLASS_BEATS).join(',') === 'cadence-root,cooldown-root,energy-root', 'the Striker, Squire and Spirit builders are registered');
-assert(Object.keys(TUTORIAL_CLASS_BEATS).join(',') === 'cadence-root,cooldown-root,dot-root', 'the Striker, Squire and Apprentice builders are registered');
+assert(Object.keys(TUTORIAL_CLASS_BEATS).join(',') === 'cadence-root,cooldown-root,summoner-root,reload-root,energy-root,dot-root', 'every class has its builder registered');
 assert(CLASS_ROOTS.length === 6, `six class roots, found ${CLASS_ROOTS.map((node) => node.id).join(',')}`);
 
 function sameRoute(script: TutorialScript): void {
@@ -271,18 +267,6 @@ const CONDUIT_TAIL = [
   'zone:cave',
   'conduit:cave-brute',
   'conduit:mountain',
-/** The Slinger tail: seal ids, in seal order, with the clip beats inserted. */
-const SLINGER_TAIL = [
-  'open:plains',
-  'slinger:scatter',
-  'boss:plains',
-  'zone:forest',
-  'slinger:snare',
-  'zone:swamp',
-  'slinger:venom',
-  'zone:cave',
-  'slinger:breaching',
-  'slinger:mountain',
   'boss:mountain',
   'farewell',
 ];
@@ -290,10 +274,6 @@ const SLINGER_TAIL = [
 function assertConduitTail(script: TutorialScript): void {
   assert(script.beats.length === TUTORIAL_OPENING.beats.length + CONDUIT_TAIL.length,
     `${script.id}: opening plus the Conduit tail`);
-function assertSlingerTail(script: TutorialScript): void {
-  assert(script.beats.length === TUTORIAL_OPENING.beats.length + SLINGER_TAIL.length,
-    `${script.id}: opening plus the Slinger tail`);
-function assertSpiritTail(script: TutorialScript): void {
   script.beats.slice(0, TUTORIAL_OPENING.beats.length).forEach((beat, i) => {
     assert(beat === TUTORIAL_OPENING.beats[i], `${script.id}: opening beat ${beat.id} was replaced`);
   });
@@ -333,6 +313,31 @@ function assertSpiritTail(script: TutorialScript): void {
   const mountain = tail.find((beat) => beat.id === 'conduit:mountain');
   if (!mountain) throw new Error('the Mountain farm is missing');
   assert(farmGate(mountain, 'mountain') === 2, 'the Mountain farm ends at the Ridge Marksman lesson');
+}
+
+/** The Slinger tail: seal ids, in seal order, with the clip beats inserted. */
+const SLINGER_TAIL = [
+  'open:plains',
+  'slinger:scatter',
+  'boss:plains',
+  'zone:forest',
+  'slinger:snare',
+  'zone:swamp',
+  'slinger:venom',
+  'zone:cave',
+  'slinger:breaching',
+  'slinger:mountain',
+  'boss:mountain',
+  'farewell',
+];
+
+function assertSlingerTail(script: TutorialScript): void {
+  assert(script.beats.length === TUTORIAL_OPENING.beats.length + SLINGER_TAIL.length,
+    `${script.id}: opening plus the Slinger tail`);
+  script.beats.slice(0, TUTORIAL_OPENING.beats.length).forEach((beat, i) => {
+    assert(beat === TUTORIAL_OPENING.beats[i], `${script.id}: opening beat ${beat.id} was replaced`);
+  });
+  const tail = script.beats.slice(TUTORIAL_OPENING.beats.length);
   assert(tail.map((beat) => beat.id).join(',') === SLINGER_TAIL.join(','),
     `${script.id}: tail is ${tail.map((beat) => beat.id).join(',')}`);
   const say = (id: string) => tail.find((beat) => beat.id === id)?.say ?? '';
@@ -363,6 +368,13 @@ function assertSpiritTail(script: TutorialScript): void {
   const mountain = tail.find((beat) => beat.id === 'slinger:mountain');
   if (!mountain) throw new Error('the Mountain farm is missing');
   assert(farmGate(mountain, 'mountain') === 2, 'the Mountain farm ends at Stopping\'s lesson');
+}
+
+function assertSpiritTail(script: TutorialScript): void {
+  script.beats.slice(0, TUTORIAL_OPENING.beats.length).forEach((beat, i) => {
+    assert(beat === TUTORIAL_OPENING.beats[i], `${script.id}: opening beat ${beat.id} was replaced`);
+  });
+  const tail = script.beats.slice(TUTORIAL_OPENING.beats.length);
   assert(tail.map((beat) => beat.id).join(',') === [
     'open:plains', 'spirit:chain-lightning', 'boss:plains',
     'zone:forest', 'spirit:thunderclap', 'zone:swamp', 'spirit:downpour',
@@ -404,8 +416,7 @@ for (const root of CLASS_ROOTS) {
   if (root.id === 'cadence-root') assertStrikerTail(script);
   else if (root.id === 'summoner-root') assertConduitTail(script);
   else if (root.id === 'reload-root') assertSlingerTail(script);
-  if (root.id === 'energy-root') assertSpiritTail(script);
-  else if (root.id === 'cadence-root') assertStrikerTail(script);
+  else if (root.id === 'energy-root') assertSpiritTail(script);
   else if (TUTORIAL_CLASS_BEATS[root.id]) {
     script.beats.slice(0, TUTORIAL_OPENING.beats.length).forEach((beat, i) => {
       assert(beat === TUTORIAL_OPENING.beats[i], `${script.id}: opening beat ${beat.id} was replaced`);

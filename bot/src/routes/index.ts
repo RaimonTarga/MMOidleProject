@@ -13,7 +13,7 @@ import { SPIRIT_T1_ID, spiritT1Route } from "./spiritT1";
  *
  * Class routes are rebuilt per class in the class-first build (plan §5).
  * `smoke-t1` stays class-agnostic. Each class's own route (`striker-t1`, `squire-t1`,
- * `conduit-t1`) registers here as data over the same executor.
+ * `conduit-t1`, `slinger-t1`, `spirit-t1`, `apprentice-t1`) registers here as data over the same executor.
  */
 
 /**
@@ -82,10 +82,15 @@ export function isClassAgnosticRouteId(id: string): boolean {
  * joins this list when it is rebuilt; explicit one-off runs of anything else
  * need `--controlled=false`.
  */
-export const CONTROLLED_ROUTE_IDS: readonly string[] = [SMOKE_T1_ID, STRIKER_T1_ID, SQUIRE_T1_ID, CONDUIT_T1_ID];
-export const CONTROLLED_ROUTE_IDS: readonly string[] = [SMOKE_T1_ID, STRIKER_T1_ID, SQUIRE_T1_ID, SLINGER_T1_ID];
-export const CONTROLLED_ROUTE_IDS: readonly string[] = [SMOKE_T1_ID, STRIKER_T1_ID, SQUIRE_T1_ID, SPIRIT_T1_ID];
-export const CONTROLLED_ROUTE_IDS: readonly string[] = [SMOKE_T1_ID, STRIKER_T1_ID, SQUIRE_T1_ID, APPRENTICE_T1_ID];
+export const CONTROLLED_ROUTE_IDS: readonly string[] = [
+  SMOKE_T1_ID,
+  STRIKER_T1_ID,
+  SQUIRE_T1_ID,
+  CONDUIT_T1_ID,
+  SLINGER_T1_ID,
+  SPIRIT_T1_ID,
+  APPRENTICE_T1_ID,
+];
 
 export function isControlledRouteId(id: string): boolean {
   return CONTROLLED_ROUTE_IDS.includes(id);

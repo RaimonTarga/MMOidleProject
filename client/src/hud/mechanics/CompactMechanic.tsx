@@ -5,7 +5,6 @@ import { useOrderView } from '../../ui/class/useOrderView';
 import { LoadoutAmmoCompact } from './ReloadMechanic';
 import { ResolveCompact } from './ResolvePips';
 import type { MechanicViewModel, SummonerMechanicModel } from './types';
-import type { MechanicViewModel } from './types';
 import { usePayoffsView } from '../../ui/class/usePayoffsView';
 import { SigilReadout } from '../SigilReadout';
 
