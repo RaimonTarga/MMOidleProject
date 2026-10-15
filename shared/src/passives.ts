@@ -222,6 +222,12 @@ export const DEFENSE_KEYS = [
   'apprentice.cold-comfort',  // Cold Comfort: Recovery multiplied while an enemy carrying your sigils is frozen or brittle
   'apprentice.ashguard',  // Ashguard: a burning hit on you lays a sigil on its shooter
   'apprentice.banked-coals',  // Banked Coals: Recovery rises this much per step of the Heat while three or more enemies carry your sigils
+  'apprentice.charnel',  // Charnel Rod: your hits also lay a sigil on the nearest risen enemy
+  'apprentice.gravewrap',  // Gravewrap: a risen enemy carrying your sigils can't hit you for this many seconds after it rises
+  'apprentice.last-rites',  // Last Rites: Recovery rises this much per risen enemy carrying your sigils (capped)
+  'apprentice.abyssal',  // Abyssal Censer: sigils tick this much harder for each different debuff on their carrier (capped)
+  'apprentice.deep-ward',  // Deep Ward: while you carry three or more debuffs, each enemy with a full bar deals this much less to you
+  'apprentice.tidal-draw',  // Tidal Draw: each debuff you move or wash off heals you this share of max HP
   'defense.recovery-hit-pct',         // Cairnstone: a hit over this share of max HP...
   'defense.recovery-hit-x',           // ...multiplies the Recovery share by this for a few seconds
   'squire.recovery-riposte-x',        // Counterbalance: after a Riposte, the Recovery share is multiplied by this

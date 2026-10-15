@@ -32,6 +32,7 @@ import { applyEnemyShield } from '../../../combat/engine/monsterMechanics';
 import { isConcealedEntity, isInvulnerableMonster } from '../../../combat/invulnerability';
 import { momentActive } from '../../../combat/moments/moments';
 import { FROZEN_EFFECT } from '../../../combat/status/frost';
+import { isShelled } from '../../../combat/ai/shellUp';
 import { monsterIgnoresControl } from '../../../combat/status/controlImmunity';
 import { applyMonsterRoot, applyMonsterSlow, monsterHasLiveRoot } from '../../../combat/status/monsterControl';
 import { applyHealToPlayer } from '../../../defense/regen/healing';
@@ -51,6 +52,7 @@ import {
 } from './constants';
 import { laySigils, nearestTo, payoffMult, payoffsOf, PIECES, sigilsOn, spend, type Payoffs } from './sigils';
 import { firePayoffT3, ripestAge, seepBurst, snagNeighbours, specParam, surfaced } from './sigilsT3';
+import { dirgeBlast, firstAmbusherHit, hidersInReach, pressureHold, recoilBack, stampSmoke, type RecoilSource } from './sigilsT4';
 import type { ApprenticePiece } from '@mmo-idle/shared';
 
 const FUSE_AT = 'apprentice.fuseAt';
@@ -105,6 +107,8 @@ export function fleesOrKites(monster: MonsterEntity): boolean {
 /** A moment holds, with `target-flees` also reading an ordinary fleeing or kiting target. */
 export function momentHolds(world: World, player: PlayerEntity, moment: MomentId, target: MonsterEntity | undefined, now: number): boolean {
   if (momentActive(world, player, moment, undefined, now)) return true;
+  // The shared `target-shielded` moment only reads a barrier; a shell (Shell Up) counts here too.
+  if (moment === 'target-shielded' && target !== undefined && isShelled(target, now)) return true;
   return moment === 'target-flees' && target !== undefined && fleesOrKites(target);
 }
 
@@ -133,6 +137,8 @@ export interface DetonateOptions {
   immediate?: boolean;
   /** Cinderfall: everything around the target also takes this share of the blast. */
   splash?: { radius: number; share: number };
+  /** Pressure Fuse: the held-back blast going off as the enemy resurfaces. */
+  damageMult?: number;
 }
 
 const distFromPlayer = (player: PlayerEntity, monster: MonsterEntity): number =>
@@ -159,6 +165,9 @@ export function detonate(
   if (chain.has(target.isMonster.id)) return;
   let damage = sigilBlast(player, target, payoffPct);
   if (damage <= 0) return;
+  // Pressure Fuse: a Detonate on an enemy out of reach waits, and goes off doubled when it resurfaces.
+  if (pressureHold(p, target, opts.damageMult !== undefined)) return;
+  damage *= opts.damageMult ?? 1;
   // Long Fuse: every detonation waits, and grows with everything laid meanwhile.
   if (p.specialization === SPEC_LONG_FUSE && !opts.immediate) {
     if (getResource(target.tracksCombat, FUSE_AT) <= now) setResource(target.tracksCombat, FUSE_AT, now + specParam(p, 'fuseMs', 2000));
@@ -181,9 +190,11 @@ export function detonate(
   }
   spend(target);
   applyPlayerAoeTo(world, player, [target], Math.max(1, damage), 'player', {}, {});
+  stampSmoke(world, p, [target]);
   if (opts.splash) {
     const around = playerAoeTargets(world, player, at, opts.splash.radius, id).filter((monster) => monster.hasHealth.hp > 0 && !chain.has(monster.isMonster.id));
     if (around.length > 0) applyPlayerAoeTo(world, player, around, Math.max(1, damage * opts.splash.share), 'player', {}, {});
+    stampSmoke(world, p, around);
   }
   // Afterburn: a detonation leaves part of its sigils burning on the target.
   if (p.specialization === SPEC_AFTERBURN && target.hasHealth.hp > 0) {
@@ -206,6 +217,8 @@ export function detonate(
       .sort((a, b) => distFromPlayer(player, b) - distFromPlayer(player, a))[0];
     if (furthest) detonate(world, player, p, furthest, PIECES.get('apprentice-signal-fire')?.params['payoffPct'] ?? payoffPct, now, chain, { immediate: true });
   }
+  // Dirge: a Detonate also sets off your sigils on every risen enemy in the fight.
+  if (topLevel) dirgeBlast(world, player, p, chain, (risen) => detonate(world, player, p, risen, payoffPct, now, chain, { immediate: true }));
   if (p.discipline !== FIRE_DISCIPLINE) return;
   const hairTrigger = p.specialization === SPEC_HAIR_TRIGGER;
   for (const other of neighboursOf(world, player, p, at, dp['chainRadius'] ?? 160, id)) {
@@ -300,10 +313,12 @@ export function firePayoffT2(world: World, player: PlayerEntity, p: Payoffs, pie
       if (!pending || world.tickCounter - pending.tick > 2) return false;
       recoilPending.delete(player);
       let any = false;
-      for (const id of pending.casters) {
-        const caster = world.getMonsterEntity(id);
+      for (const source of pending.casters) {
+        const caster = world.getMonsterEntity(source.id);
         if (!caster || caster.hasHealth.hp <= 0) continue;
         laySigils(world, player, caster, p.cap, p.cap);
+        // Recoil II: the caster also suffers its own mark or slow.
+        if ((p.ranks.get('apprentice-recoil') ?? 1) >= 2) recoilBack(world, player, caster, source);
         any = true;
       }
       return any;
@@ -316,15 +331,17 @@ export function firePayoffT2(world: World, player: PlayerEntity, p: Payoffs, pie
 // ── Watching what lands on you (Recoil, Sun-Ward, Cool Draught) ──────────────
 
 const seenDebuffs = new WeakMap<PlayerEntity, Set<string>>();
-const recoilPending = new WeakMap<PlayerEntity, { tick: number; casters: string[] }>();
+const recoilPending = new WeakMap<PlayerEntity, { tick: number; casters: RecoilSource[] }>();
 
 /** The marks, slows and curses on you (not poison or bleed): `id|caster`. */
-function currentDebuffs(player: PlayerEntity): Map<string, { sourceId: string }> {
-  const out = new Map<string, { sourceId: string }>();
+function currentDebuffs(player: PlayerEntity): Map<string, RecoilSource & { sourceId: string }> {
+  const out = new Map<string, RecoilSource & { sourceId: string }>();
   for (const effect of player.tracksCombat.statusEffects) {
     if (effect.stacks <= 0 || effect.remainingMs === 0) continue;
     if (!isHarmfulPlayerStatusEffect(effect.id, effect.data) || isMonsterDotStatusEffectId(effect.id)) continue;
-    out.set(`${effect.id}|${effect.sourceId}`, { sourceId: effect.sourceId });
+    out.set(`${effect.id}|${effect.sourceId}`, {
+      sourceId: effect.sourceId, id: effect.sourceId, effectId: effect.id, remainingMs: effect.remainingMs, speedMult: effect.data['speedMult'],
+    });
   }
   return out;
 }
@@ -333,11 +350,12 @@ function watchDebuffs(world: World, player: PlayerEntity, carriers: number): voi
   const passives = player.usesSkills.passives;
   const current = currentDebuffs(player);
   const before = seenDebuffs.get(player) ?? new Set<string>();
-  const casters: string[] = [];
+  const casters: RecoilSource[] = [];
   const sunWard = Math.min(0.5, carriers * (passives['apprentice.sun-ward'] ?? 0));
-  for (const [key, { sourceId }] of current) {
+  for (const [key, source] of current) {
     if (before.has(key)) continue;
-    if (world.getMonsterEntity(sourceId)) casters.push(sourceId);
+    const { sourceId } = source;
+    if (world.getMonsterEntity(sourceId)) casters.push(source);
     // Sun-Ward: a mark or slow landing on you is shorter for each enemy carrying your sigils.
     if (sunWard > 0) {
       for (const effect of player.tracksCombat.statusEffects) {
@@ -363,7 +381,7 @@ function watchDebuffs(world: World, player: PlayerEntity, carriers: number): voi
 /** The enemies that carried your sigils last tick, so a dying carrier's sigils can pass on. */
 const carried = new WeakMap<PlayerEntity, Map<string, MonsterEntity>>();
 
-function passOn(world: World, player: PlayerEntity, p: Payoffs, from: { x: number; y: number }, count: number, exclude: string, age = 0): void {
+export function passOn(world: World, player: PlayerEntity, p: Payoffs, from: { x: number; y: number }, count: number, exclude: string, age = 0): void {
   let left = count;
   for (const monster of nearestTo(neighboursOf(world, player, p, from, NEIGHBOUR_PX, exclude), from)) {
     if (left <= 0) break;
@@ -421,7 +439,9 @@ export function updateApprenticeT2(world: World, player: PlayerEntity, p: Payoff
     }
     // Poison: a full carrier keeps passing a sigil to its nearest neighbour, for free.
     if (plague && stacks >= p.cap && now >= getResource(monster.tracksCombat, PLAGUE_AT)) {
-      const other = nearestTo(neighboursOf(world, player, p, monster.hasPosition.current, NEIGHBOUR_PX, id), monster.hasPosition.current)
+      // Spread II: the plague also reaches a hiding or fleeing enemy anywhere within your reach.
+      const hiders = (p.ranks.get('apprentice-spread') ?? 1) >= 2 ? hidersInReach(world, player, id) : [];
+      const other = [...hiders, ...nearestTo(neighboursOf(world, player, p, monster.hasPosition.current, NEIGHBOUR_PX, id), monster.hasPosition.current)]
         .find((candidate) => sigilsOn(player, candidate) < p.cap);
       if (other) {
         laySigils(world, player, other, 1, p.cap, false, ripeAge(p, monster));
@@ -494,13 +514,16 @@ export function registerApprenticeT2(): void {
       const wither = getStatusEffect(monster.tracksCombat, WITHER_EFFECT_ID);
       if (wither && wither.remainingMs !== 0) ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - (wither.data['lessPct'] ?? 0))));
       const skin = player.usesSkills.passives['apprentice.second-skin'] ?? 0;
-      if (skin > 0 && isAmbusher(monster)) {
+      if (isAmbusher(monster)) {
         let hit = ambusherHits.get(player);
         if (!hit) ambusherHits.set(player, (hit = new Set<string>()));
         if (hit.size > 64) hit.clear();
         if (!hit.has(monster.isMonster.id)) {
           hit.add(monster.isMonster.id);
-          ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - skin)));
+          if (skin > 0) ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - skin)));
+          // Taint and Cold Shoulder: the same first blow, halved, with its own rider.
+          const p = payoffsOf(world, player);
+          if (p) ctx.damage = firstAmbusherHit(world, player, p, monster, ctx.damage);
         }
       }
     }

@@ -43,6 +43,7 @@ import {
 } from './constants';
 import { NUMBED_UNTIL, PIECES, laySigils, nearestTo, payoffsOf, sigilsOn, spend, type Payoffs } from './sigils';
 import { detonate, freezeOrBrittle, trophyParam } from './sigilsT2';
+import { firePayoffT4 } from './sigilsT4';
 
 /** How near an enemy must be to be numbed by Ice Veil (px). PLACEHOLDER. */
 const ICE_VEIL_RADIUS = 260;
@@ -160,12 +161,14 @@ export function firePayoffT3(world: World, player: PlayerEntity, p: Payoffs, pie
     }
     case 'apprentice-cinderfall': {
       if (sigilsOn(player, target) <= 0) return false;
-      detonate(world, player, p, target, params['payoffPct'] ?? 0.8, now, new Set<string>(), { splash: { radius: params['radius'] ?? 180, share: params['share'] ?? 0.5 } });
+      // Cinderfall II: each step of the Heat widens the blast.
+      const widen = (p.ranks.get('apprentice-cinderfall') ?? 1) >= 2 ? 1 + heatOf(player) * (params['heatWiden'] ?? 0) : 1;
+      detonate(world, player, p, target, params['payoffPct'] ?? 0.8, now, new Set<string>(), { splash: { radius: (params['radius'] ?? 180) * widen, share: params['share'] ?? 0.5 } });
       return true;
     }
     // Signal Fire rides every detonation of your target (inside `detonate`); Melt answers the Chill (below).
     default:
-      return false;
+      return firePayoffT4(world, player, p, piece, target, now);
   }
 }
 

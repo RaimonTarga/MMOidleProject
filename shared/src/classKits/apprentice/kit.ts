@@ -53,8 +53,8 @@ function specialization(entry: Omit<SpecializationDef, 'classId' | 'params'> & {
   return { classId: 'dot', params: {}, ...entry };
 }
 
-function leaf(entry: Omit<LeafDef, 'classId' | 'params' | 'tier' | 'column'> & { column: ApprenticeLeafColumn }): LeafDef {
-  return { classId: 'dot', params: {}, tier: 4, ...entry };
+function leaf(entry: Omit<LeafDef, 'classId' | 'params' | 'tier' | 'column'> & { column: ApprenticeLeafColumn; params?: LeafDef['params'] }): LeafDef {
+  return { classId: 'dot', tier: 4, ...entry, params: entry.params ?? {} };
 }
 
 const POISON = 'apprentice-poison';
@@ -206,7 +206,8 @@ const PIECES: readonly ApprenticePiece[] = [
   }),
   payoff({
     id: 'apprentice-cinderfall',
-    params: { payoffPct: 0.8, radius: 180, share: 0.5, cooldownMs: 1500 },
+    // `heatWiden` (rank 2, PLACEHOLDER): the radius grows by this share for each step of the Heat.
+    params: { payoffPct: 0.8, radius: 180, share: 0.5, cooldownMs: 1500, heatWiden: 0.1 },
     name: 'Cinderfall',
     family: 'fire',
     sidegradeOf: 'apprentice-detonate',
@@ -214,8 +215,10 @@ const PIECES: readonly ApprenticePiece[] = [
     ranks: [{ rank: 2, text: 'Each step of the Heat widens the blast.' }],
   }),
   // ── T4 (§9.16) ──
+  // T4 numbers are PLACEHOLDERS (the bible names the shapes, not the values).
   payoff({
     id: 'apprentice-frostcrack',
+    params: { cooldownMs: 5000 },
     name: 'Frostcrack',
     family: 'frost',
     moment: 'target-shielded',
@@ -230,6 +233,7 @@ const PIECES: readonly ApprenticePiece[] = [
   }),
   payoff({
     id: 'apprentice-transference',
+    params: { cooldownMs: 6000 },
     name: 'Transference',
     family: 'poison',
     text: "Spends the target's sigils to move one of the debuffs on you onto it.",
@@ -322,7 +326,8 @@ const TROPHIES: readonly ApprenticeTrophy[] = [
       { rank: 2, bossTier: 2, text: 'The held enemy also takes more damage from your sigils as they tick.', params: { tickDamageTakenPct: 0.2 } },
       // PLACEHOLDER (no twist in the bible): it holds longer still.
       { rank: 3, bossTier: 3, text: 'Petrify grows stronger.', params: { holdMult: 2 } },
-      { rank: 4, bossTier: 4, text: 'Petrify grows stronger.' },
+      // PLACEHOLDER (no twist in the bible, "the last rank"): it holds longer still.
+      { rank: 4, bossTier: 4, text: 'Petrify grows stronger.', params: { holdMult: 2.4 } },
     ],
   }),
   apprenticeTrophy({
@@ -348,7 +353,7 @@ const TROPHIES: readonly ApprenticeTrophy[] = [
     ranks: [
       // PLACEHOLDER (no twist in the bible): they tick faster again.
       { rank: 2, bossTier: 3, text: 'Scent grows stronger.', params: { tickMult: 2 } },
-      { rank: 3, bossTier: 4, text: 'Scent grows stronger.' },
+      { rank: 3, bossTier: 4, text: 'Scent grows stronger.', params: { tickMult: 2.5 } },
     ],
   }),
   apprenticeTrophy({
@@ -360,7 +365,7 @@ const TROPHIES: readonly ApprenticeTrophy[] = [
     ranks: [
       // PLACEHOLDER (no twist in the bible): a Spread passes to one more enemy.
       { rank: 2, bossTier: 3, text: 'Dune Wind grows stronger.', params: { extraNeighbours: 1 } },
-      { rank: 3, bossTier: 4, text: 'Dune Wind grows stronger.' },
+      { rank: 3, bossTier: 4, text: 'Dune Wind grows stronger.', params: { extraNeighbours: 2 } },
     ],
   }),
   apprenticeTrophy({
@@ -392,6 +397,8 @@ const TROPHIES: readonly ApprenticeTrophy[] = [
   }),
   apprenticeTrophy({
     id: 'apprentice-relic-trench',
+    // PLACEHOLDER: a Detonate held back by an out-of-reach enemy goes off this many times as hard.
+    params: { pressureMult: 2 },
     lineage: 'trench',
     name: 'Pressure Fuse',
     kind: 'payoff',
@@ -503,11 +510,12 @@ const SPECIALIZATIONS: readonly SpecializationDef[] = [
   }),
 ];
 
-/** T4's leaves (§9.7): "what reaches you?", answered in each discipline's style. */
+/** T4's leaves (§9.7): "what reaches you?", answered in each discipline's style. The `params` are PLACEHOLDERS. */
 const LEAVES: readonly LeafDef[] = [
   // Poison: they catch it
   leaf({
     id: 'apprentice-thick-air',
+    params: { slowPct: 0.4, slowMs: 1500 },
     disciplineId: POISON,
     column: 'charger',
     name: 'Thick Air',
@@ -515,6 +523,7 @@ const LEAVES: readonly LeafDef[] = [
   }),
   leaf({
     id: 'apprentice-taint',
+    params: { lessPct: 0.5 },
     disciplineId: POISON,
     column: 'ambusher',
     name: 'Taint',
@@ -522,6 +531,7 @@ const LEAVES: readonly LeafDef[] = [
   }),
   leaf({
     id: 'apprentice-windborne',
+    params: { everyMs: 1000 },
     disciplineId: POISON,
     column: 'shooter',
     name: 'Windborne',
@@ -530,6 +540,7 @@ const LEAVES: readonly LeafDef[] = [
   // Fire: blast them back
   leaf({
     id: 'apprentice-fire-ward',
+    params: { everyMs: 4000, knockback: 120 },
     disciplineId: FIRE,
     column: 'charger',
     name: 'Fire Ward',
@@ -537,6 +548,7 @@ const LEAVES: readonly LeafDef[] = [
   }),
   leaf({
     id: 'apprentice-tinderbox',
+    params: { everyMs: 8000, radius: 400 },
     disciplineId: FIRE,
     column: 'ambusher',
     name: 'Tinderbox',
@@ -544,6 +556,7 @@ const LEAVES: readonly LeafDef[] = [
   }),
   leaf({
     id: 'apprentice-smokescreen',
+    params: { ms: 2000, lessPct: 0.5 },
     disciplineId: FIRE,
     column: 'shooter',
     name: 'Smokescreen',
@@ -552,6 +565,7 @@ const LEAVES: readonly LeafDef[] = [
   // Frost: lock them out
   leaf({
     id: 'apprentice-frozen-step',
+    params: { holdMs: 1500 },
     disciplineId: FROST,
     column: 'charger',
     name: 'Frozen Step',
@@ -559,6 +573,7 @@ const LEAVES: readonly LeafDef[] = [
   }),
   leaf({
     id: 'apprentice-cold-shoulder',
+    params: { lessPct: 0.5, holdMs: 1500 },
     disciplineId: FROST,
     column: 'ambusher',
     name: 'Cold Shoulder',
@@ -566,6 +581,7 @@ const LEAVES: readonly LeafDef[] = [
   }),
   leaf({
     id: 'apprentice-frost-mirror',
+    params: { everyMs: 8000, holdMs: 1500 },
     disciplineId: FROST,
     column: 'shooter',
     name: 'Frost Mirror',
