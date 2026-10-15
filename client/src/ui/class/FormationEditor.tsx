@@ -217,6 +217,12 @@ export function FormationEditor({ view }: { view: ClassScreenView }) {
           {` ${formation.specialization.text}`}
         </p>
       )}
+      {formation.leaf && (
+        <p className="formation-editor__discipline">
+          <span className="class-panel__name">{formation.leaf.name}</span>
+          {` ${formation.leaf.text}`}
+        </p>
+      )}
       <div
         className="formation-editor__pips"
         role="img"

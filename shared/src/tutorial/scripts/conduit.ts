@@ -18,6 +18,9 @@
  * Tier 3 (T3-W2, bible §7.6, §7.16) follows the Tier 2 stretch: the specialization pick, then the
  * five returning zones (Mountain, Cave, Swamp, Jungle, Desert) and the two new ones (Tundra,
  * Volcanic), three beats each, the same way.
+ *
+ * Tier 4 (T4-W2, bible §7.7, §7.16) follows the Tier 3 stretch: the leaf pick, then the Mountain,
+ * Tundra, Jungle, Desert and Volcanic again and the two new zones (Graveyard, Trench), the same way.
  */
 import { LESSON_ZONE_LEVEL } from '../../classKits/kitHelpers';
 import { absoluteZoneLevel } from '../../classKits/registry';
@@ -289,6 +292,83 @@ export function buildConduitT3Beats(): TutorialBeat[] {
   return beats;
 }
 
+/** In the order the guide walks them: Tier 4's order in the bible (§7.16), the two new zones last. */
+const T4_ZONES: readonly T2Zone[] = [
+  {
+    biome: 'mountain', zone: 'Mountain',
+    lesson: 'Avalanche is bound. It costs three Command, the most of any summon, and every few seconds it charges through a line of enemies and knocks them down.',
+    soul: 'The Mountain boss fell. Your Stoneplate Soul reached its last rank.',
+  },
+  {
+    biome: 'tundra', zone: 'Tundra',
+    lesson: 'Icewarden is bound. It wraps your most hurt summon in an ice shell that soaks damage.',
+    soul: 'The Tundra boss fell. Your Rime-Mammoth Soul is rank 2, so its chill is stronger.',
+  },
+  {
+    biome: 'jungle', zone: 'Jungle',
+    lesson: 'Dartcaller is bound. Its poison darts ricochet to a second enemy.',
+    soul: 'The Jungle boss fell. Your Dread-Gorger Soul is rank 3, so the chase is stronger still.',
+  },
+  {
+    biome: 'desert', zone: 'Desert',
+    lesson: 'Mirage is bound. It conjures a copy of you that draws attacks for a few seconds, and bosses that go for the player chase it.',
+    soul: 'The Desert boss fell. Your Dune-Stalker Soul is rank 3, so the mark grows faster still.',
+  },
+  {
+    biome: 'volcanic', zone: 'Volcanic',
+    lesson: 'Obsidian Tortoise is bound. It costs two Command, and every so often it withdraws into its shell and takes almost no damage while it keeps taunting.',
+    soul: 'The Volcanic boss fell. Your Magma Salamander Soul is rank 2, so the fight ramps harder.',
+  },
+  {
+    biome: 'graveyard', zone: 'Graveyard',
+    lesson: 'Gravecaller is bound. When one of your summons dies, it rises once as a spectral husk before it goes to the rebuild queue. Area damage matters most here.',
+    soul: 'The Graveyard boss fell. The Charnel-Crown Soul is yours: enemies your summons kill rise for a while as thralls.',
+  },
+  {
+    biome: 'trench', zone: 'Trench',
+    lesson: 'Abyssal Warden is bound. Every few seconds it pulls a debuff off a nearby summon, or off you, onto itself.',
+    soul: 'The Trench boss fell. The Elder Serpent Soul is yours: your summons toughen as a fight goes on.',
+  },
+];
+
+const T4_LEAF_SAY =
+  'Tier 4 is open. Pick a leaf in the Passive Tree: a small pick for your discipline, on how your summons die, come back, or survive. The Graveyard and the Trench are new.';
+
+/** The Tier 4 stretch after the Tier 3 one: the leaf pick, then every T4 zone (bible §7.7, §7.16). */
+export function buildConduitT4Beats(): TutorialBeat[] {
+  const beats: TutorialBeat[] = [];
+  let arrival = T4_LEAF_SAY;
+  for (const entry of T4_ZONES) {
+    const chapter = `Tier 4: ${entry.zone}`;
+    const lessonLevel = absoluteZoneLevel({ kind: 'zone', biome: entry.biome, tier: 4, level: LESSON_ZONE_LEVEL });
+    const cap = biomeLevelCap(4, entry.biome);
+    beats.push(
+      t2Farm(`t4:${entry.biome}`, chapter, arrival, `Fighting in the ${entry.zone}.`, entry.biome, lessonLevel, 4),
+      t2Farm(`t4:${entry.biome}-lesson`, chapter, entry.lesson, `Fighting through the ${entry.zone}.`, entry.biome, cap, 4),
+      {
+        id: `t4:${entry.biome}-boss`,
+        chapter,
+        say: `The ${entry.zone} boss is open again. Clear the guards and wake it: its Soul gets stronger, or joins you.`,
+        waiting: `Fighting for the ${entry.zone} Soul.`,
+        steps: [{ type: 'attemptBoss', biomeGroup: entry.biome, tier: 4 }],
+      },
+    );
+    arrival = entry.soul;
+  }
+  const last = T4_ZONES[T4_ZONES.length - 1];
+  beats.push({
+    id: 't4:done',
+    chapter: 'Tier 4',
+    say: `${arrival} That is every Tier 4 summon and Soul.`,
+    steps: [{
+      type: 'farm',
+      at: { kind: 'biome', biomeGroup: last.biome, tier: 4 },
+      until: { type: 'bossCleared', biomeGroup: last.biome, tier: 4 },
+    }],
+  });
+  return beats;
+}
+
 /** Beats that follow the opening for a Conduit. */
 export function buildConduitBeats(): TutorialBeat[] {
   const seal = buildSealRouteBeats();
@@ -315,5 +395,6 @@ export function buildConduitBeats(): TutorialBeat[] {
     sealBeat(seal, 'farewell'),
     ...buildConduitT2Beats(),
     ...buildConduitT3Beats(),
+    ...buildConduitT4Beats(),
   ];
 }

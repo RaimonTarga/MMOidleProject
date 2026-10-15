@@ -66,6 +66,46 @@ export const ACCEPTED_GAPS: Readonly<Record<string, string>> = {
     'Same carrier read: the targetStatusMeta entry exists; the audit only credits a badge to a monster or player carrier.',
   'conduit-hibernate: no authored icon lookup':
     'Same carrier read: the conceptIcons alias exists (a stand-in); the audit only credits icons to a monster or player carrier.',
+  'conduit-ice-shell: player: no tile/projection':
+    'Ice Shell wraps a SUMMON, and summons show no statuses yet (the audit reads a minion carrier as unknown, as for conduit-bark). The client copy, badge and icon exist for the day a summon status strip does.',
+  'conduit-ice-shell: target: fallback help':
+    'Same carrier read: the statusHelp entry exists; the audit only credits copy to a monster or player carrier.',
+  'conduit-ice-shell: target: fallback badge':
+    'Same carrier read: the targetStatusMeta entry exists; the audit only credits a badge to a monster or player carrier.',
+  'conduit-ice-shell: no authored icon lookup':
+    'Same carrier read: the conceptIcons alias exists (a stand-in); the audit only credits icons to a monster or player carrier.',
+  'conduit-withdraw: player: no tile/projection':
+    'Withdraw draws a SUMMON into its shell, and summons show no statuses yet (the audit reads a minion carrier as unknown, as for conduit-bark). The client copy, badge and icon exist for the day a summon status strip does.',
+  'conduit-withdraw: target: fallback help':
+    'Same carrier read: the statusHelp entry exists; the audit only credits copy to a monster or player carrier.',
+  'conduit-withdraw: target: fallback badge':
+    'Same carrier read: the targetStatusMeta entry exists; the audit only credits a badge to a monster or player carrier.',
+  'conduit-withdraw: no authored icon lookup':
+    'Same carrier read: the conceptIcons alias exists (a stand-in); the audit only credits icons to a monster or player carrier.',
+  'conduit-last-stand: player: no tile/projection':
+    'Last Stand holds an elite SUMMON at 1 HP, and summons show no statuses yet (the audit reads a minion carrier as unknown, as for conduit-bark). The client copy, badge and icon exist for the day a summon status strip does.',
+  'conduit-last-stand: target: fallback help':
+    'Same carrier read: the statusHelp entry exists; the audit only credits copy to a monster or player carrier.',
+  'conduit-last-stand: target: fallback badge':
+    'Same carrier read: the targetStatusMeta entry exists; the audit only credits a badge to a monster or player carrier.',
+  'conduit-last-stand: no authored icon lookup':
+    'Same carrier read: the conceptIcons alias exists (a stand-in); the audit only credits icons to a monster or player carrier.',
+  'conduit-fall-back: player: no tile/projection':
+    'Fall Back marks a retreating SUMMON, and summons show no statuses yet (the audit reads a minion carrier as unknown, as for conduit-bark). The client copy, badge and icon exist for the day a summon status strip does.',
+  'conduit-fall-back: target: fallback help':
+    'Same carrier read: the statusHelp entry exists; the audit only credits copy to a monster or player carrier.',
+  'conduit-fall-back: target: fallback badge':
+    'Same carrier read: the targetStatusMeta entry exists; the audit only credits a badge to a monster or player carrier.',
+  'conduit-fall-back: no authored icon lookup':
+    'Same carrier read: the conceptIcons alias exists (a stand-in); the audit only credits icons to a monster or player carrier.',
+  'conduit-seal: player: no tile/projection':
+    'Pressure Seal sits on you AND on each SUMMON (the player seal has no tile yet), and summons show no statuses yet (the audit reads a minion carrier as unknown, as for conduit-bark). The client copy, badge and icon exist for the day a summon status strip does.',
+  'conduit-seal: target: fallback help':
+    'Same carrier read: the statusHelp entry exists; the audit only credits copy to a monster or player carrier.',
+  'conduit-seal: target: fallback badge':
+    'Same carrier read: the targetStatusMeta entry exists; the audit only credits a badge to a monster or player carrier.',
+  'conduit-seal: no authored icon lookup':
+    'Same carrier read: the conceptIcons alias exists (a stand-in); the audit only credits icons to a monster or player carrier.',
   'ability-entangled: authored label/help/badge; no status writer or descriptor found':
     'Its writer was an ability keystone, removed with the ability node rows (class-first rework D1). The status and its copy stay with the abilities until task D3 removes them.',
   'ability-immunity: descriptor requires unproduced status: ability-immunity (server/src/systems/player/abilities/abilityBuffs.ts:208)':

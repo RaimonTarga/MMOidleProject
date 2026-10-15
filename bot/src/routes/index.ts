@@ -3,6 +3,7 @@ import type { Route } from "../route/types";
 import { CONDUIT_T1_ID, conduitT1Route } from "./conduitT1";
 import { conduitT2Route } from "./conduitT2";
 import { conduitT3Route } from "./conduitT3";
+import { conduitT4Route } from "./conduitT4";
 import { SLINGER_T1_ID, slingerT1Route } from "./slingerT1";
 import { slingerT2Route } from "./slingerT2";
 import { slingerT3Route } from "./slingerT3";
@@ -30,6 +31,7 @@ import { spiritT3Route } from "./spiritT3";
  * `striker-t3-*` (one per specialization, T3-W2) continue the Striker past the tier-3 promotion; they stay out of the controlled batch list until they have run live.
  * `conduit-t2` continues the Conduit past the tier-2 promotion (T2-W2); it is not yet in the controlled batch list.
  * `conduit-t3` continues it past the tier-3 promotion (T3-W2); same status.
+ * `conduit-t4` continues it past the tier-4 promotion (T4-W2); same status.
  */
 
 /**
@@ -51,6 +53,7 @@ const SQUIRE_T3_ROUTE = squireT3Route();
 const CONDUIT_ROUTE = conduitT1Route();
 const CONDUIT_T2_ROUTE = conduitT2Route();
 const CONDUIT_T3_ROUTE = conduitT3Route();
+const CONDUIT_T4_ROUTE = conduitT4Route();
 const SLINGER_ROUTE = slingerT1Route();
 const SLINGER_T2_ROUTE = slingerT2Route();
 const SLINGER_T3_ROUTE = slingerT3Route();
@@ -71,6 +74,7 @@ export const ROUTES = new Map<string, Route>([
   [CONDUIT_ROUTE.id, CONDUIT_ROUTE],
   [CONDUIT_T2_ROUTE.id, CONDUIT_T2_ROUTE],
   [CONDUIT_T3_ROUTE.id, CONDUIT_T3_ROUTE],
+  [CONDUIT_T4_ROUTE.id, CONDUIT_T4_ROUTE],
   [SLINGER_ROUTE.id, SLINGER_ROUTE],
   [SLINGER_T2_ROUTE.id, SLINGER_T2_ROUTE],
   [SLINGER_T3_ROUTE.id, SLINGER_T3_ROUTE],
