@@ -16,7 +16,6 @@ import {
   getResource,
   getStatusEffect,
   getString,
-  MONSTER_DATABASE,
   removeStatusEffect,
   setResource,
   setString,
@@ -45,8 +44,6 @@ import {
 import { NUMBED_UNTIL, PIECES, laySigils, nearestTo, payoffsOf, sigilsOn, spend, type Payoffs } from './sigils';
 import { detonate, freezeOrBrittle, trophyParam } from './sigilsT2';
 
-/** The Chill stacks on you that count as "its threshold" (the Tundra ramp tops out at 6). PLACEHOLDER. */
-const CHILL_THRESHOLD = 3;
 /** How near an enemy must be to be numbed by Ice Veil (px). PLACEHOLDER. */
 const ICE_VEIL_RADIUS = 260;
 /** Seize also holds with this cap on how long (ms), as in the T1 runtime. */
@@ -110,16 +107,6 @@ const stacksOf = (player: PlayerEntity, id: string): number =>
 
 /** The Heat on you: a step per stack of the Volcanic ramp. */
 export const heatOf = (player: PlayerEntity): number => stacksOf(player, HEAT_EFFECT_ID);
-
-/**
- * A burning hit: a fire attack or a burn applier. STAND-IN until the shared `fire-attack`
- * moment is read (it is vocabulary only today), so Ashguard reads the monster definition.
- */
-function isFireAttack(monster: MonsterEntity): boolean {
-  const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
-  if (!def) return false;
-  return (def.attackStyle ?? '').includes('fire') || (def.dotEffect?.debuffId ?? '').includes('burn');
-}
 
 function isCasting(monster: MonsterEntity, now: number): boolean {
   return chargedCastEndsAt(monster) > now || castedBuffCastEndsAt(monster) > now || monsterAbilityCastEndsAt(monster) > now;
@@ -217,14 +204,11 @@ function meltPlacement(p: Payoffs): PayoffPlacement | undefined {
   return p.config.placements.find((placement) => placement.pieceId === 'apprentice-melt' && placement.moment === 'chill-threshold');
 }
 
-/**
- * The Chill on you reaching its threshold (an edge). STAND-IN: the shared `chill-threshold`
- * moment is vocabulary only, so the edge is read here from the Tundra ramp's stacks.
- */
+/** The shared `chill-threshold` moment turning on (it is a state, so the edge is read here). */
 function watchChill(world: World, player: PlayerEntity, p: Payoffs, now: number): void {
   const cs = player.tracksCombat;
   const chill = cs.statusEffects.find((effect) => effect.id === CHILL_EFFECT_ID && effect.remainingMs !== 0);
-  const over = (chill?.stacks ?? 0) >= CHILL_THRESHOLD;
+  const over = momentActive(world, player, 'chill-threshold', undefined, now);
   const was = chilled.get(player) ?? false;
   chilled.set(player, over);
   if (!over || was) return;
@@ -346,14 +330,14 @@ export function updateApprenticeT3(world: World, player: PlayerEntity, p: Payoff
 // ── Listeners ────────────────────────────────────────────────────────────────
 
 export function registerApprenticeT3(): void {
-  // Ashguard: a burning hit on you lays a sigil on its shooter.
+  // Ashguard: a burning hit on you (the shared `fire-attack` moment) lays a sigil on its shooter.
   registerCombatListener('onDamageTaken', (ctx, world) => {
     if (ctx.attackerType !== 'monster' || ctx.defenderType !== 'player' || ctx.damage <= 0) return;
     const player = ctx.defender as PlayerEntity;
     if ((player.usesSkills.passives['apprentice.ashguard'] ?? 0) <= 0) return;
     const p = payoffsOf(world, player);
     const shooter = ctx.attacker as MonsterEntity;
-    if (!p || shooter.hasHealth.hp <= 0 || !isFireAttack(shooter)) return;
+    if (!p || shooter.hasHealth.hp <= 0 || !momentActive(world, player, 'fire-attack', undefined, Date.now())) return;
     laySigils(world, player, shooter, 1, p.cap);
   });
 }

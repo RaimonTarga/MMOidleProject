@@ -5,7 +5,8 @@
  *
  * After the tier-2 promotion the guide goes on through the T2 table (§9.16): the school pick,
  * then each T2 zone as a farm to its lesson, the lesson line (the farm goes on to the zone's
- * cap) and the boss line, which names the trophy the kill ranks up.
+ * cap) and the boss line, which names the trophy the kill ranks up. The T3 stretch (§9.16) repeats
+ * that shape for the seven T3 zones, opening with the specialization pick.
  */
 import { APPRENTICE_KIT } from '../../classKits/apprentice/kit';
 import { LESSON_ZONE_LEVEL } from '../../classKits/kitHelpers';
@@ -58,8 +59,8 @@ function splitAtLesson(beat: TutorialBeat): TutorialBeat[] {
   ];
 }
 
-/** What each T2 zone gives (bible §9.16): its lesson (a new piece or a rank-up) and its trophy line. */
-interface T2Zone {
+/** What each zone gives at a tier (bible §9.16): its lesson (a new piece or a rank-up) and its trophy line. */
+interface TierZone {
   biome: string;
   name: string;
   chapter: string;
@@ -69,7 +70,7 @@ interface T2Zone {
 }
 
 /** The T2 stretch in the bible's table order. Lines name moments as the Payoff rules do. */
-const T2_ZONES: readonly T2Zone[] = [
+const T2_ZONES: readonly TierZone[] = [
   {
     biome: 'plains',
     name: 'Plains',
@@ -128,29 +129,93 @@ const T2_ZONES: readonly T2Zone[] = [
   },
 ];
 
+/**
+ * The T3 stretch in the bible's table order (the Plains and Forest have retired). Lines name the
+ * trophy rank-ups the bible gives without a twist as "stronger"; the Jungle's, Desert's and
+ * Volcanic's gear jobs are not taught here.
+ */
+const T3_ZONES: readonly TierZone[] = [
+  {
+    biome: 'mountain',
+    name: 'Mountain',
+    chapter: 'The Mountain, Tier 3',
+    intro: 'Tier 3: pick a specialization in the Passive Tree, under your school. Fight up the Mountain, now with double charges.',
+    lesson: { pieceId: 'apprentice-seize', rank: 2, say: 'Seize is stronger: it catches a second wind-up within a few seconds.' },
+    boss: 'The Mountain boss ranks up Petrify: a longer hold. Clear the guards, then the altar.',
+  },
+  {
+    biome: 'cave',
+    name: 'Cave',
+    chapter: 'The Cave, Tier 3',
+    intro: 'The Cave now chases through tunnels. Fight through it.',
+    lesson: { pieceId: 'apprentice-seep', rank: 2, say: 'Seep is stronger: when the enemy surfaces, its sigils burst onto every enemy near the spot.' },
+    boss: 'The Cave boss ranks up Brood Sigils to its last rank: one every second. Clear the guards, then the altar.',
+  },
+  {
+    biome: 'swamp',
+    name: 'Swamp',
+    chapter: 'The Swamp, Tier 3',
+    intro: 'The Swamp has spores, detonating pools and a drag. Fight through it.',
+    lesson: { pieceId: 'apprentice-spore-burst', rank: 1, say: 'Spore Burst is learned: spend the sigils on a target to burst half onto every enemy around it. Place it beside Spread.' },
+    boss: 'The Swamp boss ranks up Glut to its last rank: a wider drain. Clear the guards, then the altar.',
+  },
+  {
+    biome: 'jungle',
+    name: 'Jungle',
+    chapter: 'The Jungle, Tier 3',
+    intro: 'The Jungle again, with pursuit and flight. Fight through it.',
+    lesson: { pieceId: 'apprentice-snag', rank: 2, say: 'Snag is stronger: the root also holds every enemy near the snagged one.' },
+    boss: 'The Jungle boss ranks up Scent: sigils on a runner tick even faster. Clear the guards, then the altar.',
+  },
+  {
+    biome: 'desert',
+    name: 'Desert',
+    chapter: 'The Desert, Tier 3',
+    intro: 'The Desert again, with postures and a dash-escape. Fight through it.',
+    lesson: { pieceId: 'apprentice-signal-fire', rank: 1, say: 'Signal Fire is learned: a detonation on your target also sets off your sigils on the enemy furthest from you.' },
+    boss: 'The Desert boss ranks up Dune Wind: the leap reaches further. Clear the guards, then the altar.',
+  },
+  {
+    biome: 'tundra',
+    name: 'Tundra',
+    chapter: 'The Tundra',
+    intro: 'The Tundra is new: a Chill that builds on you, and bosses that accept no control. Fight through it.',
+    lesson: { pieceId: 'apprentice-melt', rank: 1, say: 'Melt is learned: when the Chill on you reaches its threshold, you spend the sigils of the nearest enemy to melt it off. Place it on that moment.' },
+    boss: 'The Tundra boss gives Frostheart: every Seize leaves its target brittle after. Clear the guards, then the altar.',
+  },
+  {
+    biome: 'volcanic',
+    name: 'Volcanic',
+    chapter: 'The Volcanic',
+    intro: 'The Volcanic is new: Heat, vents and shells. Fight through it.',
+    lesson: { pieceId: 'apprentice-cinderfall', rank: 1, say: 'Cinderfall is learned: a detonation that hits everything around the target, each paying a share. Place it beside Detonate.' },
+    boss: 'The Volcanic boss gives Magma Core: sigils on a shelled enemy tick through the shell. Clear the guards, then the altar.',
+  },
+];
+
 /** The zone's biome level at which its lesson arrives, as the kit counts it. */
-function t2LessonLevel(zone: T2Zone): number {
+function lessonLevel(zone: TierZone): number {
   const lesson = APPRENTICE_KIT.lessons.find((entry) => entry.pieceId === zone.lesson.pieceId && entry.rank === zone.lesson.rank);
   if (lesson?.source.kind !== 'zone') throw new Error(`apprentice tutorial: ${zone.lesson.pieceId} has no zone lesson`);
   return absoluteZoneLevel(lesson.source);
 }
 
-/** The T2 zones as beats: the farm to the lesson, the lesson (farm on to the cap), the boss. */
-function buildT2Beats(): TutorialBeat[] {
-  return T2_ZONES.flatMap((zone): TutorialBeat[] => {
-    const at = { kind: 'biome' as const, biomeGroup: zone.biome, tier: 2 };
-    const lessonLevel = t2LessonLevel(zone);
-    const cap = biomeLevelCap(2, zone.biome);
+/** A tier's zones as beats: the farm to the lesson, the lesson (farm on to the cap), the boss. */
+function buildTierBeats(tier: number, zones: readonly TierZone[]): TutorialBeat[] {
+  return zones.flatMap((zone): TutorialBeat[] => {
+    const at = { kind: 'biome' as const, biomeGroup: zone.biome, tier };
+    const lessonAt = lessonLevel(zone);
+    const cap = biomeLevelCap(tier, zone.biome);
     const lessonId = zone.lesson.rank === 1 ? zone.lesson.pieceId : `${zone.lesson.pieceId}-${zone.lesson.rank}`;
     const waiting = `Fighting in the ${zone.name}.`;
     return [
       {
-        id: `apprentice-t2-${zone.biome}`,
+        id: `apprentice-t${tier}-${zone.biome}`,
         chapter: zone.chapter,
         say: zone.intro,
         waiting,
-        progress: [{ type: 'biomeLevel', biomeGroup: zone.biome, level: lessonLevel }],
-        steps: [{ type: 'farm', at, until: { type: 'biomeLevelAtLeast', biomeGroup: zone.biome, level: lessonLevel } }],
+        progress: [{ type: 'biomeLevel', biomeGroup: zone.biome, level: lessonAt }],
+        steps: [{ type: 'farm', at, until: { type: 'biomeLevelAtLeast', biomeGroup: zone.biome, level: lessonAt } }],
       },
       {
         id: `${lessonId}-lesson`,
@@ -161,11 +226,11 @@ function buildT2Beats(): TutorialBeat[] {
         steps: [{ type: 'farm', at, until: { type: 'biomeLevelAtLeast', biomeGroup: zone.biome, level: cap } }],
       },
       {
-        id: `apprentice-boss-${zone.biome}-2`,
+        id: `apprentice-boss-${zone.biome}-${tier}`,
         chapter: zone.chapter,
         say: zone.boss,
         waiting: `Fighting for the ${zone.name} boss.`,
-        steps: [{ type: 'attemptBoss', biomeGroup: zone.biome, tier: 2 }],
+        steps: [{ type: 'attemptBoss', biomeGroup: zone.biome, tier }],
       },
     ];
   });
@@ -218,6 +283,6 @@ export function buildApprenticeBeats(): TutorialBeat[] {
     }
     return splitAtLesson(beat);
   });
-  // The farewell waits on tier 2; the T2 stretch follows it, and the panel's goodbye comes last.
-  return [...t1, ...buildT2Beats()];
+  // The farewell waits on tier 2; the T2 and T3 stretches follow it, and the panel's goodbye comes last.
+  return [...t1, ...buildTierBeats(2, T2_ZONES), ...buildTierBeats(3, T3_ZONES)];
 }

@@ -56,4 +56,16 @@ assert(t2View.available.find((p) => p.pieceId === 'apprentice-sear')?.moment ===
 assert(t2View.moments.some((m) => m.moment === 'target-shielded'), 'a T2 lesson you own puts its moment on the card');
 assert(composePayoffsView({ ...input, classConfig: config })!.discipline === null, 'no pick, no discipline');
 
+// T3: the specialization shows its rule; the T3 lessons sit on their moments.
+const t3: ClassScreenInput = {
+  ...t2,
+  biomeLevel: { ...t2.biomeLevel, tundra: 6, volcanic: 6 },
+  specializationId: 'apprentice-carrier',
+  playerTier: 3,
+};
+const t3View = composePayoffsView({ ...t3, classConfig: defaultClassConfig(classConfigContextFromState(t3)!) })!;
+assert(t3View.specialization?.id === 'apprentice-carrier' && t3View.specialization.text.length > 0, 'the pick shows its rule');
+assert(composePayoffsView({ ...t3, specializationId: 'apprentice-afterburn', classConfig: defaultClassConfig(classConfigContextFromState(t3)!) })!.specialization === null, 'a specialization of another school is not shown');
+assert(t2View.specialization === null, 'no pick, no specialization');
+
 console.log('payoffsView.test.ts: ok');

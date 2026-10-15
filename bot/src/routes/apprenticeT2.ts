@@ -6,9 +6,9 @@ import { APPRENTICE_CLASS_ROOT, apprenticeT1Route } from "./apprenticeT1";
  * The Apprentice's T2 route (T2-W2, bible §9.5, §9.16): the whole T1 route, then the T2 zones
  * in the guide's order, the Payoff rules with the T2 payoffs placed, and the seven T2 bosses.
  *
- * No discipline step: the school pick has no path the harness can drive yet (the skill tree
- * that carried it is gone and the protocol has no discipline intent), so this route fights
- * T2 with `disciplineId: null`. Add the pick here once that intent exists.
+ * The school pick is an `unlockSkill` on the discipline node (the Passive Tree carries it again).
+ * `apprentice-t2` itself still fights T2 with no school (`disciplineId: null`); the T3 route
+ * passes one so its specialization has a discipline to sit under.
  */
 export const APPRENTICE_T2_ID = "apprentice-t2";
 
@@ -53,9 +53,10 @@ export function apprenticeT2Payoffs(): ClassConfig {
   };
 }
 
-export function apprenticeT2Route(): Route {
+export function apprenticeT2Route(disciplineId: string | null = null): Route {
   const t1 = apprenticeT1Route();
   const steps: RouteStep[] = [...t1.steps];
+  if (disciplineId) steps.push({ type: "unlockSkill", skillId: disciplineId, label: "pick the school" });
 
   // Farm every T2 zone to its tier-2 cap: past the lesson level the tutorial farms to.
   for (const { biomeGroup } of APPRENTICE_T2_ZONES) {
