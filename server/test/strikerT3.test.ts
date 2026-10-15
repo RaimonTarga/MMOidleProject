@@ -239,7 +239,8 @@ const PLAIN6: (string | null)[] = [null, null, null, null, null, null];
   const r = setup({ beats: ['striker-overheat', null, null, null] });
   assert.equal(swing(r.world, r.player, r.target).outcome, 'cancelled', 'the opener casts');
   finishCast(r.world);
-  const heat = getStatusEffect(r.player.tracksCombat, 'striker-focus');
+  const heat = getStatusEffect(r.player.tracksCombat, 'striker-overheated');
+  assert(!getStatusEffect(r.player.tracksCombat, 'striker-focus'), 'Overheat is its own status, not Focus');
   assert(heat && (heat.data[ATTACK_HASTE_PCT_KEY] ?? 0) > 0.25, 'the combo is hasted harder than Focus');
   assert(playerIncomingDamageMult(r.player.tracksCombat) > 1, 'and you take more damage');
   swings(r.world, r.player, r.target, 3);
@@ -571,6 +572,24 @@ const HEAVY = 'striker-heavy';
   player.performsAttack.lastAttackAt = clock - 60_000;
   updateStrikerT3(world, 100, clock);
   assert(playerIncomingDamageMult(player.tracksCombat) > 1, 'and gives it back when you stop');
+}
+
+// 28. The HUD fields: Afterimage's held slashes and Frenzy's finisher count reach the networked slice.
+{
+  const r = setup({ beats: PLAIN4, disciplineId: 'striker-light', specializationId: 'striker-afterimage' });
+  swings(r.world, r.player, r.target, 3);
+  r.player.performsAttack.lastAttackAt = clock; // still fighting, so the break rule leaves the resource alone
+  updateStrikerT2(r.world, 100, clock);
+  assert.equal(r.player.usesCadence?.held, strikerT2(r.player).held.length, 'held slashes reach the slice');
+  assert((r.player.usesCadence?.held ?? 0) > 0, 'and some are held');
+
+  const f = setup({ beats: PLAIN4, disciplineId: 'striker-heavy', specializationId: 'striker-frenzy' });
+  for (let combo = 0; combo < 2; combo++) swings(f.world, f.player, f.target, 5);
+  f.player.performsAttack.lastAttackAt = clock;
+  updateStrikerT2(f.world, 100, clock);
+  assert.equal(f.player.usesCadence?.fightFinishers, strikerT2(f.player).fightFinishers, 'the fight count reaches the slice');
+  assert((f.player.usesCadence?.fightFinishers ?? 0) >= 2, 'two finishers landed in the fight');
+  assert.equal(f.player.usesCadence?.frenzyArmed, strikerT2(f.player).secondFinisher, 'and so does the armed second finisher');
 }
 
 console.log('strikerT3.test.ts: ok');

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAtomValue } from 'jotai';
 import type { ClassScreenView, OrderBeatView } from '@mmo-idle/shared';
 import { STRIKER_KIT, withBeat } from '@mmo-idle/shared';
-import { disciplineIdAtom, playerTierAtom } from '../../hud/atoms';
+import { disciplineIdAtom, playerTierAtom, specializationIdAtom } from '../../hud/atoms';
 import { hudBus } from '../../hudBus';
 import { GameIcon } from '../GameIcon';
 import { classPieceIconSource, trophyIconSource } from '../conceptIcons';
@@ -52,6 +52,7 @@ function scrollToRelic(): void {
 export function OrderEditor({ view }: { view: ClassScreenView }) {
   const order = useOrderView();
   const disciplineId = useAtomValue(disciplineIdAtom);
+  const specializationId = useAtomValue(specializationIdAtom);
   const playerTier = useAtomValue(playerTierAtom);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [fullNotice, setFullNotice] = useState(false);
@@ -75,6 +76,7 @@ export function OrderEditor({ view }: { view: ClassScreenView }) {
   }
 
   const discipline = STRIKER_KIT.disciplines.find((entry) => entry.id === disciplineId) ?? null;
+  const specialization = STRIKER_KIT.specializations.find((entry) => entry.id === specializationId) ?? null;
   const config = view.config?.system.kind === 'order' ? view.config : null;
   const openBeat = openIndex === null ? null : order.beats.find((beat) => beat.index === openIndex) ?? null;
   const slots = order.slots;
@@ -121,6 +123,17 @@ export function OrderEditor({ view }: { view: ClassScreenView }) {
         <div className="order-editor__discipline">
           <h4 className="class-panel__subheading">{`${discipline.name}: ${order.beats.length + 1} beats`}</h4>
           <p className="class-panel__line">{discipline.text}</p>
+          {specialization ? (
+            <>
+              <h4 className="class-panel__subheading">{`Specialization: ${specialization.name}`}</h4>
+              <p className="class-panel__line">{specialization.text}</p>
+            </>
+          ) : playerTier >= 3 ? (
+            <p className="order-editor__discipline-hint" role="status">
+              Pick a specialization in the Passive Tree: three for {discipline.name}. It bends what your discipline
+              builds.
+            </p>
+          ) : null}
         </div>
       ) : playerTier >= 2 ? (
         <p className="order-editor__discipline-hint" role="status">

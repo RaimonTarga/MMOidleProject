@@ -16,6 +16,13 @@ export interface UsesCadence {
   edge: number;
   /** Heavy: Momentum, as a bonus on the finisher (0.5 = +50%). */
   momentum: number;
+  // ── The Striker's specializations (T3; server writes, the HUD strip reads) ──
+  /** Afterimage: slashes held back this combo, one per beat, for the finisher to replay. */
+  held: number;
+  /** Frenzy: finishers landed in this fight (the second, lighter finisher joins from the 2nd on). */
+  fightFinishers: number;
+  /** Frenzy: the finisher that is armed now is the second, lighter one. */
+  frenzyArmed: boolean;
 }
 
 export function initUsesCadence(args: { threshold: number }): UsesCadence {
@@ -27,5 +34,8 @@ export function initUsesCadence(args: { threshold: number }): UsesCadence {
     lit:           false,
     edge:          0,
     momentum:      0,
+    held:          0,
+    fightFinishers: 0,
+    frenzyArmed:   false,
   };
 }

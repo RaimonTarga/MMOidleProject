@@ -289,10 +289,18 @@ function syncResourceSlice(world: World, player: PlayerEntity, state: StrikerT2S
   const cadence = player.usesCadence;
   if (!cadence) return;
   const momentum = Math.round(state.momentum * 100) / 100;
-  if (cadence.lit === state.lit && cadence.edge === state.edge && cadence.momentum === momentum) return;
+  const held = state.held.length;
+  if (
+    cadence.lit === state.lit && cadence.edge === state.edge && cadence.momentum === momentum
+    && cadence.held === held && cadence.fightFinishers === state.fightFinishers
+    && cadence.frenzyArmed === state.secondFinisher
+  ) return;
   cadence.lit = state.lit;
   cadence.edge = state.edge;
   cadence.momentum = momentum;
+  cadence.held = held;
+  cadence.fightFinishers = state.fightFinishers;
+  cadence.frenzyArmed = state.secondFinisher;
   markSliceDirty(world, player, 'usesCadence');
 }
 

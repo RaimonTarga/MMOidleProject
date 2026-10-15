@@ -69,6 +69,7 @@ export const BUFF_IDS = [
   // and frame-charge tiles went with the Squire's frame loop (CQ7); the other
   // roots wear their own frame buff ids.
   'striker-focus',  // the opener's haste, until the finisher
+  'striker-overheated', // Overheat's haste and damage taken, until the finisher
   'squire-guard',   // the Squire's brace, until the telegraphed blow lands
   'squire-parry',   // the Avenger's Parry brace: the blow is negated and countered
 ] as const;

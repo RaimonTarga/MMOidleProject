@@ -11,6 +11,7 @@ import { SQUIRE_T2_ID, squireT2Route } from "./squireT2";
 import { DEFAULT_SMOKE_CLASS, SMOKE_T1_ID, smokeT1Route } from "./smokeT1";
 import { STRIKER_T1_ID, strikerT1Route } from "./strikerT1";
 import { STRIKER_T2_ROUTE_IDS, strikerT2Route } from "./strikerT2";
+import { STRIKER_T3_ROUTE_IDS, strikerT3Route } from "./strikerT3";
 import { SPIRIT_T1_ID, spiritT1Route } from "./spiritT1";
 import { spiritT2Route } from "./spiritT2";
 
@@ -20,6 +21,7 @@ import { spiritT2Route } from "./spiritT2";
  * Class routes are rebuilt per class in the class-first build (plan §5).
  * `smoke-t1` stays class-agnostic. Each class's own route (`striker-t1`, `squire-t1`,
  * `conduit-t1`, `slinger-t1`, `slinger-t2`, `spirit-t1`, `apprentice-t1`) registers here as data over the same executor.
+ * `striker-t3-*` (one per specialization, T3-W2) continue the Striker past the tier-3 promotion; they stay out of the controlled batch list until they have run live.
  * `conduit-t2` continues the Conduit past the tier-2 promotion (T2-W2); it is not yet in the controlled batch list.
  */
 
@@ -35,6 +37,7 @@ const CLASS_AGNOSTIC_ROUTES = new Map<string, (classRoot: string) => Route>([
 const SMOKE_ROUTE = smokeT1Route(classRootFor(DEFAULT_SMOKE_CLASS));
 const STRIKER_ROUTE = strikerT1Route();
 const STRIKER_T2_ROUTES = Object.keys(STRIKER_T2_ROUTE_IDS).map((discipline) => strikerT2Route(discipline));
+const STRIKER_T3_ROUTES = Object.keys(STRIKER_T3_ROUTE_IDS).map((specialization) => strikerT3Route(specialization));
 const SQUIRE_ROUTE = squireT1Route();
 const SQUIRE_T2_ROUTE = squireT2Route();
 const CONDUIT_ROUTE = conduitT1Route();
@@ -49,6 +52,7 @@ export const ROUTES = new Map<string, Route>([
   [SMOKE_ROUTE.id, SMOKE_ROUTE],
   [STRIKER_ROUTE.id, STRIKER_ROUTE],
   ...STRIKER_T2_ROUTES.map((route): [string, Route] => [route.id, route]),
+  ...STRIKER_T3_ROUTES.map((route): [string, Route] => [route.id, route]),
   [SQUIRE_ROUTE.id, SQUIRE_ROUTE],
   [SQUIRE_T2_ROUTE.id, SQUIRE_T2_ROUTE],
   [CONDUIT_ROUTE.id, CONDUIT_ROUTE],

@@ -85,6 +85,8 @@ import { defineBuff } from '../../../combat/buffs/descriptor';
 
 /** Focus's combo haste on the player (self only; one copy). */
 export const STRIKER_FOCUS_EFFECT_ID = 'striker-focus';
+/** Overheat's haste and extra damage taken on the player (self only; one copy, its own tile). */
+export const STRIKER_OVERHEAT_EFFECT_ID = 'striker-overheated';
 
 /** `ctx.metadata`: this swing is a cast's resolution (Skyfall's blow), not a new beat to cast. */
 const CAST_RESOLVED = 'strikerCastResolved';
@@ -334,10 +336,10 @@ const CASTS: Readonly<Record<string, (world: World, player: PlayerEntity, o: Ord
     strikerT2(player).critMult = p.critMult;
   },
   // The opener that overheats: every beat swings much faster, and you take more damage, until
-  // the finisher. Rides the Focus status (one opener per combo), carrying the damage taken.
+  // the finisher. Its own status (one opener per combo), carrying the damage taken.
   'striker-overheat': (_world, player, _o, p) => {
     applyStatusEffect(player.tracksCombat, {
-      id: STRIKER_FOCUS_EFFECT_ID,
+      id: STRIKER_OVERHEAT_EFFECT_ID,
       maxStacks: 1,
       remainingMs: p.maxMs,
       refreshable: true,
@@ -578,26 +580,45 @@ export const STRIKER_ORDER_BUFFS = [
       const effect = getStatusEffect(player.tracksCombat, STRIKER_FOCUS_EFFECT_ID);
       if (!effect || effect.remainingMs === 0) return null;
       const pct = Math.round((effect.data[ATTACK_HASTE_PCT_KEY] ?? 0) * 100);
-      // Overheat rides this status too (one opener per combo), adding the damage taken.
-      const takenPct = Math.round((effect.data[DAMAGE_TAKEN_PCT_KEY] ?? 0) * 100);
-      const label = takenPct > 0 ? 'Overheat' : 'Focus';
       return {
         id: STRIKER_FOCUS_EFFECT_ID,
-        label,
+        label: 'Focus',
         stacks: 1,
         // It lasts until the finisher, not a clock.
         durationPct: -1,
         remainingMs: effect.remainingMs,
         color: '#9fd8ff',
-        logSourceName: label,
-        logDetail: takenPct > 0 ? `+${pct}% attack speed, +${takenPct}% damage taken` : `+${pct}% attack speed`,
-        values: [
-          { label: 'Attack speed', value: `+${pct}%`, good: true },
-          ...(takenPct > 0 ? [{ label: 'Damage taken', value: `+${takenPct}%`, good: false }] : []),
-        ],
+        logSourceName: 'Focus',
+        logDetail: `+${pct}% attack speed`,
+        values: [{ label: 'Attack speed', value: `+${pct}%`, good: true }],
       };
     },
     { label: 'Focus', color: '#9fd8ff', category: 'cadence', shape: 'circle' },
+  ),
+  // Overheat: the same haste, and the damage it costs, until the finisher.
+  defineBuff(
+    STRIKER_OVERHEAT_EFFECT_ID,
+    ({ player }) => {
+      const effect = getStatusEffect(player.tracksCombat, STRIKER_OVERHEAT_EFFECT_ID);
+      if (!effect || effect.remainingMs === 0) return null;
+      const pct = Math.round((effect.data[ATTACK_HASTE_PCT_KEY] ?? 0) * 100);
+      const takenPct = Math.round((effect.data[DAMAGE_TAKEN_PCT_KEY] ?? 0) * 100);
+      return {
+        id: STRIKER_OVERHEAT_EFFECT_ID,
+        label: 'Overheat',
+        stacks: 1,
+        durationPct: -1,
+        remainingMs: effect.remainingMs,
+        color: '#ff8a4a',
+        logSourceName: 'Overheat',
+        logDetail: `+${pct}% attack speed, +${takenPct}% damage taken`,
+        values: [
+          { label: 'Attack speed', value: `+${pct}%`, good: true },
+          { label: 'Damage taken', value: `+${takenPct}%`, good: false },
+        ],
+      };
+    },
+    { label: 'Overheat', color: '#ff8a4a', category: 'cadence', shape: 'circle' },
   ),
 ];
 
@@ -793,6 +814,7 @@ function onStrikerFinisher(ctx: CombatContext, world: World): void {
     }
   }
   removeStatusEffect(player.tracksCombat, STRIKER_FOCUS_EFFECT_ID);
+  removeStatusEffect(player.tracksCombat, STRIKER_OVERHEAT_EFFECT_ID);
   markSliceDirty(world, player, 'usesCadence');
 }
 
