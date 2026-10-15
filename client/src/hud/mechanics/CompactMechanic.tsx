@@ -2,6 +2,8 @@ import { OrderStrip } from '../OrderStrip';
 import { useOrderView } from '../../ui/class/useOrderView';
 import { ResolveCompact } from './ResolvePips';
 import type { MechanicViewModel } from './types';
+import { usePayoffsView } from '../../ui/class/usePayoffsView';
+import { SigilReadout } from '../SigilReadout';
 
 const SUMMONER_COMPACT_LABELS = {
   'volatile-brood': 'Volatile Brood',
@@ -51,6 +53,8 @@ function compactState(model: MechanicViewModel): { label: string; value: string;
 /** Existing one-line mobile presentation, intentionally separate from desktop widgets. */
 export function CompactMechanic({ model }: { model: MechanicViewModel }) {
   const order = useOrderView();
+  const payoffs = usePayoffsView();
+  if (model.kind === 'dot' && payoffs) return <SigilReadout budget={payoffs.sigils.cap} model={model} compact />;
   if (model.kind === 'cadence' && order) {
     return <OrderStrip order={order} count={model.count} armed={model.armed} compact />;
   }

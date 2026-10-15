@@ -2,9 +2,13 @@ import type { CSSProperties } from 'react';
 import { MechanicFrame } from './MechanicFrame';
 import { useMechanicHelp } from './mechanicHelp';
 import type { DotMechanicModel } from './types';
+import { usePayoffsView } from '../../ui/class/usePayoffsView';
+import { SigilReadout } from '../SigilReadout';
 
 export function DotMechanic({ model }: { model: DotMechanicModel }) {
   const help = useMechanicHelp(model);
+  const payoffs = usePayoffsView();
+  if (payoffs) return <SigilReadout budget={payoffs.sigils.cap} model={model} />;
   const status = model.hasTarget ? `${model.stacks} / ${model.maxStacks}` : 'No target';
   const useSegments = model.maxStacks <= 10;
   const isActive = model.hasTarget && model.stacks > 0;

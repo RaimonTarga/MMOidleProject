@@ -1,0 +1,45 @@
+.sigil-ring {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: #ae85f4;
+}
+
+.sigil-ring__pip {
+  fill: #271f36;
+  stroke: currentColor;
+  stroke-width: 1;
+}
+
+.sigil-ring__pip--filled {
+  fill: currentColor;
+}
+
+.sigil-ring__enemy {
+  fill: var(--hud-text-dim);
+}
+
+.sigil-readout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: #ae85f4;
+}
+
+.sigil-readout .sigil-ring {
+  width: 68px;
+}
+
+.sigil-readout__count {
+  font-size: 12px;
+}
+
+.sigil-readout--compact {
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.sigil-readout--compact .sigil-ring {
+  width: 36px;
+}

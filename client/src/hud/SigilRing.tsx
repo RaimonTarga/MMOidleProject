@@ -1,0 +1,39 @@
+import './sigilRing.css';
+
+/** The mastery budget plus the weapon's already-resolved cap bonus. */
+export function sigilCap(budget: number, passives: Record<string, number>): number {
+  return Math.max(1, budget + Math.round(passives['apprentice.cap-extra'] ?? 0));
+}
+
+/** A neutral T1 ring: empty pips show room, filled pips show the enemy's sigils. */
+export function SigilRing({ cap, stacks, enemy = false }: { cap: number; stacks: number; enemy?: boolean }) {
+  const size = 72 + cap * 4;
+  const center = size / 2;
+  return (
+    <svg
+      className="sigil-ring"
+      viewBox={`0 0 ${size} ${size}`}
+      role="img"
+      aria-label={`${stacks} of ${cap} sigils`}
+    >
+      {enemy && (
+        <g className="sigil-ring__enemy" aria-hidden="true">
+          <circle cx={center} cy={center - 11} r={9} />
+          <path d={`M ${center - 16} ${center + 19} Q ${center - 15} ${center + 1} ${center} ${center + 1} Q ${center + 15} ${center + 1} ${center + 16} ${center + 19} Z`} />
+        </g>
+      )}
+      {Array.from({ length: cap }, (_, index) => {
+        const angle = (index / cap) * Math.PI * 2 - Math.PI / 2;
+        return (
+          <circle
+            key={index}
+            className={`sigil-ring__pip${index < stacks ? ' sigil-ring__pip--filled' : ''}`}
+            cx={center + Math.cos(angle) * (center - 6)}
+            cy={center + Math.sin(angle) * (center - 6)}
+            r={3.5}
+          />
+        );
+      })}
+    </svg>
+  );
+}

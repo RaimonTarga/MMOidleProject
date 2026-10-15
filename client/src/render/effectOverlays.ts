@@ -3,6 +3,7 @@ import { EFFECT_BY_ID, EFFECT_FRAME_COUNT, type MinionView, type MonsterView, ty
 import type { RenderState } from './state';
 import type { GameScene } from '../scenes/GameScene';
 import { playSfx } from '../audio/audioEngine';
+import { drawSigilWorldRing, destroySigilWorldRing } from '../hud/sigilWorldRing';
 
 // Frost-family overlays voice the `frozen` cue when they first land on you.
 const FROST_EFFECT_IDS = new Set(['freeze', 'glacial-fracture', 'permafrost']);
@@ -29,6 +30,7 @@ export function updateEffectOverlays(
   scene: GameScene,
   dt: number,
 ): void {
+  drawSigilWorldRing(state, scene);
   const now = scene.time.now;
   const lastRun = state.throttles.effectOverlaysAt;
   const elapsedMs = lastRun === 0 ? dt * 1000 : now - lastRun;
@@ -130,6 +132,7 @@ function updateOverlayForEffect(
 }
 
 export function destroyEffectOverlays(state: RenderState, id: string): void {
+  destroySigilWorldRing(state, id);
   const overlays = state.effectOverlays.get(id);
   if (!overlays) return;
   for (const overlay of overlays.values()) overlay.destroy();
