@@ -68,8 +68,8 @@ export function classConfigContext(
     pieceRanks: pieceRanks(archetype, progress),
     trophyRanks: trophies,
     trophiesNewestFirst: trophiesNewestFirst(archetype, progress, trophies),
-    // Colossus asks one more Command of the Conduit's room; Two Souls holds a second trophy (bible §7.6).
-    budget: Math.max(1, classBudget(archetype, globalMasteryValue).value + budgetBonus + (progress.specializationId === 'conduit-colossus' ? 1 : 0)),
+    // Two Souls holds a second trophy (bible §7.6); Colossus's extra Command is in each summon's price.
+    budget: Math.max(1, classBudget(archetype, globalMasteryValue).value + budgetBonus),
     disciplineId: progress.disciplineId,
     specializationId: progress.specializationId ?? null,
     relicSlots: progress.specializationId === 'conduit-two-souls' ? Math.max(relicSlots, 2) : relicSlots,
