@@ -25,6 +25,9 @@ const NICK_RADIUS = 90;
 /** Shoulder Through counts at most this many extra enemies. PLACEHOLDER. */
 const SHOULDER_THROUGH_MAX_ENEMIES = 4;
 
+/** Executioner's Blade bites below this share of the target's HP (bible 12.16: half). */
+const EXECUTE_BELOW = 0.5;
+
 const GRIT_POOL = 'striker.grit.pool';
 const GRIT_RATE = 'striker.grit.ratePerMs';
 
@@ -47,6 +50,10 @@ export function strikerWeaponDamageMult(
   if (hit.finisher || hit.damageTechnique) mult *= 1 + (p['striker.technique-damage-pct'] ?? 0);
   if (hit.finisher) mult *= 1 + (p['striker.finisher-pct'] ?? 0);
   if (hit.finisher && bleedingOrRotting(target)) mult *= 1 + (p['striker.finisher-vs-dot-pct'] ?? 0);
+  // Executioner's Blade: damage techniques and the finisher hit harder below half HP.
+  if ((hit.finisher || hit.damageTechnique) && target.hasHealth.hp < target.hasHealth.maxHp * EXECUTE_BELOW) {
+    mult *= 1 + (p['striker.execute-pct'] ?? 0);
+  }
   return mult;
 }
 

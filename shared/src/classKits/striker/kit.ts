@@ -108,18 +108,24 @@ const PIECES: readonly StrikerPiece[] = [
     // The bible calls it a cast but gives it no position (opener or wind-up): `cast` waits
     // for the designer.
     text: 'You spin through every enemy around you three times.',
+    // PLACEHOLDERS. Each spin hits every other enemy within `radius` for `hitPct` of the beat's swing.
+    params: { radius: 90, hitPct: 0.4, spins: 3 },
   }),
   technique({
     id: 'striker-feint',
     name: 'Feint',
     family: 'attack-setup',
     text: 'You feint instead of striking: no damage, but your next beat is a critical hit.',
+    // PLACEHOLDER. The game has no crit stat: the next beat hits for `critMult` times its damage.
+    params: { critMult: 1.5 },
   }),
   technique({
     id: 'striker-armor-break',
     name: 'Armor Break',
     family: 'attack-setup',
     text: "You crack the target's plating for a few seconds.",
+    // PLACEHOLDERS. The target loses `crackPct` of its plating for `durationMs`.
+    params: { crackPct: 0.5, durationMs: 4000 },
   }),
   technique({
     id: 'striker-concuss',
@@ -127,6 +133,7 @@ const PIECES: readonly StrikerPiece[] = [
     family: 'finisher-setup',
     control: true,
     text: 'You stun the target for a moment.',
+    params: { stunMs: 800 }, // PLACEHOLDER
   }),
   technique({
     id: 'striker-charge',
@@ -135,6 +142,8 @@ const PIECES: readonly StrikerPiece[] = [
     family: 'damage',
     cast: 'opener',
     text: 'You open the combo with a dash to the target and a strike, catching enemies that run or keep their distance.',
+    // PLACEHOLDERS. A short cast, then a dash of up to `maxRangePx` and the strike.
+    params: { castMs: 400, maxRangePx: 420 },
   }),
   technique({
     id: 'striker-pin',
@@ -142,6 +151,7 @@ const PIECES: readonly StrikerPiece[] = [
     family: 'finisher-setup',
     control: true,
     text: "You root the target in place, so it can't back away from you.",
+    params: { rootMs: 2000 }, // PLACEHOLDER
   }),
   // ── T3 (§12.16) ──
   technique({
@@ -320,7 +330,8 @@ const TROPHIES: readonly StrikerTrophy[] = [
     text: 'Your finisher becomes a cast: a longer wind-up, then a blow about twice as big.',
     params: { castMs: 1500, blowMult: 2 },
     ranks: [
-      { rank: 2, bossTier: 2, text: 'The blow also ignores part of the plating.' },
+      // PLACEHOLDER: the Skyfall blow pays this share less plating.
+      { rank: 2, bossTier: 2, text: 'The blow also ignores part of the plating.', params: { platingIgnorePct: 0.5 } },
       { rank: 3, bossTier: 3, text: 'The wind-up is shorter.', params: { castMs: 1100 } },
       { rank: 4, bossTier: 4, text: 'The blow hits harder still.', params: { blowMult: 2.5 } },
     ],
@@ -333,7 +344,8 @@ const TROPHIES: readonly StrikerTrophy[] = [
     text: 'Your finisher exposes the target: it takes more damage from everyone for a few seconds.',
     params: { damageTakenPct: 0.12, durationMs: 5000 },
     ranks: [
-      { rank: 2, bossTier: 2, text: 'The exposed target also loses plating.' },
+      // PLACEHOLDER: the exposed target loses this share of its plating while exposed.
+      { rank: 2, bossTier: 2, text: 'The exposed target also loses plating.', params: { platingCrackPct: 0.5 } },
       { rank: 3, bossTier: 3, text: 'The exposure lasts longer.', params: { durationMs: 7000 } },
     ],
   }),
@@ -345,6 +357,8 @@ const TROPHIES: readonly StrikerTrophy[] = [
     name: 'Pounce',
     kind: 'weight',
     text: 'Your finisher leaps to the target, reaching it even if it ran, and hits harder the farther it leaps.',
+    // PLACEHOLDERS. The leap covers up to `maxLeapPx`; a full leap adds `bonusPct` to the finisher.
+    params: { maxLeapPx: 420, bonusPct: 0.5 },
     ranks: [
       { rank: 2, bossTier: 3, text: 'The landing also hits the enemies around it.' },
       { rank: 3, bossTier: 4, text: 'Pounce grows stronger.' },
@@ -356,6 +370,7 @@ const TROPHIES: readonly StrikerTrophy[] = [
     name: 'Verdict',
     kind: 'weight',
     text: 'Your finisher kills the target outright once its HP is low enough.',
+    params: { thresholdPct: 0.15 }, // PLACEHOLDER: the target's HP share at or below which it dies.
     ranks: [
       { rank: 2, bossTier: 3, text: "It kills outright with more of the target's HP left." },
       { rank: 3, bossTier: 4, text: 'Verdict grows stronger.' },

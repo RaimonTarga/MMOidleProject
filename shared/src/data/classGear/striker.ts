@@ -106,7 +106,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { green: 55 }, stats: { attack: 24, onHitDamage: 23 }, attacksPerSecond: 1.55, tier: 2,
       icon: 'items/weapons/stinger-rapier.png',
       description: 'Your first beat on a new target hits much harder.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.first-strike-pct': 0.5 },
     },
     {
       id: 'striker-executioners-blade-t2', name: "Executioner's Blade",
@@ -114,7 +114,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { yellow: 70 }, stats: { attack: 65 }, attacksPerSecond: 0.80, tier: 2,
       icon: 'items/weapons/sunsteel-falchion.png',
       description: 'Damage techniques and the finisher hit harder against a target below half HP.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.execute-pct': 0.4 },
     },
     // ── T3 ──
     {
@@ -147,7 +147,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { green: 120 }, stats: { attack: 50, onHitDamage: 38 }, attacksPerSecond: 1.65, tier: 3,
       icon: 'items/weapons/venomthorn-rapier.png',
       description: 'Your first beat on a new target hits much harder.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.first-strike-pct': 0.625 },
     },
     // moved from the Forest
     {
@@ -164,7 +164,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { yellow: 116 }, stats: { attack: 112 }, attacksPerSecond: 0.80, tier: 3,
       icon: 'items/weapons/solar-falchion.png',
       description: 'Damage techniques and the finisher hit harder against a target below half HP.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.execute-pct': 0.5 },
     },
     {
       id: 'striker-rimeblade-t3', name: 'Rimeblade',
@@ -206,7 +206,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { green: 264 }, stats: { attack: 108, onHitDamage: 70 }, attacksPerSecond: 1.75, tier: 4,
       icon: 'items/weapons/deathfang-rapier.png',
       description: 'Your first beat on a new target hits much harder.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.first-strike-pct': 0.75 },
     },
     // moved from the Forest
     {
@@ -223,7 +223,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { yellow: 255 }, stats: { attack: 212 }, attacksPerSecond: 0.80, tier: 4,
       icon: 'items/weapons/zenith-falchion.png',
       description: 'Damage techniques and the finisher hit harder against a target below half HP.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.execute-pct': 0.6 },
     },
     {
       id: 'striker-rimeblade-t4', name: 'Rimeblade',
@@ -308,10 +308,10 @@ export const STRIKER_GEAR: ClassGearDef = {
     'mountain-charm-t2': { name: 'Cairnstone', text: 'After a hit over a quarter of your HP, Recovery triples for a few seconds.', effects: { 'defense.recovery-hit-pct': 0.25, 'defense.recovery-hit-x': 3 } },
     'cave-vest-t2': { name: 'Weighty', text: 'More bulk, and slower beats.', effects: { 'striker.bulk-pct': 0.125, 'striker.beat-slow-pct': 0.1 } },
     'cave-charm-t2': { name: 'Deep Breath', text: 'Out-of-combat Recovery is much faster.', effects: { 'defense.ooc-recovery-pct': 1.25 } },
-    'jungle-vest-t2': { name: 'Watchful', text: "An ambush can't interrupt a cast or break your combo.", effects: {} },
-    'jungle-charm-t2': { name: 'Chase', text: 'Recovery doubles while you close on a target.', effects: {} },
-    'desert-vest-t2': { name: 'Close In', text: 'While a ranged enemy hits you, you move faster toward it.', effects: {} },
-    'desert-charm-t2': { name: 'Shake Off', text: 'Every few seconds a mark or slow on you ends.', effects: {} },
+    'jungle-vest-t2': { name: 'Watchful', text: "An ambush can't interrupt a cast or break your combo.", effects: { 'striker.ambush-proof': 1 } },
+    'jungle-charm-t2': { name: 'Chase', text: 'Recovery doubles while you close on a target.', effects: { 'striker.closing-recovery-x': 2 } },
+    'desert-vest-t2': { name: 'Close In', text: 'While a ranged enemy hits you, you move faster toward it.', effects: { 'striker.close-in-speed-pct': 0.3 } },
+    'desert-charm-t2': { name: 'Shake Off', text: 'Every few seconds a mark or slow on you ends.', effects: { 'striker.shake-off-interval-ms': 6000 } },
     // ── T3 ──
     'swamp-vest-t3': { name: 'Bloodless', text: "While you keep attacking, damage over time can't take you below a quarter of your HP.", effects: { 'striker.dot-floor-pct': 0.25 } },
     'swamp-charm-t3': { name: 'Antidote', text: 'Every few seconds, the poison or bleed on you with the most time left ends.', effects: { 'defense.dot-cleanse-interval-ms': 4000 } },
@@ -319,10 +319,10 @@ export const STRIKER_GEAR: ClassGearDef = {
     'mountain-charm-t3': { name: 'Cairnstone', text: 'After a hit over a quarter of your HP, Recovery triples for a few seconds.', effects: { 'defense.recovery-hit-pct': 0.25, 'defense.recovery-hit-x': 3 } },
     'cave-vest-t3': { name: 'Weighty', text: 'More bulk, and slower beats.', effects: { 'striker.bulk-pct': 0.15, 'striker.beat-slow-pct': 0.1 } },
     'cave-charm-t3': { name: 'Deep Breath', text: 'Out-of-combat Recovery is much faster.', effects: { 'defense.ooc-recovery-pct': 1.5 } },
-    'jungle-vest-t3': { name: 'Watchful', text: "An ambush can't interrupt a cast or break your combo.", effects: {} },
-    'jungle-charm-t3': { name: 'Chase', text: 'Recovery doubles while you close on a target.', effects: {} },
-    'desert-vest-t3': { name: 'Close In', text: 'While a ranged enemy hits you, you move faster toward it.', effects: {} },
-    'desert-charm-t3': { name: 'Shake Off', text: 'Every few seconds a mark or slow on you ends.', effects: {} },
+    'jungle-vest-t3': { name: 'Watchful', text: "An ambush can't interrupt a cast or break your combo.", effects: { 'striker.ambush-proof': 1 } },
+    'jungle-charm-t3': { name: 'Chase', text: 'Recovery doubles while you close on a target.', effects: { 'striker.closing-recovery-x': 2 } },
+    'desert-vest-t3': { name: 'Close In', text: 'While a ranged enemy hits you, you move faster toward it.', effects: { 'striker.close-in-speed-pct': 0.375 } },
+    'desert-charm-t3': { name: 'Shake Off', text: 'Every few seconds a mark or slow on you ends.', effects: { 'striker.shake-off-interval-ms': 5000 } },
     'tundra-vest-t3': { name: 'Winter Coat', text: 'The Chill builds on you slower while you keep attacking.', effects: {} },
     'tundra-charm-t3': { name: 'Frostbite Mend', text: 'Recovery doubles while you are chilled or slowed.', effects: {} },
     'volcanic-vest-t3': { name: 'Cinderskin', text: "The Heat's extra damage taken doesn't apply to you while you keep attacking.", effects: {} },
@@ -330,10 +330,10 @@ export const STRIKER_GEAR: ClassGearDef = {
     // ── T4 ──
     'mountain-vest-t4': { name: 'Braced Cast', text: 'Nothing interrupts your casts, and the cap is lower while you cast.', effects: { 'striker.cast-unbreakable': 1, 'striker.cast-cap-cut-pct': 0.25 } },
     'mountain-charm-t4': { name: 'Cairnstone', text: 'After a hit over a quarter of your HP, Recovery triples for a few seconds.', effects: { 'defense.recovery-hit-pct': 0.25, 'defense.recovery-hit-x': 3 } },
-    'jungle-vest-t4': { name: 'Watchful', text: "An ambush can't interrupt a cast or break your combo.", effects: {} },
-    'jungle-charm-t4': { name: 'Chase', text: 'Recovery doubles while you close on a target.', effects: {} },
-    'desert-vest-t4': { name: 'Close In', text: 'While a ranged enemy hits you, you move faster toward it.', effects: {} },
-    'desert-charm-t4': { name: 'Shake Off', text: 'Every few seconds a mark or slow on you ends.', effects: {} },
+    'jungle-vest-t4': { name: 'Watchful', text: "An ambush can't interrupt a cast or break your combo.", effects: { 'striker.ambush-proof': 1 } },
+    'jungle-charm-t4': { name: 'Chase', text: 'Recovery doubles while you close on a target.', effects: { 'striker.closing-recovery-x': 2 } },
+    'desert-vest-t4': { name: 'Close In', text: 'While a ranged enemy hits you, you move faster toward it.', effects: { 'striker.close-in-speed-pct': 0.45 } },
+    'desert-charm-t4': { name: 'Shake Off', text: 'Every few seconds a mark or slow on you ends.', effects: { 'striker.shake-off-interval-ms': 4000 } },
     'tundra-vest-t4': { name: 'Winter Coat', text: 'The Chill builds on you slower while you keep attacking.', effects: {} },
     'tundra-charm-t4': { name: 'Frostbite Mend', text: 'Recovery doubles while you are chilled or slowed.', effects: {} },
     'volcanic-vest-t4': { name: 'Cinderskin', text: "The Heat's extra damage taken doesn't apply to you while you keep attacking.", effects: {} },

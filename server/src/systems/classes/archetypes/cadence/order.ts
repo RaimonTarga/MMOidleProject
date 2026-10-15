@@ -42,13 +42,29 @@ import { attackNow, registerCombatListener, type CombatContext } from '../../../
 import { HOLD_EMPOWERED_ATTACK, isEmpoweredAttack, setEmpoweredAttack } from '../../../combat/engine/empoweredAttacks';
 import { runPlayerAttack } from '../../../combat/engine/combat';
 import { conditionsHold } from '../../../combat/moments/moments';
-import { applyMonsterSlow } from '../../../combat/status/monsterControl';
+import { applyMonsterRoot, applyMonsterSlow } from '../../../combat/status/monsterControl';
+import { monsterIgnoresControl } from '../../../combat/status/controlImmunity';
+import { applyStun } from '../../../combat/status/stun';
+import { isHardControlled } from '../../../combat/status/playerHardControl';
+import { isConcealedEntity } from '../../../combat/invulnerability';
+import { repositionPlayer } from '../../../combat/damage/knockback';
+import { fightSnapshotFor } from '../../../combat/moments/fightSnapshot';
+import { gapToTarget } from '../../../player/abilities/abilityTargeting';
 import { applySharedDebuffMaxWins } from '../../../combat/status/sharedDebuffRecord';
 import { classConfigContextOf } from '../../../player/progression/classConfig';
 import { beginClassCast, registerClassCast } from '../../../player/abilities/abilityCasting';
 import { applyPlayerDebuff } from '../../shared/applyPlayerDebuff';
 import { ATTACK_HASTE_PCT_KEY } from '../../../combat/engine/attackCadence';
 import { runStrikerWeaponStrikes, strikerWeaponDamageMult } from './strikerGear';
+import {
+  disciplineBeatMult,
+  disciplineFinisherMult,
+  isSetupFamily,
+  landStrikerBeat,
+  spendStrikerFinisher,
+  strikerAmbushGuard,
+  strikerT2,
+} from './strikerT2';
 import { defineBuff } from '../../../combat/buffs/descriptor';
 
 /** Focus's combo haste on the player (self only; one copy). */
@@ -56,6 +72,10 @@ export const STRIKER_FOCUS_EFFECT_ID = 'striker-focus';
 
 /** `ctx.metadata`: this swing is a cast's resolution (Skyfall's blow), not a new beat to cast. */
 const CAST_RESOLVED = 'strikerCastResolved';
+/** `ctx.metadata`: how far (px) a Pounce leap or Charge dash carried the Striker to this swing. */
+const LEAP_DISTANCE = 'strikerLeapPx';
+/** Techniques whose beat deals no damage (Feint). */
+const NO_SWING = new Set(['striker-feint']);
 
 const PIECES = new Map<string, StrikerPiece>(STRIKER_KIT.pieces.map((p) => [p.id, p]));
 const TROPHIES = new Map<string, StrikerTrophy>(STRIKER_KIT.trophies.map((t) => [t.id, t]));
@@ -145,6 +165,32 @@ function applyBleed(
   attachMarker(world, target, 'hasHemorrhage');
 }
 
+/** Bastard Sword: a setup lasts this much shorter. */
+function setupDuration(player: PlayerEntity, ms: number): number {
+  const cut = player.usesSkills.passives['striker.setup-duration-cut-pct'] ?? 0;
+  return ms * Math.max(0.1, 1 - cut);
+}
+
+/**
+ * Crack a share of the target's plating for a while, as the shared `plating-shred` record
+ * (everyone's hits read it). The stronger of the old and the new crack stays.
+ */
+function crackPlating(player: PlayerEntity, target: MonsterEntity, crackPct: number, durationMs: number): void {
+  const reduction = target.mitigatesDamage.plating * crackPct;
+  if (reduction <= 0 || durationMs <= 0) return;
+  const prior = getStatusEffect(target.tracksCombat, 'plating-shred');
+  if (prior && prior.remainingMs !== 0 && prior.stacks * (prior.data['platingReduction'] ?? 0) >= reduction) return;
+  removeStatusEffect(target.tracksCombat, 'plating-shred');
+  applyPlayerDebuff(player, target.tracksCombat, {
+    id: 'plating-shred',
+    maxStacks: 1,
+    remainingMs: durationMs,
+    refreshable: true,
+    sourceId: player.isPlayer.id,
+    data: { platingReduction: reduction, totalMs: durationMs },
+  }, { origin: 'mechanic' });
+}
+
 const BEATS: Readonly<Record<string, BeatHandler>> = {
   // Every other enemy around you takes a share of the swing.
   'striker-sweep': (world, player, target, p, swing) => {
@@ -163,6 +209,34 @@ const BEATS: Readonly<Record<string, BeatHandler>> = {
   'striker-rend': (world, player, target, p, swing) => {
     applyBleed(world, player, target, CADENCE_BLEED_ID, swing * p.tickPct, p.ticks * dotDurationMult(player), p.tickMs);
   },
+  // ── Tier 2 (§12.16) ──
+  // Sweep three times over: each spin hits every other enemy around you.
+  'striker-whirlwind': (world, player, target, p, swing) => {
+    for (let spin = 0; spin < Math.max(1, Math.round(p.spins)); spin++) {
+      applyPlayerAoe(world, player, player.hasPosition.current, p.radius, swing * p.hitPct,
+        target.isMonster.id, 'player', {}, { feedsWeaponReservoir: true });
+    }
+  },
+  // No damage: the next beat is a critical hit (`runStrikerBeat` reads and spends the arming).
+  'striker-feint': (_world, player, _target, p) => {
+    strikerT2(player).critMult = p.critMult;
+  },
+  // The target's plating cracks for a few seconds.
+  'striker-armor-break': (_world, player, target, p) => {
+    crackPlating(player, target, p.crackPct, setupDuration(player, p.durationMs));
+  },
+  // A brief stun (control-immune bosses refuse it).
+  'striker-concuss': (_world, player, target, p) => {
+    if (target.hasHealth.hp <= 0 || monsterIgnoresControl(target)) return;
+    applyStun(target.tracksCombat, setupDuration(player, p.stunMs), player.isPlayer.id);
+  },
+  // A root: the target can't kite away.
+  'striker-pin': (world, player, target, p) => {
+    if (target.hasHealth.hp <= 0) return;
+    applyMonsterRoot(world, target, setupDuration(player, p.rootMs), player.isPlayer.id);
+  },
+  // The opener's strike: the dash happened on the cast; the beat pays the price like any technique.
+  'striker-charge': () => {},
 };
 
 /** The casts, resolved on the player cast machine; each counts its beat when it lands. */
@@ -178,6 +252,8 @@ const CASTS: Readonly<Record<string, (world: World, player: PlayerEntity, o: Ord
       data: { [ATTACK_HASTE_PCT_KEY]: p.attackSpeedPct, totalMs: p.maxMs },
     });
   },
+  // The opener that dashes: nothing to apply on the cast itself; `chargeAndStrike` does the rest.
+  'striker-charge': () => {},
   // The wind-up: the finisher hits much harder.
   'striker-coil': (world, player) => {
     if (!player.usesCadence) return;
@@ -196,10 +272,12 @@ const WEIGHTS: Readonly<Record<string, (world: World, player: PlayerEntity, targ
   },
   // The finisher is a cast (see beforeAttack); the blow it resolves into is bigger.
   'striker-relic-mountain': (_world, _player, _target, ctx, p) => {
-    if (ctx.metadata[CAST_RESOLVED]) ctx.damage = Math.round(ctx.damage * p.blowMult);
+    if (ctx.metadata[CAST_RESOLVED] === 'skyfall') ctx.damage = Math.round(ctx.damage * p.blowMult);
   },
   // Expose: the target takes more damage from everyone for a few seconds (strongest copy).
+  // Rank 2: the exposed target also loses plating for as long.
   'striker-relic-cave': (_world, player, target, _ctx, p) => {
+    if (p.platingCrackPct) crackPlating(player, target, p.platingCrackPct, p.durationMs);
     applySharedDebuffMaxWins(player, target.tracksCombat, {
       id: 'vulnerability',
       maxStacks: 1,
@@ -208,6 +286,16 @@ const WEIGHTS: Readonly<Record<string, (world: World, player: PlayerEntity, targ
       sourceId: player.isPlayer.id,
       data: { totalMs: p.durationMs, damageMultiplier: 1 + p.damageTakenPct },
     }, ['damageMultiplier', 'totalMs']);
+  },
+  // Pounce: the finisher leapt to its target, and hits harder the farther it leapt.
+  'striker-relic-jungle': (_world, _player, _target, ctx, p) => {
+    const leapt = Number(ctx.metadata[LEAP_DISTANCE] ?? 0);
+    if (leapt > 0) ctx.damage = Math.round(ctx.damage * (1 + p.bonusPct * Math.min(1, leapt / p.maxLeapPx)));
+  },
+  // Verdict: the finisher kills a target at or below the threshold outright.
+  'striker-relic-desert': (_world, _player, target, ctx, p) => {
+    const { hp, maxHp } = target.hasHealth;
+    if (hp > 0 && hp / Math.max(1, maxHp) <= p.thresholdPct) ctx.damage = Math.max(ctx.damage, hp);
   },
 };
 
@@ -242,13 +330,101 @@ function castMsFor(player: PlayerEntity, authoredMs: number, windup: boolean): n
 
 /** Braced Cast: nothing interrupts your casts. */
 function castUnbreakable(player: PlayerEntity): boolean {
-  return (player.usesSkills.passives['striker.cast-unbreakable'] ?? 0) > 0;
+  // Watchful: an ambush landing now can't interrupt a cast either.
+  return (player.usesSkills.passives['striker.cast-unbreakable'] ?? 0) > 0 || strikerAmbushGuard(player);
 }
 
 function dist2(m: MonsterEntity, at: { x: number; y: number }): number {
   const dx = m.hasPosition.current.x - at.x;
   const dy = m.hasPosition.current.y - at.y;
   return dx * dx + dy * dy;
+}
+
+const CHARGE_ID = 'striker-charge';
+
+/** Dash toward the target, up to `maxPx`, stopping short of contact. Returns the distance covered. */
+function leapToward(world: World, player: PlayerEntity, target: MonsterEntity, maxPx: number): number {
+  const travel = Math.min(maxPx, Math.max(0, gapToTarget(player, target) - player.performsAttack.attackRange * 0.7));
+  if (travel <= 0) return 0;
+  const from = { ...player.hasPosition.current };
+  if (repositionPlayer(world, player, target.hasPosition.current, travel, true) === null) return 0;
+  const to = { ...player.hasPosition.current };
+  world.pushEvent(player.hasPosition.nodeId, {
+    kind: 'player-reposition',
+    playerId: player.isPlayer.id,
+    ability: 'striker-leap',
+    from,
+    to,
+  });
+  return Math.hypot(to.x - from.x, to.y - from.y);
+}
+
+/** Who the player is fighting or about to: the current target, else the nearest in leap range. */
+function leapTarget(world: World, player: PlayerEntity, reach: number): MonsterEntity | null {
+  const currentId = player.hasAttackTarget?.targetId;
+  const current = currentId ? world.getMonsterEntity(currentId) : undefined;
+  if (current && current.hasHealth.hp > 0) return current;
+  const travelling = player.hasAutoTraversePath !== undefined && player.hasAutoTraversePath.targetNodeId !== player.hasPosition.nodeId;
+  if (travelling) return null;
+  const candidates = [...world.monsterEntitiesInNode(player.hasPosition.nodeId)]
+    .filter((m) => m.hasHealth.hp > 0 && !isConcealedEntity(m));
+  return world.collision.bestTargetInReach(player, candidates, reach);
+}
+
+/** Charge resolves: dash to the target (even one that ran) and strike; the strike is the opener beat. */
+function chargeAndStrike(world: World, player: PlayerEntity, o: Order, piece: StrikerPiece, now: number): void {
+  const cadence = player.usesCadence;
+  const p = pieceParams(o, piece);
+  const target = leapTarget(world, player, player.performsAttack.attackRange + p.maxRangePx);
+  if (!cadence || !target) return;
+  syncComboLength(o, cadence);
+  const moved = leapToward(world, player, target, p.maxRangePx);
+  if (!world.collision.canReach(player, target, player.performsAttack.attackRange)) return;
+  player.performsAttack.lastAttackAt = now;
+  runPlayerAttack(world, player, target, now, {
+    attackOrigin: player.hasPosition.current,
+    aggroSource: { id: player.isPlayer.id, kind: 'player' },
+    metadata: { [CAST_RESOLVED]: 'charge', [LEAP_DISTANCE]: moved },
+  });
+}
+
+/**
+ * The leaps (Charge, Pounce) reach a target the ordinary swing can't: a player whose target
+ * ran or keeps its distance is out of the swing loop's reach, so these run from the tick. An
+ * opener Charge starts its cast; an armed Pounce finisher leaps and lands.
+ */
+export function updateStrikerLeaps(world: World, now: number): void {
+  for (const player of world.livePlayers) {
+    const cadence = player.usesCadence;
+    if (!cadence || player.isCastingAbility || player.isChargingAbility || isHardControlled(player.tracksCombat)) continue;
+    const o = strikerOrderOf(world, player);
+    if (!o) continue;
+    const armed = isEmpoweredAttack(player);
+    const pounce = armed && o.trophy?.id === 'striker-relic-jungle' ? o.trophy : undefined;
+    const charge = !armed && cadence.count === 0 && o.order.beats[0] === CHARGE_ID ? PIECES.get(CHARGE_ID) : undefined;
+    if (!pounce && !charge) continue;
+    if (now - player.performsAttack.lastAttackAt < player.performsAttack.attackCooldown) continue;
+    const attackRange = player.performsAttack.attackRange;
+    const p = pounce ? trophyParams(o, pounce) : pieceParams(o, charge!);
+    const maxPx = pounce ? p.maxLeapPx : p.maxRangePx;
+    const target = leapTarget(world, player, attackRange + maxPx);
+    // In reach: the ordinary swing does it. Out of the dash's range: nothing to catch.
+    if (!target || world.collision.canReach(player, target, attackRange) || gapToTarget(player, target) > maxPx) continue;
+    if (fightSnapshotFor(world, player, now).traveling) continue;
+    if (pounce) {
+      if (o.order.holdFinisher.length > 0 && conditionsHold(world, player, o.order.holdFinisher, now)) continue;
+      const moved = leapToward(world, player, target, maxPx);
+      if (!world.collision.canReach(player, target, attackRange)) continue;
+      player.performsAttack.lastAttackAt = now;
+      runPlayerAttack(world, player, target, now, {
+        attackOrigin: player.hasPosition.current,
+        aggroSource: { id: player.isPlayer.id, kind: 'player' },
+        metadata: { [LEAP_DISTANCE]: moved },
+      });
+    } else if (charge) {
+      beginClassCast(world, player, CHARGE_ID, castMsFor(player, p.castMs, false), now);
+    }
+  }
 }
 
 /** Focus on the buff bar: the combo's haste, until the finisher. */
@@ -278,6 +454,12 @@ export const STRIKER_ORDER_BUFFS = [
 
 // ── The pipeline ─────────────────────────────────────────────────────────────
 
+/** The combo is the Order's beats plus the finisher. */
+function syncComboLength(o: Order, cadence: NonNullable<PlayerEntity['usesCadence']>): void {
+  const threshold = o.order.beats.length + 1;
+  if (cadence.threshold !== threshold) cadence.threshold = threshold;
+}
+
 /** The Skyfall finisher resolves: swing the blow at the current target. */
 function resolveSkyfall(world: World, player: PlayerEntity, now: number): void {
   const targetId = player.hasAttackTarget?.targetId;
@@ -288,7 +470,7 @@ function resolveSkyfall(world: World, player: PlayerEntity, now: number): void {
   runPlayerAttack(world, player, target, now, {
     attackOrigin: player.hasPosition.current,
     aggroSource: { id: player.isPlayer.id, kind: 'player' },
-    metadata: { [CAST_RESOLVED]: true },
+    metadata: { [CAST_RESOLVED]: 'skyfall' },
   });
 }
 
@@ -300,11 +482,18 @@ function beforeStrikerSwing(ctx: CombatContext, world: World): void {
   if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
   const player = ctx.attacker;
   const cadence = player.usesCadence;
-  if (!cadence || ctx.metadata[CAST_RESOLVED]) return;
+  if (!cadence) return;
   const o = strikerOrderOf(world, player);
   if (!o) return;
-  const threshold = o.order.beats.length + 1;
-  if (cadence.threshold !== threshold) cadence.threshold = threshold;
+  // The swing a cast resolves into: Skyfall II's blow pays less plating; Charge's strike just swings.
+  if (ctx.metadata[CAST_RESOLVED]) {
+    if (ctx.metadata[CAST_RESOLVED] === 'skyfall' && o.trophy?.id === 'striker-relic-mountain') {
+      const ignore = trophyParams(o, o.trophy).platingIgnorePct ?? 0;
+      if (ignore > 0) ctx.platingMult *= Math.max(0, 1 - ignore);
+    }
+    return;
+  }
+  syncComboLength(o, cadence);
   const now = attackNow(ctx);
 
   if (isEmpoweredAttack(player)) {
@@ -341,6 +530,18 @@ export function runStrikerBeat(world: World, ctx: CombatContext): void {
   const index = cadence.count;
   const piece = PIECES.get(o.order.beats[index] ?? '');
   const handler = piece ? BEATS[piece.id] : undefined;
+  const discipline = o.ctx.disciplineId;
+  const t2 = strikerT2(player);
+
+  // What rides the swing before the technique reads it: Feint's critical hit, Hunter's Blade's
+  // first strike on a new target, and the discipline (the shine, the edge).
+  let mult = disciplineBeatMult(player, discipline, piece?.family === 'damage');
+  if (t2.critMult > 0) { mult *= t2.critMult; t2.critMult = 0; }
+  const firstStrike = player.usesSkills.passives['striker.first-strike-pct'] ?? 0;
+  if (firstStrike > 0 && t2.lastTargetId !== ctx.defender.isMonster.id) mult *= 1 + firstStrike;
+  t2.lastTargetId = ctx.defender.isMonster.id;
+  if (mult !== 1) ctx.damage = Math.max(1, Math.round(ctx.damage * mult));
+
   if (piece && handler) {
     // Bastard Sword: damage techniques hit harder, their swing and their effect.
     const swing = ctx.damage * strikerWeaponDamageMult(player, ctx.defender, { finisher: false, damageTechnique: piece.family === 'damage' });
@@ -351,8 +552,15 @@ export function runStrikerBeat(world: World, ctx: CombatContext): void {
     }
     handler(world, player, ctx.defender, pieceParams(o, piece), swing);
   }
+  // A feint deals no damage, rides no strikes and sparks nothing: it only sets up the next beat.
+  if (piece && NO_SWING.has(piece.id)) {
+    ctx.damage = 0;
+    landStrikerBeat(player, discipline, true);
+    return;
+  }
   runStrikerWeaponStrikes(world, player, ctx);
   runSpark(world, player, ctx, o);
+  landStrikerBeat(player, discipline, piece ? isSetupFamily(piece.family) : false);
 }
 
 function runSpark(world: World, player: PlayerEntity, ctx: CombatContext, o: Order): void {
@@ -374,6 +582,10 @@ function onStrikerFinisher(ctx: CombatContext, world: World): void {
     const coil = PIECES.get('striker-coil')!;
     ctx.damage = Math.round(ctx.damage * (1 + (pieceParams(o, coil).finisherBonusPct ?? 0)));
   }
+  // The discipline (the edge, Momentum), and a Feint left on the beat before.
+  const t2 = strikerT2(player);
+  ctx.damage = Math.round(ctx.damage * disciplineFinisherMult(player, o.ctx.disciplineId));
+  if (t2.critMult > 0) { ctx.damage = Math.round(ctx.damage * t2.critMult); t2.critMult = 0; }
   // Maul, Bastard Sword and Hooked Sickle on the finisher.
   ctx.damage = Math.round(ctx.damage * strikerWeaponDamageMult(player, ctx.defender, { finisher: true, damageTechnique: false }));
   if (o.trophy && o.trophy.kind === 'weight') {
@@ -384,6 +596,8 @@ function onStrikerFinisher(ctx: CombatContext, world: World): void {
   // The combo ends: the next one rides this trophy's spark, and starts unfocused, uncoiled.
   cadence.sparkTrophyId = o.trophy?.kind === 'spark' ? o.trophy.id : null;
   cadence.coiled = false;
+  t2.lastTargetId = ctx.defender.isMonster.id;
+  spendStrikerFinisher(player, o.ctx.disciplineId);
   removeStatusEffect(player.tracksCombat, STRIKER_FOCUS_EFFECT_ID);
   markSliceDirty(world, player, 'usesCadence');
 }
@@ -397,11 +611,18 @@ export function initStrikerOrder(): void {
   for (const [id, apply] of Object.entries(CASTS)) {
     registerClassCast(id, {
       unbreakable: castUnbreakable,
-      resolve(world, player) {
+      resolve(world, player, now) {
         const o = strikerOrderOf(world, player);
         const piece = PIECES.get(id);
         if (!o || !piece) return;
         apply(world, player, o, pieceParams(o, piece));
+        // Charge: the cast was the wind-up; the dash and its strike are the beat, and count
+        // through the ordinary hit.
+        if (id === CHARGE_ID) {
+          chargeAndStrike(world, player, o, piece, now);
+          return;
+        }
+        landStrikerBeat(player, o.ctx.disciplineId, isSetupFamily(piece.family));
         advanceStrikerBeat(world, player);
         markSliceDirty(world, player, 'usesCadence');
       },

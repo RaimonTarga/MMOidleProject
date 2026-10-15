@@ -202,6 +202,13 @@ export const STRIKER_KEYS = [
   // Charm lines
   'striker.grit-pct',              // Grit: this share of every hit heals back while you keep attacking
   'striker.grit-ms',               // Grit: over this long
+  // ── Tier 2 jobs and lines (§12.16) ──
+  'striker.first-strike-pct',      // Hunter's Blade: your first beat on a new target hits this much harder
+  'striker.execute-pct',           // Executioner's Blade: damage techniques and the finisher hit harder below half HP
+  'striker.ambush-proof',          // Watchful: an ambush can't interrupt a cast or break your resource
+  'striker.closing-recovery-x',    // Chase: Recovery is multiplied by this while you close on a target
+  'striker.close-in-speed-pct',    // Close In: while a ranged enemy hits you, you move this much faster toward it
+  'striker.shake-off-interval-ms', // Shake Off: every interval, a mark or slow on you ends
 ] as const;
 
 /**
