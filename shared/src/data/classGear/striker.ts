@@ -172,7 +172,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { blue: 124 }, stats: { attack: 162 }, attacksPerSecond: 0.50, tier: 3,
       icon: 'items/weapons/permafrost-maul.png',
       description: 'Beats hit harder against slowed, rooted or chilled enemies.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.cold-pct': 0.25 },
     },
     {
       id: 'striker-bloodfire-axe-t3', name: 'Bloodfire Axe',
@@ -180,7 +180,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { red: 140 }, stats: { attack: 70 }, attacksPerSecond: 1.65, tier: 3,
       icon: 'items/weapons/cinderlash.png',
       description: 'The lower your HP, the harder your beats hit.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.low-hp-pct': 0.5 },
     },
     // moved from the Plains
     {
@@ -231,7 +231,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { blue: 273 }, stats: { attack: 378 }, attacksPerSecond: 0.50, tier: 4,
       icon: 'items/weapons/glacial-tyrant-maul.png',
       description: 'Beats hit harder against slowed, rooted or chilled enemies.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.cold-pct': 0.312 },
     },
     {
       id: 'striker-bloodfire-axe-t4', name: 'Bloodfire Axe',
@@ -239,7 +239,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { red: 308 }, stats: { attack: 119 }, attacksPerSecond: 1.80, tier: 4,
       icon: 'items/weapons/eruption-lash.png',
       description: 'The lower your HP, the harder your beats hit.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.low-hp-pct': 0.625 },
     },
     // moved from the Plains
     {
@@ -323,10 +323,10 @@ export const STRIKER_GEAR: ClassGearDef = {
     'jungle-charm-t3': { name: 'Chase', text: 'Recovery doubles while you close on a target.', effects: { 'striker.closing-recovery-x': 2 } },
     'desert-vest-t3': { name: 'Close In', text: 'While a ranged enemy hits you, you move faster toward it.', effects: { 'striker.close-in-speed-pct': 0.375 } },
     'desert-charm-t3': { name: 'Shake Off', text: 'Every few seconds a mark or slow on you ends.', effects: { 'striker.shake-off-interval-ms': 5000 } },
-    'tundra-vest-t3': { name: 'Winter Coat', text: 'The Chill builds on you slower while you keep attacking.', effects: {} },
-    'tundra-charm-t3': { name: 'Frostbite Mend', text: 'Recovery doubles while you are chilled or slowed.', effects: {} },
-    'volcanic-vest-t3': { name: 'Cinderskin', text: "The Heat's extra damage taken doesn't apply to you while you keep attacking.", effects: {} },
-    'volcanic-charm-t3': { name: 'Fuel', text: 'Your Recovery rises with the Heat.', effects: {} },
+    'tundra-vest-t3': { name: 'Winter Coat', text: 'The Chill builds on you slower while you keep attacking.', effects: { 'striker.chill-build-cut-pct': 0.4 } },
+    'tundra-charm-t3': { name: 'Frostbite Mend', text: 'Recovery doubles while you are chilled or slowed.', effects: { 'striker.chilled-recovery-x': 2 } },
+    'volcanic-vest-t3': { name: 'Cinderskin', text: "The Heat's extra damage taken doesn't apply to you while you keep attacking.", effects: { 'striker.heat-ward': 1 } },
+    'volcanic-charm-t3': { name: 'Fuel', text: 'Your Recovery rises with the Heat.', effects: { 'striker.heat-recovery-pct': 0.05 } },
     // ── T4 ──
     'mountain-vest-t4': { name: 'Braced Cast', text: 'Nothing interrupts your casts, and the cap is lower while you cast.', effects: { 'striker.cast-unbreakable': 1, 'striker.cast-cap-cut-pct': 0.25 } },
     'mountain-charm-t4': { name: 'Cairnstone', text: 'After a hit over a quarter of your HP, Recovery triples for a few seconds.', effects: { 'defense.recovery-hit-pct': 0.25, 'defense.recovery-hit-x': 3 } },
@@ -334,10 +334,10 @@ export const STRIKER_GEAR: ClassGearDef = {
     'jungle-charm-t4': { name: 'Chase', text: 'Recovery doubles while you close on a target.', effects: { 'striker.closing-recovery-x': 2 } },
     'desert-vest-t4': { name: 'Close In', text: 'While a ranged enemy hits you, you move faster toward it.', effects: { 'striker.close-in-speed-pct': 0.45 } },
     'desert-charm-t4': { name: 'Shake Off', text: 'Every few seconds a mark or slow on you ends.', effects: { 'striker.shake-off-interval-ms': 4000 } },
-    'tundra-vest-t4': { name: 'Winter Coat', text: 'The Chill builds on you slower while you keep attacking.', effects: {} },
-    'tundra-charm-t4': { name: 'Frostbite Mend', text: 'Recovery doubles while you are chilled or slowed.', effects: {} },
-    'volcanic-vest-t4': { name: 'Cinderskin', text: "The Heat's extra damage taken doesn't apply to you while you keep attacking.", effects: {} },
-    'volcanic-charm-t4': { name: 'Fuel', text: 'Your Recovery rises with the Heat.', effects: {} },
+    'tundra-vest-t4': { name: 'Winter Coat', text: 'The Chill builds on you slower while you keep attacking.', effects: { 'striker.chill-build-cut-pct': 0.5 } },
+    'tundra-charm-t4': { name: 'Frostbite Mend', text: 'Recovery doubles while you are chilled or slowed.', effects: { 'striker.chilled-recovery-x': 2 } },
+    'volcanic-vest-t4': { name: 'Cinderskin', text: "The Heat's extra damage taken doesn't apply to you while you keep attacking.", effects: { 'striker.heat-ward': 1 } },
+    'volcanic-charm-t4': { name: 'Fuel', text: 'Your Recovery rises with the Heat.', effects: { 'striker.heat-recovery-pct': 0.0625 } },
     'graveyard-vest-t4': { name: 'Deathward', text: 'Below a quarter of your HP, you take a third less damage.', effects: {} },
     'graveyard-charm-t4': { name: 'Requiem', text: 'Recovery rises with the number of enemies around you.', effects: {} },
     'trench-vest-t4': { name: 'Clear Mind', text: "Debuffs can't break your combo or interrupt your casts.", effects: {} },

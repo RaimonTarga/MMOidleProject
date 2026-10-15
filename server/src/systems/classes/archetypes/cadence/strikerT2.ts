@@ -8,6 +8,10 @@
  *    Unbroken or Watchful says the hit doesn't count.
  *  - The Jungle and Desert gear lines: Watchful, Chase, Close In, Shake Off.
  *
+ * The T3 specializations (bible §12.6) bend these resources in place: Afterglow, Tempered, Iaido,
+ * Cascade, Subjugator and Crescendo live here; Thousand Cuts, Afterimage and Frenzy touch the
+ * Order's beats and finisher (`order.ts`) and keep their state here.
+ *
  * Every number is a PLACEHOLDER for the designer.
  */
 import {
@@ -25,6 +29,20 @@ import { fightSnapshotFor } from '../../../combat/moments/fightSnapshot';
 import { momentActive } from '../../../combat/moments/moments';
 import { isHardControlled } from '../../../combat/status/playerHardControl';
 import { activateRecoveryBoost } from '../../../defense/regen/recovery';
+import {
+  AFTERGLOW,
+  CASCADE,
+  CASCADE_EXTRA_STEPS,
+  CRESCENDO,
+  IAIDO,
+  IAIDO_CAST_EDGE_MULT,
+  IAIDO_CAST_EXTRA_STEPS,
+  SUBJUGATOR,
+  SUBJUGATOR_CONTROL_BEATS,
+  TEMPERED,
+  TEMPERED_KEEP,
+  strikerSpecOf,
+} from './strikerT3';
 
 export const STRIKER_LIGHT = 'striker-light';
 export const STRIKER_BALANCED = 'striker-balanced';
@@ -37,7 +55,7 @@ export const EDGE_STEP_PCT = 0.15;
 /** Heavy: a soft beat adds this much to the finisher; a setup multiplies the total by `MOMENTUM_SETUP_MULT`. */
 export const MOMENTUM_PER_BEAT = 0.25;
 export const MOMENTUM_SETUP_MULT = 1.5;
-/** Heavy: Momentum stops here (Crescendo lifts the cap at T3). */
+/** Heavy: Momentum stops here (Crescendo lifts the cap). */
 export const MOMENTUM_CAP = 2;
 /** No target for this long breaks the combo's resource. */
 export const BREAK_NO_TARGET_MS = 3000;
@@ -57,6 +75,14 @@ export interface StrikerT2State {
   edge: number;
   /** Heavy: Momentum, as a bonus on the finisher (0.5 = +50%). */
   momentum: number;
+  /** Afterglow: a break left the shine lit for one more combo; the next finisher puts it out. */
+  fading: boolean;
+  /** Afterimage: the damage the combo's beats held back, one slash each, for the finisher to replay. */
+  held: number[];
+  /** Frenzy: finishers landed since the fight began (reset when the fight goes quiet). */
+  fightFinishers: number;
+  /** Frenzy: the finisher that is armed now is the second, lighter one. */
+  secondFinisher: boolean;
   /** Hunter's Blade: the target the last swing was on. */
   lastTargetId: string | null;
   /** Watchful: an ambush landed on this tick or the last. */
@@ -68,7 +94,10 @@ const states = new WeakMap<PlayerEntity, StrikerT2State>();
 export function strikerT2(player: PlayerEntity): StrikerT2State {
   let state = states.get(player);
   if (!state) {
-    state = { critMult: 0, lit: false, edge: 0, momentum: 0, lastTargetId: null, ambushGuard: false };
+    state = {
+      critMult: 0, lit: false, edge: 0, momentum: 0, fading: false, held: [], fightFinishers: 0,
+      secondFinisher: false, lastTargetId: null, ambushGuard: false,
+    };
     states.set(player, state);
   }
   return state;
@@ -77,9 +106,13 @@ export function strikerT2(player: PlayerEntity): StrikerT2State {
 /** A break: the shine goes out, the edge resets, Momentum drains (§12.2). */
 export function breakStrikerResource(player: PlayerEntity): void {
   const state = strikerT2(player);
-  state.lit = false;
+  // Afterglow: the shine outlasts the break by one combo (the next finisher puts it out).
+  if (strikerSpecOf(player) === AFTERGLOW && state.lit) state.fading = true;
+  else state.lit = false;
   state.edge = 0;
   state.momentum = 0;
+  state.held.length = 0;
+  state.secondFinisher = false;
 }
 
 /** A setup (§12.8): a technique that changes the beat after it, rather than hitting. */
@@ -88,21 +121,56 @@ export function isSetupFamily(family: string): boolean {
 }
 
 /** What the discipline does to a beat's swing, before the technique runs. */
-export function disciplineBeatMult(player: PlayerEntity, disciplineId: string | null, damageTechnique: boolean): number {
+export function disciplineBeatMult(
+  player: PlayerEntity,
+  disciplineId: string | null,
+  damageTechnique: boolean,
+  /** The technique is a cast (Iaido: it cuts with double the edge). */
+  cast = false,
+): number {
   const state = strikerT2(player);
   let mult = 1;
   if (disciplineId === STRIKER_LIGHT && state.lit) mult *= 1 + SHINE_DAMAGE_PCT;
-  if (disciplineId === STRIKER_BALANCED && damageTechnique) mult *= 1 + EDGE_STEP_PCT * state.edge;
+  if (disciplineId === STRIKER_BALANCED && damageTechnique) {
+    const steps = state.edge * (cast && strikerSpecOf(player) === IAIDO ? IAIDO_CAST_EDGE_MULT : 1);
+    mult *= 1 + EDGE_STEP_PCT * steps;
+  }
   return mult;
 }
 
+/** What kind of beat landed, for the specializations that read it. */
+export interface LandedBeat {
+  /** A damage-family technique (Cascade). */
+  damageTechnique?: boolean;
+  /** A cast beat (Iaido). */
+  cast?: boolean;
+  /** A control technique (Subjugator). */
+  control?: boolean;
+}
+
 /** A beat landed (swing or cast): the edge rises a step; Momentum builds or is multiplied. */
-export function landStrikerBeat(player: PlayerEntity, disciplineId: string | null, setup: boolean): void {
+export function landStrikerBeat(player: PlayerEntity, disciplineId: string | null, setup: boolean, beat: LandedBeat = {}): void {
   const state = strikerT2(player);
-  if (disciplineId === STRIKER_BALANCED) state.edge++;
-  else if (disciplineId === STRIKER_HEAVY) {
-    state.momentum = Math.min(MOMENTUM_CAP, setup ? state.momentum * MOMENTUM_SETUP_MULT : state.momentum + MOMENTUM_PER_BEAT);
+  const spec = strikerSpecOf(player);
+  if (disciplineId === STRIKER_BALANCED) {
+    state.edge++;
+    if (spec === CASCADE && beat.damageTechnique) state.edge += CASCADE_EXTRA_STEPS;
+    if (spec === IAIDO && beat.cast) state.edge += IAIDO_CAST_EXTRA_STEPS;
+  } else if (disciplineId === STRIKER_HEAVY) {
+    // Subjugator: a control technique builds Momentum like two soft beats, then multiplies as a setup.
+    const base = spec === SUBJUGATOR && beat.control
+      ? state.momentum + MOMENTUM_PER_BEAT * SUBJUGATOR_CONTROL_BEATS
+      : state.momentum;
+    const next = setup ? base * MOMENTUM_SETUP_MULT : base + MOMENTUM_PER_BEAT;
+    // Crescendo: Momentum stops capping.
+    state.momentum = spec === CRESCENDO ? next : Math.min(MOMENTUM_CAP, next);
   }
+}
+
+/** Crescendo: a swing spent waiting for the finisher's release builds Momentum like a soft beat, uncapped. */
+export function buildWaitingMomentum(player: PlayerEntity): void {
+  if (strikerSpecOf(player) !== CRESCENDO) return;
+  strikerT2(player).momentum += MOMENTUM_PER_BEAT;
 }
 
 /** The finisher's discipline multiplier. */
@@ -110,15 +178,28 @@ export function disciplineFinisherMult(player: PlayerEntity, disciplineId: strin
   const state = strikerT2(player);
   if (disciplineId === STRIKER_BALANCED) return 1 + EDGE_STEP_PCT * state.edge;
   if (disciplineId === STRIKER_HEAVY) return 1 + state.momentum;
+  // Afterglow: the shine also lights the finisher.
+  if (disciplineId === STRIKER_LIGHT && state.lit && strikerSpecOf(player) === AFTERGLOW) return 1 + SHINE_DAMAGE_PCT;
   return 1;
 }
 
-/** The finisher landed: the edge and Momentum are spent; Light lights the next combo. */
+/**
+ * The finisher landed: the edge and Momentum are spent; Light lights the next combo.
+ * Tempered keeps half the edge; Afterglow's fading shine goes out here instead of relighting.
+ */
 export function spendStrikerFinisher(player: PlayerEntity, disciplineId: string | null): void {
   const state = strikerT2(player);
-  state.edge = 0;
+  const spec = strikerSpecOf(player);
+  state.edge = spec === TEMPERED ? Math.floor(state.edge * TEMPERED_KEEP) : 0;
   state.momentum = 0;
-  state.lit = disciplineId === STRIKER_LIGHT;
+  state.held.length = 0;
+  if (state.fading) {
+    state.fading = false;
+    state.lit = false;
+  } else {
+    state.lit = disciplineId === STRIKER_LIGHT;
+  }
+  state.fightFinishers++;
 }
 
 /** Watchful: an ambush landing now keeps casts and the resource whole. */
@@ -147,12 +228,18 @@ export function updateStrikerT2(world: World, dt: number, now: number): void {
     state.ambushGuard = (p['striker.ambush-proof'] ?? 0) > 0 && momentActive(world, player, 'ambush', undefined, now);
 
     // Breaks. Only a discipline has a resource to lose.
-    const hasResource = state.lit || state.edge > 0 || state.momentum > 0;
+    const hasResource = state.lit || state.edge > 0 || state.momentum > 0 || state.held.length > 0;
     if (hasResource) {
       const snapshot = fightSnapshotFor(world, player, now);
       const stunned = isHardControlled(cs) && !controlDoesNotBreak(player);
       const idle = now - player.performsAttack.lastAttackAt > BREAK_NO_TARGET_MS;
       if (stunned || idle || snapshot.traveling) breakStrikerResource(player);
+    }
+
+    // Frenzy counts the fight's finishers; a quiet spell ends the fight.
+    if (now - player.performsAttack.lastAttackAt > BREAK_NO_TARGET_MS) {
+      state.fightFinishers = 0;
+      state.secondFinisher = false;
     }
 
     syncResourceSlice(world, player, state);

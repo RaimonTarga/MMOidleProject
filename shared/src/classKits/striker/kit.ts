@@ -160,6 +160,9 @@ const PIECES: readonly StrikerPiece[] = [
     family: 'damage',
     cast: 'windup',
     text: 'You wind up before the finisher, then slam down through a line of enemies.',
+    // PLACEHOLDERS. The slam hits everything within `widthPx` of a line `lengthPx` long from you through
+    // the target, for `slamMult` times the beat's full swing.
+    params: { castMs: 900, slamMult: 1.5, lengthPx: 300, widthPx: 60 },
   }),
   technique({
     id: 'striker-upheaval',
@@ -168,6 +171,8 @@ const PIECES: readonly StrikerPiece[] = [
     control: true,
     sidegradeOf: 'striker-concuss',
     text: 'The ground erupts under the target and knocks it down, along with every enemy touching it.',
+    // PLACEHOLDERS. A knockdown is a short stun, on the target and every enemy within `radius` of it.
+    params: { knockdownMs: 1000, radius: 70 },
   }),
   technique({
     id: 'striker-hemorrhage',
@@ -175,12 +180,17 @@ const PIECES: readonly StrikerPiece[] = [
     family: 'damage',
     sidegradeOf: 'striker-rend',
     text: 'You open a deep bleed that outlasts Rend.',
+    // PLACEHOLDERS. Longer and deeper than Rend II (6 ticks of 20%).
+    params: { ticks: 10, tickMs: 1000, tickPct: 0.25 },
   }),
   technique({
     id: 'striker-triple-cut',
     name: 'Triple Cut',
     family: 'damage',
     text: 'You cut three times in quick succession, and each cut sets off your hit effects.',
+    // PLACEHOLDERS. The beat is the first cut; `cuts - 1` more follow at `cutPct` of the swing each.
+    // The beat's on-hit damage is multiplied by `cuts` (the game's one on-hit slot).
+    params: { cuts: 3, cutPct: 0.5 },
   }),
   technique({
     id: 'striker-shadowstep',
@@ -188,12 +198,15 @@ const PIECES: readonly StrikerPiece[] = [
     family: 'attack-setup',
     cast: 'opener',
     text: 'You open the combo by stepping behind the target, and your next beat is sure to be a critical hit.',
+    // PLACEHOLDERS. Same flat crit multiplier as Feint (the game has no crit stat).
+    params: { castMs: 500, behindPx: 50, critMult: 1.5 },
   }),
   technique({
     id: 'striker-icebreaker',
     name: 'Icebreaker',
     family: 'damage',
     text: 'You hit much harder against a target behind a shield or shell.',
+    params: { shellBonusPct: 1 }, // PLACEHOLDER: +100% against a shielded or shelled target.
   }),
   technique({
     id: 'striker-overheat',
@@ -201,6 +214,8 @@ const PIECES: readonly StrikerPiece[] = [
     family: 'attack-setup',
     cast: 'opener',
     text: 'You open the combo overheated: your beats swing much faster, but you take more damage until the finisher.',
+    // PLACEHOLDERS. Rides the Focus status; ends at the finisher.
+    params: { castMs: 500, attackSpeedPct: 0.6, damageTakenPct: 0.25, maxMs: 15000 },
   }),
   // ── T4 (§12.16) ──
   technique({
@@ -360,7 +375,8 @@ const TROPHIES: readonly StrikerTrophy[] = [
     // PLACEHOLDERS. The leap covers up to `maxLeapPx`; a full leap adds `bonusPct` to the finisher.
     params: { maxLeapPx: 420, bonusPct: 0.5 },
     ranks: [
-      { rank: 2, bossTier: 3, text: 'The landing also hits the enemies around it.' },
+      // PLACEHOLDERS. The landing strikes everything within `landingRadius` for `landingPct` of the finisher.
+      { rank: 2, bossTier: 3, text: 'The landing also hits the enemies around it.', params: { landingRadius: 110, landingPct: 0.5 } },
       { rank: 3, bossTier: 4, text: 'Pounce grows stronger.' },
     ],
   }),
@@ -372,7 +388,7 @@ const TROPHIES: readonly StrikerTrophy[] = [
     text: 'Your finisher kills the target outright once its HP is low enough.',
     params: { thresholdPct: 0.15 }, // PLACEHOLDER: the target's HP share at or below which it dies.
     ranks: [
-      { rank: 2, bossTier: 3, text: "It kills outright with more of the target's HP left." },
+      { rank: 2, bossTier: 3, text: "It kills outright with more of the target's HP left.", params: { thresholdPct: 0.25 } },
       { rank: 3, bossTier: 4, text: 'Verdict grows stronger.' },
     ],
   }),
@@ -382,6 +398,8 @@ const TROPHIES: readonly StrikerTrophy[] = [
     name: 'Hoarfrost',
     kind: 'spark',
     text: 'Every beat of your next combo slows the target a little more. Bosses immune to slows ignore it.',
+    // PLACEHOLDERS. Each beat adds `stepPct` to the target's slow, up to `maxPct`, for `durationMs`.
+    params: { stepPct: 0.1, maxPct: 0.5, durationMs: 3000 },
     ranks: [{ rank: 2, bossTier: 4, text: 'Hoarfrost grows stronger.' }],
   }),
   strikerTrophy({
@@ -390,6 +408,9 @@ const TROPHIES: readonly StrikerTrophy[] = [
     name: 'Eruption',
     kind: 'weight',
     text: 'Your finisher hits the target and everything around it, harder against a target with a shell up.',
+    // PLACEHOLDERS. The blow is `shellBonusPct` bigger against a shell; everything within `radius` of the
+    // target takes `splashPct` of it.
+    params: { radius: 120, splashPct: 0.8, shellBonusPct: 0.5 },
     ranks: [{ rank: 2, bossTier: 4, text: 'Eruption grows stronger.' }],
   }),
   strikerTrophy({
