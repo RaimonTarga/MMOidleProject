@@ -284,98 +284,11 @@ export const RELOAD_KEYS = [
   'reload.acquire-radius-mult',
 ] as const;
 
+// Retained readers outside the energy runtime: ranged-combatant classification and
+// the shared range listener. No current skill-tree node authors these legacy keys.
 export const ENERGY_KEYS = [
-  'energy.per-hit',
-  'energy.empowered-mult',
   'energy.flash',
-  'energy.micro-venting',
-  'energy.polarity-decay',
-  'energy.alternating-currents',
-  'energy.harmonic-equilibrium',
-  'energy.capacitor-shunt',
-  'energy.singularity-execute',
-  'energy.cascading-induction',
-  'energy.superconducting-mass',
-  // T4 specs ─────────────────────────────────────────────────────────────────
-  'energy.overdrive',          // light: discharge → +ATK% mode, decays 100→0
-  'energy.upkeep',             // light: no discharge; on-hit scales with upkeep timer
-  'energy.binary-cycle',       // balanced: alternating charge/discharge states
-  'energy.awakened-lightning', // balanced: discharge empowers next N attacks
-  'energy.charge-state',       // balanced: attack damage scales with energy %
-  'energy.critical-mass',      // heavy: consecutive discharges stack
-  'energy.endless-storm',      // heavy: discharge applies a persistent storm DoT
-  'energy.endless-storm-total-mult',
-  // Voidwalker: per-tier flat addition to BASE max energy (resolveEnergyMax).
-  'energy.max-bonus',
-  'energy.flash-energy-per-hit',
-  'energy.flash-max-damage-shift-pct',
-  'energy.flash-max-speed-bonus-pct',
-  'energy.flash-max-evasion-bonus-pct',
-  'energy.flash-shift-decay-ms',
-  'energy.overdrive-attack-damage-pct',
-  'energy.overdrive-decay-per-sec',
-  'energy.upkeep-stack-interval-ms',
-  'energy.upkeep-decay-base',
-  'energy.upkeep-decay-ramp-per-sec',
-  'energy.upkeep-band-1-end',
-  'energy.upkeep-band-2-end',
-  'energy.upkeep-band-3-end',
-  'energy.upkeep-band-1-onhit-per-tier',
-  'energy.upkeep-band-2-onhit-per-tier',
-  'energy.upkeep-band-3-onhit-per-tier',
-  'energy.upkeep-overflow-onhit-per-tier',
-  'energy.binary-charge-onhit-bonus',
-  'energy.binary-charge-onhit-per-tier',
-  'energy.binary-discharge-attack-bonus',
-  'energy.binary-charge-gain-mult',
-  'energy.binary-discharge-gain-mult',
-  'energy.binary-charge-speed-factor',
-  'energy.binary-discharge-speed-factor',
-  'energy.binary-charge-discharge-mult',
-  'energy.binary-discharge-discharge-mult',
-  'energy.awakened-strike-count',
-  'energy.awakened-damage-mult',
-  'energy.charge-state-min-mult',
-  'energy.charge-state-max-mult',
-  'energy.singularity-gain-accel-scale',
-  'energy.critical-mass-max-stacks',
-  'energy.critical-mass-discharge-per-stack',
-  'energy.critical-mass-gain-per-stack',
-  'energy.critical-mass-reset-ms',
-  'energy.endless-storm-tick-ms',
-  'energy.endless-storm-duration-ms',
-  'energy.endless-storm-extend-ms',
-  'energy.endless-storm-max-ms',
-  // ── Frame loop (progression rework Phase 3) ────────────────────────────────
-  // The Spirit's loop is WHAT THE DISCHARGE DOES
-  // (docs/briefs/frame-loops-2026-10-01.md §1).
-  //
-  // Spark — CHAIN: the discharge arcs to the nearest `chain-targets` bodies
-  // inside `chain-radius`, each taking `chain-share` of the discharge. Wisp
-  // (the Far range node) sets `energy.range-far-single-target`, and the share
-  // that would have arced is folded onto the primary hit instead.
-  'energy.frame-chain-targets',
-  'energy.frame-chain-radius',
-  'energy.frame-chain-share',
-  // Wraith — LOOP: the discharge opens a window (shorter than one charge cycle)
-  // where every hit generates `frame-gain-mult`× energy.
-  'energy.frame-gain-window-ms',
-  'energy.frame-gain-mult',
-  // Phantasm — OVERCHARGE: the pool keeps taking energy ABOVE the cap before the
-  // discharge arms, one stack per hit's worth, capped at `frame-overcharge-max`.
-  // Each stack adds `frame-overcharge-mult-per-stack` to the discharge, and the
-  // discharge staggers for `frame-stagger-ms` (the stun ladder's shortest rung).
-  'energy.frame-overcharge-max',
-  'energy.frame-overcharge-mult-per-stack',
-  'energy.frame-stagger-ms',
-  // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
-  // Shade (mid): the discharge staggers a target held at bay.
   'energy.range-mid-discharge-stagger-ms',
-  // Wisp (far): 1 = the discharge does not chain; the whole of it lands on one
-  // target. AUTHORED HERE, CONSUMED BY THE ENERGY FRAME LOOP (Phase 3, W1-B):
-  // the chain-count resolution reads this key and, when it is 1, chains to zero
-  // targets and folds the chained share onto the primary.
-  'energy.range-far-single-target',
 ] as const;
 
 export const DOT_KEYS = [

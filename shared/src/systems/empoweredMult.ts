@@ -9,7 +9,7 @@
  *
  * where `base` is the frame/spec multiplier from the archetype's empowered-mult
  * passive (frames sum additively with spec deltas — e.g. heavy 3.5 + Avenger
- * −1 = 2.5). Only cadence, cooldown and energy run an empowered multiplier;
+ * −1 = 2.5). Only cadence and cooldown run an empowered multiplier;
  * other archetypes return null.
  */
 import type { PassiveMap } from '../passives';
@@ -17,16 +17,13 @@ import {
   relicRatingsFromPassives,
   resolveCadenceRelicProfile,
   resolveCooldownRelicProfile,
-  resolveEnergyRelicProfile,
 } from './relics';
-import { resolveEnergyMaxBeforeRelic } from './energyMax';
 
-export type EmpoweredArchetype = 'cadence' | 'cooldown' | 'energy' | 'reload';
+export type EmpoweredArchetype = 'cadence' | 'cooldown' | 'reload';
 
 const BASE_KEY: Record<EmpoweredArchetype, keyof PassiveMap & string> = {
   cadence:  'cadence.empowered-mult',
   cooldown: 'cooldown.empowered-mult',
-  energy:   'energy.empowered-mult',
   // No reload path authors this key since the T3 review retired the Duelist's
   // exploding last bullet (design §22.5), so the resolver returns null for every
   // reload spec; the layer stays for any future empowered reload attack.
@@ -49,17 +46,16 @@ export interface EmpoweredMultBreakdown {
 /**
  * The multiplier each archetype's server registration falls back to when no node authors
  * the passive: a root-only character (every character since the class-first tree replaced
- * frames). Mirrors `CADENCE_DAMAGE_MULT_DEFAULT`, the Squire's `EXECUTION_MULTIPLIER` and
- * the Spirit's `EMPOWERED_MULT_DEFAULT`. The reload root arms no empowered attack.
+ * frames). Mirrors `CADENCE_DAMAGE_MULT_DEFAULT` and the Squire's
+ * `EXECUTION_MULTIPLIER`. The reload root arms no empowered attack.
  */
 const ROOT_DEFAULT_MULT: Partial<Record<EmpoweredArchetype, number>> = {
   cadence:  2.0,
   cooldown: 2.0,
-  energy:   2.0,
 };
 
 function isEmpoweredArchetype(a: string | null | undefined): a is EmpoweredArchetype {
-  return a === 'cadence' || a === 'cooldown' || a === 'energy' || a === 'reload';
+  return a === 'cadence' || a === 'cooldown' || a === 'reload';
 }
 
 /**
@@ -69,7 +65,7 @@ function isEmpoweredArchetype(a: string | null | undefined): a is EmpoweredArche
 export function resolveEmpoweredMultiplier(
   passives: PassiveMap,
   archetype: string | null | undefined,
-  playerTier = 0,
+  _playerTier = 0,
 ): EmpoweredMultBreakdown | null {
   if (!isEmpoweredArchetype(archetype)) return null;
 
@@ -91,13 +87,6 @@ export function resolveEmpoweredMultiplier(
     effective = resolveCadenceRelicProfile(5, effective, ratings).empoweredMultiplier.after;
   } else if (archetype === 'cooldown') {
     effective = resolveCooldownRelicProfile(7000, effective, ratings).empoweredMultiplier.after;
-  } else if (archetype === 'energy') {
-    effective = resolveEnergyRelicProfile(
-      passives['energy.per-hit'] ?? 14,
-      resolveEnergyMaxBeforeRelic(passives, playerTier),
-      effective,
-      ratings,
-    ).dischargeMultiplier.after;
   }
 
   return { base, archetypeAdd, sharedAdd, multBonus, effective };

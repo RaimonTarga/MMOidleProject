@@ -34,9 +34,9 @@ function compactState(model: MechanicViewModel): { label: string; value: string;
         : { label: 'Execution', value: model.executionReady ? 'READY' : `${Math.round(model.executionPct)}%`, pct: model.executionPct };
     case 'energy':
       return {
-        label: model.isFlash ? model.shiftLabel : 'Energy',
-        value: model.empowered && !model.isFlash ? 'EMPOWERED' : `${model.value} / ${model.max}`,
-        pct: model.empowered && !model.isFlash ? 100 : model.pct,
+        label: 'Storm',
+        value: `${model.value} / ${model.max}`,
+        pct: model.pct,
       };
     case 'reload':
       return { label: 'Ammo', value: model.ammo === 0 ? 'Reloading…' : `${model.ammo} / ${model.ammoMax}`, pct: model.ammoMax > 0 ? model.ammo / model.ammoMax * 100 : 0 };

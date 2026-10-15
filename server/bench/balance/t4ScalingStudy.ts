@@ -124,7 +124,7 @@ for(const [index,spec] of unique.entries()) {
   if(spec.mode==='boss')assert(bossId,'Actual dungeon boss must exist');
   // The Rampage arms (speed30, threshold3) and Crescendo's cap100 tuned the cadence T3
   // paths, deleted in class-first CS7: they are inert labels now, and `rampage` reads null.
-  if(spec.arm==='gain10')bot.usesSkills.passives['energy.critical-mass-gain-per-stack']=0.10;
+  // The gain10 arm tuned Critical Mass, removed by SP7; its label is inert.
   const laserScale=(ctx:CombatContext)=>{if(ctx.attacker===bot&&ctx.metadata['reloadLaser']) {
     if(spec.arm==='laserFlat25')ctx.metadata['onHitDamageMult']=0.25;
     if(spec.arm==='laserFlat75')ctx.metadata['onHitDamageMult']=0.75;
@@ -169,8 +169,8 @@ for(const [index,spec] of unique.entries()) {
         const key=JSON.stringify((e as any).tags??(e as any).damageKind??'damage');sources[key]=(sources[key]??0)+e.hpDamage;
       }
     }
-    if(tickDamage)raw.push([elapsed+100,tickDamage,null,bot.usesEnergy?.criticalMassStacks??null,bot.performsAttack.attackCooldown]);
-    minCd=Math.min(minCd,bot.performsAttack.attackCooldown);maxCritical=Math.max(maxCritical,bot.usesEnergy?.criticalMassStacks??0);
+    if(tickDamage)raw.push([elapsed+100,tickDamage,null,null,bot.performsAttack.attackCooldown]);
+    minCd=Math.min(minCd,bot.performsAttack.attackCooldown);
     world.worldLogJournal=[];world.worldLogByPlayer.clear();world.takeNodeEvents(cell.nodeId);
     if([10000,30000,60000,120000,300000,600000].includes(elapsed+100))windows.push({atMs:elapsed+100,...progress.snapshot(elapsed+100)});
     if(bot.isDead||bot.hasHealth.hp<=0){outcome='player-died';elapsed+=100;break;}

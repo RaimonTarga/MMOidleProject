@@ -9,20 +9,7 @@ import type { RenderState } from '../render/state';
  * applied in render/players.ts). Add new state classes by adding an entry here and
  * setting the aura id server-side in views.ts.
  */
-export const AURA_REGISTRY: Record<string, { color: number; tint: number; intensity: number }> = {
-  // Surge / Overdrive — electric yellow.
-  surge: { color: 0xffdd33, tint: 0xffe680, intensity: 1.0 },
-  // Channeler — light blue, 3 ramping stages (size + brightness grow with stacks).
-  'channel-1': { color: 0x88d8ff, tint: 0xcdeeff, intensity: 0.7 },
-  'channel-2': { color: 0x55c2ff, tint: 0xa8e0ff, intensity: 1.1 },
-  'channel-3': { color: 0x22aaff, tint: 0x88d4ff, intensity: 1.6 },
-  // Equinox — opposed green (Charge) vs magenta (Discharge); vivid complementary
-  // pair, distinct from the yellow/light-blue used by other auras.
-  'equinox-charge':    { color: 0x44dd66, tint: 0xa8f0bb, intensity: 1.1 },
-  'equinox-discharge': { color: 0xdd44cc, tint: 0xf0a8e6, intensity: 1.1 },
-  // Stormbringer — electric indigo crackle while the empowered strikes last.
-  'storm': { color: 0x8a5cff, tint: 0xc2aaff, intensity: 1.3 },
-};
+export const AURA_REGISTRY: Record<string, { color: number; tint: number; intensity: number }> = {};
 
 interface AuraColors { color: number; tint: number; intensity: number }
 
@@ -37,7 +24,7 @@ interface AuraColors { color: number; tint: number; intensity: number }
  * Two shapes, matching the two jobs an aura does:
  *
  *   'stacks'  PROGRESSION — the character visibly gains power as stacks climb.
- *             Staged in thirds, the same shape as `channel-1..3`.
+ *             Staged in thirds.
  *   'timed'   STATE — a window is open or it is not. One look, no stages.
  *
  * Colours echo each chip's own colour so the glow and the chip agree on sight.
@@ -56,11 +43,6 @@ interface BuffAuraDef {
 }
 
 const BUFF_AURA_BY_ID: Record<string, BuffAuraDef> = {
-  // Invoker — 3 consecutive-discharge stacks.
-  'energy-critical-mass': {
-    kind: 'stacks', fullAt: 3, color: 0xff5577, tint: 0xffaabb,
-    minIntensity: 0.7, maxIntensity: 1.6,
-  },
 };
 
 /**
@@ -92,37 +74,11 @@ function buffAura(player: PlayerView): AuraColors | null {
   return null;
 }
 
-function lerpColor(a: number, b: number, t: number): number {
-  const k = Math.max(0, Math.min(1, t));
-  const ar = (a >> 16) & 0xff, ag = (a >> 8) & 0xff, ab = a & 0xff;
-  const br = (b >> 16) & 0xff, bg = (b >> 8) & 0xff, bb = b & 0xff;
-  const r = Math.round(ar + (br - ar) * k);
-  const g = Math.round(ag + (bg - ag) * k);
-  const bl = Math.round(ab + (bb - ab) * k);
-  return (r << 16) | (g << 8) | bl;
-}
-
-/**
- * Resolve a player's current aura colors. Most auras are static registry entries;
- * Aetherist ('aether') is DYNAMIC — a sun that shifts red→yellow and brightens as
- * energy (and thus attack power) climbs.
- */
+/** Resolve a server-set aura, or derive one from the current buff chips. */
 export function resolveAuraColors(player: PlayerView): AuraColors | null {
   const id = player.aura;
-  // Server-set aura ids stay authoritative — they cover the states that are not
-  // expressible as a single chip (Equinox's two phases, Aetherist's continuous
-  // wave). Only when there is none do we derive one from the buff chips.
+  // Server-set aura ids take priority over auras derived from buff chips.
   if (!id) return buffAura(player);
-  if (id === 'aether') {
-    // Energy resets to 0 the tick it fills (the discharge arms), so treat
-    // empowered-ready as full — otherwise the aura snaps to red at peak charge.
-    const t = player.empoweredReady ? 1 : Math.max(0, Math.min(1, (player.energyCount ?? 0) / 100));
-    return {
-      color: lerpColor(0xff2a1a, 0xffd633, t),  // deep red → bright sun-yellow
-      tint:  lerpColor(0xff7a5a, 0xffe699, t),
-      intensity: 0.7 + 0.8 * t,                 // brighter/bigger at high energy
-    };
-  }
   const def = AURA_REGISTRY[id];
   return def ? { color: def.color, tint: def.tint, intensity: def.intensity } : null;
 }

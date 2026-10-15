@@ -75,15 +75,12 @@ export function useMechanicHelp(model: MechanicViewModel): ReactNode {
       return (
         <>
           <div>
-            Every landed hit generates energy. At full energy your next attack
-            discharges it as an empowered strike, emptying the bank.
+            The storm fills from a constant flow. Hits and damage over time drain it before HP.
+            Your Thresholds set the floor, spend bands and phase.
           </div>
           <div style={{ marginTop: 6 }}>
-            {model.empowered
-              ? 'Full — your next attack discharges.'
-              : `${Math.round(model.value)} of ${Math.round(model.max)} energy (${Math.round(model.pct)}%).`}
+            {Math.round(model.value)} of {Math.round(model.max)} storm ({Math.round(model.pct)}%).
           </div>
-          <EmpoweredNote archetype={archetype} />
         </>
       );
 

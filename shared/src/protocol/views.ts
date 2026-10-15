@@ -5,7 +5,6 @@ import type { PassiveMap } from "../passives";
 import { isRangedCombatant, type SubVariant } from "../skillTree";
 import type { MonsterBehavior } from "../data/monsters/behavior";
 import type { ClassConfig } from "../classKits/configTypes";
-import { resolveUpkeepConfig, upkeepStacks, upkeepStage } from "../systems/energyUpkeep";
 import type { BuffId, PlayerBuff } from "../components/combat/buffs";
 import type {
   CombatArchetype,
@@ -130,10 +129,6 @@ export interface PlayerView {
   resolveMax: number;
   energyCount: number;
   energyMax: number;
-  flashShiftPct: number;
-  flashDamageShiftPct: number;
-  flashSpeedBonusPct: number;
-  flashEvasionBonusPct: number;
   empoweredReady: boolean;
   targetDotStacks: number;
   /** Server-authored progress toward the current target's next primary DoT tick. */
@@ -291,12 +286,6 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     return null;
   }
   const pos = entity.hasPosition.current;
-  const flashShiftPct =
-    entity.usesEnergy && entity.usesEnergy.energyMax > 0
-      ? Math.round(
-          (entity.usesEnergy.energy / entity.usesEnergy.energyMax) * 100,
-        )
-      : 0;
   const summonSlots = projectSummonSlots(
     entity.summonsMinions,
     skills.passives,
@@ -380,44 +369,13 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     resolveMax: entity.usesCooldown?.resolveMax ?? 0,
     energyCount: entity.usesEnergy?.energy ?? 0,
     energyMax: entity.usesEnergy?.energyMax ?? 100,
-    flashShiftPct,
-    flashDamageShiftPct: entity.usesEnergy
-      ? Math.round((0.45 - (flashShiftPct / 100) * 0.9) * 100)
-      : 0,
-    flashSpeedBonusPct: entity.usesEnergy
-      ? Math.round(entity.usesEnergy.flashSpeedBonusPct * 100)
-      : 0,
-    flashEvasionBonusPct: entity.usesEnergy
-      ? Math.round(entity.usesEnergy.flashEvasionBonusPct * 100)
-      : 0,
     empoweredReady: entity.hasEmpoweredAttack !== undefined,
     targetDotStacks: entity.appliesDots?.targetDotStacks ?? 0,
     targetDotTickPct: entity.appliesDots?.targetDotTickPct ?? 0,
     targetChillStacks: entity.chillsTarget?.targetChillStacks ?? 0,
     isChanneling: entity.isChanneling !== undefined,
     channelingPct: entity.isChanneling?.pct ?? 0,
-    // Transformation/state auras. Add future state classes here (each maps to a
-    // client aura color). Surge/Overdrive glows yellow; Channeler glows light blue
-    // in 3 stages by upkeep stacks.
-    aura: (() => {
-      // Auras are the right channel for STACKING COMBAT STATE — permanent identity
-      // lives in the body sprite and the head accent, so the two never compete.
-      const e = entity.usesEnergy;
-      if (!e) return null;
-      if (e.overdriveActive) return 'surge';
-      const upkeep = resolveUpkeepConfig(entity.usesSkills?.passives ?? {});
-      const stacks = upkeepStacks(e, upkeep.stackIntervalMs);
-      if (stacks > 0) return `channel-${upkeepStage(stacks, upkeep)}`;
-      // Equinox is always in one of two cycles → always coloured by its current state.
-      if ((entity.usesSkills?.passives['energy.binary-cycle'] ?? 0) > 0) {
-        return e.binaryDischargeState ? 'equinox-discharge' : 'equinox-charge';
-      }
-      // Stormbringer: storm aura while empowered strikes remain.
-      if (e.awakenedCharges > 0) return 'storm';
-      // Aetherist: always wears a sun aura (client tints red→yellow by energy).
-      if ((entity.usesSkills?.passives['energy.charge-state'] ?? 0) > 0) return 'aether';
-      return null;
-    })(),
+    aura: null,
     activeEffects: entity.hasStatus?.activeEffects,
     activeEffectFrames: entity.hasStatus?.activeEffectFrames,
     activeBuffs: entity.hasStatus?.activeBuffs ?? [],

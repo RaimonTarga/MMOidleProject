@@ -90,7 +90,6 @@ function gearScore(recipe: Recipe, slot: Exclude<GearSlot, 'relic'>): number {
 // Relic scoring lives below the shared path-profile helpers because it needs the
 // selected build's passives, not authored magnitude alone.
 const RELIC_BUFF_PASSIVES = [
-  'energy.overdrive',
   'dot.frenzy',
 ] as const satisfies readonly PassiveKey[];
 
@@ -142,9 +141,6 @@ function relicProfileFactor(profile: ResolvedRelicProfile): number {
     case 'dot':
       return lowerIsBetter(profile.tickIntervalMs.before, profile.tickIntervalMs.after)
         * higherIsBetter(profile.maxStacks.before, profile.maxStacks.after);
-    case 'energy':
-      return higherIsBetter(profile.gainPerHit.before, profile.gainPerHit.after)
-        * higherIsBetter(profile.dischargeMultiplier.before, profile.dischargeMultiplier.after);
     case 'summoner':
       return lowerIsBetter(profile.respawnMs.before, profile.respawnMs.after)
         * (profile.summonPower ? higherIsBetter(profile.summonPower.before, profile.summonPower.after) : higherIsBetter(profile.summonCount.before, profile.summonCount.after));

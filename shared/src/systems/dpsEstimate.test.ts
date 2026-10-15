@@ -33,7 +33,7 @@ const PASSIVES: Record<string, PassiveMap> = {
   cooldown: { 'cooldown.empowered-mult': 5 },
   reload: { 'reload.max-ammo': 6, 'reload.reload-time-ms': 2_000, 'reload.empowered-mult': 2 },
   dot: { 'dot.conversion-pct': 0.6 },
-  energy: { 'energy.per-hit': 14, 'energy.empowered-mult': 2 },
+  energy: {},
   summoner: { 'summoner.minion-damage-pct': 1 },
 };
 
@@ -92,7 +92,7 @@ function testMechanicBeatsPlainAutoAttack(): void {
   // than the same character with no mechanic at all. This is the assertion that
   // fails if an archetype branch stops accounting for its own mechanic.
   const plain = estimatePlayerDps(BASE).total;
-  for (const archetype of ['cadence', 'energy'] as const) {
+  for (const archetype of ['cadence'] as const) {
     const withMechanic = estimatePlayerDps(inputFor(archetype)).total;
     assert(
       withMechanic > plain,
@@ -110,6 +110,10 @@ function testMechanicBeatsPlainAutoAttack(): void {
     'the cooldown estimate must not invent an execution clock',
   );
   assert(cooldown.total === plain, 'cooldown DPS is the regular attacks until Resolve is modeled');
+
+  const spirit = estimatePlayerDps(inputFor('energy'));
+  assert(!spirit.parts.some((part) => /discharge/i.test(part.label)), 'Spirit has no per-hit discharge cycle to estimate');
+  assert(spirit.caveats.some((line) => line.includes('flow, floor and bands')), 'Spirit states that Threshold spends are omitted');
 }
 
 function testDotCountsConvertedDamage(): void {

@@ -55,10 +55,6 @@ export interface T1SnapshotClassResources {
   executionCooldownPct: number;
   energyCount: number;
   energyMax: number;
-  flashShiftPct: number;
-  flashDamageShiftPct: number;
-  flashSpeedBonusPct: number;
-  flashEvasionBonusPct: number;
   empoweredReady: boolean;
   targetDotStacks: number;
   targetDotTickPct: number;

@@ -2,7 +2,6 @@ import {
   resolveCadenceRelicProfile,
   resolveCooldownRelicProfile,
   resolveDotRelicDeliveryProfile,
-  resolveEnergyRelicProfile,
   resolveRelicBonusMultiplier,
   resolveRelicCount,
   resolveRelicGain,
@@ -56,13 +55,6 @@ eq(resolveRelicCount(10, 1, 1, 1, 12), 12, 'count respects cap');
   assert(p.maxStacks.after > 6, 'DoT potency raises stack ceiling');
   eq(p.damagePerStackReference.tickIntervalMs, 1500, 'DoT damage reference keeps pre-relic interval');
   eq(p.damagePerStackReference.maxStacks, 6, 'DoT damage reference keeps pre-relic cap');
-}
-
-{
-  const p = resolveEnergyRelicProfile(14, 100, 2, positive);
-  assert(p.gainPerHit.after > 14, 'energy frequency raises gain');
-  eq(p.maxEnergy.after, 140, 'energy potency raises capacity');
-  eq(p.dischargeMultiplier.after, 2.4, 'energy discharge follows capacity ratio');
 }
 
 {

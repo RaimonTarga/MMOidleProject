@@ -78,7 +78,6 @@ import { drawDetonateWindups } from "../../fx/detonateWindup";
 import { drawAllyAoeFootprints } from "../../fx/allyAoeFootprint";
 import { drawSkillCallouts } from "../../render/skillCallouts";
 import { updateEffectOverlays } from "../../render/effectOverlays";
-import { updateMovementEffects } from "../../render/movementEffects";
 import {
   beginTabResync,
   isClientRenderPaused,
@@ -589,7 +588,6 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     updateBossWeather(scene, dt * 1000);
     updateBossAuras(scene, dt * 1000);
     updateAttackAnticipation(scene);
-    updateMovementEffects(scene.state, scene);
     updatePlayerAuras(scene.state, scene);
     updateFrameChargeGlows(scene.state, scene, dt);
     updateIdentityAccents(scene.state, scene);

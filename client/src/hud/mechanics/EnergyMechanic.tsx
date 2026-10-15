@@ -1,46 +1,25 @@
-import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
+import type { CSSProperties } from 'react';
 import { MechanicFrame } from './MechanicFrame';
 import { useMechanicHelp } from './mechanicHelp';
 import type { EnergyMechanicModel } from './types';
 
 export function EnergyMechanic({ model }: { model: EnergyMechanicModel }) {
   const help = useMechanicHelp(model);
-  const previousEmpowered = useRef(model.empowered);
-  const [discharging, setDischarging] = useState(false);
-
-  useLayoutEffect(() => {
-    const wasEmpowered = previousEmpowered.current;
-    previousEmpowered.current = model.empowered;
-    if (
-      !wasEmpowered ||
-      model.empowered ||
-      model.isFlash ||
-      document.visibilityState === 'hidden' ||
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    ) return;
-
-    setDischarging(true);
-    const timeout = window.setTimeout(() => setDischarging(false), 430);
-    return () => window.clearTimeout(timeout);
-  }, [model.empowered, model.isFlash]);
-
-  const displayedPct = discharging ? 0 : model.empowered && !model.isFlash ? 100 : model.pct;
+  const displayedPct = model.pct;
   const style = {
     '--energy-pct': `${displayedPct}%`,
-    ...(model.isFlash ? { '--mechanic-energy-shift': model.shiftColor } : {}),
   } as CSSProperties;
 
   return (
     <MechanicFrame
       kind="energy"
       help={help}
-      title={model.isFlash ? model.shiftLabel : 'Energy'}
-      state={discharging ? 'discharging' : model.empowered && !model.isFlash ? 'empowered' : undefined}
+      title="Storm"
     >
       <div
-        className={`mechanic-capacitor${model.isFlash ? ' mechanic-capacitor--shift' : ''}${discharging ? ' mechanic-capacitor--discharging' : ''}`}
+        className="mechanic-capacitor"
         role="meter"
-        aria-label={model.isFlash ? model.shiftLabel : 'Energy'}
+        aria-label="Storm"
         aria-valuemin={0}
         aria-valuemax={model.max}
         aria-valuenow={model.value}

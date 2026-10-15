@@ -150,7 +150,7 @@ export function passiveNamespaceLabel(key: string): string {
   return NAMESPACE_LABELS[namespace] ?? humanize(namespace);
 }
 
-/** The feature name, without its namespace: `energy.overdrive` → "Overdrive". */
+/** The feature name, without its namespace: `dot.frenzy` → "Frenzy". */
 function stemLabel(stem: string): string {
   const dot = stem.indexOf('.');
   return humanize(dot === -1 ? stem : stem.slice(dot + 1));
@@ -321,7 +321,7 @@ export function passiveLines(
 
   const lines: PassiveLine[] = [];
   for (const [stem, entries] of groups) {
-    // The headline is the key that IS the feature (a flag like `energy.overdrive`)
+    // The headline is the key that IS the feature (a flag like `dot.frenzy`)
     // when present, otherwise the most magnitude-like qualifier.
     const bare = entries.find((entry) => entry.suffix === null);
     const headline = bare

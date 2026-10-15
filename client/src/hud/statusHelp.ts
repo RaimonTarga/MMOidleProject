@@ -82,21 +82,6 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'defense-reactive-plating': b('Reactive plating', 'Each direct hit adds plating up to a cap and refreshes a short hold window. Heavy hits do not crack it. Once the hold lapses, the stacks fade one at a time.'),
 
   // -- Energy ----------------------------------------------------------------
-  'energy-overcharge': m('Overcharge', 'Stacked charge added to your next discharge.'),
-  'energy-overdrive': m('Surge', 'A window of raised attack damage.'),
-  'energy-channel': m('Flow', 'Upkeep stacks that add on-hit damage for as long as you can pay for them.'),
-  'energy-binary-charge': m('Charge phase', 'The slow half of the binary cycle: heavier on-hit damage, but slower attacks, slower energy gain and a weak discharge.'),
-  'energy-binary-discharge': m('Discharge phase', 'The fast half of the binary cycle: more attack damage, faster attacks, faster energy gain and a strong discharge.'),
-  'energy-storm': m('Storm', 'Your next few attacks are empowered by a damage multiplier.'),
-  'energy-aether': m('Aether', 'Your power scales continuously with how full your energy is, between a floor and a ceiling.'),
-  'energy-critical-mass': m('Critical mass', 'Stacks that raise both discharge damage and energy gain, up to a hard cap.'),
-  'energy-ac-charge': m('Accumulating charge', 'While charging: more damage and faster energy gain.'),
-  'energy-ac-discharge': m('Accumulated discharge', 'The release window: attacks come faster and each tick lands for a share of your attack.'),
-  'energy-reservoir': m('Reservoir', 'A stored pool that scales the size of your discharge.'),
-  'energy-equilibrium': m('Equilibrium', 'Holding energy in balance pays a flat damage bonus.'),
-  'energy-sm-pool': m('Stored charge', 'True damage held in reserve — it ignores plating and damage reduction when it is spent.'),
-  'energy-frame-surge': m('Surge', 'Wraith’s frame loop. The discharge opened a window where every hit generates more energy, so the loop feeds the next discharge. The window is shorter than one charge cycle, which is why attack speed raises its uptime instead of merely shortening the wait.'),
-  'energy-frame-overcharge': m('Overcharge', 'Phantasm’s frame loop. The pool keeps taking energy above its cap before the discharge arms, and each hit’s worth banked here adds to the discharge’s damage. The discharge spends the whole bank and staggers what it hits.'),
 
   // -- DoT -------------------------------------------------------------------
   'dot-vigor': m('Vigor', 'Your own damage and attack speed rise while your poison is working on the target.'),
@@ -151,7 +136,6 @@ const TARGET_HELP: Record<string, StatusHelp> = {
   'ability-rooted': d('Bound', 'Binding Strike has pinned the target in place. It can still attack anything already in reach, but cannot reposition until the bind ends.'),
   // Bramble Guard's Entangle keystone (design §22.4): the slow on whatever hit a brambled player.
   'ability-entangled': d('Entangled', 'It struck you through your brambles and the thorns caught its stride: it moves slower, but still attacks and casts. An entangled target counts as held for the cards that need one.'),
-  'energy-ci-tag': d('Induction', 'Cascading Induction: your regular hits land almost nothing but charge the target. Your next discharge grows with every charge stored here, then spends them all.'),
   stunned: d('Stunned', 'The target cannot move or act until this hard-control window ends. This is the control applied by Stunning Strike or a frost shatter; slow resistance does not help.'),
   'stun-immune': b('Stun ward', 'The target is protected from another stun while this ward lasts, including the tail after the current stun. It does not reduce damage or prevent slows.'),
   'canopy-chameleon-barrage': b('Barrage', 'The Canopy Chameleon has primed a short volley: its next two attacks resolve at triple attack speed. The counter shows how many attacks remain.'),
@@ -162,7 +146,6 @@ const TARGET_HELP: Record<string, StatusHelp> = {
   'slinger-rot': d('Rot', 'The last round’s wound is rotting: it deals part of the shot again over a few seconds.'),
   'conduit-poison': d('Poison', 'Your summons’ hits have poisoned this enemy: it takes damage over time, and every hit adds ticks.'),
   'striker-rot': d('Rot', 'Your finisher’s wound is rotting: it deals part of the blow again over a few seconds.'),
-  'energy-storm': d('Storm', 'Storm charge is grounding through this target.'),
   brittle: d('Brittle', 'Each Brittle stack can strip the target’s flat plating and damage reduction, so more of your hits get through.'),
   'dr-shatter': d('Shattered', 'Brittle has been stacked to its shatter threshold: the target’s damage reduction is stripped to nothing for the window. Plating still applies, but the percentage reduction is gone.'),
   vulnerability: d('Vulnerable', 'The target takes amplified damage from every source while this holds.'),

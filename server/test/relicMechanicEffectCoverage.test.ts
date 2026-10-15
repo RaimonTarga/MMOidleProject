@@ -1,6 +1,6 @@
 // Runtime regressions for the ACTIVE mechanics that were missing Relic
 // Buff/Debuff Effect coverage: Grand Ritual, Harrier Brood, Withering Chorus,
-// Tempest's Endless Storm and the Winter Warden Frozen payoff (Berserker
+// the Winter Warden Frozen payoff (Berserker
 // Rampage's block went with the cadence T3 paths, CS7). Each block compares an otherwise identical build at secondary
 // relic rating 0 vs +25%, using the real runtime call sites (not a
 // reimplementation of the formula).
@@ -31,7 +31,6 @@ import {
   tickSummonerSpecializations,
 } from '../src/systems/classes/archetypes/summoner/specs';
 import { FROZEN_EFFECT } from '../src/systems/classes/archetypes/dot/t3/core/constants';
-import { STORM_FX } from '../src/systems/classes/archetypes/energy/t3/core/constants';
 
 initCombatSystems();
 
@@ -105,9 +104,9 @@ function minions(world: World, player: ReturnType<typeof attachSummoner>['player
   return player.summonsMinions!.minionIds.map((id) => world.getMinionEntity(id)!).filter(Boolean);
 }
 
-// ── Non-summoner (dot/energy) fixture (mirrors coreRelicIntegration.test.ts) ─
+// ── Non-summoner (dot) fixture (mirrors coreRelicIntegration.test.ts) ─
 
-function fixture(archetype: 'dot' | 'energy') {
+function fixture(archetype: 'dot') {
   const id = `mech-${serial++}`;
   const world = new World();
   const slices: PersistedPlayerSlices = {
@@ -276,51 +275,6 @@ const hit = (world: World, player: ReturnType<typeof fixture>['player'], target:
     'a rated build with no eligible mechanic must say so truthfully (buff)');
   assert(preview?.secondaryNotes?.some((n) => n.kind === 'debuff' && /no eligible/i.test(n.message)),
     'a rated build with no eligible mechanic must say so truthfully (debuff)');
-}
-
-// ── 7/8. Tempest / Endless Storm — debuff effect scales tick damage only ────────
-{
-  function stormRun(debuffEffect: number) {
-    const { world, player } = fixture('energy');
-    player.usesSkills.passives['energy.endless-storm'] = 1;
-    if (debuffEffect !== 0) player.usesSkills.passives['relic.mechanic-debuff-effect'] = debuffEffect;
-    player.dealsDamage!.attack = 4_500; // makes damagePerTick land on an exact integer pre-scaling
-    const target = nonSummonerTarget(world);
-    attachComponent(world, player, 'hasEmpoweredAttack', {});
-    hit(world, player, target, 1_000);
-    const storm = getStatusEffect(target.tracksCombat, STORM_FX);
-    assert(storm !== undefined, 'Endless Storm must apply the storm DoT on an empowered discharge');
-    return storm!;
-  }
-  const base = stormRun(0);
-  const boosted = stormRun(0.25);
-  close(base.data.damagePerTick, 8_000, 'sanity: baseline damagePerTick matches the authored formula');
-  close(boosted.data.damagePerTick / base.data.damagePerTick, 1.25,
-    '+25% Debuff Effect scales Storm tick damage by exactly the rated bonus');
-  close(base.remainingMs, boosted.remainingMs, 'Storm base duration must not scale with the relic');
-  close(base.data.tickIntervalMs, boosted.data.tickIntervalMs, 'Storm tick interval must not scale with the relic');
-  close(base.data.totalMs, boosted.data.totalMs, 'Storm max duration must not scale with the relic');
-
-  // Extension per normal hit is a separate, untouched code path.
-  const { world: extWorld, player: extPlayer } = fixture('energy');
-  extPlayer.usesSkills.passives['energy.endless-storm'] = 1;
-  extPlayer.usesSkills.passives['relic.mechanic-debuff-effect'] = 0.25;
-  extPlayer.dealsDamage!.attack = 4_500;
-  const extTarget = nonSummonerTarget(extWorld);
-  attachComponent(extWorld, extPlayer, 'hasEmpoweredAttack', {});
-  hit(extWorld, extPlayer, extTarget, 1_000);
-  const beforeExtend = getStatusEffect(extTarget.tracksCombat, STORM_FX)!.remainingMs;
-  hit(extWorld, extPlayer, extTarget, 1_100); // a normal (non-empowered) follow-up hit
-  const afterExtend = getStatusEffect(extTarget.tracksCombat, STORM_FX)!.remainingMs;
-  assert(afterExtend > beforeExtend, 'a follow-up normal hit must still extend the storm');
-
-  // Preview parity: previewed as the attack-independent totalMult, which scales
-  // identically to damagePerTick since damagePerTick is linear in it.
-  const preview = resolveRelicPreview('energy', { 'energy.endless-storm': 1 }, { ...ZERO_RELIC_RATINGS, debuffEffect: 0.25 });
-  const line = preview?.secondaryEffects?.find((e) => e.label === 'Storm damage multiplier');
-  assert(line !== undefined, 'preview must surface a Storm debuff line');
-  close(line!.after / line!.before, boosted.data.damagePerTick / base.data.damagePerTick,
-    'preview scaling ratio must match the runtime scaling ratio');
 }
 
 // ── 9/10. Winter Warden Frozen payoff — debuff effect scales damageTakenPct only ──

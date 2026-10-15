@@ -40,7 +40,6 @@ const STATUS_META: Record<string, StatusMeta> = {
   'conduit-poison':     { label: 'Poison', color: '#88bb55' },
   'striker-rot':        { label: 'Rot', color: '#7a8b2e' },
   'energy-storm':       { label: 'Storm', color: '#c77dff' },
-  'energy-ci-tag':      { label: 'Induction', color: '#c77dff' },
   brittle:         { label: 'Brittle', color: '#d88a4a' },
   'dr-shatter':    { label: 'Shattered', color: '#f0c04a' },
   // Weapon reservoir-DoT effects (poison → Poison, fire → Burn, frost → Chill).

@@ -220,38 +220,6 @@ export function resolveDotRelicDeliveryProfile(
   };
 }
 
-export interface EnergyRelicProfile {
-  archetype: 'energy';
-  gainPerHit: RelicValue<number>;
-  gainPerHitLabel?: string;
-  maxEnergy: RelicValue<number>;
-  dischargeMultiplier: RelicValue<number>;
-  dischargeSuppressed?: boolean;
-}
-
-export function resolveEnergyRelicProfile(
-  gainPerHit: number,
-  maxEnergy: number,
-  dischargeMultiplier: number,
-  ratings: RelicRatings,
-): EnergyRelicProfile {
-  const c = RELIC_COEFFICIENTS.energy;
-  const effectiveMax = resolveRelicCount(maxEnergy, ratings.potency, c.potency, 1);
-  const capacityRatio = effectiveMax / Math.max(1, maxEnergy);
-  return {
-    archetype: 'energy',
-    gainPerHit: {
-      before: gainPerHit,
-      after: resolveRelicGain(gainPerHit, ratings.frequency, c.frequency, 1),
-    },
-    maxEnergy: { before: maxEnergy, after: effectiveMax },
-    dischargeMultiplier: {
-      before: dischargeMultiplier,
-      after: Math.max(1, 1 + Math.max(0, dischargeMultiplier - 1) * capacityRatio),
-    },
-  };
-}
-
 export interface SummonerRelicProfile {
   archetype: 'summoner';
   respawnMs: RelicValue<number>;
@@ -286,5 +254,4 @@ export type ResolvedRelicProfile = (
   | CadenceRelicProfile
   | CooldownRelicProfile
   | DotRelicProfile
-  | EnergyRelicProfile
   | SummonerRelicProfile) & { secondaryEffects?: import('./relicEffectPreview').RelicEffectPreview[]; secondaryNotes?: import('./relicEffectPreview').RelicEffectNote[] };

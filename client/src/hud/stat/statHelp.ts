@@ -126,25 +126,6 @@ export const STAT_HELP: Record<string, string> = {
   'reload.mechanic-proxy-mult': 'The multiplier a hit lands at when an Empowered card makes it count as your class mechanic.',
 
   // ── Energy (charge on hits, spend on a discharge) ───────────────────────────
-  'energy.per-hit': 'Energy gained per landed hit.',
-  'energy.empowered-mult': 'The damage multiplier your discharge hits for at full energy.',
-  'energy.max-bonus': 'Raises your maximum energy, so each discharge holds more.',
-  'energy.flash': 'Full energy flashes into a temporary shift: bonus damage, speed or evasion that decays.',
-  'energy.micro-venting': 'Bleeds energy off continuously instead of holding it to a full discharge.',
-  'energy.polarity-decay': 'Held energy decays over time, rewarding spending it promptly.',
-  'energy.alternating-currents': 'Charge and discharge alternate, each state changing how you fight.',
-  'energy.harmonic-equilibrium': 'Sitting near a balanced energy level is itself a bonus.',
-  'energy.capacitor-shunt': 'Excess energy is shunted rather than wasted when you overflow.',
-  'energy.singularity-execute': 'A full-energy discharge executes weakened targets outright.',
-  'energy.cascading-induction': 'Discharges chain, each one feeding the next.',
-  'energy.superconducting-mass': 'Energy is stored more efficiently the more of it you are holding.',
-  'energy.overdrive': 'Discharging drops you into an attack-damage mode that decays from full to nothing.',
-  'energy.upkeep': 'You never discharge; instead your on-hit damage scales with how long you have held the charge.',
-  'energy.binary-cycle': 'You alternate between a charging state and a discharging state, each with its own bonuses.',
-  'energy.awakened-lightning': 'A discharge empowers your next several attacks instead of one big hit.',
-  'energy.charge-state': 'Your attack damage scales continuously with how full your energy is.',
-  'energy.critical-mass': 'Consecutive discharges stack, each stronger than the last.',
-  'energy.endless-storm': 'Discharging leaves a persistent storm on the target that keeps ticking.',
 
   // ── Damage over time ───────────────────────────────────────────────────────
   'dot.max-stacks': 'How many stacks of your damage-over-time a single target can carry.',
