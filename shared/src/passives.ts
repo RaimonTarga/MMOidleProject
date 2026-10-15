@@ -202,6 +202,12 @@ export const DEFENSE_KEYS = [
   'apprentice.patient-hunter',  // Patient Hunter: Recovery multiplied while every enemy within your reach carries your sigils
   'apprentice.sun-ward',  // Sun-Ward: marks and slows on you are this much shorter per enemy carrying your sigils (capped)
   'apprentice.cool-draught',  // Cool Draught: a mark or slow ending on you heals you this share of max HP
+  'apprentice.chill-linger',  // Glacial Wand: sigils on a chilled or slowed enemy last this many times as long
+  'apprentice.heat-tick',  // Magma Censer: sigils tick this much harder for each step of the Heat
+  'apprentice.ice-veil',  // Ice Veil: when the Chill on you reaches its threshold, enemies carrying your sigils are numbed
+  'apprentice.cold-comfort',  // Cold Comfort: Recovery multiplied while an enemy carrying your sigils is frozen or brittle
+  'apprentice.ashguard',  // Ashguard: a burning hit on you lays a sigil on its shooter
+  'apprentice.banked-coals',  // Banked Coals: Recovery rises this much per step of the Heat while three or more enemies carry your sigils
   'defense.recovery-hit-pct',         // Cairnstone: a hit over this share of max HP...
   'defense.recovery-hit-x',           // ...multiplies the Recovery share by this for a few seconds
   'squire.recovery-riposte-x',        // Counterbalance: after a Riposte, the Recovery share is multiplied by this

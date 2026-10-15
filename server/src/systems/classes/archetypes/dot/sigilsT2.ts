@@ -41,9 +41,16 @@ import {
   FROST_DISCIPLINE,
   HELD_EFFECT_ID,
   POISON_DISCIPLINE,
+  SPEC_AFTERBURN,
+  SPEC_HAIR_TRIGGER,
+  SPEC_ICE_TOMB,
+  SPEC_LONG_FUSE,
+  SPEC_RIPENING,
+  SPEC_SHARDSTORM,
   WITHER_EFFECT_ID,
 } from './constants';
 import { laySigils, nearestTo, payoffMult, payoffsOf, PIECES, sigilsOn, spend, type Payoffs } from './sigils';
+import { firePayoffT3, ripestAge, seepBurst, snagNeighbours, specParam, surfaced } from './sigilsT3';
 import type { ApprenticePiece } from '@mmo-idle/shared';
 
 const FUSE_AT = 'apprentice.fuseAt';
@@ -121,10 +128,23 @@ function neighboursOf(world: World, player: PlayerEntity, p: Payoffs, at: { x: n
   return near;
 }
 
+export interface DetonateOptions {
+  /** Go off now even under Long Fuse (the fuse running out, or a chain's own links). */
+  immediate?: boolean;
+  /** Cinderfall: everything around the target also takes this share of the blast. */
+  splash?: { radius: number; share: number };
+}
+
+const distFromPlayer = (player: PlayerEntity, monster: MonsterEntity): number =>
+  Math.hypot(monster.hasPosition.current.x - player.hasPosition.current.x, monster.hasPosition.current.y - player.hasPosition.current.y);
+
 /**
  * Set off every sigil on `target` at once. Frost: on a frozen or brittle target it Shatters
  * (heavier, and its cold chills the neighbours). Fire: the blast throws burn onto every enemy
  * around it and any it fills goes off too, each enemy once per chain.
+ * T3: Long Fuse waits first, Afterburn leaves part of the sigils burning, Hair Trigger sets
+ * off every carrier the chain reaches, Shardstorm's shards fly out of a shatter, Signal Fire
+ * sets off the furthest carrier, and Cinderfall splashes.
  */
 export function detonate(
   world: World,
@@ -134,15 +154,25 @@ export function detonate(
   payoffPct: number,
   now: number,
   chain: Set<string> = new Set<string>(),
+  opts: DetonateOptions = {},
 ): void {
   if (chain.has(target.isMonster.id)) return;
   let damage = sigilBlast(player, target, payoffPct);
   if (damage <= 0) return;
+  // Long Fuse: every detonation waits, and grows with everything laid meanwhile.
+  if (p.specialization === SPEC_LONG_FUSE && !opts.immediate) {
+    if (getResource(target.tracksCombat, FUSE_AT) <= now) setResource(target.tracksCombat, FUSE_AT, now + specParam(p, 'fuseMs', 2000));
+    return;
+  }
+  const topLevel = chain.size === 0;
   const dp = disciplineParamsOf(p.discipline);
   const at = { ...target.hasPosition.current };
   const id = target.isMonster.id;
+  const carriedBefore = sigilsOn(player, target);
   chain.add(id);
+  let shattered = false;
   if (p.discipline === FROST_DISCIPLINE && isFrozenOrBrittle(target)) {
+    shattered = true;
     damage *= dp['shatterMult'] ?? 2;
     target.tracksCombat.statusEffects = target.tracksCombat.statusEffects.filter((effect) => effect.id !== FROZEN_EFFECT && effect.id !== BRITTLE_EFFECT_ID);
     for (const other of playerAoeTargets(world, player, at, dp['shatterRadius'] ?? 160, id)) {
@@ -151,19 +181,50 @@ export function detonate(
   }
   spend(target);
   applyPlayerAoeTo(world, player, [target], Math.max(1, damage), 'player', {}, {});
+  if (opts.splash) {
+    const around = playerAoeTargets(world, player, at, opts.splash.radius, id).filter((monster) => monster.hasHealth.hp > 0 && !chain.has(monster.isMonster.id));
+    if (around.length > 0) applyPlayerAoeTo(world, player, around, Math.max(1, damage * opts.splash.share), 'player', {}, {});
+  }
+  // Afterburn: a detonation leaves part of its sigils burning on the target.
+  if (p.specialization === SPEC_AFTERBURN && target.hasHealth.hp > 0) {
+    laySigils(world, player, target, Math.floor(carriedBefore * specParam(p, 'keepShare', 0.5)), p.cap);
+  }
+  // Shardstorm: a shatter's shards fly to the nearest enemies, laying frost sigils; a frozen one shatters too.
+  if (shattered && p.specialization === SPEC_SHARDSTORM) {
+    const shards = nearestTo(playerAoeTargets(world, player, at, specParam(p, 'radius', 400), id), at)
+      .filter((monster) => monster.hasHealth.hp > 0 && !chain.has(monster.isMonster.id))
+      .slice(0, specParam(p, 'shards', 3));
+    for (const shard of shards) {
+      laySigils(world, player, shard, specParam(p, 'shardSigils', 1), p.cap);
+      if (isFrozenOrBrittle(shard)) detonate(world, player, p, shard, payoffPct, now, chain, { immediate: true });
+    }
+  }
+  // Signal Fire: detonating your target also sets off your sigils on the enemy furthest from you.
+  if (topLevel && p.owned.has('apprentice-signal-fire')) {
+    const furthest = [...world.monsterEntitiesInNode(player.hasPosition.nodeId)]
+      .filter((monster) => monster.hasHealth.hp > 0 && !chain.has(monster.isMonster.id) && sigilsOn(player, monster) > 0)
+      .sort((a, b) => distFromPlayer(player, b) - distFromPlayer(player, a))[0];
+    if (furthest) detonate(world, player, p, furthest, PIECES.get('apprentice-signal-fire')?.params['payoffPct'] ?? payoffPct, now, chain, { immediate: true });
+  }
   if (p.discipline !== FIRE_DISCIPLINE) return;
+  const hairTrigger = p.specialization === SPEC_HAIR_TRIGGER;
   for (const other of neighboursOf(world, player, p, at, dp['chainRadius'] ?? 160, id)) {
     if (chain.has(other.isMonster.id) || other.hasHealth.hp <= 0) continue;
+    const carried = sigilsOn(player, other) > 0;
     laySigils(world, player, other, dp['chainSigils'] ?? 2, p.cap);
-    if (sigilsOn(player, other) >= p.cap) detonate(world, player, p, other, payoffPct, now, chain);
+    // Hair Trigger: the chain sets off any enemy carrying sigils, not only those it fills.
+    if (sigilsOn(player, other) >= p.cap || (hairTrigger && carried)) detonate(world, player, p, other, payoffPct, now, chain, { immediate: true });
   }
 }
 
 /** Frost's Seize: a real freeze, or a brittle boss when the target accepts no control. */
 export function freezeOrBrittle(world: World, player: PlayerEntity, p: Payoffs, target: MonsterEntity, holdMs: number): void {
   const dp = disciplineParamsOf(p.discipline);
+  // Ice Tomb: a frozen target stays frozen, and a brittle boss brittle, until you shatter it (up to a limit).
+  const tomb = p.specialization === SPEC_ICE_TOMB;
+  if (tomb) holdMs = specParam(p, 'tombMs', 6000);
   if (monsterIgnoresControl(target)) {
-    const ms = dp['brittleMs'] ?? 4000;
+    const ms = tomb ? holdMs : dp['brittleMs'] ?? 4000;
     applyStatusEffect(target.tracksCombat, {
       id: BRITTLE_EFFECT_ID, maxStacks: 1, remainingMs: ms, refreshable: true, sourceId: player.isPlayer.id,
       data: { totalMs: ms, apprenticeBrittle: 1, damageTakenPct: dp['brittlePct'] ?? 0.3 },
@@ -230,7 +291,9 @@ export function firePayoffT2(world: World, player: PlayerEntity, p: Payoffs, pie
     case 'apprentice-snag': {
       if (sigils < p.cap) return false;
       applyMonsterRoot(world, target, params['rootMs'] ?? 1500, pid);
-      return monsterHasLiveRoot(target);
+      if (!monsterHasLiveRoot(target)) return false;
+      snagNeighbours(world, player, p, target, params['rootMs'] ?? 1500);
+      return true;
     }
     case 'apprentice-recoil': {
       const pending = recoilPending.get(player);
@@ -246,7 +309,7 @@ export function firePayoffT2(world: World, player: PlayerEntity, p: Payoffs, pie
       return any;
     }
     default:
-      return false;
+      return firePayoffT3(world, player, p, piece, target, now);
   }
 }
 
@@ -300,16 +363,21 @@ function watchDebuffs(world: World, player: PlayerEntity, carriers: number): voi
 /** The enemies that carried your sigils last tick, so a dying carrier's sigils can pass on. */
 const carried = new WeakMap<PlayerEntity, Map<string, MonsterEntity>>();
 
-function passOn(world: World, player: PlayerEntity, p: Payoffs, from: { x: number; y: number }, count: number, exclude: string): void {
+function passOn(world: World, player: PlayerEntity, p: Payoffs, from: { x: number; y: number }, count: number, exclude: string, age = 0): void {
   let left = count;
   for (const monster of nearestTo(neighboursOf(world, player, p, from, NEIGHBOUR_PX, exclude), from)) {
     if (left <= 0) break;
     const room = p.cap - sigilsOn(player, monster);
     if (room <= 0) continue;
     const give = Math.min(room, left);
-    laySigils(world, player, monster, give, p.cap);
+    laySigils(world, player, monster, give, p.cap, false, age);
     left -= give;
   }
+}
+
+/** Ripening: the plague passes on its ripest sigil (its age comes along). */
+function ripeAge(p: Payoffs, monster: MonsterEntity): number {
+  return p.specialization === SPEC_RIPENING ? ripestAge(getStatusEffect(monster.tracksCombat, DOT_EFFECT_ID)) : 0;
 }
 
 /** The disciplines' running rules, Fuse, Seep, Scent and the debuff watch. */
@@ -335,7 +403,7 @@ export function updateApprenticeT2(world: World, player: PlayerEntity, p: Payoff
     for (const [id, monster] of before) {
       if (monster.hasHealth.hp > 0 && world.getMonsterEntity(id)) continue;
       const left = getStatusEffect(monster.tracksCombat, DOT_EFFECT_ID)?.stacks ?? 0;
-      if (left > 0) passOn(world, player, p, monster.hasPosition.current, left, id);
+      if (left > 0) passOn(world, player, p, monster.hasPosition.current, left, id, ripeAge(p, monster));
     }
   }
 
@@ -356,12 +424,13 @@ export function updateApprenticeT2(world: World, player: PlayerEntity, p: Payoff
       const other = nearestTo(neighboursOf(world, player, p, monster.hasPosition.current, NEIGHBOUR_PX, id), monster.hasPosition.current)
         .find((candidate) => sigilsOn(player, candidate) < p.cap);
       if (other) {
-        laySigils(world, player, other, 1, p.cap);
+        laySigils(world, player, other, 1, p.cap, false, ripeAge(p, monster));
         setResource(monster.tracksCombat, PLAGUE_AT, now + (dp['passEveryMs'] ?? 1000));
       }
     }
     // Seep: out of reach, the sigils keep ticking at double (the tick loop reads `seep`).
     const out = isConcealedEntity(monster) || isInvulnerableMonster(monster);
+    if (seep && surfaced(monster, out)) seepBurst(world, player, p, monster);
     if (seep && out) {
       effect.data['seep'] = PIECES.get('apprentice-seep')?.params['tickMult'] ?? 2;
       effect.remainingMs = Math.max(effect.remainingMs, SEEP_MIN_LIFE_MS);
@@ -385,7 +454,7 @@ export function updateApprenticeT2(world: World, player: PlayerEntity, p: Payoff
     const fuseAt = getResource(monster.tracksCombat, FUSE_AT);
     if (fuseAt <= 0 || now < fuseAt) continue;
     setResource(monster.tracksCombat, FUSE_AT, 0);
-    if (monster.hasHealth.hp > 0) detonate(world, player, p, monster, detonatePct, now);
+    if (monster.hasHealth.hp > 0) detonate(world, player, p, monster, detonatePct, now, new Set<string>(), { immediate: true });
   }
 
   carried.set(player, next);

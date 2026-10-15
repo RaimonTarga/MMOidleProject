@@ -170,7 +170,7 @@ export const APPRENTICE_GEAR: ClassGearDef = {
       cost: { blue: 124 }, stats: { attack: 162 }, attacksPerSecond: 0.50, tier: 3,
       icon: 'items/weapons/permafrost-maul.png',
       description: 'Sigils on a chilled or slowed enemy last twice as long.',
-      mechanicEffects: {},
+      mechanicEffects: { 'apprentice.chill-linger': 2 },
     },
     {
       id: 'apprentice-magma-censer-t3', name: 'Magma Censer',
@@ -178,7 +178,7 @@ export const APPRENTICE_GEAR: ClassGearDef = {
       cost: { red: 140 }, stats: { attack: 70 }, attacksPerSecond: 1.65, tier: 3,
       icon: 'items/weapons/cinderlash.png',
       description: "Sigils tick harder for each step of the fight's Heat.",
-      mechanicEffects: {},
+      mechanicEffects: { 'apprentice.heat-tick': 0.02 },
     },
     // moved from the Plains
     {
@@ -229,7 +229,7 @@ export const APPRENTICE_GEAR: ClassGearDef = {
       cost: { blue: 273 }, stats: { attack: 378 }, attacksPerSecond: 0.50, tier: 4,
       icon: 'items/weapons/glacial-tyrant-maul.png',
       description: 'Sigils on a chilled or slowed enemy last twice as long.',
-      mechanicEffects: {},
+      mechanicEffects: { 'apprentice.chill-linger': 2 },
     },
     {
       id: 'apprentice-magma-censer-t4', name: 'Magma Censer',
@@ -237,7 +237,7 @@ export const APPRENTICE_GEAR: ClassGearDef = {
       cost: { red: 308 }, stats: { attack: 119 }, attacksPerSecond: 1.80, tier: 4,
       icon: 'items/weapons/eruption-lash.png',
       description: "Sigils tick harder for each step of the fight's Heat.",
-      mechanicEffects: {},
+      mechanicEffects: { 'apprentice.heat-tick': 0.02 },
     },
     // moved from the Plains
     {
@@ -321,10 +321,10 @@ export const APPRENTICE_GEAR: ClassGearDef = {
     'jungle-charm-t3': { name: 'Patient Hunter', text: 'Recovery doubles while every enemy within your reach carries your sigils.', effects: { 'apprentice.patient-hunter': 2 } },
     'desert-vest-t3': { name: 'Sun-Ward', text: 'Marks and slows on you are shorter for each enemy carrying your sigils (capped).', effects: { 'apprentice.sun-ward': 0.1 } },
     'desert-charm-t3': { name: 'Cool Draught', text: 'A mark or slow ending on you heals you a little.', effects: { 'apprentice.cool-draught': 0.03 } },
-    'tundra-vest-t3': { name: 'Ice Veil', text: 'When the Chill on you reaches its threshold, every enemy around you carrying your sigils is numbed.', effects: {} },
-    'tundra-charm-t3': { name: 'Cold Comfort', text: 'Recovery doubles while an enemy carrying your sigils is frozen or brittle.', effects: {} },
-    'volcanic-vest-t3': { name: 'Ashguard', text: 'A burning hit on you lays a sigil on its shooter.', effects: {} },
-    'volcanic-charm-t3': { name: 'Banked Coals', text: 'Recovery rises with the Heat while three or more enemies carry your sigils.', effects: {} },
+    'tundra-vest-t3': { name: 'Ice Veil', text: 'When the Chill on you reaches its threshold, every enemy around you carrying your sigils is numbed.', effects: { 'apprentice.ice-veil': 1 } },
+    'tundra-charm-t3': { name: 'Cold Comfort', text: 'Recovery doubles while an enemy carrying your sigils is frozen or brittle.', effects: { 'apprentice.cold-comfort': 2 } },
+    'volcanic-vest-t3': { name: 'Ashguard', text: 'A burning hit on you lays a sigil on its shooter.', effects: { 'apprentice.ashguard': 1 } },
+    'volcanic-charm-t3': { name: 'Banked Coals', text: 'Recovery rises with the Heat while three or more enemies carry your sigils.', effects: { 'apprentice.banked-coals': 0.02 } },
     // ── T4 ──
     'mountain-vest-t4': { name: 'Stone Sigil', text: 'Part of a hit over a quarter of your HP arrives as damage over time instead.', effects: { 'defense.hit-to-dot-pct': 0.3 } },
     'mountain-charm-t4': { name: 'Still Mind', text: 'After a Seize breaks a wind-up, Recovery triples for a few seconds.', effects: { 'apprentice.still-mind': 3 } },
@@ -332,10 +332,10 @@ export const APPRENTICE_GEAR: ClassGearDef = {
     'jungle-charm-t4': { name: 'Patient Hunter', text: 'Recovery doubles while every enemy within your reach carries your sigils.', effects: { 'apprentice.patient-hunter': 2 } },
     'desert-vest-t4': { name: 'Sun-Ward', text: 'Marks and slows on you are shorter for each enemy carrying your sigils (capped).', effects: { 'apprentice.sun-ward': 0.1 } },
     'desert-charm-t4': { name: 'Cool Draught', text: 'A mark or slow ending on you heals you a little.', effects: { 'apprentice.cool-draught': 0.03 } },
-    'tundra-vest-t4': { name: 'Ice Veil', text: 'When the Chill on you reaches its threshold, every enemy around you carrying your sigils is numbed.', effects: {} },
-    'tundra-charm-t4': { name: 'Cold Comfort', text: 'Recovery doubles while an enemy carrying your sigils is frozen or brittle.', effects: {} },
-    'volcanic-vest-t4': { name: 'Ashguard', text: 'A burning hit on you lays a sigil on its shooter.', effects: {} },
-    'volcanic-charm-t4': { name: 'Banked Coals', text: 'Recovery rises with the Heat while three or more enemies carry your sigils.', effects: {} },
+    'tundra-vest-t4': { name: 'Ice Veil', text: 'When the Chill on you reaches its threshold, every enemy around you carrying your sigils is numbed.', effects: { 'apprentice.ice-veil': 1 } },
+    'tundra-charm-t4': { name: 'Cold Comfort', text: 'Recovery doubles while an enemy carrying your sigils is frozen or brittle.', effects: { 'apprentice.cold-comfort': 2 } },
+    'volcanic-vest-t4': { name: 'Ashguard', text: 'A burning hit on you lays a sigil on its shooter.', effects: { 'apprentice.ashguard': 1 } },
+    'volcanic-charm-t4': { name: 'Banked Coals', text: 'Recovery rises with the Heat while three or more enemies carry your sigils.', effects: { 'apprentice.banked-coals': 0.02 } },
     'graveyard-vest-t4': { name: 'Gravewrap', text: "A risen enemy carrying your sigils can't hit you for its first seconds.", effects: {} },
     'graveyard-charm-t4': { name: 'Last Rites', text: 'Recovery rises for each risen enemy carrying your sigils.', effects: {} },
     'trench-vest-t4': { name: 'Deep Ward', text: 'While you carry three or more debuffs, each enemy carrying a full bar deals less damage to you.', effects: {} },

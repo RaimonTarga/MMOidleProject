@@ -1,5 +1,5 @@
 import { getStatusEffect } from '@mmo-idle/shared';
-import { HELD_EFFECT_ID } from './constants';
+import { DOT_EFFECT_ID, HELD_EFFECT_ID } from './constants';
 import { outgoingFinalDamage } from '../../../combat/damage/finalDamage';
 import { mitigatePlayerTickOnMonster } from '../../../combat/damage/monsterTickMitigation';
 import { applyMonsterDamageTakenDebuffs } from '../../shared/debuffs';
@@ -14,7 +14,9 @@ export function classDotTickDamage(
   rawTick: number,
 ): number {
   const state = monster.tracksCombat;
-  let damage = mitigatePlayerTickOnMonster(monster, rawTick, 'dot');
+  // Magma Core: on a shelled enemy the sigils tick at full, past its defenses (`magma` is the multiplier).
+  const magma = getStatusEffect(state, DOT_EFFECT_ID)?.data['magma'] ?? 0;
+  let damage = magma > 0 ? Math.round(rawTick * magma) : mitigatePlayerTickOnMonster(monster, rawTick, 'dot');
   damage = Math.max(1, applyMonsterDamageTakenDebuffs(state, damage));
   // Petrify II: the held enemy also takes more from your ticks.
   const held = getStatusEffect(state, HELD_EFFECT_ID);
