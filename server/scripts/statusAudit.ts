@@ -474,7 +474,7 @@ export function auditStatusRegistry(root: string = AUDIT_DEFAULT_ROOT) {
   // The monster rider adapters (`monsterRiders.ts`) forward a config whose id the audit
   // already resolved at its `target.apply` call site.
   const riderAdapter = (row: Dynamic) => row.at.startsWith('server/src/systems/combat/status/monsterRiders.ts:');
-  const unexplained = dynamic.filter((row) => !controlApplier(row) && !riderAdapter(row) && !/applyStatusEffect|frameWindowEffectId|sourceBarrierEffectId|recoveryEffectIdForAbility|guardEffectIdForAbility|linkId|step\.effectId|debuff\.effectId|room\.effectId|profile\.effectId|^id$|action\.effectId|buff\.effectId|ward\.effectId|debuff\.statusEffectId|source\.id|pool\.erodes\.effectId|ramp\.effectId|se\.effectId|damage\.effectId/.test(row.expression));
+  const unexplained = dynamic.filter((row) => !controlApplier(row) && !riderAdapter(row) && !/applyStatusEffect|frameWindowEffectId|sourceBarrierEffectId|recoveryEffectIdForAbility|guardEffectIdForAbility|linkId|step\.effectId|debuff\.effectId|room\.effectId|profile\.effectId|^id$|^movedDebuffId\(|action\.effectId|buff\.effectId|ward\.effectId|debuff\.statusEffectId|source\.id|pool\.erodes\.effectId|ramp\.effectId|se\.effectId|damage\.effectId/.test(row.expression));
   const uiOnly = [...new Set([...playerHelp.keys(), ...targetHelp.keys(), ...badge.keys()])].filter((id) => !byId.has(id) && !descriptors.has(id) && !['source-barrier', 'enemy-barrier', 'harvest'].includes(id)).sort();
   const bossMeta = entries('client/src/hud/targetStatusMeta.ts', 'BOSS_META');
   const bossCopy = entries(helpFile, 'BOSS_HELP');

@@ -230,9 +230,7 @@ function wardenPull(world: World, owner: PlayerEntity, warden: MinionEntity, rad
     if (ids.length > worst.length) { source = body.cs; worst = ids; }
   }
   if (!source) return;
-  const id = worst
-    .map((candidate) => ({ id: candidate, stacks: getStatusEffect(source!, candidate)?.stacks ?? 0 }))
-    .sort((a, b) => (b.stacks - a.stacks) || a.id.localeCompare(b.id))[0]!.id;
+  const id = movedDebuffId(source, worst);
   const effect = getStatusEffect(source, id);
   if (!effect) return;
   const moved = applyStatusEffect(warden.tracksCombat, {
@@ -241,6 +239,13 @@ function wardenPull(world: World, owner: PlayerEntity, warden: MinionEntity, rad
   });
   moved.stacks = Math.max(moved.stacks, effect.maxStacks > 0 ? Math.min(effect.maxStacks, effect.stacks) : effect.stacks);
   removeStatusEffect(source, id);
+}
+
+/** The debuff to move off a summon: the one with the most stacks (ties by id). It copies a status that already exists. */
+function movedDebuffId(source: TracksCombat, ids: readonly string[]): string {
+  return ids
+    .map((candidate) => ({ id: candidate, stacks: getStatusEffect(source, candidate)?.stacks ?? 0 }))
+    .sort((a, b) => (b.stacks - a.stacks) || a.id.localeCompare(b.id))[0]!.id;
 }
 
 export function updateConduitT4(world: World, owner: PlayerEntity, dt: number, now: number): void {
