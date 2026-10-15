@@ -68,7 +68,7 @@ where the brief says, and tell me.
 
 | ID | Task | Agent | Waits for |
 |---|---|---|---|
-| Next class | The Conduit ([C-conduit](C-conduit.md), plan written 2026-10-15; CD.1 next), then Slinger, Spirit, Apprentice | Conductor | — |
+| Next class | The Conduit ([C-conduit](C-conduit.md), plan written 2026-10-15; CD.1–CD.3 done; CD.4 Souls and CD.5 gear keys next, then the delegate briefs), then Slinger, Spirit, Apprentice | Conductor | — |
 
 ## Known follow-ups (not yet a task)
 
@@ -121,6 +121,7 @@ where the brief says, and tell me.
 
 | ID | Task | Merged |
 |---|---|---|
+| CD.1–CD.3 | The Conduit: the formation is the roster in the class config (`RosterBody`, `<piece>#<n>` slots); the T1 types' stat multipliers, acid, power shot and taunting sweep (`summonPieces.ts`); the orders, Recall rule and rebuild order (`formationOrders.ts`); `conduitFormation.test.ts` | `be52d9fa`, `a9994353`, `208a7f46`; 343/343 |
 | F7-PANEL, CS6-ROUTE, CQ6-ROUTE, CQ7-CLEANUP | The class screen shell; the Striker's and Squire's tutorials and bot routes; the Squire's frame loop and T3 paths deleted (Grok) | merges `093c1050`, `84a63cc5`, `a15f697f`, then CQ7; 342/342 |
 | S7 | The timed ward on the Mountain (big hit) and Tundra (frozen) charm bases, replacing their barrier; `charmWards.test.ts` | next commit |
 | S4 | The always-on in-combat Recovery share for every class; Recovery-multiplier lines (Rhythm, Cairnstone, Counterbalance, Stone Patience); `recoveryBoost.test.ts` | `76ae8143` + test fix |
