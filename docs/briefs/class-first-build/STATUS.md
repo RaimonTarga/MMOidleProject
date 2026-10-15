@@ -28,6 +28,70 @@ Recorded in the bible (§4 Armor/charm row, §5) where they are design.
 
 All delegate tasks are merged (2026-10-15 night): CD6, CD7, CD8, CL5, CL6, CL7, SP5, SP6, SP7, AP5, AP6, AP7.
 
+## Tier 2 prompts (wave 1)
+
+Plan: [T2-plan.md](T2-plan.md). One agent per class (Codex or Grok), each in its own folder.
+
+**T2-STRIKER**, folder `Documents/Claude/Projects/mmo-rw-t2-striker`:
+
+```text
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/t2-striker. First read docs/briefs/class-first-build/AGENT-RULES.md and
+T2-plan.md, then do the task marked T2-STRIKER there. Work only in this folder; never
+run pnpm install. When you're done, commit on your branch, write your report where the
+brief says, and tell me.
+```
+
+**T2-SQUIRE**, folder `Documents/Claude/Projects/mmo-rw-t2-squire`:
+
+```text
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/t2-squire. First read docs/briefs/class-first-build/AGENT-RULES.md and
+T2-plan.md, then do the task marked T2-SQUIRE there. Work only in this folder; never
+run pnpm install. When you're done, commit on your branch, write your report where the
+brief says, and tell me.
+```
+
+**T2-CONDUIT**, folder `Documents/Claude/Projects/mmo-rw-t2-conduit`:
+
+```text
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/t2-conduit. First read docs/briefs/class-first-build/AGENT-RULES.md and
+T2-plan.md, then do the task marked T2-CONDUIT there. Work only in this folder; never
+run pnpm install. When you're done, commit on your branch, write your report where the
+brief says, and tell me.
+```
+
+**T2-SLINGER**, folder `Documents/Claude/Projects/mmo-rw-t2-slinger`:
+
+```text
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/t2-slinger. First read docs/briefs/class-first-build/AGENT-RULES.md and
+T2-plan.md, then do the task marked T2-SLINGER there. Work only in this folder; never
+run pnpm install. When you're done, commit on your branch, write your report where the
+brief says, and tell me.
+```
+
+**T2-SPIRIT**, folder `Documents/Claude/Projects/mmo-rw-t2-spirit`:
+
+```text
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/t2-spirit. First read docs/briefs/class-first-build/AGENT-RULES.md and
+T2-plan.md, then do the task marked T2-SPIRIT there. Work only in this folder; never
+run pnpm install. When you're done, commit on your branch, write your report where the
+brief says, and tell me.
+```
+
+**T2-APPRENTICE**, folder `Documents/Claude/Projects/mmo-rw-t2-apprentice`:
+
+```text
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/t2-apprentice. First read docs/briefs/class-first-build/AGENT-RULES.md and
+T2-plan.md, then do the task marked T2-APPRENTICE there. Work only in this folder; never
+run pnpm install. When you're done, commit on your branch, write your report where the
+brief says, and tell me.
+```
+
 ## Paste-ready prompts
 
 Open the agent **in the task's worktree folder** and paste its prompt.
