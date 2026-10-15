@@ -1,7 +1,8 @@
 import { atom, getDefaultStore, type PrimitiveAtom } from 'jotai';
 import { intents } from '../intents';
-import { bestiaryNodeId, globalMastery } from '@mmo-idle/shared';
+import { bestiaryNodeId, globalMastery, sameClassConfig } from '@mmo-idle/shared';
 import type {
+  ClassConfig,
   CombatArchetype,
   HasAutoIntent,
   EquipmentMap,
@@ -109,6 +110,8 @@ export const selectedSubVariantAtom = atom<SubVariant | null>(null);
 export const selectedRangeAtom = atom<string | null>(null);
 /** The T2 pick, a discipline node id (class-first). */
 export const disciplineIdAtom = atom<string | null>(null);
+/** The class system setup (class-first). Null before a class is picked. */
+export const classConfigAtom = atom<ClassConfig | null>(null);
 export const currentSkillTierAtom = atom<number>(0);
 export const playerTierAtom = atom<number>(0);
 export const levelAtom = atom<number>(1);
@@ -325,6 +328,8 @@ export const craftTabAtom = atom<'make' | null>(null);
 export const statsOpenAtom = atom<boolean>(false);
 export const questOpenAtom = atom<boolean>(false);
 export const settingsOpenAtom = atom<boolean>(false);
+/** The class screen: Order, Response rules, and the other class systems. */
+export const classOpenAtom = atom<boolean>(false);
 export const debugPanelOpenAtom = atom<boolean>(false);
 /**
  * Dev-only: the server-global kill-reward multiplier, mirrored from
@@ -455,6 +460,14 @@ export function setAutoPath(path: string[] | null): void {
   if (prev === null && path === null) return;
   if (prev !== null && path !== null && shallowArrayEqual(prev, path)) return;
   store.set(autoPathAtom, path);
+}
+
+function setClassConfigFromPlayer(next: ClassConfig | null): void {
+  const store = getDefaultStore();
+  const prev = store.get(classConfigAtom);
+  if (prev === next) return;
+  if (prev && next && sameClassConfig(prev, next)) return;
+  store.set(classConfigAtom, next);
 }
 
 function setIfChanged<T>(targetAtom: PrimitiveAtom<T>, next: T): void {
@@ -628,6 +641,7 @@ function resetPlayerAtoms(): void {
   store.set(selectedSubVariantAtom, null);
   store.set(selectedRangeAtom, null);
   store.set(disciplineIdAtom, null);
+  store.set(classConfigAtom, null);
   store.set(currentSkillTierAtom, 0);
   store.set(playerTierAtom, 0);
   store.set(levelAtom, 1);
@@ -741,6 +755,7 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(selectedSubVariantAtom, player.selectedSubVariant);
   setIfChanged(selectedRangeAtom, player.selectedRange);
   setIfChanged(disciplineIdAtom, player.disciplineId);
+  setClassConfigFromPlayer(player.classConfig);
   setIfChanged(currentSkillTierAtom, player.currentSkillTier);
   setIfChanged(playerTierAtom, player.playerTier);
   setIfChanged(levelAtom, player.level);

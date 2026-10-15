@@ -1,5 +1,6 @@
 import type {
   AutocombatConfig,
+  ClassConfig,
   EquipmentSlot,
   EquippedRule,
   PlayerMoveOptions,
@@ -89,6 +90,10 @@ export function sendUnequip(socket: GameSocket, slot: EquipmentSlot): void {
 
 export function sendCraftRecipe(socket: GameSocket, recipeId: string): void {
   socket.emit('crafting:craftRecipe', recipeId);
+}
+
+export function sendSetClassConfig(socket: GameSocket, config: ClassConfig): void {
+  socket.emit('class:setConfig', config);
 }
 
 export function sendJoinParty(socket: GameSocket, targetPlayerId: string): void {
