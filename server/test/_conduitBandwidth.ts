@@ -33,7 +33,6 @@ import { equipItem } from '../src/systems/player/economy/inventory';
 import { World } from '../src/world/World';
 
 
-import { setEntityMotion } from '../src/ecs/markerHelpers';
 initCombatSystems();
 const BIOMES = { plains: 12, forest: 12, swamp: 12, mountain: 12, cave: 12, jungle: 6, desert: 6 };
 
