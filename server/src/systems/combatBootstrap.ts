@@ -8,6 +8,7 @@ import { initInvulnerabilityGuard } from "./combat/invulnerability";
 import { initDeadPlayerGuard } from "./world/playerIncapacitation";
 import { initMobilityBoots } from "./world/mobility/mobilityBoots";
 import { initRuneTauntSystem } from "./combat/ai/taunt";
+import { initMomentListeners } from "./combat/moments/moments";
 import { initDungeonCombatHooks } from "./world/dungeons/dungeon";
 import { initAbilitySystems } from "./player/abilities/abilityEffects";
 import { initAttackTempoSystem } from "./player/abilities/attackTempo";
@@ -91,4 +92,7 @@ export function initCombatSystems(): void {
   // pipeline. Wired here rather than imported directly so `bossPatterns.ts` (which
   // combat.ts reads for the suppression check) does not import combat.ts back.
   initBossPatternCombat();
+  // The moments registry's pipeline events (a big hit, one enemy's hits in a row, a full
+  // dodge). LAST, so they read each hit's final damage and evade outcome.
+  initMomentListeners();
 }

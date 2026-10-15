@@ -1,31 +1,20 @@
-import { updateHeatManagement, heatManagementState, heatEngagementTargets, recordHeatDecision } from "./heatManagement";
+import { updateHeatManagement, heatManagementState, recordHeatDecision } from "./heatManagement";
 import {
   deriveAutoConfigFromRunes,
   getFlag,
   isWaitOutCandidate,
-  isHarmfulPlayerStatusEffect,
   AMBIENT_RAMP_KEY,
-  MONSTER_DATABASE,
   RUNE_NODE_ACQUIRE_RADIUS,
-  posHitboxFromEntity,
-  reachGap,
   setFlag,
   setString,
   type RuneContext,
   type RuneTraceRule,
 } from "@mmo-idle/shared";
 import type { World } from "../../../world/World";
-import type { MonsterEntity, PlayerEntity } from "../../../ecs/entity";
-import { playerDotAtMaxStacks } from "../damage/dotInventory";
+import type { PlayerEntity } from "../../../ecs/entity";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
-import { isMonsterThreatening } from "./guardableThreats";
-import { bossPatternEscaping } from "./bossPatterns";
-import { isPlayerActivelyInCombat, isPlayerInCombat } from "./engagement";
-import {
-  telegraphsContainingPlayer,
-  updateTelegraphEvasionLifecycle,
-} from "./telegraphEvasion";
-import { isPlayerControlled } from "../status/playerHardControl";
+import { updateTelegraphEvasionLifecycle } from "./telegraphEvasion";
+import { updatePlayerMoments } from "../moments/moments";
 
 /** Server-only runtime flags read by the auto-combat systems. */
 export const RUNE_FLEE_FLAG = "rune.flee";
@@ -73,100 +62,6 @@ export function playerHasWaitOutStatus(world: World, player: PlayerEntity): bool
 }
 
 /**
- * Count enemies aggroed onto this player and whether any is winding up a cast the
- * player is meant to ANSWER. Deliberately the shared guardable-threat query rather
- * than the charged-attack state alone: a boss mid `MonsterAbility` area-hit is
- * every bit the threat a Power Shot is, and utility casts stay excluded so Guard
- * is not spent on a self-buff.
- */
-function aggroStats(
-  world: World,
-  player: PlayerEntity,
-  now: number,
-): { count: number; charging: boolean; contact: boolean } {
-  let count = 0;
-  let charging = false;
-  let contact = false;
-  const playerBox = posHitboxFromEntity(player);
-  for (const monster of world.aggroedMonsters) {
-    if (
-      monster.hasAggroTarget.targetKind === "player" &&
-      monster.hasAggroTarget.targetId === player.isPlayer.id
-    ) {
-      count++;
-      if (!charging && isMonsterThreatening(world, monster, now)) charging = true;
-      if (!contact) contact = inMeleeContact(player, playerBox, monster);
-    } else if (
-      // A Conduit's formation is "you" for Enemy Charging: a slam wound up on
-      // one of its summons is the cast a Recall/Guard rule is meant to answer.
-      !charging &&
-      monster.hasAggroTarget.targetKind === "minion" &&
-      world.getMinionEntity(monster.hasAggroTarget.targetId)?.isMinion.ownerPlayerId === player.isPlayer.id &&
-      isMonsterThreatening(world, monster, now)
-    ) {
-      charging = true;
-    }
-  }
-  return { count, charging, contact };
-}
-
-/**
- * Melee monsters reach at most 72px and ranged ones at least 180px, so anything
- * reaching further than this is a shooter, not something "in contact".
- */
-const MELEE_CONTACT_MAX_REACH = 100;
-/** Slack over the monster's own reach, so contact reads a step before the swing. */
-const MELEE_CONTACT_SLACK_PX = 10;
-
-/** A live melee enemy in the player's node is within its own reach of them. */
-function inMeleeContact(
-  player: PlayerEntity,
-  playerBox: ReturnType<typeof posHitboxFromEntity>,
-  monster: MonsterEntity,
-): boolean {
-  const reach = monster.performsAttack?.attackRange;
-  if (reach === undefined || reach > MELEE_CONTACT_MAX_REACH) return false;
-  if (monster.hasHealth.hp <= 0 || monster.hasPosition.nodeId !== player.hasPosition.nodeId) return false;
-  return reachGap(playerBox, posHitboxFromEntity(monster)) <= reach + MELEE_CONTACT_SLACK_PX;
-}
-
-/** Summoner with at most half of its target summon count alive in its node. */
-function formationBroken(world: World, player: PlayerEntity): boolean {
-  const summons = player.summonsMinions;
-  if (!summons || summons.targetCount <= 0) return false;
-  const nodeId = player.hasPosition.nodeId;
-  let living = 0;
-  for (const id of summons.minionIds) {
-    const minion = world.getMinionEntity(id);
-    if (minion && minion.isMinion.ownerPlayerId === player.isPlayer.id
-      && minion.hasHealth.hp > 0 && minion.hasPosition.nodeId === nodeId) living++;
-  }
-  return living * 2 <= summons.targetCount;
-}
-
-/**
- * A boss fighting this player is getting away (flee, dash) or coming for them
- * underground — the moment a root or stun answers (Enemy Escaping).
- */
-function bossEscapingFrom(world: World, player: PlayerEntity): boolean {
-  for (const monster of world.patternMonsters) {
-    if (monster.hasPosition.nodeId !== player.hasPosition.nodeId) continue;
-    if (monster.runsBossPattern?.targetId !== player.isPlayer.id) continue;
-    if (bossPatternEscaping(monster)) return true;
-  }
-  return false;
-}
-
-/** Whether the player's current attack target is an elite (or a boss). */
-function isEliteTarget(world: World, targetId: string | undefined): boolean {
-  if (!targetId) return false;
-  const monster = world.getMonsterEntity(targetId);
-  if (!monster) return false;
-  if (monster.isMonster.isBoss) return true;
-  return MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.elite === true;
-}
-
-/**
  * Per-tick rune derivation. Runs at the START of `World.tick`, before the
  * party-follow / auto-traverse / auto-target systems, so they read freshly
  * derived values. Equipped rules are the sole driver of the auto-combat config:
@@ -177,58 +72,31 @@ function isEliteTarget(world: World, targetId: string | undefined): boolean {
 export function updateRuneDerivedConfig(world: World, now = Date.now()): void {
   for (const player of world.playerEntities) updateHeatManagement(world, player);
   for (const player of world.livePlayers) {
-    const { count: currentAggroCount, charging: enemyCharging, contact: enemyInContact } = aggroStats(
-      world,
-      player,
-      now,
-    );
-    const attackTargetId = player.hasAttackTarget?.targetId;
-    const attackTarget = attackTargetId ? world.getMonsterEntity(attackTargetId) : undefined;
-    const dangerousTelegraphs = telegraphsContainingPlayer(world, player, now);
+    // The fight's facts, measured once per tick for the rules here and for every class
+    // system (the moments registry, class-first build plan F6).
+    const fight = updatePlayerMoments(world, player, now);
+    const dangerousTelegraphs = fight.telegraphs;
     const ctx: RuneContext = {
-      hpPct:
-        player.hasHealth.hp / Math.max(1, player.hasHealth.maxHp),
-      targetHpPct: attackTarget
-        ? attackTarget.hasHealth.hp / Math.max(1, attackTarget.hasHealth.maxHp)
-        : undefined,
-      inCombat: currentAggroCount > 0 || isPlayerInCombat(player, now) ||
-        (heatManagementState(player) === "requested" && heatEngagementTargets(world, player).size > 0),
-      activelyEngaged: isPlayerActivelyInCombat(world, player) ||
-        (heatManagementState(player) === "requested" && heatEngagementTargets(world, player).size > 0),
-      formationBroken: formationBroken(world, player),
-      inParty: player.inParty !== undefined,
-      aggroCount: currentAggroCount,
+      hpPct: fight.hpPct,
+      targetHpPct: fight.targetHpPct,
+      inCombat: fight.inCombat,
+      activelyEngaged: fight.activelyEngaged,
+      formationBroken: fight.formationBroken,
+      inParty: fight.inParty,
+      aggroCount: fight.aggroCount,
       combatArchetype: player.usesSkills.combatArchetype,
-      debuffed: player.tracksCombat.statusEffects.some(
-        (e) => e.stacks > 0 && isHarmfulPlayerStatusEffect(e.id, e.data),
-      ),
-      controlled: isPlayerControlled(player),
-      enemyInContact,
-      enemyCharging,
+      debuffed: fight.debuffed,
+      controlled: fight.controlled,
+      enemyInContact: fight.enemyInContact,
+      enemyCharging: fight.enemyCharging,
       insideDangerousTelegraph: dangerousTelegraphs.length > 0,
-      // The shared empowered-attack flag is armed → the next attack is empowered.
-      // Set by each class when its finisher/execution/discharge becomes ready
-      // (cadence/cooldown/energy); absent for classes with no empowered attack.
-      empoweredImminent: player.hasEmpoweredAttack !== undefined,
-      // Elite-ness is a property of the monster DEFINITION, same source the
-      // `focus-elites` targeting bonus reads.
-      targetIsElite: isEliteTarget(world, attackTargetId),
-      // Measured through the DoT inventory rather than by reading any one
-      // effect id, so a future T4 damage-over-time path drives `target-max-stacks`
-      // the moment it registers a family. Weapon reservoirs are excluded there,
-      // not here.
-      targetAtMaxDotStacks: attackTarget
-        ? playerDotAtMaxStacks(world, player, attackTarget)
-        : false,
-      targetShielded: (attackTarget?.hasStatus.enemyBarrier?.amount ?? 0) > 0,
-      targetEscaping: bossEscapingFrom(world, player),
-      debuffCount: new Set(player.tracksCombat.statusEffects
-        .filter((e) => e.stacks > 0 && isHarmfulPlayerStatusEffect(e.id, e.data))
-        .map((e) => e.id)).size,
-      traveling:
-        player.hasAutoTraversePath !== undefined &&
-        player.hasAutoTraversePath.targetNodeId !== player.hasPosition.nodeId &&
-        player.hasAutoTraversePath.remainingPath.length > 0,
+      empoweredImminent: fight.empoweredImminent,
+      targetIsElite: fight.targetIsElite,
+      targetAtMaxDotStacks: fight.targetAtMaxDotStacks,
+      targetShielded: fight.targetShielded,
+      targetEscaping: fight.targetEscaping,
+      debuffCount: fight.debuffCount,
+      traveling: fight.traveling,
     };
 
     const d = deriveAutoConfigFromRunes(
