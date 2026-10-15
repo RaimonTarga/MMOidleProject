@@ -235,12 +235,12 @@ export function classPathEmblemIconSource(nodeId: string): AssetIconSource {
 
 /** A class piece (technique, response, payoff, clip, threshold, summon). */
 export function classPieceIconSource(id: string): AssetIconSource {
-  return source('class-pieces', id, 'class-pieces-v1');
+  return source('class-pieces', id, 'class-pieces-v2');
 }
 
 /** A boss trophy equipped in the class relic slot. */
 export function trophyIconSource(id: string): AssetIconSource {
-  return source('trophies', id, 'trophies-v1');
+  return source('trophies', id, 'trophies-v2');
 }
 
 /** A discipline crest. T2+ art may be missing; GameIcon falls back. */
