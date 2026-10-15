@@ -18,7 +18,7 @@
  */
 
 import type { Vec2 } from '@mmo-idle/shared';
-import type { PlayerEntity } from '../../../ecs/entity';
+import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { recordMoment } from '../moments/moments';
 import { playerForcedMovementResistPct, repositionPlayer } from './knockback';
@@ -52,6 +52,7 @@ export function applyForcedMovement(
   baseDistance: number,
   toward: boolean,
   reason: ForcedMovementReason,
+  source?: MonsterEntity,
 ): ForcedMovementResult | null {
   if (baseDistance <= 0) return null;
   // Something drags or pushes you: the moment fires even when your resistance holds you in place.
@@ -60,7 +61,7 @@ export function applyForcedMovement(
   // ONE resistance for both directions. Splitting it would mean a player geared
   // against being shoved is still dragged at full strength, which reads as the stat
   // being broken rather than as a different mechanic.
-  const resist = playerForcedMovementResistPct(player, world);
+  const resist = playerForcedMovementResistPct(player, world, source);
   let distance = Math.max(0, Math.round(baseDistance * (1 - resist)));
 
   if (toward) {
@@ -95,8 +96,9 @@ export function pushPlayer(
   player: PlayerEntity,
   anchor: Vec2,
   baseDistance: number,
+  source?: MonsterEntity,
 ): ForcedMovementResult | null {
-  return applyForcedMovement(world, player, anchor, baseDistance, false, 'knockback');
+  return applyForcedMovement(world, player, anchor, baseDistance, false, 'knockback', source);
 }
 
 /**

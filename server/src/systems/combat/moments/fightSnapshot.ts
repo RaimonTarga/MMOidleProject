@@ -85,6 +85,9 @@ export interface FightSnapshot {
   chillAtThreshold: boolean;
   /** An enemy on the player attacks with fire (a fire style or a burning hit). */
   fireAttackAtMe: boolean;
+  // ── Tier 4 ──
+  /** A fallen enemy has risen again in the node near the player. */
+  risenNearMe: boolean;
 }
 
 /**
@@ -211,6 +214,19 @@ function allyThreatened(world: World, player: PlayerEntity, now: number): boolea
 /** An ally this low on HP counts as threatened. PLACEHOLDER. */
 const ALLY_LOW_HP = 0.3;
 
+/** A raised (risen) enemy, alive, within this distance of the player. PLACEHOLDER. */
+const RISEN_NEAR_PX = 500;
+
+function risenNear(world: World, player: PlayerEntity): boolean {
+  for (const monster of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
+    if (monster.isRaised === undefined || monster.hasHealth.hp <= 0) continue;
+    const dx = monster.hasPosition.current.x - player.hasPosition.current.x;
+    const dy = monster.hasPosition.current.y - player.hasPosition.current.y;
+    if (dx * dx + dy * dy <= RISEN_NEAR_PX * RISEN_NEAR_PX) return true;
+  }
+  return false;
+}
+
 /** Chill stacks on the player that count as the Chill's threshold. PLACEHOLDER (one below Deep Freeze). */
 const CHILL_THRESHOLD_STACKS = 3;
 const TUNDRA_CHILL_ID = 'tundra-chill';
@@ -281,6 +297,7 @@ function computeFightSnapshot(world: World, player: PlayerEntity, now: number): 
     allyThreatened: allyThreatened(world, player, now),
     chillAtThreshold: chillStacks(player) >= CHILL_THRESHOLD_STACKS,
     fireAttackAtMe,
+    risenNearMe: risenNear(world, player),
     moving: player.isMoving !== undefined,
     traveling:
       player.hasAutoTraversePath !== undefined &&

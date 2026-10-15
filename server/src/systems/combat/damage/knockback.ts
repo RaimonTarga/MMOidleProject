@@ -6,7 +6,7 @@ import {
   type HasKnockback,
   type Vec2,
 } from '@mmo-idle/shared';
-import type { PlayerEntity } from '../../../ecs/entity';
+import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import { ABILITY_GUARD_EFFECT_IDS, getStatusEffect } from '@mmo-idle/shared';
 
 /**
@@ -198,6 +198,20 @@ export function updateKnockback(world: World, dt: number): void {
   }
 }
 
+/** Whether a push or pull from `source` is refused outright. `source` is absent for boss mechanics and hazards. */
+export type ForcedMovementResist = (player: PlayerEntity, source?: MonsterEntity) => boolean;
+const forcedMovementResists: ForcedMovementResist[] = [];
+
+/** Register a class line that refuses forced movement outright. Called from a module's `init`. */
+export function registerForcedMovementResist(resist: ForcedMovementResist): void {
+  forcedMovementResists.push(resist);
+}
+
+/** An ordinary monster's push: a source that is known and is not a boss. */
+export function isOrdinarySource(source?: MonsterEntity): boolean {
+  return source !== undefined && !source.isMonster.isBoss;
+}
+
 /**
  * How much forced movement the player currently shrugs off, 0..cap.
  *
@@ -208,7 +222,9 @@ export function updateKnockback(world: World, dt: number): void {
  * immovable outright, because immunity to a boss's repositioning is immunity to the
  * mechanic it sets up.
  */
-export function playerForcedMovementResistPct(player: PlayerEntity, world?: World): number {
+export function playerForcedMovementResistPct(player: PlayerEntity, world?: World, source?: MonsterEntity): number {
+  // A class line that refuses forced movement outright (Immovable, Steady Nerve...), registered by its module.
+  for (const resist of forcedMovementResists) if (resist(player, source)) return 1;
   // The Spirit's Grounded line: no forced movement while the storm is at or above the floor.
   if (world && groundedResist(world, player)) return 1;
   let best = 0;

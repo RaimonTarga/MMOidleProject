@@ -5,6 +5,7 @@
 import assert from 'node:assert/strict';
 import { applyStatusEffect, emptyEquipment, type MomentId } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
+import { attachComponent } from '../src/ecs/markerHelpers';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
 import { pushPlayer } from '../src/systems/combat/damage/forcedMovement';
 import { momentActive, momentImplemented, updatePlayerMoments } from '../src/systems/combat/moments/moments';
@@ -27,7 +28,7 @@ const slices = {
   usesSkills: { unlockedSkills: [], passives: {}, selectedClass: null, selectedSubVariant: null, selectedRange: null, combatArchetype: null },
 } as PersistedPlayerSlices;
 
-for (const id of ['chill-threshold', 'fire-attack', 'drag-or-push'] as MomentId[]) {
+for (const id of ['chill-threshold', 'fire-attack', 'drag-or-push', 'risen'] as MomentId[]) {
   assert(momentImplemented(id), `${id} is implemented`);
 }
 
@@ -50,5 +51,10 @@ assert(!active('fire-attack'), 'a plain attacker is not a fire attack');
 
 pushPlayer(world, player, { x: 300, y: 400 }, 80);
 assert(active('drag-or-push'), 'a push is the drag-or-push moment');
+
+assert(!active('risen'), 'nothing has risen');
+attachComponent(world, salamander, 'isRaised', { raiserId: 'necromancer' } as never);
+tick();
+assert(active('risen'), 'a raised enemy near you is the risen moment (T4)');
 
 console.log('momentsT3: ok');

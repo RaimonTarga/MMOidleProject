@@ -36,6 +36,7 @@ import { updateStrikerT4 } from '../src/systems/classes/archetypes/cadence/strik
 import { strikerInvulnerableWindow } from '../src/systems/classes/archetypes/cadence/strikerLeaves';
 import { updateAbilityCasts } from '../src/systems/player/abilities/abilityCasting';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
+import { pushPlayer } from '../src/systems/combat/damage/forcedMovement';
 import { World } from '../src/world/World';
 
 initCombatSystems();
@@ -608,6 +609,19 @@ const HEAVY = 'striker-heavy';
   assert(full > 0, 'the DoT hurts');
   const half = hpAfterDot('striker-thick-blood');
   assert(half > 0 && half < full, `Thick Blood takes some off (${half} < ${full})`);
+}
+
+// 25. Immovable also refuses an ordinary mob's knockback; a boss's push still lands.
+{
+  const pushedBy = (leaf: string | undefined, boss: boolean) => {
+    const r = setup({ disciplineId: HEAVY, leaf });
+    const mob = r.spawn(500, 400);
+    mob.isMonster.isBoss = boss;
+    return pushPlayer(r.world, r.player, mob.hasPosition.current, 120, mob) !== null;
+  };
+  assert(pushedBy(undefined, false), 'an ordinary mob knocks you back without the leaf');
+  assert(!pushedBy('striker-immovable', false), 'not with Immovable');
+  assert(pushedBy('striker-immovable', true), 'a boss still can');
 }
 
 console.log('strikerT4.test.ts: ok');

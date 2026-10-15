@@ -30,6 +30,10 @@ const T1_DEFAULTS: readonly PayoffPlacement[] = [
   { moment: 'target-out-of-reach', pieceId: 'apprentice-seep', conditions: [] },
   { moment: 'target-flees', pieceId: 'apprentice-snag', conditions: [] },
   { moment: 'debuff-landed', pieceId: 'apprentice-recoil', conditions: [] },
+  // T3 and T4 lessons that answer a moment of their own.
+  { moment: 'chill-threshold', pieceId: 'apprentice-melt', conditions: [] },
+  { moment: 'target-shielded', pieceId: 'apprentice-frostcrack', conditions: [] },
+  { moment: 'risen', pieceId: 'apprentice-pyre', conditions: [] },
 ];
 
 export const APPRENTICE_SYSTEM: ClassSystemSpec<PayoffsConfig> = {

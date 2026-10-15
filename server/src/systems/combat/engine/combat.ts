@@ -1165,7 +1165,7 @@ function resolveMonsterAbilityHit(
   if (outcome !== 'hit' || result.evadeBlocksDebuffs === true) return;
   if (action.effect) applyMonsterAbilityPlayerEffect(monster, target, action.effect);
   if (action.knockback) {
-    pushPlayer(world, target, monster.hasPosition.current, action.knockback.distance);
+    pushPlayer(world, target, monster.hasPosition.current, action.knockback.distance, monster);
   }
   const refreshed = world.getPlayerEntity(target.isPlayer.id);
   if (refreshed) markEngaged(world, refreshed, now);
@@ -1201,7 +1201,7 @@ function resolveMonsterAbilityArea(
         );
       }
       if (action.knockback) {
-        pushPlayer(world, target, impact, action.knockback.distance);
+        pushPlayer(world, target, impact, action.knockback.distance, monster);
       }
       const refreshed = world.getPlayerEntity(target.isPlayer.id);
       if (refreshed) markEngaged(world, refreshed, now);
@@ -1771,7 +1771,7 @@ function applyChargedAttackKnockback(
   // Through the shared forced-movement helper: resistance, clamping, obstacle
   // resolution and the reason-tagged event are the same whichever direction a
   // boss moves the player. No boss writes coordinates itself.
-  pushPlayer(world, target, monster.hasPosition.current, charged.knockback?.distance ?? 0);
+  pushPlayer(world, target, monster.hasPosition.current, charged.knockback?.distance ?? 0, monster);
 }
 
 /**

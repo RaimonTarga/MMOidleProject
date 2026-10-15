@@ -60,6 +60,8 @@ const STATES: Partial<Record<MomentId, StatePredicate>> = {
   // Tier 3
   'chill-threshold': (s) => s.chillAtThreshold,
   'fire-attack': (s) => s.fireAttackAtMe,
+  // Tier 4
+  'risen': (s) => s.risenNearMe,
 };
 
 /** The events, recorded as they happen. A param, when the moment has one, is a floor on the recorded value. */
