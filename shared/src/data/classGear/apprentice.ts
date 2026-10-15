@@ -1,7 +1,7 @@
 /**
  * The Apprentice's gear (`dot`): its weapons and its lines on the shared armor and charm
  * bases, from bible §9.4 (T1) and §9.16 (T2–T4). Placeholder numbers are copied from the biome's first
- * generic weapon at that tier; mechanic keys stay empty until the class runtime.
+ * generic weapon at that tier; mechanic keys are the placeholders the class runtime reads.
  */
 import type { ClassGearDef } from './types';
 
@@ -104,15 +104,15 @@ export const APPRENTICE_GEAR: ClassGearDef = {
       cost: { green: 55 }, stats: { attack: 24, onHitDamage: 23 }, attacksPerSecond: 1.55, tier: 2,
       icon: 'items/weapons/stinger-rapier.png',
       description: 'Sigils on a fleeing or kiting enemy tick double.',
-      mechanicEffects: {},
+      mechanicEffects: { 'apprentice.flee-tick': 2 },
     },
     {
       id: 'apprentice-dune-staff-t2', name: 'Dune Staff',
       recipeGroup: 'desert', requiredBiomeLevel: 1, slot: 'weapon',
-      cost: { yellow: 70 }, stats: { attack: 65 }, attacksPerSecond: 0.80, tier: 2,
+      cost: { yellow: 70 }, stats: { attack: 65, attackRange: 40 }, attacksPerSecond: 0.80, tier: 2,
       icon: 'items/weapons/sunsteel-falchion.png',
       description: 'Longer reach, and sigils last longer on far enemies.',
-      mechanicEffects: {},
+      mechanicEffects: { 'apprentice.far-linger': 0.5 },
     },
     // ── T3 ──
     {
@@ -145,7 +145,7 @@ export const APPRENTICE_GEAR: ClassGearDef = {
       cost: { green: 120 }, stats: { attack: 50, onHitDamage: 38 }, attacksPerSecond: 1.65, tier: 3,
       icon: 'items/weapons/venomthorn-rapier.png',
       description: 'Sigils on a fleeing or kiting enemy tick double.',
-      mechanicEffects: {},
+      mechanicEffects: { 'apprentice.flee-tick': 2 },
     },
     // moved from the Forest
     {
@@ -159,10 +159,10 @@ export const APPRENTICE_GEAR: ClassGearDef = {
     {
       id: 'apprentice-dune-staff-t3', name: 'Dune Staff',
       recipeGroup: 'desert', requiredBiomeLevel: 7, slot: 'weapon',
-      cost: { yellow: 116 }, stats: { attack: 112 }, attacksPerSecond: 0.80, tier: 3,
+      cost: { yellow: 116 }, stats: { attack: 112, attackRange: 40 }, attacksPerSecond: 0.80, tier: 3,
       icon: 'items/weapons/solar-falchion.png',
       description: 'Longer reach, and sigils last longer on far enemies.',
-      mechanicEffects: {},
+      mechanicEffects: { 'apprentice.far-linger': 0.5 },
     },
     {
       id: 'apprentice-glacial-wand-t3', name: 'Glacial Wand',
@@ -204,7 +204,7 @@ export const APPRENTICE_GEAR: ClassGearDef = {
       cost: { green: 264 }, stats: { attack: 108, onHitDamage: 70 }, attacksPerSecond: 1.75, tier: 4,
       icon: 'items/weapons/deathfang-rapier.png',
       description: 'Sigils on a fleeing or kiting enemy tick double.',
-      mechanicEffects: {},
+      mechanicEffects: { 'apprentice.flee-tick': 2 },
     },
     // moved from the Forest
     {
@@ -218,10 +218,10 @@ export const APPRENTICE_GEAR: ClassGearDef = {
     {
       id: 'apprentice-dune-staff-t4', name: 'Dune Staff',
       recipeGroup: 'desert', requiredBiomeLevel: 13, slot: 'weapon',
-      cost: { yellow: 255 }, stats: { attack: 212 }, attacksPerSecond: 0.80, tier: 4,
+      cost: { yellow: 255 }, stats: { attack: 212, attackRange: 40 }, attacksPerSecond: 0.80, tier: 4,
       icon: 'items/weapons/zenith-falchion.png',
       description: 'Longer reach, and sigils last longer on far enemies.',
-      mechanicEffects: {},
+      mechanicEffects: { 'apprentice.far-linger': 0.5 },
     },
     {
       id: 'apprentice-glacial-wand-t4', name: 'Glacial Wand',
@@ -306,10 +306,10 @@ export const APPRENTICE_GEAR: ClassGearDef = {
     'mountain-charm-t2': { name: 'Still Mind', text: 'After a Seize breaks a wind-up, Recovery triples for a few seconds.', effects: { 'apprentice.still-mind': 3 } },
     'cave-vest-t2': { name: 'Sigil Weight', text: "A winding-up enemy's blow is weaker for each sigil it carries, up to a third.", effects: { 'apprentice.sigil-weight': 0.06 } },
     'cave-charm-t2': { name: 'Long Draw', text: 'While an elite or boss carries a full bar of your sigils, Recovery rises.', effects: { 'apprentice.long-draw': 2 } },
-    'jungle-vest-t2': { name: 'Second Skin', text: 'The first hit each ambusher lands on you is a third weaker.', effects: {} },
-    'jungle-charm-t2': { name: 'Patient Hunter', text: 'Recovery doubles while every enemy within your reach carries your sigils.', effects: {} },
-    'desert-vest-t2': { name: 'Sun-Ward', text: 'Marks and slows on you are shorter for each enemy carrying your sigils (capped).', effects: {} },
-    'desert-charm-t2': { name: 'Cool Draught', text: 'A mark or slow ending on you heals you a little.', effects: {} },
+    'jungle-vest-t2': { name: 'Second Skin', text: 'The first hit each ambusher lands on you is a third weaker.', effects: { 'apprentice.second-skin': 0.33 } },
+    'jungle-charm-t2': { name: 'Patient Hunter', text: 'Recovery doubles while every enemy within your reach carries your sigils.', effects: { 'apprentice.patient-hunter': 2 } },
+    'desert-vest-t2': { name: 'Sun-Ward', text: 'Marks and slows on you are shorter for each enemy carrying your sigils (capped).', effects: { 'apprentice.sun-ward': 0.1 } },
+    'desert-charm-t2': { name: 'Cool Draught', text: 'A mark or slow ending on you heals you a little.', effects: { 'apprentice.cool-draught': 0.03 } },
     // ── T3 ──
     'swamp-vest-t3': { name: 'Bitter Blood', text: 'Poison and bleed on you tick slower.', effects: { 'defense.dot-resistance': 0.25 } },
     'swamp-charm-t3': { name: 'Bitter Tonic', text: 'Siphon heals more and comes back sooner.', effects: { 'apprentice.siphon-pct': 0.5, 'apprentice.siphon-cd-pct': 0.3 } },
@@ -317,10 +317,10 @@ export const APPRENTICE_GEAR: ClassGearDef = {
     'mountain-charm-t3': { name: 'Still Mind', text: 'After a Seize breaks a wind-up, Recovery triples for a few seconds.', effects: { 'apprentice.still-mind': 3 } },
     'cave-vest-t3': { name: 'Sigil Weight', text: "A winding-up enemy's blow is weaker for each sigil it carries, up to a third.", effects: { 'apprentice.sigil-weight': 0.06 } },
     'cave-charm-t3': { name: 'Long Draw', text: 'While an elite or boss carries a full bar of your sigils, Recovery rises.', effects: { 'apprentice.long-draw': 2 } },
-    'jungle-vest-t3': { name: 'Second Skin', text: 'The first hit each ambusher lands on you is a third weaker.', effects: {} },
-    'jungle-charm-t3': { name: 'Patient Hunter', text: 'Recovery doubles while every enemy within your reach carries your sigils.', effects: {} },
-    'desert-vest-t3': { name: 'Sun-Ward', text: 'Marks and slows on you are shorter for each enemy carrying your sigils (capped).', effects: {} },
-    'desert-charm-t3': { name: 'Cool Draught', text: 'A mark or slow ending on you heals you a little.', effects: {} },
+    'jungle-vest-t3': { name: 'Second Skin', text: 'The first hit each ambusher lands on you is a third weaker.', effects: { 'apprentice.second-skin': 0.33 } },
+    'jungle-charm-t3': { name: 'Patient Hunter', text: 'Recovery doubles while every enemy within your reach carries your sigils.', effects: { 'apprentice.patient-hunter': 2 } },
+    'desert-vest-t3': { name: 'Sun-Ward', text: 'Marks and slows on you are shorter for each enemy carrying your sigils (capped).', effects: { 'apprentice.sun-ward': 0.1 } },
+    'desert-charm-t3': { name: 'Cool Draught', text: 'A mark or slow ending on you heals you a little.', effects: { 'apprentice.cool-draught': 0.03 } },
     'tundra-vest-t3': { name: 'Ice Veil', text: 'When the Chill on you reaches its threshold, every enemy around you carrying your sigils is numbed.', effects: {} },
     'tundra-charm-t3': { name: 'Cold Comfort', text: 'Recovery doubles while an enemy carrying your sigils is frozen or brittle.', effects: {} },
     'volcanic-vest-t3': { name: 'Ashguard', text: 'A burning hit on you lays a sigil on its shooter.', effects: {} },
@@ -328,10 +328,10 @@ export const APPRENTICE_GEAR: ClassGearDef = {
     // ── T4 ──
     'mountain-vest-t4': { name: 'Stone Sigil', text: 'Part of a hit over a quarter of your HP arrives as damage over time instead.', effects: { 'defense.hit-to-dot-pct': 0.3 } },
     'mountain-charm-t4': { name: 'Still Mind', text: 'After a Seize breaks a wind-up, Recovery triples for a few seconds.', effects: { 'apprentice.still-mind': 3 } },
-    'jungle-vest-t4': { name: 'Second Skin', text: 'The first hit each ambusher lands on you is a third weaker.', effects: {} },
-    'jungle-charm-t4': { name: 'Patient Hunter', text: 'Recovery doubles while every enemy within your reach carries your sigils.', effects: {} },
-    'desert-vest-t4': { name: 'Sun-Ward', text: 'Marks and slows on you are shorter for each enemy carrying your sigils (capped).', effects: {} },
-    'desert-charm-t4': { name: 'Cool Draught', text: 'A mark or slow ending on you heals you a little.', effects: {} },
+    'jungle-vest-t4': { name: 'Second Skin', text: 'The first hit each ambusher lands on you is a third weaker.', effects: { 'apprentice.second-skin': 0.33 } },
+    'jungle-charm-t4': { name: 'Patient Hunter', text: 'Recovery doubles while every enemy within your reach carries your sigils.', effects: { 'apprentice.patient-hunter': 2 } },
+    'desert-vest-t4': { name: 'Sun-Ward', text: 'Marks and slows on you are shorter for each enemy carrying your sigils (capped).', effects: { 'apprentice.sun-ward': 0.1 } },
+    'desert-charm-t4': { name: 'Cool Draught', text: 'A mark or slow ending on you heals you a little.', effects: { 'apprentice.cool-draught': 0.03 } },
     'tundra-vest-t4': { name: 'Ice Veil', text: 'When the Chill on you reaches its threshold, every enemy around you carrying your sigils is numbed.', effects: {} },
     'tundra-charm-t4': { name: 'Cold Comfort', text: 'Recovery doubles while an enemy carrying your sigils is frozen or brittle.', effects: {} },
     'volcanic-vest-t4': { name: 'Ashguard', text: 'A burning hit on you lays a sigil on its shooter.', effects: {} },

@@ -79,8 +79,10 @@ export function updateDotArchetype(world: World, dt: number, now = Date.now()): 
   for (const entity of world.dottedMonsters) {
     const monsterId = entity.isMonster.id;
     const state = entity.tracksCombat;
-    if (isInvulnerableMonster(entity)) continue;
     const effect = getStatusEffects(state, DOT_EFFECT_ID)[0];
+    // Seep (§9.16): sigils keep ticking, doubled, on an enemy out of reach.
+    const seep = effect?.data.seep ?? 0;
+    if (isInvulnerableMonster(entity) && seep <= 0) continue;
     if (!effect) {
       detachMarkerIfNoEffect(world, entity, "hasDot", state, DOT_EFFECT_ID);
       continue;
@@ -90,7 +92,7 @@ export function updateDotArchetype(world: World, dt: number, now = Date.now()): 
     if (effect.data.nextTickIn > 0) continue;
 
     const rawTick = computeLinearDotDamage(effect);
-    const damage = classDotTickDamage(world, entity, effect.sourceId, rawTick);
+    const damage = Math.round(classDotTickDamage(world, entity, effect.sourceId, rawTick) * (seep > 0 ? seep : 1));
     const source = actorFromSourceId(world, effect.sourceId);
     recordMonsterDamagedByPlayer(
       world,

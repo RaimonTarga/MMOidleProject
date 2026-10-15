@@ -168,6 +168,13 @@ export const DEFENSE_KEYS = [
   'apprentice.still-mind',  // Still Mind: Recovery multiplied after a Seize breaks a wind-up
   'apprentice.sigil-weight',  // Sigil Weight: a winding-up enemy's blow is weaker per sigil it carries (up to a third)
   'apprentice.long-draw',  // Long Draw: Recovery multiplied while an elite or boss carries a full bar of your sigils
+  // Apprentice T2 (bible §9.16): the Jungle and Desert jobs.
+  'apprentice.flee-tick',  // Stalker's Rod: sigils on a fleeing or kiting enemy tick this many times as fast
+  'apprentice.far-linger',  // Dune Staff: sigils last this much longer on far enemies
+  'apprentice.second-skin',  // Second Skin: the first hit each ambusher lands on you is this much weaker
+  'apprentice.patient-hunter',  // Patient Hunter: Recovery multiplied while every enemy within your reach carries your sigils
+  'apprentice.sun-ward',  // Sun-Ward: marks and slows on you are this much shorter per enemy carrying your sigils (capped)
+  'apprentice.cool-draught',  // Cool Draught: a mark or slow ending on you heals you this share of max HP
   'defense.recovery-hit-pct',         // Cairnstone: a hit over this share of max HP...
   'defense.recovery-hit-x',           // ...multiplies the Recovery share by this for a few seconds
   'squire.recovery-riposte-x',        // Counterbalance: after a Riposte, the Recovery share is multiplied by this
