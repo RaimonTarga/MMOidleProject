@@ -508,7 +508,7 @@ function assertSpiritTail(script: TutorialScript): void {
     assert(boss.steps.length === 1 && boss.steps[0].type === 'attemptBoss' && boss.steps[0].tier === 2, `${biome}: a Tier-2 boss beat`);
   }
   // The Tier-3 stretch (T3-W2): the specialization pick, then lesson and trophy per T3 zone.
-  const t3 = tail.slice(33);
+  const t3 = tail.slice(33, 54);
   assert(t3.length === 21 && t3.every((beat) => beat.chapter.startsWith('Tier 3')), 'seven Tier-3 zones of three beats each');
   assert(t3[0].say.includes('specialization') && t3[0].say.includes('Passive Tree'), 'the first Tier-3 beat is the specialization pick');
   for (const [lesson, biome, name] of [
@@ -525,6 +525,24 @@ function assertSpiritTail(script: TutorialScript): void {
   }
   assert(t3.find((beat) => beat.id === 't3boss:tundra')!.say.includes('Ice Storm') && t3.find((beat) => beat.id === 't3boss:volcanic')!.say.includes('Pyrocumulus'),
     'the new Tundra and Volcanic trophies are named');
+  // The Tier-4 stretch (T4-W2): the leaf pick, then lesson and trophy per T4 zone.
+  const t4 = tail.slice(54);
+  assert(t4.length === 21 && t4.every((beat) => beat.chapter.startsWith('Tier 4')), 'seven Tier-4 zones of three beats each');
+  assert(t4[0].say.includes('leaf') && t4[0].say.includes('Passive Tree'), 'the first Tier-4 beat is the leaf pick');
+  for (const [lesson, biome, name] of [
+    ['spirit:downburst-t4', 'mountain', 'Downburst'], ['spirit:sleet-t4', 'tundra', 'Sleet'],
+    ['spirit:ground-charge-t4', 'jungle', 'Ground Charge'], ['spirit:dust-wall-t4', 'desert', 'Dust Wall'],
+    ['spirit:ash-lightning-t4', 'volcanic', 'Ash Lightning'], ['spirit:thunderstorm-t4', 'graveyard', 'Thunderstorm'],
+    ['spirit:maelstrom-t4', 'trench', 'Maelstrom'],
+  ] as const) {
+    const beat = t4.find((entry) => entry.id === lesson)!;
+    assert(beat?.say.includes(name), `${lesson} names the piece`);
+    assert(farmGate(beat, biome) === biomeLevelCap(4, biome), `${lesson} continues to the Tier-4 cap`);
+    const boss = t4.find((entry) => entry.id === `t4boss:${biome}`)!;
+    assert(boss.steps.length === 1 && boss.steps[0].type === 'attemptBoss' && boss.steps[0].tier === 4, `${biome}: a Tier-4 boss beat`);
+  }
+  assert(t4.find((beat) => beat.id === 't4boss:graveyard')!.say.includes('Stray Bolts') && t4.find((beat) => beat.id === 't4boss:trench')!.say.includes('Depth Charge'),
+    'the new Wasteland and Trench trophies are named');
   const say = (id: string) => tail.find((beat) => beat.id === id)?.say ?? '';
   for (const text of ['plain rod', 'Storm 4', 'fills itself', 'Bolt band', '30% floor', 'gathers to full', 'breaks down to the floor', 'before HP']) {
     assert(say('open:plains').includes(text), `the Spirit intro teaches ${text}`);
@@ -747,8 +765,14 @@ for (const script of SCRIPTS) {
   const t3Done = { ...t2Done };
   for (const biome of t3Zones) t3Done[biome] = biomeLevelCap(3, biome);
   const t3Cleared = [...t2Cleared, ...t3Zones.map((biome) => bossClearKey(biome, 3))];
-  assert(resolveBeatIndex(script, view({ ...openingDone, playerTier: 3, biomeLevel: t3Done, bossesCleared: t3Cleared })) === script.beats.length,
-    'every Tier-3 boss finishes the Spirit script');
+  assert(resolveBeatIndex(script, view({ ...openingDone, playerTier: 3, biomeLevel: t3Done, bossesCleared: t3Cleared })) === script.beats.findIndex((beat) => beat.id === 't4:mountain'),
+    'every Tier-3 boss hands over to the Tier-4 stretch');
+  const t4Zones = ['mountain', 'tundra', 'jungle', 'desert', 'volcanic', 'graveyard', 'trench'];
+  const t4Done = { ...t3Done };
+  for (const biome of t4Zones) t4Done[biome] = biomeLevelCap(4, biome);
+  const t4Cleared = [...t3Cleared, ...t4Zones.map((biome) => bossClearKey(biome, 4))];
+  assert(resolveBeatIndex(script, view({ ...openingDone, playerTier: 4, biomeLevel: t4Done, bossesCleared: t4Cleared })) === script.beats.length,
+    'every Tier-4 boss finishes the Spirit script');
 }
 
 // ── The first-hour checklist ─────────────────────────────────────────────────

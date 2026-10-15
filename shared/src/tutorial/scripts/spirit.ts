@@ -266,6 +266,118 @@ export function buildSpiritT3Beats(): TutorialBeat[] {
   });
 }
 
+/** The Spirit's Tier-4 stretch, in the order of the bible's T4 table (§11.16; the Swamp and Cave have retired). */
+const T4_ZONES: ReadonlyArray<{
+  biome: KitBiome;
+  chapter: string;
+  lessonPieceId: string;
+  approach: string;
+  lesson: string;
+  boss: string;
+}> = [
+  {
+    biome: 'mountain',
+    chapter: 'Tier 4: The Mountain',
+    lessonPieceId: 'spirit-downburst',
+    approach: 'Tier 4. Pick a leaf under your discipline in the Passive Tree: it answers what empties your storm. Then climb the Mountain, where the ground splits late.',
+    lesson: 'Downburst ranks up: the column pins every enemy in a line from you through the charger.',
+    boss: 'Fight the Mountain boss. Thunderhead ranks up again: its full-storm spend also staggers.',
+  },
+  {
+    biome: 'tundra',
+    chapter: 'Tier 4: The Tundra',
+    lessonPieceId: 'spirit-sleet',
+    approach: 'The Tundra armours its beasts at their heaviest. Fight through it.',
+    lesson: 'Sleet is a sidegrade of Hailstorm: a narrow sheet on one target that breaks shells three times as fast. Keep both and choose.',
+    boss: 'Fight the Tundra boss. Ice Storm ranks up: its glaze is stronger.',
+  },
+  {
+    biome: 'jungle',
+    chapter: 'Tier 4: The Jungle',
+    lessonPieceId: 'spirit-ground-charge',
+    approach: 'The Jungle is hard to catch, then it commits. Fight into it.',
+    lesson: 'Ground Charge is a squall: it lays a charged patch, and the first enemy to leap at you is thrown back and stunned.',
+    boss: 'Fight the Jungle boss. Running Storm ranks up once more.',
+  },
+  {
+    biome: 'desert',
+    chapter: 'Tier 4: The Desert',
+    lessonPieceId: 'spirit-dust-wall',
+    approach: 'The Desert comes in three acts: melee, kiter, cornered. Fight through them.',
+    lesson: 'Dust Wall is a sidegrade of Gale: the wall of dust rolls out in every direction and pushes everything back.',
+    boss: 'Fight the Desert boss. Sandstorm ranks up once more.',
+  },
+  {
+    biome: 'volcanic',
+    chapter: 'Tier 4: The Volcanic',
+    lessonPieceId: 'spirit-ash-lightning',
+    approach: 'The Heat is a race now. Fight into it.',
+    lesson: 'Ash Lightning ranks up: it also strikes the enemies around the target.',
+    boss: 'Fight the Volcanic boss. Pyrocumulus ranks up: its burst is stronger.',
+  },
+  {
+    biome: 'graveyard',
+    chapter: 'Tier 4: The Wasteland',
+    lessonPieceId: 'spirit-thunderstorm',
+    approach: 'The Wasteland is new: the dead rise, and area matters most. Fight into it.',
+    lesson: 'Thunderstorm is a strike: for a few seconds, lightning strikes at random among every enemy around you.',
+    boss: 'Fight the Wasteland boss for Stray Bolts: every spend also strikes a random enemy elsewhere in the fight.',
+  },
+  {
+    biome: 'trench',
+    chapter: 'Tier 4: The Trench',
+    lessonPieceId: 'spirit-maelstrom',
+    approach: 'The Trench is new: debuffs pile up, and enemies dive out of reach. Fight into it.',
+    lesson: 'Maelstrom is a squall: when the enemy you fight dives out of reach, a whirlpool drags it back to the surface.',
+    boss: 'Fight the Trench boss for Depth Charge: your storm gathers faster while the target is away, and the first spend on its return is bigger.',
+  },
+];
+
+/** The biome level where a T4 zone teaches its lesson (absolute, as the game counts levels). */
+export function spiritT4LessonLevel(biome: KitBiome, pieceId: string): number {
+  const lesson = SPIRIT_KIT.lessons.find((entry) =>
+    entry.pieceId === pieceId && entry.source.kind === 'zone' && entry.source.tier === 4 && entry.source.biome === biome);
+  if (!lesson || lesson.source.kind !== 'zone') throw new Error(`spirit tutorial: no T4 ${pieceId} lesson in ${biome}`);
+  return absoluteZoneLevel(lesson.source);
+}
+
+/**
+ * The Tier-4 beats, after the Tier-3 stretch: the leaf pick, each zone's lesson and its boss's
+ * trophy rank-up or new trophy. Zone farms split at the lesson level like T1 to T3.
+ */
+export function buildSpiritT4Beats(): TutorialBeat[] {
+  return T4_ZONES.flatMap(({ biome, chapter, lessonPieceId, approach, lesson, boss }) => {
+    const at = { kind: 'biome', biomeGroup: biome, tier: 4, pick: 'uncleared' } as const;
+    const lessonLevel = spiritT4LessonLevel(biome, lessonPieceId);
+    const cap = biomeLevelCap(4, biome);
+    const name = biome === 'graveyard' ? 'Wasteland' : biome.charAt(0).toUpperCase() + biome.slice(1);
+    return [
+      {
+        id: `t4:${biome}`,
+        chapter,
+        say: approach,
+        waiting: `Fighting the ${name} at Tier 4.`,
+        progress: [{ type: 'biomeLevel', biomeGroup: biome, level: lessonLevel }],
+        steps: [{ type: 'farm', at, until: { type: 'biomeLevelAtLeast', biomeGroup: biome, level: lessonLevel } }],
+      },
+      {
+        id: `spirit:${lessonPieceId.slice('spirit-'.length)}-t4`,
+        chapter,
+        say: lesson,
+        waiting: `Fighting the ${name} at Tier 4.`,
+        progress: [{ type: 'biomeLevel', biomeGroup: biome, level: cap }],
+        steps: [{ type: 'farm', at, until: { type: 'biomeLevelAtLeast', biomeGroup: biome, level: cap } }],
+      },
+      {
+        id: `t4boss:${biome}`,
+        chapter,
+        say: boss,
+        steps: [{ type: 'attemptBoss', biomeGroup: biome, tier: 4 }],
+      },
+    ] satisfies TutorialBeat[];
+  });
+}
+
 /** Beats after the shared Clearing opening for an energy-root character. */
 export function buildSpiritBeats(): TutorialBeat[] {
   const seal = buildSealRouteBeats();
@@ -313,5 +425,6 @@ export function buildSpiritBeats(): TutorialBeat[] {
     sealBeat(seal, 'farewell'),
     ...buildSpiritT2Beats(),
     ...buildSpiritT3Beats(),
+    ...buildSpiritT4Beats(),
   ];
 }
