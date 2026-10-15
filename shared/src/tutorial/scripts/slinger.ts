@@ -17,6 +17,10 @@
  * Then the T3 stretch (T3-W2, bible ยง10.6 and ยง10.16): the specialization pick, then
  * the seven T3 zones in the bible's table order (Mountain, Cave, Swamp, Jungle, Desert, and the new
  * Tundra and Volcanic), each as the same three beats at tier 3.
+ *
+ * Then the T4 stretch (T4-W2, bible ง10.7 and ง10.16): the leaf pick, then the seven T4 zones in
+ * the bible's table order (Mountain, Tundra, Jungle, Desert, Volcanic, and the new Wasteland and
+ * Trench), each as the same three beats at tier 4. The Wasteland's biome id is `graveyard`.
  */
 import { biomeLevelCap } from '../../config/gameConfig';
 import { LESSON_ZONE_LEVEL } from '../../classKits/kitHelpers';
@@ -283,6 +287,65 @@ const T3_ZONES: readonly T2Zone[] = [
   },
 ];
 
+const T4_ZONES: readonly T2Zone[] = [
+  {
+    biome: 'mountain',
+    chapter: 'Tier 4: The Mountain',
+    say: 'Tier 4. Spend your skill point in the Passive Tree on a leaf under your discipline: caught reloading, they reach you, or the wrong clip. Then the Mountain.',
+    lesson: 'shellbreaker-ii',
+    lessonSay: 'Shellbreaker ranks up: a few rounds in a row on a barrier are enough to break it in one blow.',
+    bossSay: 'The Mountain boss is open again. Beat it and Quake Round ranks up for the last time: the blast leaves aftershocks.',
+  },
+  {
+    biome: 'tundra',
+    chapter: 'Tier 4: The Tundra',
+    say: 'The Tundra is at its coldest, with Ice Armor at its heaviest. Fight through it.',
+    lesson: 'frost-ii',
+    lessonSay: 'Frost ranks up: it builds twice as fast, and Ice Armor takes the Chill double.',
+    bossSay: 'The Tundra boss is open again. Beat it and Rime Round ranks up.',
+  },
+  {
+    biome: 'jungle',
+    chapter: 'Tier 4: The Jungle',
+    say: 'The Jungle is hard to catch now, then it commits. Fight through it.',
+    lesson: 'tracer-iii',
+    lessonSay: 'Tracer ranks up again: rounds on a traced target hit harder while it flees or hides.',
+    bossSay: "The Jungle boss is open again. Beat it and Hunter's Round ranks up.",
+  },
+  {
+    biome: 'desert',
+    chapter: 'Tier 4: The Desert',
+    say: 'The Desert boss is a three-act duel: melee, kiter, cornered. Fight through the dunes first.',
+    lesson: 'hollow-point-ii',
+    lessonSay: 'Hollow-point ranks up: the bonus doubles when the target is below a third.',
+    bossSay: 'The Desert boss is open again. Beat it and Bounty Round ranks up.',
+  },
+  {
+    biome: 'volcanic',
+    chapter: 'Tier 4: The Volcanic',
+    say: 'The Volcanic is a race against the Heat, with a Magma Shove. Fight through it.',
+    lesson: 'thermite',
+    lessonSay: 'Thermite is a sidegrade of Incendiary: the burn eats shells, and obsidian and ice shells take it double.',
+    bossSay: 'The Volcanic boss is open again. Beat it and Cinder Round ranks up.',
+  },
+  {
+    biome: 'graveyard',
+    chapter: 'Tier 4: The Wasteland',
+    say: 'The Wasteland is new: the dead rise again, and area damage matters most. Fight through it.',
+    lesson: 'hallowed',
+    lessonSay: 'Hallowed is a new clip: risen enemies take double from these rounds, and they rise weaker.',
+    bossSay: 'The Wasteland boss is open. Beat it and take Toll Round: the last round hits harder for every enemy in the fight.',
+  },
+  {
+    biome: 'trench',
+    chapter: 'Tier 4: The Trench',
+    say: 'The Trench is new: one enormous duel, a pile of debuffs, and dives out of reach. Fight through it.',
+    lesson: 'exploit',
+    lessonSay: 'Exploit is a new clip: each round hits harder for each different harmful effect on the target.',
+    bossSay: 'The Trench boss is open. Beat it and take Harpoon Round: the last round harpoons the target, and for a few seconds it cannot dive, burrow or flee.',
+  },
+];
+
 /** Beats that follow the opening for a Slinger. */
 export function buildSlingerBeats(): TutorialBeat[] {
   const seal = buildSealRouteBeats();
@@ -309,5 +372,6 @@ export function buildSlingerBeats(): TutorialBeat[] {
     sealBeat(seal, 'farewell'),
     ...zoneBeats(T2_ZONES, 2),
     ...zoneBeats(T3_ZONES, 3),
+    ...zoneBeats(T4_ZONES, 4),
   ];
 }

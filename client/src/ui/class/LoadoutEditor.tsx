@@ -12,7 +12,7 @@ import {
   type ClipView,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
-import { disciplineIdAtom, playerTierAtom, slingerSpecializationIdAtom } from '../../hud/atoms';
+import { disciplineIdAtom, playerTierAtom, slingerSpecializationIdAtom, unlockedSkillsAtom } from '../../hud/atoms';
 import { GameIcon } from '../GameIcon';
 import { classPieceIconSource, trophyIconSource } from '../conceptIcons';
 import { rankMark } from './format';
@@ -43,6 +43,7 @@ export function LoadoutEditor({ view }: { view: ClassScreenView }) {
   const disciplineId = useAtomValue(disciplineIdAtom);
   const specializationId = useAtomValue(slingerSpecializationIdAtom);
   const playerTier = useAtomValue(playerTierAtom);
+  const unlockedSkills = useAtomValue(unlockedSkillsAtom);
   const [tried, setTried] = useState<string[] | null>(null);
 
   useEffect(() => {
@@ -100,6 +101,7 @@ export function LoadoutEditor({ view }: { view: ClassScreenView }) {
       />
 
       <SpecializationNote disciplineId={disciplineId} specializationId={specializationId} playerTier={playerTier} />
+      <LeafNote disciplineId={disciplineId} unlockedSkills={unlockedSkills} playerTier={playerTier} />
 
       <div className="loadout-editor__pips" aria-label={`Rack: ${loadout.rack.used} of ${loadout.rack.slots}`}>
         {Array.from({ length: loadout.rack.slots }, (_, index) => (
@@ -327,6 +329,49 @@ function SpecializationNote({ disciplineId, specializationId, playerTier }: {
         </div>
         <p className="class-panel__line">{picked.text}</p>
         {SPECIALIZATION_TIPS[picked.id] && <p className="class-panel__line">{SPECIALIZATION_TIPS[picked.id]}</p>}
+      </div>
+    </article>
+  );
+}
+
+/** How each T4 leaf reads in the editor, beside the kit's own text. */
+const LEAF_TIPS: Record<string, string> = {
+  'slinger-light-hands': 'It halves one hit in each short window while the reload runs, so the first blow is the one that stops hurting.',
+  'slinger-slip-away': 'Your speed rises only while an enemy is on you; step away and it fades.',
+  'slinger-quick-swap': 'Switch early on purpose: the rounds you leave come back on top of the next full clip.',
+  'slinger-bunker': 'Reloads become the safe moment; the cut ends the instant the reload does.',
+  'slinger-stakes': 'A charger stops at your feet, held a moment; the same enemy cannot be caught again for a few seconds.',
+  'slinger-fresh-powder': 'Switch clips and the shell at the reload is already the new clip.',
+  'slinger-cool-reload': 'Only telegraphed blows are halved, so watch for the wind-up while you reload.',
+  'slinger-steady-nerve': 'Stuns and knockback are refused while an enemy is in melee with you.',
+  'slinger-improvise': 'Load a clip the target shrugs off and the called shot still hits a third harder.',
+};
+
+/** The T4 leaf under the discipline: the pick, or a pointer to the Passive Tree. */
+function LeafNote({ disciplineId, unlockedSkills, playerTier }: {
+  disciplineId: string | null;
+  unlockedSkills: readonly string[];
+  playerTier: number;
+}) {
+  if (!disciplineId) return null;
+  const picked = SLINGER_KIT.leaves.find((entry) => entry.disciplineId === disciplineId && unlockedSkills.includes(entry.id));
+  if (!picked) {
+    if (playerTier < 4) return null;
+    return (
+      <article className="class-panel__card loadout-editor__discipline">
+        <p className="class-panel__line">Pick a leaf in the Passive Tree: three are open under your discipline.</p>
+      </article>
+    );
+  }
+  return (
+    <article className="class-panel__card loadout-editor__discipline">
+      <div>
+        <div className="class-panel__card-title">
+          <span className="class-panel__name">{picked.name}</span>
+          <span className="class-panel__family">leaf</span>
+        </div>
+        <p className="class-panel__line">{picked.text}</p>
+        {LEAF_TIPS[picked.id] && <p className="class-panel__line">{LEAF_TIPS[picked.id]}</p>}
       </div>
     </article>
   );

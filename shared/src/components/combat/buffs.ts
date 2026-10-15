@@ -76,6 +76,7 @@ export const BUFF_IDS = [
   'squire-rampage', // the Juggernaut's burst of faster swings after a slam (T3)
   'slinger-fan-the-hammer', // the Gunslinger's Fan the Hammer: fast rounds after a reload
   'slinger-entrenched',     // the Siege's Entrenched: standing still ramps fire rate and shell
+  'debuff-immune',          // the Pressure Suit: no debuff lands while you reload (T4)
 ] as const;
 
 export type BuffId = typeof BUFF_IDS[number];

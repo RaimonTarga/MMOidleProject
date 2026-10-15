@@ -339,6 +339,8 @@ const CLASS_PIECE_STATUS_ICONS: Record<string, string> = {
   // Stand-ins until the designer's art: the Slinger's two buffs wear the Guard icon.
   'slinger-fan-the-hammer': 'squire-guard',
   'slinger-entrenched': 'squire-guard',
+  // Pressure Suit's immunity wears the Guard icon until the designer's art.
+  'debuff-immune': 'squire-guard',
 };
 
 export function statusIconSource(id: string, instanceKey?: string): AssetIconSource | null {

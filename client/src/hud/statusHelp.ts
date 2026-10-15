@@ -63,6 +63,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'squire-frostward': b('Frostward', 'You held the Tundra Chill below the freeze: it cannot climb past the hold while this lasts. Hearth heals you each second it stands.'),
   'squire-rampage': b('Rampage', 'Your slam set you swinging faster: attack speed is raised for a short burst, and each new slam starts it again.'),
   'slinger-fan-the-hammer': b('Fanning', 'You are fanning the hammer: the first rounds after a reload fire far faster. It ends after six rounds, on the last round, or when a reload starts.'),
+  'debuff-immune': b('Debuff-proof', 'Nothing harmful can land on you right now: your Pressure Suit holds while you reload.'),
   'slinger-entrenched': b('Entrenched', 'You have stood your ground: fire rate and the next shell grow the longer you stand still, up to a cap. Moving resets it.'),
   'striker-focus': b('Focus', 'Your opener focused you: every beat of this combo swings faster, until its finisher.'),
   'striker-overheated': b('Overheat', 'Your opener overheated you: every beat of this combo swings much faster, but you take more damage, until its finisher.'),
