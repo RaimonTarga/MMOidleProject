@@ -2,6 +2,7 @@ import { SKILL_TREE } from '../../data/skillTree';
 import type { TutorialBeat, TutorialScript } from '../types';
 import { TUTORIAL_OPENING } from './opening';
 import { buildSealRouteBeats } from './sealRoute';
+import { buildSpiritBeats } from './spirit';
 import { buildSquireBeats } from './squire';
 import { buildStrikerBeats } from './striker';
 
@@ -21,6 +22,7 @@ const scripts = new Map<string, TutorialScript>();
 export const TUTORIAL_CLASS_BEATS: Partial<Record<string, () => TutorialBeat[]>> = {
   'cadence-root': buildStrikerBeats,
   'cooldown-root': buildSquireBeats,
+  'energy-root': buildSpiritBeats,
 };
 
 /**
