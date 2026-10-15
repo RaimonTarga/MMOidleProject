@@ -28,7 +28,7 @@ export interface RosterBody {
   hpMult?: number;
   damageMult?: number;
   cooldownMult?: number;
-  /** What it costs to field; a slot's share of the formation's offense and HP follows it. */
+  /** What it costs to field; a slot's share of the formation's offense and HP follows it. 0 is free (a Soul): it counts as one more body and dilutes no one. */
   command: number;
   mode: SummonerAttackMode;
   row: 'front' | 'middle' | 'back';
@@ -124,19 +124,19 @@ const MODE_RANGE = { melee: 'close', reach: 'mid', ranged: 'far' } as const;
  * formation delivering one attack each still totals 1.0 however it is composed.
  */
 function rosterSlots(roster: readonly RosterBody[]): SummonerSlotProfile[] {
-  const total = roster.reduce((sum, body) => sum + Math.max(1, body.command), 0);
+  const total = roster.reduce((sum, body) => sum + (body.command > 0 ? body.command : 0), 0) || 1;
   const seen = new Map<string, number>();
   return roster.map((body) => {
     const n = seen.get(body.pieceId) ?? 0;
     seen.set(body.pieceId, n + 1);
-    const weight = Math.max(1, body.command) / total;
+    const weight = (body.command > 0 ? body.command : 1) / total;
     return {
       slotId: `${body.pieceId}#${n}`,
       role: 'normal' as const,
       offenseWeight: weight,
       defenseWeight: weight,
       procWeight: weight,
-      sizeMult: body.command > 1 ? 1.2 : 1,
+      sizeMult: body.command > 1 || body.command === 0 ? 1.2 : 1,
       pieceId: body.pieceId,
       family: body.family,
       row: body.row,

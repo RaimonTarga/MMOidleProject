@@ -30,6 +30,7 @@ import { registerSummonerFrameLoop, summonerFrenzyApsPct } from './frameLoop';
 import { registerSummonPieces } from './summonPieces';
 import { summonerLineBonus, syncSummonerLine } from './lineHolds';
 import { syncFormationRecall } from './formationOrders';
+import { onSoulSummonDeath, updateSoul } from './souls';
 
 type SummonerPlayerEntity = PlayerEntity & {
   summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
@@ -203,6 +204,7 @@ function collectDeaths(world: World, owner: SummonerPlayerEntity): void {
     if (minion && minion.hasHealth.hp > 0) continue;
     enqueueSummonReconstruction(world, owner, summons.slotIds[index]!);
     if (minion) {
+      onSoulSummonDeath(world, owner, minion);
       if (owner.controlsSummons) {
         onSummonDeath(
           world,
@@ -270,5 +272,6 @@ export function updateSummonerArchetype(world: World, dt: number, now: number): 
       driveMinion(world, minion, summoner, now);
     }
     syncSummonerFormationTarget(world, summoner);
+    updateSoul(world, summoner, dt, now);
   }
 }

@@ -12,6 +12,7 @@ import { playerAoeTargets } from '../../../combat/damage/aoeDamage';
 import { attackNow, registerCombatListener, type CombatContext } from '../../../combat/engine/combatPipeline';
 import { evadeBlocksDebuffs } from '../../../defense/mitigation/evasion';
 import { applyFramePlatingShred } from '../../shared/frameLoop';
+import { onTankTaunt } from './souls';
 
 const PIECES = new Map<string, ConduitPiece>(CONDUIT_KIT.pieces.map((piece) => [piece.id, piece]));
 
@@ -28,6 +29,12 @@ function swing(ctx: CombatContext, world: World): { owner: PlayerEntity; minion:
 }
 
 export function registerSummonPieces(): void {
+  // The Dreadbore Soul's spiderling is a lighter strike (a stand-in; see souls.ts).
+  registerCombatListener('onHit', (ctx) => {
+    const mult = ctx.metadata['soulSpiderling'];
+    if (typeof mult === 'number' && ctx.formation) ctx.damage = Math.round(ctx.damage * mult);
+  });
+
   // Ridge Marksman: every few shots is a heavy one. One multiplier per hit: recorded as the
   // hit's empowered multiplier so a Technique rider reads the hit as it was before it.
   registerCombatListener('onHit', (ctx, world) => {
@@ -68,6 +75,7 @@ export function registerSummonPieces(): void {
         if (monster.hasHealth.hp <= 0) continue;
         applyTaunt(world, monster, { id: minion.isMinion.id, kind: 'minion' }, piece.params.tauntMs ?? 3000, now);
       }
+      onTankTaunt(world, owner, minion);
     }
   });
 }

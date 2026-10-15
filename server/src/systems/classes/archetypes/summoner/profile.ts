@@ -6,6 +6,7 @@ import {
   type SummonerProfile,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../../ecs/entity';
+import { SOUL_BODY, soulOf } from './souls';
 
 /**
  * The Formation's roster (class-first §7.3), resolved from the class config: one body per roster
@@ -31,6 +32,20 @@ function rosterOf(owner: PlayerEntity): readonly RosterBody[] | undefined {
       hpMult: piece.params.hpMult,
       damageMult: piece.params.damageMult,
       cooldownMult: piece.params.cooldownMult,
+    });
+  }
+  // The Soul in the relic slot is a free body (0 Command) wearing its own stand-in body.
+  const soul = soulOf(owner);
+  if (soul && bodies.length > 0) {
+    bodies.push({
+      pieceId: soul.id,
+      family: 'damage',
+      command: 0,
+      mode: 'melee',
+      row: 'middle',
+      body: soul.body,
+      hpMult: SOUL_BODY.hpMult,
+      damageMult: SOUL_BODY.damageMult,
     });
   }
   return bodies;

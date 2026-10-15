@@ -30,7 +30,7 @@ import { World } from '../src/world/World';
 initCombatSystems();
 const BIOMES = { plains: 6, forest: 6, swamp: 6, mountain: 6, cave: 6 };
 
-function setup(roster?: string[]) {
+function setup(roster?: string[], relic?: string) {
   const world = new World();
   const player = world.attachPlayerEntity({
     isPlayer: { id: 'conduit', name: 'Conduit' },
@@ -56,6 +56,7 @@ function setup(roster?: string[]) {
   const config = defaultClassConfig(ctx);
   assert.equal(config.system.kind, 'formation');
   if (roster && config.system.kind === 'formation') config.system.roster = roster;
+  if (relic) config.relic = [relic];
   attachComponent(world, player, 'configuresClass', { config: { ...config, mode: 'custom' } });
   return { world, player };
 }
@@ -186,6 +187,67 @@ const piece = (id: string) => CONDUIT_KIT.pieces.find((p) => p.id === id)!;
   orders.recallWhen = [];
   syncFormationRecall(world, player, 2_200);
   assert.equal(isSummonerRecalling(player), false, 'an empty rule never recalls');
+}
+
+// CD.4: a Soul is a free extra body plus its seed line.
+{
+  const roster = ['conduit-plains-tank', 'conduit-forest-bruiser', 'conduit-mountain-marksman'];
+  const { world, player } = setup(roster, 'conduit-relic-plains');
+  const profile = summonerProfileFor(player);
+  assert.equal(profile.slots.length, 4, 'the Soul adds a body');
+  assert.equal(profile.slots[3]!.slotId, 'conduit-relic-plains#0');
+  assert.equal(profile.slots[3]!.body, 'conduit-summon-champion', 'the Soul wears its own body');
+  assert.ok(Math.abs(profile.slots[0]!.offenseWeight - 1 / 3) < 1e-9, 'a free Soul dilutes no paid body');
+
+  const mk = (x: number) => {
+    const m = world.createMonster('node-5-5', 'bone-crawler', { x, y: 400 })!;
+    m.hasHealth.hp = m.hasHealth.maxHp = 1_000_000;
+    m.mitigatesDamage.plating = 0;
+    return m;
+  };
+  updateSummonerArchetype(world, 100, 1_000);
+  updateSummonerArchetype(world, 100, 1_100);
+  const target = mk(430);
+  player.summonsMinions!.formationTargetId = target.isMonster.id;
+  const hpBefore = target.hasHealth.hp;
+  updateSummonerArchetype(world, 100, 50_000);
+  assert.ok(target.hasHealth.hp < hpBefore, 'Razortusk: the melee summons charge the target together');
+}
+{
+  const { world, player } = setup(['conduit-forest-bruiser', 'conduit-plains-tank'], 'conduit-relic-forest');
+  updateSummonerArchetype(world, 100, 1_000);
+  updateSummonerArchetype(world, 100, 1_100);
+  const minion = world.getMinionEntity(player.summonsMinions!.minionIds[0]!)!;
+  const mon = world.createMonster('node-5-5', 'bone-crawler', { x: 460, y: 400 })!;
+  setAggroTarget(world, mon, { kind: 'player', id: player.isPlayer.id }, 0);
+  minion.hasHealth.hp = Math.round(minion.hasHealth.maxHp * 0.5);
+  const before = minion.hasHealth.hp;
+  updateSummonerArchetype(world, 1_000, Date.now());
+  assert.ok(minion.hasHealth.hp > before, 'Timberclaw: summons mend during a fight');
+}
+{
+  const { world, player } = setup(['conduit-forest-bruiser', 'conduit-plains-tank'], 'conduit-relic-swamp');
+  updateSummonerArchetype(world, 100, 1_000);
+  updateSummonerArchetype(world, 100, 1_100);
+  const dying = world.getMinionEntity(player.summonsMinions!.minionIds[0]!)!;
+  const mon = world.createMonster('node-5-5', 'bone-crawler', { x: dying.hasPosition.current.x + 30, y: dying.hasPosition.current.y })!;
+  mon.hasHealth.hp = mon.hasHealth.maxHp = 1_000_000;
+  const before = mon.hasHealth.hp;
+  dying.hasHealth.hp = 0;
+  updateSummonerArchetype(world, 100, 1_200);
+  assert.ok(mon.hasHealth.hp < before, 'Mire Behemoth: a fallen summon leaves bile that hurts enemies');
+}
+{
+  const { world, player } = setup(['conduit-plains-tank'], 'conduit-relic-mountain');
+  updateSummonerArchetype(world, 100, 1_000);
+  updateSummonerArchetype(world, 100, 1_100);
+  const tank = world.getMinionEntity(player.summonsMinions!.minionIds[0]!)!;
+  const target = world.createMonster('node-5-5', 'bone-crawler', { x: 430, y: 400 })!;
+  target.hasHealth.hp = target.hasHealth.maxHp = 1_000_000;
+  tank.hasHealth.hp = Math.round(tank.hasHealth.maxHp * 0.5);
+  const before = tank.hasHealth.hp;
+  runFormationAttack(world, player, tank, target, 3_000);
+  assert.ok(tank.hasHealth.hp > before, 'Stoneplate: the tank taunt also shields it');
 }
 
 console.log('conduitFormation: ok');
