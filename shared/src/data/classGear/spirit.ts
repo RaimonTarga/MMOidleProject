@@ -103,7 +103,7 @@ export const SPIRIT_GEAR: ClassGearDef = {
       cost: { green: 55 }, stats: { attack: 24, onHitDamage: 23 }, attacksPerSecond: 1.55, tier: 2,
       icon: 'items/weapons/stinger-rapier.png',
       description: 'Your first spend on each new target costs nothing.',
-      mechanicEffects: {},
+      mechanicEffects: { 'spirit.first-free': 1 },
     },
     {
       id: 'spirit-sirocco-staff-t2', name: 'Sirocco Staff',
@@ -111,7 +111,7 @@ export const SPIRIT_GEAR: ClassGearDef = {
       cost: { yellow: 70 }, stats: { attack: 65 }, attacksPerSecond: 0.80, tier: 2,
       icon: 'items/weapons/sunsteel-falchion.png',
       description: 'Your spends reach much farther.',
-      mechanicEffects: {},
+      mechanicEffects: { 'spirit.reach-x': 1.6 },
     },
     // ── T3 ──
     {
@@ -144,7 +144,7 @@ export const SPIRIT_GEAR: ClassGearDef = {
       cost: { green: 120 }, stats: { attack: 50, onHitDamage: 38 }, attacksPerSecond: 1.65, tier: 3,
       icon: 'items/weapons/venomthorn-rapier.png',
       description: 'Your first spend on each new target costs nothing.',
-      mechanicEffects: {},
+      mechanicEffects: { 'spirit.first-free': 1 },
     },
     // The Forest's Quickening Wand moves here.
     {
@@ -161,7 +161,7 @@ export const SPIRIT_GEAR: ClassGearDef = {
       cost: { yellow: 116 }, stats: { attack: 112 }, attacksPerSecond: 0.80, tier: 3,
       icon: 'items/weapons/solar-falchion.png',
       description: 'Your spends reach much farther.',
-      mechanicEffects: {},
+      mechanicEffects: { 'spirit.reach-x': 1.6 },
     },
     {
       id: 'spirit-rime-staff-t3', name: 'Rime Staff',
@@ -203,7 +203,7 @@ export const SPIRIT_GEAR: ClassGearDef = {
       cost: { green: 264 }, stats: { attack: 108, onHitDamage: 70 }, attacksPerSecond: 1.75, tier: 4,
       icon: 'items/weapons/deathfang-rapier.png',
       description: 'Your first spend on each new target costs nothing.',
-      mechanicEffects: {},
+      mechanicEffects: { 'spirit.first-free': 1 },
     },
     // The Forest's Quickening Wand, still here.
     {
@@ -220,7 +220,7 @@ export const SPIRIT_GEAR: ClassGearDef = {
       cost: { yellow: 255 }, stats: { attack: 212 }, attacksPerSecond: 0.80, tier: 4,
       icon: 'items/weapons/zenith-falchion.png',
       description: 'Your spends reach much farther.',
-      mechanicEffects: {},
+      mechanicEffects: { 'spirit.reach-x': 1.6 },
     },
     {
       id: 'spirit-rime-staff-t4', name: 'Rime Staff',
@@ -305,10 +305,10 @@ export const SPIRIT_GEAR: ClassGearDef = {
     'mountain-charm-t2': { name: 'Afterstorm', text: 'After a hit over a quarter of your HP, the storm gathers three times as fast for a few seconds.', effects: { 'spirit.afterstorm-x': 3, 'defense.recovery-hit-pct': 0.25 } },
     'cave-vest-t2': { name: 'Ironbound', text: 'While your storm is empty, your plating doubles.', effects: { 'spirit.ironbound': 2 } },
     'cave-charm-t2': { name: 'Capacitor', text: 'While the storm is full, the flow that would be wasted heals you.', effects: { 'spirit.capacitor': 1 } },
-    'jungle-vest-t2': { name: 'Stormsense', text: 'An ambush cannot drain your storm below your floor.', effects: {} },
-    'jungle-charm-t2': { name: 'Monsoon', text: 'After an ambush hits you, the storm gathers three times as fast for a few seconds.', effects: {} },
-    'desert-vest-t2': { name: 'Sandshroud', text: 'Ranged hits drain the storm at half cost.', effects: {} },
-    'desert-charm-t2': { name: 'Oasis', text: 'While you are marked or slowed, the storm gathers faster.', effects: {} },
+    'jungle-vest-t2': { name: 'Stormsense', text: 'An ambush cannot drain your storm below your floor.', effects: { 'spirit.stormsense': 1 } },
+    'jungle-charm-t2': { name: 'Monsoon', text: 'After an ambush hits you, the storm gathers three times as fast for a few seconds.', effects: { 'spirit.monsoon-x': 3 } },
+    'desert-vest-t2': { name: 'Sandshroud', text: 'Ranged hits drain the storm at half cost.', effects: { 'spirit.ranged-cost': 0.5 } },
+    'desert-charm-t2': { name: 'Oasis', text: 'While you are marked or slowed, the storm gathers faster.', effects: { 'spirit.oasis-pct': 0.5 } },
     // ── T3 ──
     'swamp-vest-t3': { name: 'Sealed Vessel', text: 'Poison and bleed ticks drain the storm at half cost.', effects: { 'spirit.sealed-vessel': 0.5 } },
     'swamp-charm-t3': { name: 'Petrichor', text: 'A Downpour heals you for part of what it washed off.', effects: { 'spirit.petrichor-pct': 0.05 } },
@@ -316,10 +316,10 @@ export const SPIRIT_GEAR: ClassGearDef = {
     'mountain-charm-t3': { name: 'Afterstorm', text: 'After a hit over a quarter of your HP, the storm gathers three times as fast for a few seconds.', effects: { 'spirit.afterstorm-x': 3, 'defense.recovery-hit-pct': 0.25 } },
     'cave-vest-t3': { name: 'Ironbound', text: 'While your storm is empty, your plating doubles.', effects: { 'spirit.ironbound': 2 } },
     'cave-charm-t3': { name: 'Capacitor', text: 'While the storm is full, the flow that would be wasted heals you.', effects: { 'spirit.capacitor': 1 } },
-    'jungle-vest-t3': { name: 'Stormsense', text: 'An ambush cannot drain your storm below your floor.', effects: {} },
-    'jungle-charm-t3': { name: 'Monsoon', text: 'After an ambush hits you, the storm gathers three times as fast for a few seconds.', effects: {} },
-    'desert-vest-t3': { name: 'Sandshroud', text: 'Ranged hits drain the storm at half cost.', effects: {} },
-    'desert-charm-t3': { name: 'Oasis', text: 'While you are marked or slowed, the storm gathers faster.', effects: {} },
+    'jungle-vest-t3': { name: 'Stormsense', text: 'An ambush cannot drain your storm below your floor.', effects: { 'spirit.stormsense': 1 } },
+    'jungle-charm-t3': { name: 'Monsoon', text: 'After an ambush hits you, the storm gathers three times as fast for a few seconds.', effects: { 'spirit.monsoon-x': 3 } },
+    'desert-vest-t3': { name: 'Sandshroud', text: 'Ranged hits drain the storm at half cost.', effects: { 'spirit.ranged-cost': 0.5 } },
+    'desert-charm-t3': { name: 'Oasis', text: 'While you are marked or slowed, the storm gathers faster.', effects: { 'spirit.oasis-pct': 0.5 } },
     'tundra-vest-t3': { name: 'Insulated', text: 'The Chill builds on you slower while your storm is above the floor.', effects: {} },
     'tundra-charm-t3': { name: 'Aurora', text: 'While you are chilled, the storm gathers faster.', effects: {} },
     'volcanic-vest-t3': { name: 'Flash Steam', text: 'Fire damage drains the storm at half cost.', effects: {} },
@@ -327,10 +327,10 @@ export const SPIRIT_GEAR: ClassGearDef = {
     // ── T4 ──
     'mountain-vest-t4': { name: 'Grounded', text: 'While the storm is at or above your floor, hits cannot knock you back or stun you.', effects: { 'spirit.grounded': 1 } },
     'mountain-charm-t4': { name: 'Afterstorm', text: 'After a hit over a quarter of your HP, the storm gathers three times as fast for a few seconds.', effects: { 'spirit.afterstorm-x': 3, 'defense.recovery-hit-pct': 0.25 } },
-    'jungle-vest-t4': { name: 'Stormsense', text: 'An ambush cannot drain your storm below your floor.', effects: {} },
-    'jungle-charm-t4': { name: 'Monsoon', text: 'After an ambush hits you, the storm gathers three times as fast for a few seconds.', effects: {} },
-    'desert-vest-t4': { name: 'Sandshroud', text: 'Ranged hits drain the storm at half cost.', effects: {} },
-    'desert-charm-t4': { name: 'Oasis', text: 'While you are marked or slowed, the storm gathers faster.', effects: {} },
+    'jungle-vest-t4': { name: 'Stormsense', text: 'An ambush cannot drain your storm below your floor.', effects: { 'spirit.stormsense': 1 } },
+    'jungle-charm-t4': { name: 'Monsoon', text: 'After an ambush hits you, the storm gathers three times as fast for a few seconds.', effects: { 'spirit.monsoon-x': 3 } },
+    'desert-vest-t4': { name: 'Sandshroud', text: 'Ranged hits drain the storm at half cost.', effects: { 'spirit.ranged-cost': 0.5 } },
+    'desert-charm-t4': { name: 'Oasis', text: 'While you are marked or slowed, the storm gathers faster.', effects: { 'spirit.oasis-pct': 0.5 } },
     'tundra-vest-t4': { name: 'Insulated', text: 'The Chill builds on you slower while your storm is above the floor.', effects: {} },
     'tundra-charm-t4': { name: 'Aurora', text: 'While you are chilled, the storm gathers faster.', effects: {} },
     'volcanic-vest-t4': { name: 'Flash Steam', text: 'Fire damage drains the storm at half cost.', effects: {} },
