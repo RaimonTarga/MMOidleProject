@@ -143,10 +143,11 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-hunting-rifle-t3', name: 'Hunting Rifle',
       recipeGroup: 'jungle', requiredBiomeLevel: 7, slot: 'weapon',
-      cost: { green: 120 }, stats: { attack: 50, onHitDamage: 38 }, attacksPerSecond: 1.65, tier: 3,
+      cost: { green: 120 }, stats: { attack: 50, onHitDamage: 38, attackRange: 60 }, attacksPerSecond: 1.65, tier: 3,
       icon: 'items/weapons/venomthorn-rapier.png',
       description: 'Long reach. Rounds hit harder the farther the target is.',
-      mechanicEffects: {},
+      // PLACEHOLDER: reach, clip and reload are not in the bible (copied from the job's first tier).
+      mechanicEffects: { 'reload.max-ammo': 6, 'reload.reload-time-ms': 1800, 'slinger.far-pct': 0.5 },
     },
     // The Forest's Carbine moves here.
     {
@@ -160,18 +161,20 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-long-rifle-t3', name: 'Long Rifle',
       recipeGroup: 'desert', requiredBiomeLevel: 7, slot: 'weapon',
-      cost: { yellow: 116 }, stats: { attack: 112 }, attacksPerSecond: 0.80, tier: 3,
+      cost: { yellow: 116 }, stats: { attack: 112, attackRange: 140 }, attacksPerSecond: 0.80, tier: 3,
       icon: 'items/weapons/solar-falchion.png',
       description: 'The longest reach. It outranges kiters.',
-      mechanicEffects: {},
+      // PLACEHOLDER: reach, clip and reload are not in the bible (copied from the job's first tier).
+      mechanicEffects: { 'reload.max-ammo': 5, 'reload.reload-time-ms': 2000 },
     },
     {
       id: 'slinger-frostlock-rifle-t3', name: 'Frostlock Rifle',
       recipeGroup: 'tundra', requiredBiomeLevel: 1, slot: 'weapon',
-      cost: { blue: 124 }, stats: { attack: 162 }, attacksPerSecond: 0.50, tier: 3,
+      cost: { blue: 124 }, stats: { attack: 162, attackRange: 100 }, attacksPerSecond: 0.50, tier: 3,
       icon: 'items/weapons/permafrost-maul.png',
       description: 'Rounds hit harder against chilled, slowed or rooted enemies.',
-      mechanicEffects: {},
+      // PLACEHOLDER: reach, clip and reload are not in the bible (copied from the job's first tier).
+      mechanicEffects: { 'reload.max-ammo': 5, 'reload.reload-time-ms': 2200, 'slinger.cold-pct': 0.4 },
     },
     {
       id: 'slinger-firebrand-pistol-t3', name: 'Firebrand Pistol',
@@ -179,7 +182,8 @@ export const SLINGER_GEAR: ClassGearDef = {
       cost: { red: 140 }, stats: { attack: 70 }, attacksPerSecond: 1.65, tier: 3,
       icon: 'items/weapons/cinderlash.png',
       description: "Each step of the fight's Heat makes every round hit harder.",
-      mechanicEffects: {},
+      // PLACEHOLDER: reach, clip and reload are not in the bible (copied from the job's first tier).
+      mechanicEffects: { 'reload.max-ammo': 8, 'reload.reload-time-ms': 1700, 'slinger.heat-pct': 0.03 },
     },
     // The Plains' Pepperbox moves here.
     {
@@ -202,10 +206,11 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-hunting-rifle-t4', name: 'Hunting Rifle',
       recipeGroup: 'jungle', requiredBiomeLevel: 13, slot: 'weapon',
-      cost: { green: 264 }, stats: { attack: 108, onHitDamage: 70 }, attacksPerSecond: 1.75, tier: 4,
+      cost: { green: 264 }, stats: { attack: 108, onHitDamage: 70, attackRange: 60 }, attacksPerSecond: 1.75, tier: 4,
       icon: 'items/weapons/deathfang-rapier.png',
       description: 'Long reach. Rounds hit harder the farther the target is.',
-      mechanicEffects: {},
+      // PLACEHOLDER: reach, clip and reload are not in the bible (copied from the job's first tier).
+      mechanicEffects: { 'reload.max-ammo': 6, 'reload.reload-time-ms': 1800, 'slinger.far-pct': 0.5 },
     },
     // The Forest's Carbine, still here.
     {
@@ -219,18 +224,20 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-long-rifle-t4', name: 'Long Rifle',
       recipeGroup: 'desert', requiredBiomeLevel: 13, slot: 'weapon',
-      cost: { yellow: 255 }, stats: { attack: 212 }, attacksPerSecond: 0.80, tier: 4,
+      cost: { yellow: 255 }, stats: { attack: 212, attackRange: 140 }, attacksPerSecond: 0.80, tier: 4,
       icon: 'items/weapons/zenith-falchion.png',
       description: 'The longest reach. It outranges kiters.',
-      mechanicEffects: {},
+      // PLACEHOLDER: reach, clip and reload are not in the bible (copied from the job's first tier).
+      mechanicEffects: { 'reload.max-ammo': 5, 'reload.reload-time-ms': 2000 },
     },
     {
       id: 'slinger-frostlock-rifle-t4', name: 'Frostlock Rifle',
       recipeGroup: 'tundra', requiredBiomeLevel: 7, slot: 'weapon',
-      cost: { blue: 273 }, stats: { attack: 378 }, attacksPerSecond: 0.50, tier: 4,
+      cost: { blue: 273 }, stats: { attack: 378, attackRange: 100 }, attacksPerSecond: 0.50, tier: 4,
       icon: 'items/weapons/glacial-tyrant-maul.png',
       description: 'Rounds hit harder against chilled, slowed or rooted enemies.',
-      mechanicEffects: {},
+      // PLACEHOLDER: reach, clip and reload are not in the bible (copied from the job's first tier).
+      mechanicEffects: { 'reload.max-ammo': 5, 'reload.reload-time-ms': 2200, 'slinger.cold-pct': 0.4 },
     },
     {
       id: 'slinger-firebrand-pistol-t4', name: 'Firebrand Pistol',
@@ -238,7 +245,8 @@ export const SLINGER_GEAR: ClassGearDef = {
       cost: { red: 308 }, stats: { attack: 119 }, attacksPerSecond: 1.80, tier: 4,
       icon: 'items/weapons/eruption-lash.png',
       description: "Each step of the fight's Heat makes every round hit harder.",
-      mechanicEffects: {},
+      // PLACEHOLDER: reach, clip and reload are not in the bible (copied from the job's first tier).
+      mechanicEffects: { 'reload.max-ammo': 8, 'reload.reload-time-ms': 1700, 'slinger.heat-pct': 0.03 },
     },
     // The Plains' Pepperbox, still here.
     {
@@ -318,25 +326,25 @@ export const SLINGER_GEAR: ClassGearDef = {
     'mountain-charm-t3': { name: 'Regroup', text: 'After a hit over a quarter of your HP, you move faster and Recovery doubles for a few seconds.', effects: { 'defense.recovery-hit-pct': 0.25, 'defense.recovery-hit-x': 2, 'slinger.regroup-speed-pct': 0.3 } },
     'cave-vest-t3': { name: 'Hunker', text: 'Your plating doubles while you reload.', effects: { 'slinger.hunker': 2 } },
     'cave-charm-t3': { name: 'Bivouac', text: 'Out-of-combat Recovery is much faster.', effects: { 'defense.ooc-recovery-pct': 1 } },
-    'jungle-vest-t3': { name: 'Lookout', text: 'An enemy that ambushes you while you reload is slowed and revealed.', effects: {} },
-    'jungle-charm-t3': { name: 'Undergrowth', text: 'Recovery doubles while no enemy is targeting you.', effects: {} },
-    'desert-vest-t3': { name: 'Glass Duster', text: 'You reload faster and hit harder, and the armor defends you less.', effects: {} },
-    'desert-charm-t3': { name: 'Shade', text: 'Every few seconds a mark or slow on you ends.', effects: {} },
-    'tundra-vest-t3': { name: 'Warm Hands', text: 'The Chill on you does not build while you reload.', effects: {} },
-    'tundra-charm-t3': { name: 'Thaw', text: 'Recovery doubles while you are chilled or slowed.', effects: {} },
-    'volcanic-vest-t3': { name: 'Asbestos Coat', text: 'The extra damage from the Heat does not apply to you while you reload.', effects: {} },
-    'volcanic-charm-t3': { name: 'Heatsink', text: 'Recovery rises with the Heat while no enemy is near you.', effects: {} },
+    'jungle-vest-t3': { name: 'Lookout', text: 'An enemy that ambushes you while you reload is slowed and revealed.', effects: { 'slinger.lookout': 0.4 } },
+    'jungle-charm-t3': { name: 'Undergrowth', text: 'Recovery doubles while no enemy is targeting you.', effects: { 'slinger.undergrowth': 2 } },
+    'desert-vest-t3': { name: 'Glass Duster', text: 'You reload faster and hit harder, and the armor defends you less.', effects: { 'slinger.damage-pct': 0.15, 'slinger.reload-faster-pct': 0.2 } },
+    'desert-charm-t3': { name: 'Shade', text: 'Every few seconds a mark or slow on you ends.', effects: { 'slinger.shade': 5000 } },
+    'tundra-vest-t3': { name: 'Warm Hands', text: 'The Chill on you does not build while you reload.', effects: { 'slinger.warm-hands': 1 } },
+    'tundra-charm-t3': { name: 'Thaw', text: 'Recovery doubles while you are chilled or slowed.', effects: { 'slinger.thaw': 2 } },
+    'volcanic-vest-t3': { name: 'Asbestos Coat', text: 'The extra damage from the Heat does not apply to you while you reload.', effects: { 'slinger.asbestos': 1 } },
+    'volcanic-charm-t3': { name: 'Heatsink', text: 'Recovery rises with the Heat while no enemy is near you.', effects: { 'slinger.heatsink': 0.1 } },
     // ── T4 ──
     'mountain-vest-t4': { name: 'Dig In', text: 'While you reload, no single hit takes more than a fifth of your HP.', effects: { 'slinger.dig-in': 0.2 } },
     'mountain-charm-t4': { name: 'Regroup', text: 'After a hit over a quarter of your HP, you move faster and Recovery doubles for a few seconds.', effects: { 'defense.recovery-hit-pct': 0.25, 'defense.recovery-hit-x': 2, 'slinger.regroup-speed-pct': 0.3 } },
-    'jungle-vest-t4': { name: 'Lookout', text: 'An enemy that ambushes you while you reload is slowed and revealed.', effects: {} },
-    'jungle-charm-t4': { name: 'Undergrowth', text: 'Recovery doubles while no enemy is targeting you.', effects: {} },
-    'desert-vest-t4': { name: 'Glass Duster', text: 'You reload faster and hit harder, and the armor defends you less.', effects: {} },
-    'desert-charm-t4': { name: 'Shade', text: 'Every few seconds a mark or slow on you ends.', effects: {} },
-    'tundra-vest-t4': { name: 'Warm Hands', text: 'The Chill on you does not build while you reload.', effects: {} },
-    'tundra-charm-t4': { name: 'Thaw', text: 'Recovery doubles while you are chilled or slowed.', effects: {} },
-    'volcanic-vest-t4': { name: 'Asbestos Coat', text: 'The extra damage from the Heat does not apply to you while you reload.', effects: {} },
-    'volcanic-charm-t4': { name: 'Heatsink', text: 'Recovery rises with the Heat while no enemy is near you.', effects: {} },
+    'jungle-vest-t4': { name: 'Lookout', text: 'An enemy that ambushes you while you reload is slowed and revealed.', effects: { 'slinger.lookout': 0.4 } },
+    'jungle-charm-t4': { name: 'Undergrowth', text: 'Recovery doubles while no enemy is targeting you.', effects: { 'slinger.undergrowth': 2 } },
+    'desert-vest-t4': { name: 'Glass Duster', text: 'You reload faster and hit harder, and the armor defends you less.', effects: { 'slinger.damage-pct': 0.15, 'slinger.reload-faster-pct': 0.2 } },
+    'desert-charm-t4': { name: 'Shade', text: 'Every few seconds a mark or slow on you ends.', effects: { 'slinger.shade': 5000 } },
+    'tundra-vest-t4': { name: 'Warm Hands', text: 'The Chill on you does not build while you reload.', effects: { 'slinger.warm-hands': 1 } },
+    'tundra-charm-t4': { name: 'Thaw', text: 'Recovery doubles while you are chilled or slowed.', effects: { 'slinger.thaw': 2 } },
+    'volcanic-vest-t4': { name: 'Asbestos Coat', text: 'The extra damage from the Heat does not apply to you while you reload.', effects: { 'slinger.asbestos': 1 } },
+    'volcanic-charm-t4': { name: 'Heatsink', text: 'Recovery rises with the Heat while no enemy is near you.', effects: { 'slinger.heatsink': 0.1 } },
     'graveyard-vest-t4': { name: 'Hallowed Ground', text: 'While you reload, risen enemies around you deal half damage.', effects: {} },
     'graveyard-charm-t4': { name: 'Vigil', text: 'Recovery rises with the number of enemies in the fight while none is near you.', effects: {} },
     'trench-vest-t4': { name: 'Pressure Suit', text: 'Debuffs cannot land on you while you reload.', effects: {} },

@@ -6,23 +6,38 @@
  * bend them. Wiring only: every number is a placeholder (kit `params`, `slinger/tuning.ts`, the
  * constants below, the gear keys).
  *
+ * Tier 3 (T3-SLINGER; §10.6, §10.16): the nine specializations, the T3 clips (Seeker, Acid, Tether, Frost,
+ * Incendiary), the T3 trophy ranks and rounds (Rime, Cinder) and the Tundra and Volcanic gear.
+ *
  * The old frame, range, and T3 paths are gone (CL7). This file is the Loadout runtime.
  */
 import {
+  applyStatusEffect,
+  CHILL_STATUS_ID,
+  DAMAGE_TAKEN_PCT_KEY,
+  FROZEN_STATUS_ID,
+  holdKindOfStatusId,
+  MONSTER_ROOT_STATUS_IDS,
+  MONSTER_SLOW_STATUS_IDS,
   pieceParamsAt,
+  playerIncomingDamageMult,
   SLINGER_KIT,
   getResource,
   getStatusEffect,
   getString,
   setResource,
   setString,
+  statusDamageAmplifierPct,
   trophyParamsAt,
+  TUNDRA_CHILL_EFFECT_ID,
+  VOLCANIC_HEAT_EFFECT_ID,
   type ClassConfigContext,
   type LoadoutConfig,
   type SlingerPiece,
   type SlingerTrophy,
 } from '@mmo-idle/shared';
 import { mutateSlice } from '../../../../ecs/dirtyHelpers';
+import { attachMarker, detachMarker } from '../../../../ecs/markerHelpers';
 import type { MonsterEntity, PlayerEntity } from '../../../../ecs/entity';
 import type { World } from '../../../../world/World';
 import { isPlayerInCombat } from '../../../combat/ai/engagement';
@@ -39,13 +54,53 @@ import { stopEntity } from '../../../world/movement';
 import { classConfigContextOf } from '../../../player/progression/classConfig';
 import { applyFramePlatingShred } from '../../shared/frameLoop';
 import { applyTickDot } from '../../shared/tickDot';
-import { pickCalledTarget } from '../../slinger/calledShot';
-import { bankShell, fireShell, markShellPending, shellBank, shellPending } from '../../slinger/shell';
+import { applyBurn, tickBurns } from '../../slinger/burn';
+import { calledMomentHolds, pickCalledTarget } from '../../slinger/calledShot';
+import { bankShell, fireShell, markDeathmark, markShellPending, shellBank, shellPending } from '../../slinger/shell';
+import {
+  clearEntrench,
+  deadeyeHolds,
+  endFan,
+  entrenchTick,
+  fleeSlowTick,
+  layRime,
+  resetDeadeye,
+  revealSeekable,
+  rimeTick,
+  startFan,
+  takeDeadeyeHeld,
+  tetherHit,
+  tetherTick,
+} from '../../slinger/t3';
 import { lookoutAmbusher, revealTraced, shadeTick, traceTarget } from '../../slinger/tracer';
 import {
   CALLED_SHOT_MULT,
+  CROSSFIRE,
+  CROSSFIRE_EFFECT_MULT,
+  CROSSFIRE_KEYS,
+  CROSSFIRE_WINDOW_MS,
+  DEADEYE,
+  DEADEYE_HELD_MULT,
+  DEADEYE_HOLD_MS,
+  DEADEYE_LOW_HP,
+  DEATHMARK,
+  ENTRENCHED,
+  FAN_ROUNDS,
+  FAN_THE_HAMMER,
   FAR_FULL_PX,
+  GUN_KATA,
   GUNSLINGER,
+  HEAT_STACKS_MAX,
+  KATA_CLOSE_MULT,
+  KATA_CLOSE_PX,
+  KATA_MELEE_PX,
+  PIERCE,
+  PIERCE_WIDTH_PX,
+  RICOCHET,
+  RICOCHET_BOUNCES,
+  RICOCHET_SHARE,
+  ROLLING_EVERY_ROUNDS,
+  ROLLING_FIRE,
   SIEGE,
   SIEGE_ROUND_PCT,
   TRICKSHOT,
@@ -74,6 +129,15 @@ const SHOVE_AT = 'slinger.shoveAt';
 const TWIN_CLIP = 'slinger.twinClip';
 /** Trickshot: the target the player held before the called shot retargeted (empty: none). */
 const CALLED_FROM = 'slinger.calledFrom';
+/** Acid: rounds in a row on this target, and when the last landed (the plating it has eaten so far). */
+const ACID_STACKS = 'slinger.acid.stacks';
+const ACID_AT = 'slinger.acid.at';
+/** Crossfire: the last round's gun, target and time. */
+const CROSS_CLIP = 'slinger.cross.clip';
+const CROSS_TARGET = 'slinger.cross.target';
+const CROSS_AT = 'slinger.cross.at';
+/** Warm Hands: the Chill the player had before the reload held it. */
+const CHILL_HELD = 'slinger.chill.held';
 
 interface Loadout {
   config: LoadoutConfig;
@@ -118,6 +182,42 @@ function trophyParams(loadout: Loadout): Record<string, number> {
 function disciplineOf(player: PlayerEntity): string | null {
   const id = player.usesSkills.disciplineId ?? null;
   return id === GUNSLINGER || id === SIEGE || id === TRICKSHOT ? id : null;
+}
+
+/** The specialization the Slinger picked (T3), if it is one of the Slinger's. */
+function specializationOf(player: PlayerEntity): string | null {
+  const id = player.usesSkills.specializationId ?? null;
+  switch (id) {
+    case FAN_THE_HAMMER: case CROSSFIRE: case GUN_KATA: case DEATHMARK: case ENTRENCHED:
+    case ROLLING_FIRE: case RICOCHET: case PIERCE: case DEADEYE:
+      return id;
+    default:
+      return null;
+  }
+}
+
+/** Frostlock Rifle's "cold": chilled, slowed or rooted (or frozen). */
+function isColdTarget(target: MonsterEntity): boolean {
+  return target.tracksCombat.statusEffects.some((effect) =>
+    effect.remainingMs !== 0 && effect.id !== 'stunned' && holdKindOfStatusId(effect.id) !== undefined);
+}
+
+/** The Heat stacks on the player (Firebrand Pistol, Heatsink). */
+function heatStacks(player: PlayerEntity): number {
+  return Math.min(HEAT_STACKS_MAX, getStatusEffect(player.tracksCombat, VOLCANIC_HEAT_EFFECT_ID)?.stacks ?? 0);
+}
+
+/**
+ * Deadeye (bible §10.6): should the last round wait? True while the clip holds it for the rule's moment
+ * (an enemy winds up, an elite is in reach, the target is below a third) or a few seconds. Asked by the
+ * reload gate on the attack that would fire the last round.
+ */
+export function deadeyeWaits(world: World, player: PlayerEntity, now: number): boolean {
+  const loadout = loadoutOf(player);
+  const reload = player.usesReload;
+  if (!loadout || !reload || disciplineOf(player) !== TRICKSHOT || specializationOf(player) !== DEADEYE) return false;
+  if (reload.reloadingMs > 0 || reload.ammo !== 1) return false;
+  return deadeyeHolds(player, calledMomentHolds(world, player, loadout.config.calledShot, DEADEYE_LOW_HP, now), DEADEYE_HOLD_MS, now);
 }
 
 /** The clip the Loadout's rules load now: the first rule that holds, else the plain clip. */
@@ -251,6 +351,20 @@ export function updateSlinger(world: World, player: PlayerEntity, dt: number, no
 
   // Tracer: a traced target that went to ground stays a legal target.
   revealTraced(world, player, now);
+  // Seeker: with it loaded (either gun), a target that burrowed, dived or hid inside reach is found.
+  if (reload.clipId === 'slinger-seeker' || (discipline === GUNSLINGER && getString(cs, TWIN_CLIP) === 'slinger-seeker')) revealSeekable(world, player);
+  // Tracer II: a traced target that flees moves slower. Tether: a held target cannot get away. Rime: frozen ground. Burns tick.
+  const fleeSlow = clipParams(loadout, 'slinger-tracer')['fleeSlowPct'] ?? 0;
+  if (fleeSlow > 0) fleeSlowTick(world, player, fleeSlow, now);
+  tetherTick(world, player, now);
+  rimeTick(world, player, now);
+  tickBurns(world, player, dt);
+  sweepChillMarkers(world);
+  // Entrenched: standing still ramps fire rate and the shell.
+  if (discipline === SIEGE && specializationOf(player) === ENTRENCHED) entrenchTick(player, now);
+  else if (getResource(cs, 'slinger.entrench') > 0) clearEntrench(player);
+  // Deadeye: the last round is no longer waiting once it is not the next one.
+  if (!(reload.reloadingMs <= 0 && reload.ammo === 1)) resetDeadeye(player);
   // Lookout: the ambusher that sprang on you while you reload.
   const lookout = passives['slinger.lookout'] ?? 0;
   if (lookout > 0 && reload.reloadingMs > 0) lookoutAmbusher(world, player, lookout, now);
@@ -272,9 +386,41 @@ export function updateSlinger(world: World, player: PlayerEntity, dt: number, no
   if (snake > 0 && count === 0 && cs.statusEffects.some((e) => (e.data['isDot'] ?? 0) === 1 || e.id.includes('poison') || e.id.includes('hemorrhage'))) factor *= snake;
   const undergrowth = passives['slinger.undergrowth'] ?? 0;
   if (undergrowth > 0 && !isTargeted(world, player)) factor *= undergrowth;
+  // Thaw: Recovery is multiplied while you are chilled or slowed.
+  const thaw = passives['slinger.thaw'] ?? 0;
+  if (thaw > 0 && isChilledOrSlowed(player)) factor *= thaw;
+  // Heatsink: Recovery rises with the Heat while no enemy is near you.
+  const heatsink = passives['slinger.heatsink'] ?? 0;
+  if (heatsink > 0 && count === 0) factor *= 1 + heatsink * heatStacks(player);
+  // Warm Hands: the Chill on you does not build while you reload.
+  if ((passives['slinger.warm-hands'] ?? 0) > 0) holdChill(player, reload.reloadingMs > 0);
   if (getResource(cs, SLINGER_RECOVERY_X) !== factor) setResource(cs, SLINGER_RECOVERY_X, factor);
 
   syncDisciplineHud(world, player, discipline);
+}
+
+/** The Chill on the player, or any slow (Thaw). */
+function isChilledOrSlowed(player: PlayerEntity): boolean {
+  return player.tracksCombat.statusEffects.some((effect) =>
+    effect.remainingMs !== 0 && effect.stacks > 0
+    && (effect.id === TUNDRA_CHILL_EFFECT_ID || effect.id === 'slow' || (effect.data['moveSlowPct'] ?? 0) > 0));
+}
+
+/** Warm Hands: while reloading the Chill may fall but not rise above what it was when the reload began. */
+function holdChill(player: PlayerEntity, reloading: boolean): void {
+  const cs = player.tracksCombat;
+  const chill = getStatusEffect(cs, TUNDRA_CHILL_EFFECT_ID);
+  const stacks = chill?.stacks ?? 0;
+  const held = getResource(cs, CHILL_HELD);
+  if (reloading && chill && stacks > held) chill.stacks = held > 0 ? held : stacks;
+  else if (getResource(cs, CHILL_HELD) !== stacks) setResource(cs, CHILL_HELD, stacks);
+}
+
+/** A chill marker whose status ran out comes off. */
+function sweepChillMarkers(world: World): void {
+  for (const monster of [...world.chilledMonsters]) {
+    if (!getStatusEffect(monster.tracksCombat, CHILL_STATUS_ID)) detachMarker(world, monster, 'hasChill');
+  }
 }
 
 /**
@@ -334,11 +480,208 @@ function hasBarrier(target: MonsterEntity): boolean {
 
 const hpShare = (monster: MonsterEntity): number => monster.hasHealth.hp / Math.max(1, monster.hasHealth.maxHp);
 
+/** Clip params, Crossfire-scaled (each number that makes the clip's effect bigger). */
+function boostedParams(loadout: Loadout, clip: string, boost: number): Record<string, number> {
+  const p = clipParams(loadout, clip);
+  if (boost === 1) return p;
+  const out = { ...p };
+  for (const key of CROSSFIRE_KEYS) if (out[key] !== undefined) out[key] = out[key]! * boost;
+  return out;
+}
+
+/**
+ * Crossfire (bible §10.6): the previous round came from the other gun on this target a moment ago, so
+ * both clips' effects land at +50%. Returns the factor and remembers this round.
+ */
+function crossfireBoost(player: PlayerEntity, target: MonsterEntity, clip: string, now: number, spec: string | null): number {
+  const cs = player.tracksCombat;
+  const prior = { clip: getString(cs, CROSS_CLIP), target: getString(cs, CROSS_TARGET), at: getResource(cs, CROSS_AT) };
+  setString(cs, CROSS_CLIP, clip);
+  setString(cs, CROSS_TARGET, target.isMonster.id);
+  setResource(cs, CROSS_AT, now);
+  if (spec !== CROSSFIRE) return 1;
+  return prior.clip !== '' && prior.clip !== clip && prior.target === target.isMonster.id && now - prior.at <= CROSSFIRE_WINDOW_MS ? CROSSFIRE_EFFECT_MULT : 1;
+}
+
+/** One round's clip effect on the target it hit (the damage is already done). */
+function applyClipEffect(
+  world: World,
+  player: PlayerEntity,
+  loadout: Loadout,
+  target: MonsterEntity,
+  clip: string,
+  hitDamage: number,
+  now: number,
+  boost: number,
+): void {
+  const passives = player.usesSkills.passives;
+  const p = boostedParams(loadout, clip, boost);
+  const at = target.hasPosition.current;
+  if (clip === 'slinger-scatter') {
+    const nicks = (p['nicks'] ?? 2) + (passives['slinger.scatter-extra'] ?? 0);
+    const beside = playerAoeTargets(world, player, at, 110, target.isMonster.id)
+      .sort((a, b) => Math.hypot(a.hasPosition.current.x - at.x, a.hasPosition.current.y - at.y) - Math.hypot(b.hasPosition.current.x - at.x, b.hasPosition.current.y - at.y))
+      .slice(0, nicks);
+    if (beside.length > 0) applyPlayerAoeTo(world, player, beside, hitDamage * (p['nickPct'] ?? 0.4), 'player', {}, {});
+  } else if (clip === 'slinger-buckshot') {
+    // A cone of pellets: the others in front of the muzzle take a share, and a charger is stopped.
+    const from = player.hasPosition.current;
+    const aim = Math.atan2(at.y - from.y, at.x - from.x);
+    const half = ((p['coneDeg'] ?? 35) * Math.PI) / 180;
+    const cone = playerAoeTargets(world, player, from, p['coneRangePx'] ?? 220, target.isMonster.id)
+      .filter((monster) => {
+        const off = Math.atan2(monster.hasPosition.current.y - from.y, monster.hasPosition.current.x - from.x) - aim;
+        return Math.abs(Math.atan2(Math.sin(off), Math.cos(off))) <= half;
+      })
+      .slice(0, p['maxPellets'] ?? 3);
+    if (cone.length > 0) applyPlayerAoeTo(world, player, cone, hitDamage * (p['pelletPct'] ?? 0.25), 'player', {}, {});
+    for (const monster of [target, ...cone]) stopCharge(world, monster);
+  } else if (clip === 'slinger-snare') {
+    const cap = p['slowCap'] ?? 0.4;
+    const prior = getStatusEffect(target.tracksCombat, 'ability-slowed')?.data['moveSlowPct'] ?? 0;
+    const next = Math.min(cap, prior + (p['slowPerRound'] ?? 0.08));
+    applyMonsterSlow(world, target, next, p['durationMs'] ?? 3000, player.isPlayer.id);
+    // Snare II: at the cap the target's wind-ups take longer too (its attack cadence stretches).
+    const attackSlow = p['capAttackSlow'] ?? 0;
+    if (attackSlow > 0 && next >= cap - 1e-9) {
+      const slowed = getStatusEffect(target.tracksCombat, 'ability-slowed');
+      if (slowed) slowed.data['attackSlowPct'] = attackSlow;
+    }
+  } else if (clip === 'slinger-venom') {
+    const long = 1 + (passives['slinger.poison-long-pct'] ?? 0);
+    applyTickDot(world, player, target, SLINGER_VENOM_ID, hitDamage * (p['tickShare'] ?? 0.2), (p['ticksPerRound'] ?? 2) * long, (p['maxTicks'] ?? 12) * long, p['tickMs'] ?? 1000);
+  } else if (clip === 'slinger-stopping') {
+    const cs = target.tracksCombat;
+    if (now - getResource(cs, SHOVE_AT) > (p['windowMs'] ?? 3000)) setResource(cs, SHOVES, 0);
+    if (getResource(cs, SHOVES) < (p['maxShoves'] ?? 4)) {
+      setResource(cs, SHOVES, getResource(cs, SHOVES) + 1);
+      setResource(cs, SHOVE_AT, now);
+      shove(world, player.hasPosition.current, target, p['shovePx'] ?? 22);
+    }
+    // Stopping II: a charger that is stopped is also staggered.
+    if ((p['staggerMs'] ?? 0) > 0 && (target.controlsMonster.chargeRemainingMs ?? 0) > 0) {
+      stopCharge(world, target);
+      if (!monsterIgnoresControl(target)) applyStun(target.tracksCombat, p['staggerMs']!, player.isPlayer.id);
+    }
+  } else if (clip === 'slinger-tracer') {
+    // It designates; it never stores damage (§10.16).
+    traceTarget(player, target, now + (p['tracedMs'] ?? 8000));
+  } else if (clip === 'slinger-acid') {
+    // Instead of poison, each round eats a little plating, up to a cap.
+    const cs = target.tracksCombat;
+    const rounds = now - getResource(cs, ACID_AT) > (p['shredMs'] ?? 4000) ? 1 : getResource(cs, ACID_STACKS) + 1;
+    setResource(cs, ACID_STACKS, rounds);
+    setResource(cs, ACID_AT, now);
+    applyFramePlatingShred(player, target, Math.min(p['shredCap'] ?? 0.6, rounds * (p['shredPerRound'] ?? 0.08)), p['shredMs'] ?? 4000);
+  } else if (clip === 'slinger-tether') {
+    tetherHit(player, target, p['rounds'] ?? 3, p['windowMs'] ?? 2500, p['tetherMs'] ?? 2000, now);
+  } else if (clip === 'slinger-frost') {
+    // Each round chills (slower attacks and movement) up to a cap; never freezes.
+    const chill = applyStatusEffect(target.tracksCombat, {
+      id: CHILL_STATUS_ID, maxStacks: p['maxChill'] ?? 5, remainingMs: p['chillMs'] ?? 4000, refreshable: true, sourceId: player.isPlayer.id,
+      data: { totalMs: p['chillMs'] ?? 4000, moveSlowPerStack: p['movePerChill'] ?? 0.06, attackSlowPerStack: p['attackPerChill'] ?? 0.05 },
+    });
+    chill.data['moveSlowPerStack'] = Math.max(chill.data['moveSlowPerStack'] ?? 0, p['movePerChill'] ?? 0.06);
+    chill.data['attackSlowPerStack'] = Math.max(chill.data['attackSlowPerStack'] ?? 0, p['attackPerChill'] ?? 0.05);
+    attachMarker(world, target, 'hasChill');
+  } else if (clip === 'slinger-incendiary') {
+    // Each round sets the target burning up to a cap; it never detonates.
+    applyBurn(player, target, hitDamage * (p['burnShare'] ?? 0.15), 1, p['maxBurn'] ?? 5, p['burnMs'] ?? 4000, p['tickMs'] ?? 1000);
+  }
+}
+
+/** The equipped trophy round's twist on a target it struck (the damage is already done). */
+function applyTrophy(world: World, player: PlayerEntity, loadout: Loadout, target: MonsterEntity, hitDamage: number, now: number): void {
+  const trophy = loadout.trophy;
+  if (!trophy) return;
+  const t = trophyParams(loadout);
+  const at = target.hasPosition.current;
+  if (trophy.id === 'slinger-relic-plains') {
+    const behind = lineTargets(world, player, target, t['lineLength'] ?? 240, t['lineWidth'] ?? 44);
+    for (const monster of [target, ...behind]) {
+      shove(world, player.hasPosition.current, monster, t['shovePx'] ?? 90);
+      // Stampede Round II: the shove also knocks them down.
+      if ((t['knockdownMs'] ?? 0) > 0 && !monsterIgnoresControl(monster)) applyStun(monster.tracksCombat, t['knockdownMs']!, player.isPlayer.id);
+    }
+  } else if (trophy.id === 'slinger-relic-forest') {
+    applyPlayerAoeTo(world, player, [target], hitDamage * (t['secondShotPct'] ?? 0.6), 'player', {}, {});
+  } else if (trophy.id === 'slinger-relic-swamp') {
+    const ticks = t['ticks'] ?? 4;
+    applyTickDot(world, player, target, SLINGER_ROT_ID, (hitDamage * (t['sharePct'] ?? 0.5)) / ticks, ticks, ticks, t['tickMs'] ?? 1000);
+  } else if (trophy.id === 'slinger-relic-mountain') {
+    const around = playerAoeTargets(world, player, at, t['radius'] ?? 110, target.isMonster.id);
+    // Quake Round II: the wider blast also cracks plating. III: it knocks down.
+    if ((t['crackFraction'] ?? 0) > 0) for (const monster of [target, ...around]) applyFramePlatingShred(player, monster, t['crackFraction']!, t['crackMs'] ?? 6000);
+    if ((t['knockdownMs'] ?? 0) > 0) for (const monster of [target, ...around]) if (!monsterIgnoresControl(monster)) applyStun(monster.tracksCombat, t['knockdownMs']!, player.isPlayer.id);
+    if (around.length > 0) applyPlayerAoeTo(world, player, around, hitDamage * (t['blastPct'] ?? 0.8), 'player', {}, {});
+  } else if (trophy.id === 'slinger-relic-cave') {
+    const nearestTo = (from: { x: number; y: number }) => (a: MonsterEntity, b: MonsterEntity) =>
+      Math.hypot(a.hasPosition.current.x - from.x, a.hasPosition.current.y - from.y) - Math.hypot(b.hasPosition.current.x - from.x, b.hasPosition.current.y - from.y);
+    const radius = t['radius'] ?? 220;
+    const share = t['splinterPct'] ?? 0.5;
+    const others = playerAoeTargets(world, player, at, radius, target.isMonster.id).sort(nearestTo(at)).slice(0, t['splinters'] ?? 3);
+    if (others.length > 0) applyPlayerAoeTo(world, player, others, hitDamage * share, 'player', {}, {});
+    // Splinter Round III: each splinter splits once more, on to the nearest enemy not yet struck.
+    if ((t['splitAgain'] ?? 0) > 0) {
+      const struck = new Set([target.isMonster.id, ...others.map((monster) => monster.isMonster.id)]);
+      for (const splinter of others) {
+        const from = splinter.hasPosition.current;
+        const next = playerAoeTargets(world, player, from, radius, splinter.isMonster.id).filter((monster) => !struck.has(monster.isMonster.id)).sort(nearestTo(from)).slice(0, t['splitAgain']);
+        if (next.length === 0) continue;
+        for (const monster of next) struck.add(monster.isMonster.id);
+        applyPlayerAoeTo(world, player, next, hitDamage * share * share, 'player', {}, {});
+      }
+    }
+  } else if (trophy.id === 'slinger-relic-tundra') {
+    // Rime Round: the ground at the target freezes and slows whatever stands on it.
+    layRime(player, at, t['radius'] ?? 120, t['slowPct'] ?? 0.4, t['groundMs'] ?? 6000, now);
+  } else if (trophy.id === 'slinger-relic-volcanic') {
+    // Cinder Round: everything around the target is set burning.
+    for (const monster of [target, ...playerAoeTargets(world, player, at, t['radius'] ?? 140, target.isMonster.id)]) {
+      if (monster.hasHealth.hp > 0) applyBurn(player, monster, hitDamage * (t['burnShare'] ?? 0.2), t['stacks'] ?? 2, 5, 4000, 1000);
+    }
+  }
+}
+
+/** Ricochet and Pierce: what the called shot does beyond its target. */
+function calledShotExtras(world: World, player: PlayerEntity, loadout: Loadout, target: MonsterEntity, hitDamage: number, now: number, spec: string | null): void {
+  if (spec === RICOCHET) {
+    // The shot bounces on to more enemies the rule picks, each taking a share and the trophy's twist.
+    const struck = new Set([target.isMonster.id]);
+    for (let i = 0; i < RICOCHET_BOUNCES; i++) {
+      const next = pickCalledTarget(world, player, loadout.config.calledShot, now, struck);
+      if (!next) break;
+      struck.add(next.isMonster.id);
+      const damage = hitDamage * RICOCHET_SHARE;
+      applyPlayerAoeTo(world, player, [next], damage, 'player', {}, {});
+      if (next.hasHealth.hp > 0) applyTrophy(world, player, loadout, next, damage, now);
+    }
+  } else if (spec === PIERCE) {
+    // Everything between you and the target takes the shot in full.
+    const from = player.hasPosition.current;
+    const to = target.hasPosition.current;
+    const len = Math.max(1, Math.hypot(to.x - from.x, to.y - from.y));
+    const ux = (to.x - from.x) / len;
+    const uy = (to.y - from.y) / len;
+    const between = playerAoeTargets(world, player, from, len, target.isMonster.id).filter((monster) => {
+      const rx = monster.hasPosition.current.x - from.x;
+      const ry = monster.hasPosition.current.y - from.y;
+      return rx * ux + ry * uy > 0 && Math.abs(rx * uy - ry * ux) <= PIERCE_WIDTH_PX;
+    });
+    for (const monster of between) {
+      applyPlayerAoeTo(world, player, [monster], hitDamage, 'player', {}, {});
+      if (monster.hasHealth.hp > 0) applyTrophy(world, player, loadout, monster, hitDamage, now);
+    }
+  }
+}
+
 export function registerSlinger(): void {
   registerReloadLifecycleHook({
     onStart(_world, player) {
-      // Siege: the shell fires with the reload (once the round that started it has banked).
-      if (loadoutOf(player) && disciplineOf(player) === SIEGE) markShellPending(player);
+      if (!loadoutOf(player)) return;
+      // Siege: the shell fires with the reload (once the round that started it has banked). Rolling Fire carries none.
+      if (disciplineOf(player) === SIEGE && specializationOf(player) !== ROLLING_FIRE) markShellPending(player);
+      endFan(player);
     },
     onComplete(world, player) {
       const loadout = loadoutOf(player);
@@ -346,6 +689,8 @@ export function registerSlinger(): void {
       const now = Date.now();
       player.usesReload!.clipId = chooseClip(world, player, loadout, now);
       if (disciplineOf(player) === GUNSLINGER) setString(player.tracksCombat, TWIN_CLIP, chooseTwinClip(world, player, loadout, player.usesReload!.clipId, now));
+      // Fan the Hammer: after every reload spin the first rounds fire at triple rate.
+      if (disciplineOf(player) === GUNSLINGER && specializationOf(player) === FAN_THE_HAMMER) startFan(player);
     },
   });
 
@@ -366,7 +711,11 @@ export function registerSlinger(): void {
     if (clip === 'slinger-breaching') ctx.platingMult = clipParams(loadout, clip)['platingMult'] ?? 0.25;
     if (last) {
       // Trickshot: the last round is the called shot.
-      if (disciplineOf(player) === TRICKSHOT) ctx.metadata['slingerCalled'] = true;
+      if (disciplineOf(player) === TRICKSHOT) {
+        ctx.metadata['slingerCalled'] = true;
+        // Deadeye: a round that was held hits much harder.
+        if (specializationOf(player) === DEADEYE && takeDeadeyeHeld(player)) ctx.metadata['slingerHeld'] = true;
+      }
       // Hunter's Round follows its target and can't miss: the monster's dodge clock skips it
       // (the same exemption a completed cast's hit gets). PLACEHOLDER: any target, not only a fleeing one.
       if (loadout.trophy?.id === 'slinger-relic-jungle') ctx.metadata['castDelivered'] = true;
@@ -385,6 +734,7 @@ export function registerSlinger(): void {
     const round = Number(ctx.metadata['slingerRound'] ?? 1);
     const last = ctx.metadata['slingerLastRound'] === true;
     const p = clipParams(loadout, clip);
+    const spec = specializationOf(player);
     const from = player.hasPosition.current;
     const at = target.hasPosition.current;
     const dist = Math.hypot(at.x - from.x, at.y - from.y);
@@ -396,11 +746,18 @@ export function registerSlinger(): void {
     if (clip === 'slinger-buckshot') mult *= 1 + (p['closeBonus'] ?? 0) * (1 - Math.min(1, dist / (p['closePx'] ?? 160))); // harder up close
     if (clip === 'slinger-hollow-point' && hpShare(target) < (p['belowHp'] ?? 0.5)) mult *= 1 + (p['bonusPct'] ?? 0.5);
     if (clip === 'slinger-shellbreaker' && hasBarrier(target)) mult *= p['barrierMult'] ?? 2;
+    if (clip === 'slinger-seeker' && target.isConcealed) mult *= p['hiddenPct'] ?? 0.7; // a target found in cover: lighter
+    const cold = passives['slinger.cold-pct'] ?? 0; // Frostlock Rifle: chilled, slowed or rooted enemies
+    if (cold > 0 && isColdTarget(target)) mult *= 1 + cold;
+    const heatPct = passives['slinger.heat-pct'] ?? 0; // Firebrand Pistol: each step of the Heat
+    if (heatPct > 0) mult *= 1 + heatPct * heatStacks(player);
+    if (spec === GUN_KATA && dist <= KATA_CLOSE_PX) mult *= KATA_CLOSE_MULT; // Gun Kata: up close
     if (disciplineOf(player) === SIEGE) mult *= SIEGE_ROUND_PCT; // the other half of the damage is the shell
     if (last) {
       mult *= 1 + (passives['slinger.last-round-pct'] ?? 0); // Hand Cannon
       if (getStatusEffect(target.tracksCombat, SLINGER_VENOM_ID)) mult *= 1 + (passives['slinger.last-vs-poisoned-pct'] ?? 0); // Snakebite
       if (ctx.metadata['slingerCalled'] === true) mult *= CALLED_SHOT_MULT; // Trickshot
+      if (ctx.metadata['slingerHeld'] === true) mult *= DEADEYE_HELD_MULT; // Deadeye: the held round
       if (loadout.trophy?.id === 'slinger-relic-jungle') mult *= 1 + (trophyParams(loadout)['farPctPer100px'] ?? 0) * (dist / 100); // Hunter's Round
     }
     if (mult !== 1) {
@@ -420,96 +777,54 @@ export function registerSlinger(): void {
     const target = ctx.defender as MonsterEntity;
     const loadout = loadoutOf(player);
     if (!loadout) return;
-    const passives = player.usesSkills.passives;
     const clip = ctx.metadata['slingerClip'] as string;
-    const p = clipParams(loadout, clip);
+    const round = Number(ctx.metadata['slingerRound'] ?? 1);
     const hitDamage = ctx.damage;
-    const at = target.hasPosition.current;
     const now = attackNow(ctx);
     const last = ctx.metadata['slingerLastRound'] === true;
+    const spec = specializationOf(player);
+    const discipline = disciplineOf(player);
 
-    // Siege: every round charges the shell.
-    if (disciplineOf(player) === SIEGE && hitDamage > 0) bankShell(player, target, clip, hitDamage);
+    // Fan the Hammer: the burst covers the first rounds only.
+    if (spec === FAN_THE_HAMMER && (round >= FAN_ROUNDS || last)) endFan(player);
+
+    // Siege: every round charges the shell. Deathmark: the enemy it hit is marked.
+    if (discipline === SIEGE && hitDamage > 0) {
+      bankShell(player, target, clip, hitDamage);
+      if (spec === DEATHMARK && target.hasHealth.hp > 0) markDeathmark(player, target);
+    }
 
     if (target.hasHealth.hp > 0 && hitDamage > 0) {
-      if (clip === 'slinger-scatter') {
-        const nicks = (p['nicks'] ?? 2) + (passives['slinger.scatter-extra'] ?? 0);
-        const beside = playerAoeTargets(world, player, at, 110, target.isMonster.id)
-          .sort((a, b) => Math.hypot(a.hasPosition.current.x - at.x, a.hasPosition.current.y - at.y) - Math.hypot(b.hasPosition.current.x - at.x, b.hasPosition.current.y - at.y))
-          .slice(0, nicks);
-        if (beside.length > 0) applyPlayerAoeTo(world, player, beside, hitDamage * (p['nickPct'] ?? 0.4), 'player', {}, {});
-      } else if (clip === 'slinger-buckshot') {
-        // A cone of pellets: the others in front of the muzzle take a share, and a charger is stopped.
+      const boost = crossfireBoost(player, target, clip, now, spec);
+      applyClipEffect(world, player, loadout, target, clip, hitDamage, now, boost);
+
+      // Gun Kata: an enemy in melee with you takes both guns at once.
+      if (spec === GUN_KATA && target.hasHealth.hp > 0) {
         const from = player.hasPosition.current;
-        const aim = Math.atan2(at.y - from.y, at.x - from.x);
-        const half = ((p['coneDeg'] ?? 35) * Math.PI) / 180;
-        const cone = playerAoeTargets(world, player, from, p['coneRangePx'] ?? 220, target.isMonster.id)
-          .filter((monster) => {
-            const off = Math.atan2(monster.hasPosition.current.y - from.y, monster.hasPosition.current.x - from.x) - aim;
-            return Math.abs(Math.atan2(Math.sin(off), Math.cos(off))) <= half;
-          })
-          .slice(0, p['maxPellets'] ?? 3);
-        if (cone.length > 0) applyPlayerAoeTo(world, player, cone, hitDamage * (p['pelletPct'] ?? 0.25), 'player', {}, {});
-        for (const monster of [target, ...cone]) stopCharge(world, monster);
-      } else if (clip === 'slinger-snare') {
-        const cap = p['slowCap'] ?? 0.4;
-        const prior = getStatusEffect(target.tracksCombat, 'ability-slowed')?.data['moveSlowPct'] ?? 0;
-        const next = Math.min(cap, prior + (p['slowPerRound'] ?? 0.08));
-        applyMonsterSlow(world, target, next, p['durationMs'] ?? 3000, player.isPlayer.id);
-        // Snare II: at the cap the target's wind-ups take longer too (its attack cadence stretches).
-        const attackSlow = p['capAttackSlow'] ?? 0;
-        if (attackSlow > 0 && next >= cap - 1e-9) {
-          const slowed = getStatusEffect(target.tracksCombat, 'ability-slowed');
-          if (slowed) slowed.data['attackSlowPct'] = attackSlow;
+        const at = target.hasPosition.current;
+        if (Math.hypot(at.x - from.x, at.y - from.y) <= KATA_MELEE_PX) {
+          const other = clip === player.usesReload!.clipId ? getString(player.tracksCombat, TWIN_CLIP) || clip : player.usesReload!.clipId;
+          const share = (other === PLAIN ? 1 : clipParams(loadout, other)['damagePct'] ?? 1) / (clip === PLAIN ? 1 : clipParams(loadout, clip)['damagePct'] ?? 1);
+          applyPlayerAoeTo(world, player, [target], hitDamage * share, 'player', {}, {});
+          if (target.hasHealth.hp > 0) applyClipEffect(world, player, loadout, target, other, hitDamage * share, now, 1);
         }
-      } else if (clip === 'slinger-venom') {
-        const long = 1 + (passives['slinger.poison-long-pct'] ?? 0);
-        applyTickDot(world, player, target, SLINGER_VENOM_ID, hitDamage * (p['tickShare'] ?? 0.2), (p['ticksPerRound'] ?? 2) * long, (p['maxTicks'] ?? 12) * long, p['tickMs'] ?? 1000);
-      } else if (clip === 'slinger-stopping') {
-        const cs = target.tracksCombat;
-        if (now - getResource(cs, SHOVE_AT) > (p['windowMs'] ?? 3000)) setResource(cs, SHOVES, 0);
-        if (getResource(cs, SHOVES) < (p['maxShoves'] ?? 4)) {
-          setResource(cs, SHOVES, getResource(cs, SHOVES) + 1);
-          setResource(cs, SHOVE_AT, now);
-          shove(world, player.hasPosition.current, target, p['shovePx'] ?? 22);
-        }
-      } else if (clip === 'slinger-tracer') {
-        // It designates; it never stores damage (§10.16).
-        traceTarget(player, target, now + (p['tracedMs'] ?? 8000));
       }
 
-      const trophy = last ? loadout.trophy : undefined;
-      if (trophy) {
-        const t = trophyParams(loadout);
-        if (trophy.id === 'slinger-relic-plains') {
-          const behind = lineTargets(world, player, target, t['lineLength'] ?? 240, t['lineWidth'] ?? 44);
-          for (const monster of [target, ...behind]) {
-            shove(world, player.hasPosition.current, monster, t['shovePx'] ?? 90);
-            // Stampede Round II: the shove also knocks them down.
-            if ((t['knockdownMs'] ?? 0) > 0 && !monsterIgnoresControl(monster)) applyStun(monster.tracksCombat, t['knockdownMs']!, player.isPlayer.id);
-          }
-        } else if (trophy.id === 'slinger-relic-forest') {
-          applyPlayerAoeTo(world, player, [target], hitDamage * (t['secondShotPct'] ?? 0.6), 'player', {}, {});
-        } else if (trophy.id === 'slinger-relic-swamp') {
-          const ticks = t['ticks'] ?? 4;
-          applyTickDot(world, player, target, SLINGER_ROT_ID, (hitDamage * (t['sharePct'] ?? 0.5)) / ticks, ticks, ticks, t['tickMs'] ?? 1000);
-        } else if (trophy.id === 'slinger-relic-mountain') {
-          const around = playerAoeTargets(world, player, at, t['radius'] ?? 110, target.isMonster.id);
-          // Quake Round II: the wider blast also cracks plating.
-          if ((t['crackFraction'] ?? 0) > 0) for (const monster of [target, ...around]) applyFramePlatingShred(player, monster, t['crackFraction']!, t['crackMs'] ?? 6000);
-          if (around.length > 0) applyPlayerAoeTo(world, player, around, hitDamage * (t['blastPct'] ?? 0.8), 'player', {}, {});
-        } else if (trophy.id === 'slinger-relic-cave') {
-          const others = playerAoeTargets(world, player, at, t['radius'] ?? 220, target.isMonster.id)
-            .sort((a, b) => Math.hypot(a.hasPosition.current.x - at.x, a.hasPosition.current.y - at.y) - Math.hypot(b.hasPosition.current.x - at.x, b.hasPosition.current.y - at.y))
-            .slice(0, t['splinters'] ?? 3);
-          if (others.length > 0) applyPlayerAoeTo(world, player, others, hitDamage * (t['splinterPct'] ?? 0.5), 'player', {}, {});
-        }
+      if (last) {
+        applyTrophy(world, player, loadout, target, hitDamage, now);
+        if (ctx.metadata['slingerCalled'] === true) calledShotExtras(world, player, loadout, target, hitDamage, now, spec);
         // Hunter's Round and Bounty Round act on the hit itself (onHit above).
       }
     }
 
-    // Siege: the round that emptied the clip has banked; the reload's shell fires now.
-    if (shellPending(player)) fireShell(world, player);
+    // Siege: the round that emptied the clip has banked; the reload's shell fires now. Rolling Fire fires a small one every few rounds.
+    if (discipline === SIEGE) {
+      if (spec === ROLLING_FIRE) {
+        if (round % ROLLING_EVERY_ROUNDS === 0 || last) fireShell(world, player);
+      } else if (shellPending(player)) {
+        fireShell(world, player);
+      }
+    }
   });
 
   // The defensive lines: Dig In and Hunker while you reload, Regroup after a big hit.
@@ -526,6 +841,16 @@ export function registerSlinger(): void {
     }
     const dig = passives['slinger.dig-in'] ?? 0;
     if (dig > 0) ctx.damage = Math.min(ctx.damage, Math.max(1, Math.round(player.hasHealth.maxHp * dig)));
+    // Asbestos Coat: the Heat's extra damage does not apply while you reload. The amplifier runs after this
+    // listener and multiplies by 1 + (all amplifiers), so pre-shrink the hit by the Heat's share of that.
+    if ((passives['slinger.asbestos'] ?? 0) > 0) {
+      const heat = getStatusEffect(player.tracksCombat, VOLCANIC_HEAT_EFFECT_ID);
+      if (heat) {
+        const heatPct = statusDamageAmplifierPct(heat, DAMAGE_TAKEN_PCT_KEY);
+        const all = playerIncomingDamageMult(player.tracksCombat);
+        if (heatPct > 0 && all > 1) ctx.damage = Math.max(1, Math.round((ctx.damage * (all - heatPct)) / all));
+      }
+    }
   });
   registerCombatListener('afterHit', (ctx) => {
     if (ctx.attackerType !== 'monster' || ctx.defenderType !== 'player' || ctx.damage <= 0) return;

@@ -1,10 +1,11 @@
-import { registerCombatListener } from '../../../combat/engine/combatPipeline';
+import { attackNow, registerCombatListener } from '../../../combat/engine/combatPipeline';
 import { registerEmpoweredMultiplier } from '../../../combat/engine/empoweredAttacks';
 import type { World } from '../../../../world/World';
 import { getFlag } from '@mmo-idle/shared';
 import { clipShiftFor } from '../../slinger/tuning';
 import { isPlayerActivelyInCombat } from '../../../combat/ai/engagement';
 import { RUNE_TACTICAL_RELOAD_FLAG } from '../../../combat/ai/runeConfig';
+import { deadeyeWaits } from './slinger';
 import {
   completeReload,
   emitReloadStart,
@@ -84,6 +85,12 @@ export function initReloadArchetype(): void {
 
     // Chaotic miss: the shot whiffs but doesn't consume ammo or start a reload.
     if (ctx.metadata['chaoticMiss']) return;
+
+    // Deadeye (bible §10.6): the last round waits for the rule's moment. The attack is cancelled and the clip pauses.
+    if (reload.ammo === 1 && deadeyeWaits(world, entity, attackNow(ctx))) {
+      ctx.cancelled = true;
+      return;
+    }
 
     // Class adapters key off the authoritative ammo pipeline. `reloadClipSize` is
     // the authored clip: Tempo's attack-equivalents and Sweep's clip budget

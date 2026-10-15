@@ -151,6 +151,13 @@ export const DEFENSE_KEYS = [
   'slinger.lookout',  // Lookout: an enemy that ambushes you while you reload is slowed this much and revealed
   'slinger.undergrowth',  // Undergrowth: Recovery share multiplied while no enemy is targeting you
   'slinger.shade',  // Shade: every this many ms a mark or slow on you ends
+  // Slinger T3 gear (class-first build plan T3-SLINGER)
+  'slinger.cold-pct',  // Frostlock Rifle: rounds hit chilled, slowed or rooted enemies this much harder
+  'slinger.heat-pct',  // Firebrand Pistol: rounds hit this much harder per step of the fight's Heat
+  'slinger.warm-hands',  // Warm Hands: the Chill on you does not build while you reload
+  'slinger.thaw',  // Thaw: Recovery share multiplied while you are chilled or slowed
+  'slinger.asbestos',  // Asbestos Coat: the Heat's extra damage does not apply to you while you reload
+  'slinger.heatsink',  // Heatsink: Recovery rises by this share per step of Heat while no enemy is near you
   'spirit.area-extra',  // Forked Rod: area spends reach this many more enemies
   'spirit.cost-mult',  // Weapon: spends cost this much (1 = normal)
   'spirit.damage-mult',  // Weapon: spends hit this much (1 = normal)

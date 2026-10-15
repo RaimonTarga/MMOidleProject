@@ -52,8 +52,8 @@ for (const expected of PIECES) {
   assert(found.name === expected.name, `${expected.id}: name ${found.name}`);
   assert(found.family === expected.family, `${expected.id}: family ${found.family}`);
   assert(found.color === expected.color, `${expected.id}: color ${found.color}`);
-  // The T1 and T2 clips and trophy rounds carry their runtime numbers (CL.2, T2-SLINGER); later pieces stay empty.
-  const t1Clip = ['slinger-scatter', 'slinger-snare', 'slinger-venom', 'slinger-stopping', 'slinger-breaching', 'slinger-buckshot', 'slinger-shellbreaker', 'slinger-tracer', 'slinger-hollow-point'].includes(expected.id);
+  // The T1-T3 clips and trophy rounds carry their runtime numbers (CL.2, T2-SLINGER, T3-SLINGER); T4 pieces stay empty.
+  const t1Clip = ['slinger-scatter', 'slinger-snare', 'slinger-venom', 'slinger-stopping', 'slinger-breaching', 'slinger-buckshot', 'slinger-shellbreaker', 'slinger-tracer', 'slinger-hollow-point', 'slinger-seeker', 'slinger-acid', 'slinger-tether', 'slinger-frost', 'slinger-incendiary'].includes(expected.id);
   assert(t1Clip ? Object.values(found.params).every(Number.isFinite) : Object.keys(found.params).length === 0, `${expected.id}: params empty until their runtime`);
   familyCount[found.family] += 1;
 }
@@ -175,7 +175,7 @@ for (const expected of TROPHIES) {
   if (!found) throw new Error(`missing trophy ${expected.id}`);
   assert(found.name === expected.name, `${expected.id}: name ${found.name}`);
   assert(found.kind === 'round', `${expected.id}: kind ${found.kind}`);
-  const t1Round = ['slinger-relic-plains', 'slinger-relic-forest', 'slinger-relic-swamp', 'slinger-relic-mountain', 'slinger-relic-cave', 'slinger-relic-jungle', 'slinger-relic-desert'].includes(expected.id);
+  const t1Round = ['slinger-relic-plains', 'slinger-relic-forest', 'slinger-relic-swamp', 'slinger-relic-mountain', 'slinger-relic-cave', 'slinger-relic-jungle', 'slinger-relic-desert', 'slinger-relic-tundra', 'slinger-relic-volcanic'].includes(expected.id);
   assert(t1Round ? Object.values(found.params).every(Number.isFinite) : Object.keys(found.params).length === 0, `${expected.id}: params empty until their runtime`);
   assert(
     found.ranks.map((rank) => rank.bossTier).join() === expected.bossTiers.join(),
