@@ -10,6 +10,7 @@ import {
   classConfigContext,
   classKitFor,
   globalMastery,
+  ITEM_DATABASE,
   resolveClassConfig,
   sameClassConfig,
   validateClassConfig,
@@ -25,6 +26,7 @@ import { markSliceDirty } from '../../../ecs/dirtyHelpers';
 import type { World } from '../../../world/World';
 
 type ProgressSlices = {
+  holdsInventory?: { equipment: { weapon?: string | null } };
   tracksProgression: Pick<TracksProgression, 'biomeLevel' | 'bossesCleared'>;
   usesSkills: Pick<UsesSkills, 'combatArchetype' | 'disciplineId'>;
 };
@@ -48,10 +50,15 @@ export function classKitProgressOf(archetype: ClassArchetype, slices: ProgressSl
 export function classConfigContextOf(slices: ProgressSlices): ClassConfigContext | null {
   const archetype = slices.usesSkills.combatArchetype;
   if (!archetype) return null;
+  // The Conduit's weapon adds or removes Command (bible §7.2).
+  const weapon = slices.holdsInventory?.equipment.weapon;
+  const budgetBonus = archetype === 'summoner' && weapon ? (ITEM_DATABASE.get(weapon)?.mechanicEffects?.['conduit.command'] ?? 0) : 0;
   return classConfigContext(
     archetype,
     classKitProgressOf(archetype, slices),
     globalMastery(slices.tracksProgression.biomeLevel),
+    1,
+    budgetBonus,
   );
 }
 

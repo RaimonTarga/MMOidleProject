@@ -16,6 +16,9 @@ export const CADENCE_BLEED_ID = 'cadence-hemorrhage';
 /** Festering Cut's rot: the finisher's wound, dealing part of its damage again. */
 export const STRIKER_ROT_ID = 'striker-rot';
 
+/** The Conduit's Poison Staff: summon hits add ticks to a poison on the target. */
+export const CONDUIT_POISON_ID = 'conduit-poison';
+
 /**
  * How a bleed's `stacks` field behaves, carried in the effect's own data under
  * `bleedMode` so one driver can serve both shapes.
@@ -31,6 +34,7 @@ export type BleedMode = 'ticks' | 'intensity';
 export const BLEED_EFFECT_IDS: readonly string[] = [
   CADENCE_BLEED_ID,
   STRIKER_ROT_ID,
+  CONDUIT_POISON_ID,
 ];
 
 /** Whether this monster state carries any bleed the driver owns. */

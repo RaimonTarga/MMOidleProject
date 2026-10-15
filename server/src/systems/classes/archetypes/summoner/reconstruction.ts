@@ -88,9 +88,11 @@ export function tickSummonReconstruction(
   const active = owner.summonsMinions.activeReconstruction;
   if (!active) return;
   const previousElapsed = active.elapsedMs;
-  const speed = isPlayerInCombat(owner, now)
+  const passives = owner.usesSkills.passives;
+  const speed = (isPlayerInCombat(owner, now)
     ? 1
-    : summonerProfileFor(owner).outOfCombatReconstructionSpeedMult;
+    : summonerProfileFor(owner).outOfCombatReconstructionSpeedMult * (1 + (passives['conduit.herd-pct'] ?? 0)))
+    * (1 + (passives['conduit.rebuild-speed-pct'] ?? 0));
   active.elapsedMs = Math.min(active.durationMs, active.elapsedMs + dt * speed);
   if (active.elapsedMs !== previousElapsed) {
     markSliceDirty(world, owner, 'summonsMinions');

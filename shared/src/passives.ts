@@ -108,6 +108,20 @@ export const DEFENSE_KEYS = [
   'defense.ooc-recovery-pct',
   'defense.recovery-rhythm-max',      // Rhythm: the longer the fight, the more the Recovery share is multiplied, up to this
   'defense.recovery-rhythm-ms',       // Rhythm: the fight length that reaches the maximum
+  'conduit.command',  // Weapon: adds (or removes) Command
+  'conduit.damage-pct',  // Summon damage
+  'conduit.hp-pct',  // Summon HP
+  'conduit.cooldown-pct',  // Summon attack interval
+  'conduit.ability-pct',  // Weapon: summon abilities (shots, acid) hit harder
+  'conduit.poison-stacks',  // Poison Staff: poison stacks per summon hit
+  'conduit.plating-share',  // Shared Plating: extra plating the summons copy from you
+  'conduit.herd-pct',  // Herd: faster out-of-combat rebuilds
+  'conduit.rebuild-speed-pct',  // Deep Reserve: faster rebuilds (stand-in for two at once)
+  'conduit.thorns',  // Bramble: flat damage a summon returns per hit taken
+  'conduit.sapbark-ms',  // Sapbark: summons regenerate after this long unhit
+  'conduit.poison-shift',  // Poison Shift: poison on you moves to a summon
+  'conduit.bloodtithe-pct',  // Bloodtithe: share of the rebuild HP cost returned when a summon dies
+  'conduit.intercept-pct',  // Big-Hit Intercept: a hit over this share of your HP goes to the nearest tank
   'defense.recovery-hit-pct',         // Cairnstone: a hit over this share of max HP...
   'defense.recovery-hit-x',           // ...multiplies the Recovery share by this for a few seconds
   'squire.recovery-riposte-x',        // Counterbalance: after a Riposte, the Recovery share is multiplied by this

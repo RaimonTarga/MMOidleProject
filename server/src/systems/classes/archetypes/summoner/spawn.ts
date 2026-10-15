@@ -122,7 +122,7 @@ export function computeMinionMitigation(
   lineBonus: SummonerLineBonus,
 ): { plating: number; damageReduction: number } {
   return applySummonerLineBonus({
-    plating: owner.mitigatesDamage.plating,
+    plating: owner.mitigatesDamage.plating * (1 + (owner.usesSkills.passives['conduit.plating-share'] ?? 0)),
     damageReduction: owner.mitigatesDamage.damageReduction,
   }, lineBonus);
 }

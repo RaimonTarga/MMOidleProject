@@ -434,6 +434,7 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'magma-obsidian-shell': 'obsidian-shell',
   'cadence-hemorrhage': 'debuff-dot',
   'striker-rot': 'debuff-poison',
+  'conduit-poison': 'debuff-poison',
   'energy-storm': 'energy-storm',
   'energy-ci-tag': 'energy-ac-charge',
   'death-mark': 'reload-snipe-ready',

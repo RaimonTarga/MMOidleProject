@@ -26,6 +26,7 @@ import type {
 import { grantMonsterRewards } from "../../player/progression/rewards";
 import { ATTACK_NOW, makeCombatContext, emitCombatEvent, recordBaseDefenseMeasurement, type FormationAttackContribution } from "./combatPipeline";
 import { formationTempoWeight } from "../../classes/archetypes/summoner/profile";
+import { onMinionStruck } from "../../classes/archetypes/summoner/minionHits";
 import { formationAreaMults } from "../../classes/archetypes/summoner/formationArea";
 import {
   monsterBoneTitheMult,
@@ -1844,6 +1845,7 @@ export function runMonsterAttackOnMinion(
   );
   minion.hasHealth.hp = Math.max(0, minion.hasHealth.hp - damage);
   pushDamageEvent(world, minion, damage, { sourceId: monster.isMonster.id });
+  onMinionStruck(world, monster, minion, now);
   monster.performsAttack.lastAttackAt = now;
   monster.performsAttack.lastAttackEmpowered = damageMultiplier > 1 || rawDamage !== undefined || markMult > 1;
   if (minion.hasHealth.hp > 0) {

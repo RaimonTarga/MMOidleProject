@@ -80,6 +80,8 @@ function fixture(className = 'slinger') {
 // Conduit redirection: after shields, before the owner's debt and recuperation.
 {
   const { world, bot, hit } = fixture('conduit');
+  // The old default sponge belongs to the frame/range path (a roster formation redirects nothing, §7.10); CD.8 deletes both.
+  bot.usesSkills.selectedRange = 'summoner-range-close';
   updateSummonerArchetype(world, 0, 1_000);
   const minionIds = bot.summonsMinions?.minionIds.filter(Boolean) ?? [];
   assert(minionIds.length > 0, 'Conduit fixture must field summons');

@@ -2,6 +2,8 @@
 import type { World } from '../../../../world/World';
 import type { MinionEntity, PlayerEntity } from '../../../../ecs/entity';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
+import { getResource } from '@mmo-idle/shared';
+import { LAST_HIT_AT, SAPBARK_PCT_PER_SEC } from './minionHits';
 import {
   computeMinionMaxHp,
   computeMinionSizeMult,
@@ -16,7 +18,7 @@ import {
 } from './spawn';
 import { driveMinion } from './ai';
 import { validateSummonerCommand } from './command';
-import { applyHealToMinion } from '../../../defense/regen/healing';
+import { applyHealToMinion, applyHealToPlayer } from '../../../defense/regen/healing';
 import { summonerProfileFor } from './profile';
 import {
   enqueueSummonReconstruction,
@@ -184,6 +186,12 @@ function runMinionRegen(
   now: number,
 ): void {
   if (minion.hasHealth.hp >= minion.hasHealth.maxHp) return;
+  // Sapbark: a summon unhit for a few seconds regenerates, in a fight too.
+  const sapMs = owner.usesSkills.passives['conduit.sapbark-ms'] ?? 0;
+  if (sapMs > 0 && now - getResource(minion.tracksCombat, LAST_HIT_AT) >= sapMs) {
+    applyHealToMinion(minion, owner.isPlayer.id, minion.hasHealth.maxHp * SAPBARK_PCT_PER_SEC * (dt / 1_000), world);
+    return;
+  }
   // In combat a summon has no Recovery of its own.
   if (isMinionInCombat(world, owner, minion, now)) return;
   const recovery = minion.hasHealth.recovery ?? 0;
@@ -205,6 +213,11 @@ function collectDeaths(world: World, owner: SummonerPlayerEntity): void {
     enqueueSummonReconstruction(world, owner, summons.slotIds[index]!);
     if (minion) {
       onSoulSummonDeath(world, owner, minion);
+      // Bloodtithe: part of the HP paid to build it comes back.
+      const tithe = owner.usesSkills.passives['conduit.bloodtithe-pct'] ?? 0;
+      if (tithe > 0) {
+        applyHealToPlayer(owner, owner.tracksCombat, minion.hasHealth.maxHp * summonerProfileFor(owner).reconstructionHpCostRatio * tithe, world);
+      }
       if (owner.controlsSummons) {
         onSummonDeath(
           world,

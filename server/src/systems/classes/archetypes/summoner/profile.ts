@@ -14,6 +14,10 @@ import { SOUL_BODY, soulOf } from './souls';
  * frame/range path then applies until it is deleted).
  */
 function rosterOf(owner: PlayerEntity): readonly RosterBody[] | undefined {
+  const passives = owner.usesSkills.passives;
+  const damageMult = 1 + (passives['conduit.damage-pct'] ?? 0);
+  const hpMult = 1 + (passives['conduit.hp-pct'] ?? 0);
+  const cooldownMult = 1 + (passives['conduit.cooldown-pct'] ?? 0);
   const system = owner.configuresClass?.config.system;
   if (system?.kind !== 'formation') return undefined;
   // Transitional (CD.8 deletes it with the frames): a character still on a frame or range pick keeps the old path.
@@ -29,9 +33,9 @@ function rosterOf(owner: PlayerEntity): readonly RosterBody[] | undefined {
       mode: piece.mode,
       row: piece.row,
       body: piece.body,
-      hpMult: piece.params.hpMult,
-      damageMult: piece.params.damageMult,
-      cooldownMult: piece.params.cooldownMult,
+      hpMult: (piece.params.hpMult ?? 1) * hpMult,
+      damageMult: (piece.params.damageMult ?? 1) * damageMult,
+      cooldownMult: (piece.params.cooldownMult ?? 1) * cooldownMult,
     });
   }
   // The Soul in the relic slot is a free body (0 Command) wearing its own stand-in body.
@@ -44,8 +48,9 @@ function rosterOf(owner: PlayerEntity): readonly RosterBody[] | undefined {
       mode: 'melee',
       row: 'middle',
       body: soul.body,
-      hpMult: SOUL_BODY.hpMult,
-      damageMult: SOUL_BODY.damageMult,
+      hpMult: SOUL_BODY.hpMult * hpMult,
+      damageMult: SOUL_BODY.damageMult * damageMult,
+      cooldownMult,
     });
   }
   return bodies;

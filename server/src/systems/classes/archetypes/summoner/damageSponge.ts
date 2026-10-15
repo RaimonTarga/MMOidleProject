@@ -10,7 +10,7 @@ import { pushDamageEvent } from '../../../combat/damage/damageEvent';
  * it as a raw HP subtraction and kill the slime if it drops to ≤0. The
  * summoner tick will start the respawn timer on the next pass.
  */
-import type { MinionMonsterType } from '@mmo-idle/shared';
+import { CONDUIT_KIT, type MinionMonsterType } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import type { World } from '../../../../world/World';
 import type { MinionEntity, PlayerEntity } from '../../../../ecs/entity';
@@ -35,6 +35,22 @@ export function pickLivingMinion(world: World, owner: PlayerEntity): MinionEntit
   return candidates[index]!;
 }
 
+/** The living tank summon closest to the owner. */
+function nearestTank(world: World, owner: PlayerEntity): MinionEntity | null {
+  let best: MinionEntity | null = null;
+  let bestSq = Infinity;
+  for (const id of owner.summonsMinions?.minionIds ?? []) {
+    const minion = id ? world.getMinionEntity(id) : undefined;
+    if (!minion || minion.hasHealth.hp <= 0) continue;
+    const piece = CONDUIT_KIT.pieces.find((candidate) => candidate.id === minion.isMinion.slotId.split('#')[0]);
+    if (piece?.family !== 'tank') continue;
+    const dx = minion.hasPosition.current.x - owner.hasPosition.current.x;
+    const dy = minion.hasPosition.current.y - owner.hasPosition.current.y;
+    if (dx * dx + dy * dy < bestSq) { bestSq = dx * dx + dy * dy; best = minion; }
+  }
+  return best;
+}
+
 /** Raw HP subtraction on a minion; death is handled by the summoner tick. */
 export function redirectDamageToMinion(minion: MinionEntity, amount: number, world: World): void {
   minion.hasHealth.hp -= amount;
@@ -54,6 +70,17 @@ export function registerSummonerDamageSponge(): void {
     if (ctx.metadata['secondarySplash']) return;
     const player = ctx.defender;
     if (!player.summonsMinions) return;
+
+    // Big-Hit Intercept: a hit that would take a large share of your HP goes to the nearest tank.
+    const intercept = player.usesSkills.passives['conduit.intercept-pct'] ?? 0;
+    if (intercept > 0 && ctx.damage >= player.hasHealth.maxHp * intercept) {
+      const tank = nearestTank(world, player);
+      if (tank) {
+        redirectDamageToMinion(tank, ctx.damage, world);
+        ctx.damage = 0;
+        return;
+      }
+    }
 
     const spongePct = summonerProfileFor(player).redirectionPct;
     if (spongePct <= 0) return;

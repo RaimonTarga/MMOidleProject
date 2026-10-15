@@ -4,7 +4,7 @@
  * hitting slot's piece: the Spitter's acid, the Marksman's power shot, the tanks' taunting sweep.
  * Every number is a kit `params` placeholder.
  */
-import { CONDUIT_KIT, getResource, setResource, type ConduitPiece } from '@mmo-idle/shared';
+import { CONDUIT_KIT, getResource, getStatusEffect, removeStatusEffect, setResource, type ConduitPiece } from '@mmo-idle/shared';
 import type { MinionEntity, MonsterEntity, PlayerEntity } from '../../../../ecs/entity';
 import type { World } from '../../../../world/World';
 import { applyTaunt } from '../../../combat/ai/targeting';
@@ -13,10 +13,18 @@ import { attackNow, registerCombatListener, type CombatContext } from '../../../
 import { evadeBlocksDebuffs } from '../../../defense/mitigation/evasion';
 import { applyFramePlatingShred } from '../../shared/frameLoop';
 import { onTankTaunt } from './souls';
+import { attachMarker } from '../../../../ecs/markerHelpers';
+import { CONDUIT_POISON_ID } from '../../../combat/damage/bleedIds';
+import { applyPlayerDebuff } from '../../shared/applyPlayerDebuff';
 
 const PIECES = new Map<string, ConduitPiece>(CONDUIT_KIT.pieces.map((piece) => [piece.id, piece]));
 
 const SHOTS = 'summon.shots';
+/** Poison Staff, per stack of the weapon: ticks added per hit, the cap, a tick's share of the hit, the tick gap. PLACEHOLDERS. */
+const POISON_TICKS_PER_HIT = 2;
+const POISON_MAX_TICKS = 12;
+const POISON_TICK_SHARE = 0.2;
+const POISON_TICK_MS = 1_000;
 const LAST_TAUNT_AT = 'summon.lastTauntAt';
 
 /** The piece behind a formation hit, with the minion that swung. */
@@ -45,7 +53,7 @@ export function registerSummonPieces(): void {
     const shots = getResource(cs, SHOTS) + 1;
     if (shots < every) { setResource(cs, SHOTS, shots); return; }
     setResource(cs, SHOTS, 0);
-    const mult = hit.piece.params.shotMult ?? 1;
+    const mult = 1 + ((hit.piece.params.shotMult ?? 1) - 1) * (1 + (hit.owner.usesSkills.passives['conduit.ability-pct'] ?? 0));
     if (mult <= 1 || ctx.metadata['empoweredMultiplier'] !== undefined) return;
     ctx.damage = Math.round(ctx.damage * mult);
     ctx.metadata['empoweredMultiplier'] = mult;
@@ -59,7 +67,25 @@ export function registerSummonPieces(): void {
     // Bile Spitter: its acid strips a share of the target's plating.
     const shred = piece.params.shredFraction ?? 0;
     if (shred > 0 && !evadeBlocksDebuffs(ctx) && target.hasHealth.hp > 0) {
-      applyFramePlatingShred(owner, target, shred, piece.params.shredMs ?? 4000);
+      applyFramePlatingShred(owner, target, shred * (1 + (owner.usesSkills.passives['conduit.ability-pct'] ?? 0)), piece.params.shredMs ?? 4000);
+    }
+
+    // Poison Staff: every summon hit adds ticks to a poison on the target (back-loaded damage).
+    const poison = owner.usesSkills.passives['conduit.poison-stacks'] ?? 0;
+    if (poison > 0 && !evadeBlocksDebuffs(ctx) && target.hasHealth.hp > 0) {
+      const prior = getStatusEffect(target.tracksCombat, CONDUIT_POISON_ID);
+      const ticks = Math.min(POISON_MAX_TICKS, (prior?.stacks ?? 0) + poison * POISON_TICKS_PER_HIT);
+      const perTick = Math.max(1, Math.round(ctx.damage * POISON_TICK_SHARE), prior?.data['damagePerTick'] ?? 0);
+      removeStatusEffect(target.tracksCombat, CONDUIT_POISON_ID);
+      const effect = applyPlayerDebuff(owner, target.tracksCombat, {
+        id: CONDUIT_POISON_ID,
+        instanced: false,
+        remainingMs: -1,
+        sourceId: owner.isPlayer.id,
+        data: { damagePerTick: perTick, nextTickIn: POISON_TICK_MS, tickIntervalMs: POISON_TICK_MS },
+      }, { origin: 'mechanic' });
+      effect.stacks = ticks; // one stack per remaining tick, as a bleed
+      attachMarker(world, target, 'hasHemorrhage');
     }
 
     // Tanks (Plains Warden, Cave Brute): the sweep taunts the enemies around the target.

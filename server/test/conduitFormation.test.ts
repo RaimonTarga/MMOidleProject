@@ -10,6 +10,7 @@ import {
   defaultClassConfig,
   emptyEquipment,
   SUMMONER_BASELINE_ATTACK_RANGE,
+  getResource,
   getStatusEffect,
   SUMMONER_RANGE_TUNING,
 } from '@mmo-idle/shared';
@@ -22,6 +23,12 @@ import { isSummonerRecalling } from '../src/systems/classes/archetypes/summoner/
 import { orderedTarget, rebuildRank, syncFormationRecall } from '../src/systems/classes/archetypes/summoner/formationOrders';
 import { updatePlayerMoments } from '../src/systems/combat/moments/moments';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
+import { computeMinionMitigation } from '../src/systems/classes/archetypes/summoner/spawn';
+import { runMonsterAttackOnMinion } from '../src/systems/combat/engine/combat';
+import { applyMonsterDotToPlayer } from '../src/systems/combat/status/monsterDot';
+import { emitCombatEvent, makeCombatContext } from '../src/systems/combat/engine/combatPipeline';
+import { classConfigContextOf } from '../src/systems/player/progression/classConfig';
+import { equipItem } from '../src/systems/player/economy/inventory';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
 import { summonerProfileFor } from '../src/systems/classes/archetypes/summoner/profile';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
@@ -248,6 +255,111 @@ const piece = (id: string) => CONDUIT_KIT.pieces.find((p) => p.id === id)!;
   const before = tank.hasHealth.hp;
   runFormationAttack(world, player, tank, target, 3_000);
   assert.ok(tank.hasHealth.hp > before, 'Stoneplate: the tank taunt also shields it');
+}
+
+// CD.5: the weapon and the T1 lines.
+{
+  const { world, player } = setup(['conduit-plains-tank', 'conduit-forest-bruiser', 'conduit-swamp-spitter']);
+  const base = classConfigContextOf(player)!.budget;
+  player.holdsInventory.inventory.push('conduit-swarm-staff-t1');
+  assert.ok(equipItem(world, player, 'conduit-swarm-staff-t1'), 'equip the Swarm Staff');
+  assert.equal(classConfigContextOf(player)!.budget, base + 2, 'the Swarm Staff adds Command');
+  assert.equal(player.usesSkills.passives['conduit.command'], 2);
+  player.holdsInventory.equipment.weapon = null;
+  player.usesSkills.passives['conduit.command'] = 0;
+
+  // You Tank / weapon multipliers reach the slots.
+  player.usesSkills.passives['conduit.damage-pct'] = 0.2;
+  player.usesSkills.passives['conduit.hp-pct'] = -0.3;
+  const slot = summonerProfileFor(player).slots[1]!;
+  assert.ok(Math.abs(slot.damageMult! - 0.9 * 1.2) < 1e-9 && Math.abs(slot.hpMult! - 0.6 * 0.7) < 1e-9, 'damage and HP lines scale the piece');
+  player.usesSkills.passives['conduit.damage-pct'] = 0;
+  player.usesSkills.passives['conduit.hp-pct'] = 0;
+
+  updateSummonerArchetype(world, 100, 1_000);
+  updateSummonerArchetype(world, 100, 1_100);
+  const minions = player.summonsMinions!.minionIds.map((id) => world.getMinionEntity(id)!);
+  const mon = world.createMonster('node-5-5', 'bone-crawler', { x: 440, y: 400 })!;
+  mon.hasHealth.hp = mon.hasHealth.maxHp = 1_000_000;
+
+  // Shared Plating.
+  const plain = computeMinionMitigation(player, { plating: 0 } as never).plating;
+  player.usesSkills.passives['conduit.plating-share'] = 0.5;
+  assert.ok(computeMinionMitigation(player, { plating: 0 } as never).plating >= plain, 'Shared Plating raises the summons plating');
+  player.mitigatesDamage.plating = 10;
+  assert.equal(computeMinionMitigation(player, { plating: 0 } as never).plating, 15, 'a half-again plating copy');
+  player.usesSkills.passives['conduit.plating-share'] = 0;
+
+  // Bramble thorns and the unhit clock.
+  player.usesSkills.passives['conduit.thorns'] = 7;
+  const hpBefore = mon.hasHealth.hp;
+  runMonsterAttackOnMinion(world, mon, minions[0]!, 5_000);
+  assert.ok(hpBefore - mon.hasHealth.hp >= 7, 'Bramble hits back');
+  assert.equal(getResource(minions[0]!.tracksCombat, 'minion.lastHitAt'), 5_000, 'the unhit clock is stamped');
+  player.usesSkills.passives['conduit.thorns'] = 0;
+
+  // Sapbark: unhit long enough, a hurt summon regenerates even mid-fight.
+  player.usesSkills.passives['conduit.sapbark-ms'] = 1_000;
+  minions[1]!.hasHealth.hp = Math.round(minions[1]!.hasHealth.maxHp * 0.5);
+  const hurt = minions[1]!.hasHealth.hp;
+  setAggroTarget(world, mon, { kind: 'player', id: player.isPlayer.id }, 0);
+  updateSummonerArchetype(world, 1_000, 20_000);
+  assert.ok(minions[1]!.hasHealth.hp > hurt, 'Sapbark regenerates');
+  player.usesSkills.passives['conduit.sapbark-ms'] = 0;
+
+  // Bloodtithe: a fallen summon returns part of the rebuild cost.
+  player.usesSkills.passives['conduit.bloodtithe-pct'] = 1;
+  player.hasHealth.hp = Math.round(player.hasHealth.maxHp * 0.5);
+  const owned = player.hasHealth.hp;
+  minions[2]!.hasHealth.hp = 0;
+  updateSummonerArchetype(world, 100, 21_000);
+  assert.ok(player.hasHealth.hp > owned, 'Bloodtithe heals the owner');
+  player.usesSkills.passives['conduit.bloodtithe-pct'] = 0;
+}
+{
+  const { world, player } = setup(['conduit-plains-tank', 'conduit-forest-bruiser']);
+  updateSummonerArchetype(world, 100, 1_000);
+  updateSummonerArchetype(world, 100, 1_100);
+  const tank = world.getMinionEntity(player.summonsMinions!.minionIds[0]!)!;
+  const mon = world.createMonster('node-5-5', 'bone-crawler', { x: 440, y: 400 })!;
+  const hit = (damage: number) => {
+    const ctx = makeCombatContext(mon, 'monster', player, 'player');
+    ctx.damage = damage;
+    emitCombatEvent('onDamageTaken', ctx, world);
+    return ctx.damage;
+  };
+  // No default redirection (§7.10).
+  assert.equal(hit(10), 10, 'nothing is redirected by default');
+  // Big-Hit Intercept.
+  player.usesSkills.passives['conduit.intercept-pct'] = 0.3;
+  const tankHp = tank.hasHealth.hp;
+  const small = Math.round(player.hasHealth.maxHp * 0.1);
+  assert.equal(hit(small), small, 'a small hit lands on you');
+  assert.equal(hit(player.hasHealth.maxHp * 0.4), 0, 'a big hit goes to the tank');
+  assert.ok(tank.hasHealth.hp < tankHp, 'the tank took it');
+  player.usesSkills.passives['conduit.intercept-pct'] = 0;
+
+  // Poison Shift.
+  player.usesSkills.passives['conduit.poison-shift'] = 1;
+  applyMonsterDotToPlayer(world, mon, player, { debuffId: 'poison', label: 'Poison', damagePerStack: 5, maxStacks: 3, tickIntervalMs: 1000, durationMs: 5000, element: 'poison' } as never);
+  const summons = player.summonsMinions!.minionIds.map((id) => world.getMinionEntity(id)!);
+  assert.ok(summons.some((m) => m.tracksCombat.statusEffects.some((e) => e.id.includes('poison'))), 'poison lands on a summon');
+  assert.ok(!player.tracksCombat.statusEffects.some((e) => e.id.includes('poison')), 'and not on you');
+}
+{
+  // Poison Staff: summon hits stack a poison of remaining ticks.
+  const { world, player } = setup(['conduit-forest-bruiser']);
+  player.usesSkills.passives['conduit.poison-stacks'] = 1;
+  updateSummonerArchetype(world, 100, 1_000);
+  updateSummonerArchetype(world, 100, 1_100);
+  const bruiser = world.getMinionEntity(player.summonsMinions!.minionIds[0]!)!;
+  const mon = world.createMonster('node-5-5', 'bone-crawler', { x: 430, y: 400 })!;
+  mon.hasHealth.hp = mon.hasHealth.maxHp = 1_000_000;
+  runFormationAttack(world, player, bruiser, mon, 2_000);
+  const first = getStatusEffect(mon.tracksCombat, 'conduit-poison')?.stacks ?? 0;
+  runFormationAttack(world, player, bruiser, mon, 4_000);
+  const second = getStatusEffect(mon.tracksCombat, 'conduit-poison')?.stacks ?? 0;
+  assert.ok(first > 0 && second > first, `poison ticks stack: ${first} then ${second}`);
 }
 
 console.log('conduitFormation: ok');

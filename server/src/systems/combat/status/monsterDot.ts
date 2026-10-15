@@ -9,7 +9,21 @@ import { attachMarker } from '../../../ecs/markerHelpers';
 import type { World } from '../../../world/World';
 import { harmfulStatusDurationMult, harmfulStatusPotencyMult } from './harmfulStatus';
 import { playerRefusesAffliction } from './debuffGuard';
+import { applyMonsterDotToMinion } from './minionAfflictions';
 import { buildKillerFromMonster } from '../../world/deathCause';
+
+function nearestLivingSummon(world: World, player: PlayerEntity) {
+  let best;
+  let bestSq = Infinity;
+  for (const id of player.summonsMinions?.minionIds ?? []) {
+    const minion = id ? world.getMinionEntity(id) : undefined;
+    if (!minion || minion.hasHealth.hp <= 0) continue;
+    const dx = minion.hasPosition.current.x - player.hasPosition.current.x;
+    const dy = minion.hasPosition.current.y - player.hasPosition.current.y;
+    if (dx * dx + dy * dy < bestSq) { bestSq = dx * dx + dy * dy; best = minion; }
+  }
+  return best;
+}
 
 /** Apply one definition-shaped monster DoT stack through the canonical status path. */
 export function applyMonsterDotToPlayer(
@@ -21,6 +35,14 @@ export function applyMonsterDotToPlayer(
 ): void {
   const monsterDef = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
   const debuff = resolveMonsterDotDebuff({ monster: monsterDef, dotEffect });
+  // Conduit, Poison Shift: poison aimed at you lands on a summon instead.
+  if ((debuff.element === 'poison' || debuff.statusEffectId.includes('poison')) && (player.usesSkills.passives['conduit.poison-shift'] ?? 0) > 0) {
+    const summon = nearestLivingSummon(world, player);
+    if (summon) {
+      applyMonsterDotToMinion(world, monster, summon, dotEffect);
+      return;
+    }
+  }
   // Cleanse's Immunity keystone (design §22.4): a stripped kind does not come back.
   if (playerRefusesAffliction(player, debuff.statusEffectId)) return;
   // Status resistance (mobility tenacity + the Warding posture) lands HERE, at the

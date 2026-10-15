@@ -36,6 +36,7 @@ const STATUS_META: Record<string, StatusMeta> = {
   'plating-shred': { label: 'Shred',   color: '#d8b24a' },
   'reload-suppress-shred': { label: 'Suppressed', color: '#d8b24a' },
   'cadence-hemorrhage': { label: 'Bleed', color: '#c41e1e' },
+  'conduit-poison':     { label: 'Poison', color: '#88bb55' },
   'striker-rot':        { label: 'Rot', color: '#7a8b2e' },
   'energy-storm':       { label: 'Storm', color: '#c77dff' },
   'energy-ci-tag':      { label: 'Induction', color: '#c77dff' },

@@ -271,8 +271,9 @@ export function resolveSummonerProfile(input: SummonerProfileInput): SummonerPro
     // Procession's reach with only a melee animation.
     attackRange: selectedRange ? rangeTuning.attackRange : SUMMONER_BASELINE_ATTACK_RANGE,
     preferredDistance: rangeTuning.preferredDistance,
-    conduitDefenseShare: rangeTuning.conduitDefenseShare,
-    redirectionPct: rangeTuning.redirectionPct,
+    // No default damage redirection for a roster formation (bible §7.10): the Big-Hit Intercept line is the only one.
+    conduitDefenseShare: fromRoster ? 0 : rangeTuning.conduitDefenseShare,
+    redirectionPct: fromRoster ? 0 : rangeTuning.redirectionPct,
     leashRadius: SUMMONER_CORE_TUNING.leashRadius,
     reconstructionIntervalMs: Math.max(
       floorMs,

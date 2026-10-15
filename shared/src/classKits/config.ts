@@ -60,6 +60,7 @@ export function classConfigContext(
   progress: ClassKitProgress,
   globalMasteryValue: number,
   relicSlots = 1,
+  budgetBonus = 0,
 ): ClassConfigContext {
   const trophies = trophyRanks(archetype, progress.bossesCleared);
   return {
@@ -67,7 +68,7 @@ export function classConfigContext(
     pieceRanks: pieceRanks(archetype, progress),
     trophyRanks: trophies,
     trophiesNewestFirst: trophiesNewestFirst(archetype, progress, trophies),
-    budget: classBudget(archetype, globalMasteryValue).value,
+    budget: Math.max(1, classBudget(archetype, globalMasteryValue).value + budgetBonus),
     disciplineId: progress.disciplineId,
     relicSlots,
   };
