@@ -6,6 +6,7 @@ import { APPRENTICE_T1_ID, apprenticeT1Route } from "./apprenticeT1";
 import { SQUIRE_T1_ID, squireT1Route } from "./squireT1";
 import { DEFAULT_SMOKE_CLASS, SMOKE_T1_ID, smokeT1Route } from "./smokeT1";
 import { STRIKER_T1_ID, strikerT1Route } from "./strikerT1";
+import { STRIKER_T2_ROUTE_IDS, strikerT2Route } from "./strikerT2";
 import { SPIRIT_T1_ID, spiritT1Route } from "./spiritT1";
 
 /**
@@ -27,6 +28,7 @@ const CLASS_AGNOSTIC_ROUTES = new Map<string, (classRoot: string) => Route>([
 /** Authored routes, keyed by id; class-agnostic ones in their default class. */
 const SMOKE_ROUTE = smokeT1Route(classRootFor(DEFAULT_SMOKE_CLASS));
 const STRIKER_ROUTE = strikerT1Route();
+const STRIKER_T2_ROUTES = Object.keys(STRIKER_T2_ROUTE_IDS).map((discipline) => strikerT2Route(discipline));
 const SQUIRE_ROUTE = squireT1Route();
 const CONDUIT_ROUTE = conduitT1Route();
 const SLINGER_ROUTE = slingerT1Route();
@@ -35,6 +37,7 @@ const APPRENTICE_ROUTE = apprenticeT1Route();
 export const ROUTES = new Map<string, Route>([
   [SMOKE_ROUTE.id, SMOKE_ROUTE],
   [STRIKER_ROUTE.id, STRIKER_ROUTE],
+  ...STRIKER_T2_ROUTES.map((route): [string, Route] => [route.id, route]),
   [SQUIRE_ROUTE.id, SQUIRE_ROUTE],
   [CONDUIT_ROUTE.id, CONDUIT_ROUTE],
   [SLINGER_ROUTE.id, SLINGER_ROUTE],
@@ -85,6 +88,7 @@ export function isClassAgnosticRouteId(id: string): boolean {
 export const CONTROLLED_ROUTE_IDS: readonly string[] = [
   SMOKE_T1_ID,
   STRIKER_T1_ID,
+  ...Object.values(STRIKER_T2_ROUTE_IDS),
   SQUIRE_T1_ID,
   CONDUIT_T1_ID,
   SLINGER_T1_ID,

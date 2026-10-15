@@ -66,7 +66,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'ability-bramble': b('Bramble', 'Thorned plating: you gain flat plating and return damage to anything that hits you, for the duration.'),
   'ability-second-wind': b('Recovery skill', 'A Recovery window is open — a share of your Recovery rate is switched on, healing you over the duration. What that converts to in HP depends on your Recovery stat.'),
   'ability-second-wind-2': b('Recovery skill', 'Your second Recovery window is open. Second Wind (strong and short) and Recuperate (weak and long) can be held together and run independently.'),
-  'ability-sidestep': b('Sidestep', 'You slipped aside: for the window, a chance to dodge each hit outright on top of whatever your gear gives you, and a burst of move speed that ends with it.'),
+  'ability-sidestep': b('Sidestep', 'You slipped aside: for the window, a chance to dodge each hit outright on top of whatever your gear gives you, and a burst of move speed that ends with it. Close In (Striker armor) borrows this tile: it carries only the move speed.'),
   'ability-imbue': b('Imbued', 'Lightning is stored in your hands. Each attack that lands spends one charge and carries bonus damage with it. There is no timer — the charges wait as long as you need them to, and the number on the tile is how many attacks are left.'),
   'ability-control-resist': b('Unbound', 'You broke free, and incoming control is shortened for a moment afterward so you are not immediately re-caught.'),
   'ability-immunity': b('Immunity', 'What your Cleanse just stripped cannot be put back on you for a few seconds: a new application of that same affliction fails to land. Anything else still can.'),

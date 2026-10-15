@@ -290,6 +290,9 @@ const PLAIN4: (string | null)[] = [null, null, null, null];
   const { world, player, target } = setup({ beats: PLAIN4, disciplineId: 'striker-balanced' });
   swings(world, player, target, 4);
   assert.equal(strikerT2(player).edge, 4, 'the edge rose a step per beat');
+  player.performsAttack.lastAttackAt = clock; // still fighting, so the break rule leaves the edge alone
+  updateStrikerT2(world, 100, clock);
+  assert.equal(player.usesCadence?.edge, 4, 'the edge reaches the networked slice for the HUD strip');
   const finisher = swing(world, player, target).damage;
   assert(finisher > plainFinisher, `the finisher cuts with the edge (${finisher} > ${plainFinisher})`);
   assert.equal(strikerT2(player).edge, 0, 'and resets');

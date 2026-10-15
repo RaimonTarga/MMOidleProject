@@ -113,6 +113,10 @@ export interface PlayerView {
   cadenceCount: number;
   cadenceThreshold: number;
   cadenceEmpoweredArmed: boolean;
+  /** Striker T2 resource: Light's shine, Balanced's edge steps, Heavy's Momentum. */
+  cadenceLit: boolean;
+  cadenceEdge: number;
+  cadenceMomentum: number;
   ammoCount: number;
   ammoMax: number;
   /** Authoritative milliseconds left in the active reload; 0 while idle. */
@@ -356,6 +360,9 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     cadenceCount: entity.usesCadence?.count ?? 0,
     cadenceThreshold: entity.usesCadence?.threshold ?? 0,
     cadenceEmpoweredArmed: entity.hasEmpoweredAttack !== undefined,
+    cadenceLit: entity.usesCadence?.lit ?? false,
+    cadenceEdge: entity.usesCadence?.edge ?? 0,
+    cadenceMomentum: entity.usesCadence?.momentum ?? 0,
     ammoCount: entity.usesReload?.ammo ?? 0,
     ammoMax: entity.usesReload?.ammoMax ?? 0,
     reloadRemainingMs: entity.usesReload?.reloadingMs ?? 0,

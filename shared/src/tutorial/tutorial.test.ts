@@ -4,6 +4,7 @@ import { RECIPE_DATABASE } from '../data/recipes';
 import { ITEM_DATABASE } from '../itemDatabase';
 import { emptyEquipment, type EssenceType } from '../items';
 import { QUEST_DATABASE } from '../quests/questDatabase';
+import { absoluteZoneLevel } from '../classKits/registry';
 import { bossClearKey } from '../systems/biomeProgress';
 import { tutorialNodeFor } from './nodes';
 import {
@@ -207,6 +208,9 @@ const STRIKER_TAIL = [
   'striker:mountain',
   'boss:mountain',
   'farewell',
+  // The Tier 2 stretch (T2-W2): zone, lesson, boss for each of the seven T2 zones.
+  ...['plains', 'forest', 'mountain', 'swamp', 'cave', 'jungle', 'desert']
+    .flatMap((zone) => [`striker2:${zone}`, `striker2:${zone}-lesson`, `striker2:${zone}-boss`]),
 ];
 
 function farmGate(beat: TutorialBeat, biome: string): number | null {
@@ -235,7 +239,15 @@ function assertStrikerTail(script: TutorialScript): void {
   assert(say('zone:forest').includes('finisher'), 'the forest beat opens on the trophy');
   assert(say('striker:hamstring').includes('Hamstring') && say('striker:rend').includes('Rend'), 'Hamstring and Rend have their own beats');
   assert(say('striker:focus').includes('Focus') && say('boss:mountain').includes('Coil'), 'Focus and Coil name the cast');
-  assert(tail[tail.length - 1].say === TUTORIAL_FAREWELL[0], 'the Striker route still ends on the farewell line');
+  assert(tail.find((beat) => beat.id === 'farewell')?.say === TUTORIAL_FAREWELL[0], 'the Striker route still says the farewell line');
+  assert(tail[tail.length - 1].id === 'striker2:desert-boss', 'the Striker route ends on the last Tier 2 boss');
+  assert(say('striker2:plains').includes('discipline'), 'the first Tier 2 line points at the discipline pick');
+  assert(say('striker2:jungle-lesson').includes('Charge') && say('striker2:desert-lesson').includes('Pin'), 'the new Tier 2 lessons have lines');
+  for (const beat of tail.filter((entry) => entry.id.startsWith('striker2:'))) {
+    assert(beat.say.length < 170, `${beat.id}: a Tier 2 line stays short`);
+    assert(beat.steps.every((step) => (step.type === 'farm' && step.at.kind === 'biome' && step.at.tier === 2)
+      || (step.type === 'attemptBoss' && step.tier === 2)), `${beat.id}: Tier 2 steps stay in Tier 2`);
+  }
   // The lesson line is the beat that starts at level 2: the approach stops there,
   // and the technique beat carries on to the seal route's cap.
   for (const [approach, technique, biome] of [
@@ -540,7 +552,13 @@ for (const script of SCRIPTS) {
     biomeLevel: { ...levels },
     bossesCleared: [...cleared, bossClearKey('mountain', 1)],
   }));
-  assert(finished === script.beats.length, 'both seals at tier 2 finish the script, farewell included');
+  assert(finished === beatIndex(script, 'striker2:plains'), 'both seals at tier 2 finish Tier 1 and open the Tier 2 stretch');
+  // The Tier 2 lesson lines come up at their level, and each boss after its zone's cap.
+  const t2 = { playerTier: 2, bossesCleared: [...cleared, bossClearKey('mountain', 1)] };
+  const lessonLevel = absoluteZoneLevel({ kind: 'zone', biome: 'plains', tier: 2, level: 2 });
+  at({ ...t2, biomeLevel: { ...levels, plains: lessonLevel } }, 'striker2:plains-lesson');
+  at({ ...t2, biomeLevel: { ...levels, plains: biomeLevelCap(2, 'plains') } }, 'striker2:plains-boss');
+  at({ ...t2, biomeLevel: { ...levels, plains: biomeLevelCap(2, 'plains') }, bossesCleared: [...t2.bossesCleared, bossClearKey('plains', 2)] }, 'striker2:forest');
 }
 
 // ── Spirit resume: each lesson appears at its unlock, before both seals ──────

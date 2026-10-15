@@ -1,0 +1,101 @@
+import assert from "node:assert/strict";
+import {
+  SKILL_TREE,
+  strikerComboLength,
+  tutorialScriptFor,
+  type TutorialCondition,
+} from "@mmo-idle/shared";
+import type { Condition, RouteStep } from "../route/types";
+import { CONTROLLED_ROUTE_IDS, isClassAgnosticRouteId, requireRoute, ROUTES } from "./index";
+import { STRIKER_CLASS_ROOT, strikerT1Route } from "./strikerT1";
+import {
+  STRIKER_T2_LIGHT_ID,
+  STRIKER_T2_ROUTE_IDS,
+  STRIKER_T2_ZONES,
+  strikerT2FarmLevel,
+  strikerT2Route,
+} from "./strikerT2";
+
+const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+
+function gates(condition: Condition | TutorialCondition): (Condition | TutorialCondition)[] {
+  if (condition.type === "allOf" || condition.type === "anyOf") return [condition, ...condition.of.flatMap(gates)];
+  if (condition.type === "not") return [condition, ...gates(condition.of)];
+  return [condition];
+}
+
+/** The tier-2 level the Striker guide farms this zone to. */
+function tutorialT2Level(biomeGroup: string): number {
+  let level = 0;
+  for (const beat of tutorialScriptFor(STRIKER_CLASS_ROOT).beats) {
+    if (!beat.id.startsWith("striker2:")) continue;
+    for (const step of beat.steps) {
+      if (step.type !== "farm") continue;
+      for (const gate of gates(step.until)) {
+        if (gate.type === "biomeLevelAtLeast" && gate.biomeGroup === biomeGroup) level = Math.max(level, gate.level);
+      }
+    }
+  }
+  return level;
+}
+
+const t1 = strikerT1Route();
+for (const [disciplineId, id] of Object.entries(STRIKER_T2_ROUTE_IDS)) {
+  const route = strikerT2Route(disciplineId);
+  assert.equal(route.id, id);
+  assert(KEBAB.test(route.id), "the id is kebab-case");
+  assert.equal(route.classRoot, STRIKER_CLASS_ROOT);
+  assert(route.description.length > 0, "the route is described");
+  assert.deepEqual(ROUTES.get(id), route, `${id} is registered`);
+  assert.equal(requireRoute(id), ROUTES.get(id));
+  assert.equal(isClassAgnosticRouteId(id), false, "the route is not rebuilt for another class");
+  assert(CONTROLLED_ROUTE_IDS.includes(id), `${id} joins the controlled batch list`);
+
+  // It is the T1 route, then the pick, the Order, and three steps per T2 zone.
+  assert.deepEqual(route.steps.slice(0, t1.steps.length), t1.steps, "the T1 route comes first, unchanged");
+  const rest = route.steps.slice(t1.steps.length);
+  assert.deepEqual(
+    rest.map((step) => step.type),
+    ["unlockSkill", "classConfig", ...STRIKER_T2_ZONES.flatMap(() => ["travel", "farm", "attemptBoss"])],
+  );
+
+  const [pick, config] = rest;
+  assert(pick.type === "unlockSkill" && pick.skillId === disciplineId, "the route picks its discipline");
+  assert.equal(SKILL_TREE.get(disciplineId)?.disciplineId, disciplineId, "the discipline is a skill node");
+  assert(config.type === "classConfig" && config.config.mode === "auto", "the Order goes back to auto");
+  if (config.type === "classConfig" && config.config.system.kind === "order") {
+    assert.equal(config.config.system.beats.length, strikerComboLength(disciplineId) - 1, "the Order fits the discipline's combo");
+  }
+
+  const farms = rest.filter((step): step is Extract<RouteStep, { type: "farm" }> => step.type === "farm");
+  const bosses = rest.filter((step): step is Extract<RouteStep, { type: "attemptBoss" }> => step.type === "attemptBoss");
+  assert.deepEqual(bosses.map((step) => step.biomeGroup), [...STRIKER_T2_ZONES], "every T2 boss, in guide order");
+  assert(bosses.every((step) => step.tier === 2), "the bosses are tier 2");
+  STRIKER_T2_ZONES.forEach((biomeGroup, index) => {
+    const farm = farms[index];
+    assert(farm.at.kind === "biome" && farm.at.biomeGroup === biomeGroup && farm.at.tier === 2, `${biomeGroup} is farmed at tier 2`);
+    assert(farm.until.type === "biomeLevelAtLeast" && farm.until.level === strikerT2FarmLevel(biomeGroup), `${biomeGroup} waits on its cap`);
+    assert.equal(strikerT2FarmLevel(biomeGroup), tutorialT2Level(biomeGroup), `${biomeGroup} is farmed to the level the guide farms`);
+  });
+
+  assert(route.completion.type === "allOf", "completion is every T2 boss");
+  if (route.completion.type === "allOf") {
+    assert.equal(route.completion.of.length, STRIKER_T2_ZONES.length);
+    assert(route.completion.of.every((condition) => condition.type === "bossCleared" && condition.tier === 2));
+  }
+
+  const ids = route.milestones.map((milestone) => milestone.id);
+  assert.equal(new Set(ids).size, ids.length, "milestone ids are unique");
+  for (const milestone of ids) assert(KEBAB.test(milestone), `milestone ${milestone} is kebab-case`);
+  for (const biomeGroup of STRIKER_T2_ZONES) assert(ids.includes(`${biomeGroup}-t2-boss`), `${biomeGroup} has a boss milestone`);
+}
+
+assert.equal(strikerT2Route().id, STRIKER_T2_LIGHT_ID, "Light is the default arm");
+assert.throws(() => strikerT2Route("striker-nope"), /unknown Striker discipline/);
+assert.notEqual(
+  strikerComboLength("striker-light"),
+  strikerComboLength("striker-heavy"),
+  "the disciplines' combos differ, so each arm needs its own Order",
+);
+
+console.log("strikerT2: ok");
