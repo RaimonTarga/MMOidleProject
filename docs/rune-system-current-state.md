@@ -1,5 +1,7 @@
 # Rune System Current State
 
+> Class-first rework (2026-10-15): the shared Runic Point budget, crafted rune recipes, the stance channel, and stance targets removed; see the bible.
+
 Snapshot of what is implemented right now. The working rework proposal lives in
 `docs/archive/rune-system-plan.md`.
 
@@ -14,7 +16,7 @@ export interface EquippedRule {
   conditionId: string;
   actionId: string;
   targetAbilityId?: string;
-  targetStanceId?: string;
+  waitOutMode?: "all" | "heat-managed";
 }
 ```
 
@@ -40,7 +42,6 @@ Current channels:
 - `CONTROL`
 - `FORMATION` (Conduit only: where the formation stands, independent of owner movement)
 - `ABILITY` (per-ability timing, runtime execution arbitration)
-- `STANCE`
 
 `GLOBAL_STRATEGY` is suppressed while the player is in combat, except for
 `lead-the-way`, which remains active as a party role marker.
@@ -99,16 +100,12 @@ Actions:
 - `taunt-current-target` (shown as "Taunt Target")
 - `recall-summons` (shown as "Recall Summons"; summoner only, starter; `hp-below-25`, `while-traveling`, `target-casting`)
 
-New players start with all situation fragments as baseline vocabulary, including
-`inside-telegraph`, plus the responses required by the default loadout and a small
-set of basic timing/party responses. Additional responses come from one-time rune
-forge recipes. `step-back` unlocks at Cave mastery level 2.
+Ownership is `runeIdsForArchetype`: every condition, plus every action that names
+no class or names this class. Rules cost nothing. There is no rune forge and no
+shared Runic Point budget.
 
-Reload Safely, Ready Execution, and Rebuild Formation are baseline class actions,
-available without crafting but absent from the default loadout. The editor only
-shows them to the matching archetype (including its later class evolutions). The
-old reload/execution recipes are deprecated, hidden, and rejected by the server;
-their IDs remain valid for saved crafting history. Each action costs 1 RP.
+Reload Safely, Ready Execution, and Rebuild Formation are class actions, absent
+from the default loadout. The editor only shows them to the matching archetype.
 
 With **Always**, these actions hold as soon as active combat ends, even during the
 combat grace period. **Out of Combat** waits until that period expires. Active
@@ -118,39 +115,10 @@ while rebuilding. Maintenance actions compose with Recover First and Wait It Out
 
 ## Budget
 
-Budget is simple per-rule cost for now:
-
-```ts
-ruleCost = condition.cost + action.cost
-```
-
-The shared RP budget covers attuned abilities, attuned stances, Rune rules and Rites. `runicPointLoadoutCost` is authoritative for all four. Capacity is seeded at `16 + floor(Global Mastery / 5)`; both constants and authored prices are easy to tune. See [Runic attunement](runic-attunement-current-state.md) for migration, over-budget preservation and editing rules.
-
-`use-ability` carries an attuned `targetAbilityId`; it is the only way an ability auto-fires (abilities have no built-in trigger). Active targets retain Rune priority, with combat arbitration deciding which can execute. Stance switching targets attuned postures and pays only logic, never the stance reservation again.
-
-## Rune Forge
-
-Rune forge recipes live in `shared/src/runeRecipes.ts`. Single kind: `unlock-rune` (unlocks one
-condition or response fragment). The `increase-rune-points` kind was retired in Step 5.
-
-**Gating (Step 5):** recipes carry a biome-mastery gate (`recipeGroup` + `requiredBiomeLevel`) and/or a
-boss gate (`requiredBossClear`). The shared predicate `isRuneRecipeUnlocked(recipe, { biomeLevel,
-bossesCleared })` is the single authority used by both server and the forge UI. All current (basic)
-runes are biome-gated; the boss channel is reserved for the advanced/signature runes Step 13 will add.
-`requiredBiomeLevel` values are placeholders pending the balance pass. Crafting is one-time, costs
-essence; the test room bypasses gates.
-
-The server applies rune forge crafts through
-`server/src/systems/player/economy/runeCrafting.ts`. It validates:
-
-- recipe id exists,
-- recipe has not already been crafted,
-- `isRuneRecipeUnlocked` (biome level / boss clear) passes unless in test room,
-- unlock recipes point at a known rune fragment,
-- the player has enough essence.
-
-On success, the server records the recipe id in `runeRecipesCrafted`, rebuilds `runesOwned` from
-starter fragments plus crafted unlock recipes, and marks `tracksProgression` dirty.
+There is no budget. Rules cost nothing, and a class owns every rune it may use
+(`runeIdsForArchetype` in `shared/src/runeDatabase.ts`). `use-ability` carries an
+attuned `targetAbilityId`. It is the only way an ability auto-fires (abilities have
+no built-in trigger).
 
 ## Default Loadout
 
@@ -351,9 +319,7 @@ Rune ownership and equipped loadout live on `TracksProgression` in
 
 ```ts
 runesOwned: string[];
-runeRecipesCrafted: string[];
 runesEquipped: EquippedRule[];
-// runePointBonus removed in Step 5 — RP budget is derived from Global Mastery.
 ```
 
 They persist through `server/src/db/playerRepo.ts`.
@@ -363,24 +329,12 @@ The client-to-server socket event is defined in
 
 ```ts
 "rune:setLoadout": (rules: EquippedRule[]) => void;
-"rune:craftRecipe": (recipeId: string) => void;
 ```
 
-The server-to-client rune forge result is:
-
-```ts
-"rune:craftResult": (result: { recipeId: string; success: boolean; reason?: string }) => void;
-```
-
-The handler in `server/src/index.ts` validates:
-
-- payload is an array,
-- condition/action ids exist in the catalog,
-- player owns both fragments,
-- rules fit inside the current budget in order.
-- class-specific responses match `usesSkills.combatArchetype`.
-
-Rules that do not fit or are invalid are skipped.
+The handler in `server/src/net/playerHandlers.ts` accepts the array only when every
+rule survives `sanitizeRuneLoadout`: known ids, fragments the class owns, and a
+`use-ability` target that is attuned. The answer is `build:loadoutResult`. There is
+no budget check.
 
 Class specificity is based on `combatArchetype`, not class display names or
 branch ids. That means every reload branch can use reload-only responses, and
@@ -389,38 +343,28 @@ every cooldown branch can use cooldown-only responses across tiers.
 ## Client UI
 
 `client/src/ui/BuildRunesTab.tsx` is the current rune panel. It is one tab of the
-shared arrangement dialog (`client/src/ui/BuildPanel.tsx`), alongside Abilities,
-Stances and Rites; each of the four has its own rail entry. Rune *recipes* live
-in Crafting, not here.
+arrangement dialog (`client/src/ui/BuildPanel.tsx`), beside Abilities. There is no
+stance tab, no rite tab, and no rune forge.
 
 The rune board groups rules by their actual behavior channel. Within each group,
 connected numbered rows run top to bottom; the first matching rule wins. Different
 groups can act together. Reorder controls only move rules within their group.
 Each row and the pinned draft show the same condition -> response sentence.
 
-- The Runic Point meter uses colored segments and a numeric legend for Abilities,
-  Stances, Logic, Rites, and available budget.
 - Add/edit opens a focused When/Do editor with compatible, owned responses.
 - Picking When or Do collapses its choices into a compact summary with a Change
   button. Changing When clears dependent draft choices; changing Do clears its
-  target. Ability and stance pickers receive focus and appear directly below
-  the summaries. Saved rules remain unchanged until the draft is submitted.
-- Ability responses display the named attuned ability and authored default; their ability binding
-  remains visible in the selected description. Empty bindings cannot be saved.
-- Stance destinations wrap in a grid, show total rule cost, and explain the return
-  to the default stance. Selecting a step scrolls its next choices into view.
+  target. Saved rules remain unchanged until the draft is submitted.
+- Ability responses display the named attuned ability. Empty bindings cannot be saved.
 - Saving preserves priority; same-condition/channel collisions explicitly replace
   the existing rule. Only suppressed/redundant rules get conflict warnings.
-- Attunement lives in the Abilities and Stances tabs. Redundant inline attunement
-  sections and illustrative preview controls have been removed.
-- Budget validation, authoritative request/result handling, and an inline reset
-  confirmation remain in place.
+- Ability attunement lives in the Abilities tab.
+- The save goes through `rune:setLoadout`. An inline reset confirmation remains.
 
-The Behavior panel now lives on the right desktop rail, with stance information
-removed from the health crown. On narrow screens it is available in the character
-sheet. It keeps the stance and current action visible; its header toggles the
-trigger and recent ability feedback, remembering that preference locally. It
-omits secondary matching rules, Always triggers, and default/temporary labels.
+The Behavior panel lives on the right desktop rail. On narrow screens it is
+available in the character sheet. Its header toggles the trigger and recent
+ability feedback, remembering that preference locally. It omits secondary matching
+rules, Always triggers, and default/temporary labels.
 Ability activation feedback comes from actual combat events, not cooldown guesses.
 
 Ability details and crafting comparisons expose authored default firing behavior.
@@ -428,46 +372,31 @@ Equipped ability details and HUD tooltips distinguish that default from configur
 Rune timing, including that the ability waits when no overriding condition matches.
 Rune action descriptions show the actual ability and retain the current position
 binding: replacing an equipped ability changes which ability that rule controls.
-The build dialog offers an optional, reversible wider desktop view. The board
-now includes unified RP attunement. Ability and stance attunement are
-authoritative and live in their dedicated tabs; Rite mechanics are unchanged.
+The build dialog offers an optional, reversible wider desktop view.
 
 The server exposes an optional `matchedRunes` snapshot from the authoritative rune
-fold, including stance destinations. Active-rune attribution uses that snapshot
+fold. Active-rune attribution uses that snapshot
 instead of finding the first equipped rule with the same action. A matching rule
 is a selected instruction, not proof that an ability fired. This is presentation
 telemetry only; it observes the authoritative Rune and attunement runtime.
 
-The Forge tab:
-
-- reads essence, boss clears, owned runes, crafted rune recipes, and rune point
-  bonus from HUD atoms,
-- shows only recipes unlocked by current boss clears,
-- marks crafted/unlocked recipes as done,
-- sends craft attempts through `hudBus.requestCraftRuneRecipe()`,
-- displays the authoritative `rune:craftResult` response.
-
-The server remains authoritative even though the client performs a local budget
-check for usability.
+The server remains authoritative for the equipped list.
 
 ## Current Gaps
 
 Still not implemented:
 
-- quest/hidden rune recipe unlocks beyond boss-gated recipes,
 - editable parameters for threshold conditions,
 - drag reorder UI,
-- taunt stance/mechanic,
+- a taunt mechanic beyond the existing taunt action,
 - Rune Malfunction death attribution,
 - dedicated rune debugger/logging.
 
 ## Relevant Files
 
 - `shared/src/runeDatabase.ts`
-- `shared/src/runeRecipes.ts`
 - `shared/src/components/core/networkedSlices.ts`
 - `shared/src/protocol/socketEvents.ts`
-- `server/src/systems/player/economy/runeCrafting.ts`
 - `server/src/systems/combat/ai/runeConfig.ts`
 - `server/src/systems/combat/ai/targetPriority.ts`
 - `server/src/systems/combat/ai/autoTarget.ts`

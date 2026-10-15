@@ -1,3 +1,5 @@
+> **ARCHIVED (2026-10-15): the class-first rework removed this system (D5).** Design authority: [class-first-bible.md](../../design_docs/class-first-bible.md). Kept for history only.
+
 # Solo bot capability and reliability audit
 
 Live-source audit and hardening, 2026-09-11. This is infrastructure validation,

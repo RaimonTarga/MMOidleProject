@@ -46,7 +46,7 @@ Use this prompt structure:
 
 ```text
 Use case: stylized-concept (or precise-object-edit for a revision)
-Asset type: fantasy MMO <ability/buff/debuff/rune/stance> icon displayed at <N>px
+Asset type: fantasy MMO <ability/buff/debuff/rune> icon displayed at <N>px
 Primary request: <one concrete visual metaphor for the mechanic>
 Composition: one centered silhouette, generous padding, readable when reduced
 Color palette: <dominant mechanic color and restrained supporting colors>
@@ -233,7 +233,7 @@ sizes are:
 | Group | Shipped size | Typical in-game display |
 | --- | ---: | ---: |
 | Classes, frames, ranges | 96 px | 54-80 px |
-| Abilities, stances, rites | 64 px | 22-44 px |
+| Abilities | 64 px | 22-44 px |
 | Rune conditions/actions | 48 px | 32 px |
 | Buffs and debuffs | 48 px | 22-48 px |
 

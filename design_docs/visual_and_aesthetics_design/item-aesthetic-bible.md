@@ -521,7 +521,9 @@ They are allowed to be the simplest item slot.
 
 ## 13. Core Slot Identity
 
-The core slot represents a modifier layer, especially range/engagement identity and body behavior.
+> Class-first rework (2026-10-15): the core equipment slot was removed. The notes below are pre-rework object language, not a request to draw cores.
+
+The core slot represented a modifier layer, especially range/engagement identity and body behavior.
 
 It unlocks later than the initial equipment slots and should feel slightly more magical than basic weapons or armor.
 
@@ -581,7 +583,9 @@ Do not overdefine cores yet if the system is still evolving.
 
 ## 14. Relic Slot Identity
 
-The relic slot represents class mechanic modification.
+> Class-first rework (2026-10-15): the relic slot remains and holds the class boss trophy. Crafted relic items were removed. The notes below are pre-rework object language, not a trophy art spec.
+
+The notes below describe a crafted relic item. The live slot holds the class boss trophy.
 
 It unlocks later, around the point where a class mechanic has matured into a distinct identity.
 
@@ -931,6 +935,6 @@ If the item is unclear, simplify the name and strengthen the icon.
 - Fire DoT belongs better to Volcanic.
 - Frost DoT belongs better to Tundra.
 - Each slot should have its own object language.
-- Cores are later modifier objects; exact flavor is still flexible.
-- Relics are later class-mechanic objects; exact flavor needs a separate future pass.
-- Catalysts are intentionally excluded from this bible until their system is more defined.
+- The core slot was removed (class-first rework). §13 is pre-rework object language.
+- The relic slot holds the class boss trophy. §14 is pre-rework relic-item language, not a trophy spec.
+- Catalysts were removed. They stay out of this bible.

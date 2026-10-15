@@ -12,10 +12,9 @@ Terse on purpose.
 - Updated user goal (2026-09-25): by a biome's current-tier mastery cap, the
   player should have earned roughly enough essence for a full **+3 gear set**.
   Farming through **+5** should take roughly **50% additional time**. These
-  are affordability goals; Global Mastery, lineage shard/capstone costs (the
-  weapon slot's replacement for the retired catalyst wallet — see
-  `docs/lineages-current-state.md`) and cross-color costs can separately gate
-  purchases.
+  are affordability goals for the retired +N ladder. Lineage shard and capstone
+  costs were removed with the item trees. Cross-color essence costs can still
+  gate a craft.
 - The older goal of +3 requiring a grind after mastery is superseded. Concrete
   joint tuning candidates are in the [reward proposal](../reports/reward-mastery-study-2026-09-25/PROPOSAL.md);
   their working definition includes acquisition/evolution plus upgrades for
@@ -51,15 +50,15 @@ Terse on purpose.
   target has no entry (T2 ×0.35–0.75, T3 ×0.6–1.4,
   T4 ×1.8–3.4; values in `gameConfig.ts`). Factors below 1 slow a fast biome
   without raising the tier budget, so earlier-tier nodes never become a faster
-  route into a later segment. It affects mastery XP only: essence and
-  lineage shard grants ignore it (the catalyst wallet this used to also apply to
-  was removed 2026-10-01). Use it for biome-wide throughput gaps, not to speed up
+  route into a later segment. It affects mastery XP only. Essence grants ignore
+  it. The lineage shard grants and the catalyst wallet this used to also skip are
+  gone. Use it for biome-wide throughput gaps, not to speed up
   one slow class or build.
 - Updated user pacing targets (2026-09-25) are **T1 ~5 minutes**, **T2 ~15**,
   **T3 ~30**, and **T4 ~60 minutes** per biome tier segment. These supersede
   the initial 5 / 10–12 / 13–16 / 16–20-minute targets. At T4, fast builds should
   take about 50 minutes and slow viable builds about 90. Slow defensive setups
-  (Defensive-stance Squire, Recover-First Conduit) may take longer; switching to
+  (a slow defensive Squire, Recover-First Conduit) may take longer; switching to
   an offensive farming setup is an accepted answer for now.
 - The first-pass budgets were measured with bots on T2 Desert, T3 Swamp/Tundra
   and T4 Tundra/Desert. The 2026-09-26 [all-biome sweep](../reports/reward-mastery-study-2026-09-25/xp-sweep-2026-09-26/RESULTS.md)
@@ -89,7 +88,7 @@ Terse on purpose.
 ## 3. Crafting cost (demand side)
 
 - **Base craft cost stays accessible; upgrade cost is the real gate.** A new item should be affordable shortly after its level unlocks; maxing it should not.
-- **Upgrade-cost multipliers by slot:** armor ×3 · charm ×1.5 · boots ×1. Cost hierarchy: **armor > charm > boots**. (Weapon dropped off this ladder entirely 2026-10-01 — its cost curve is the lineage tree's own per-tier magnitude table, `shared/src/data/lineages/magnitudes.ts`, not this multiplier rule. See `docs/lineages-current-state.md`.)
+- **Upgrade-cost multipliers by slot:** armor ×3 · charm ×1.5 · boots ×1. Cost hierarchy: **armor > charm > boots**. The +N ladder these multipliers priced is retired on every slot, weapons included. `shared/src/data/lineages/magnitudes.ts` is gone. `getMaxUpgrade` returns 0.
   - *Charm ×1.5 (not ×3):* its upgrades buy small % mechanic bumps, not raw stats — a ×3 would overprice the value delivered.
   - *Boots ×1:* premium *utility* slot, cheapest by design — cheap to enter, cheap to max, low ceiling.
   - *Armor may run above weapon* where its mitigation is generic (e.g. flat %DR works vs every damage shape). Flexibility earns a premium.

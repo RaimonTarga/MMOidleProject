@@ -33,14 +33,14 @@ pages are authoritative.
 
 | Area | Current status | Living record |
 | --- | --- | --- |
-| Essence and modifier-family catalysts | Shipped; weights/costs remain tuning inputs | [aspects-catalysts-current-state.md](aspects-catalysts-current-state.md) |
-| Biome Mastery and Global Mastery | Shipped; derived GM drives rune capacity and upgrade ceilings | [global-mastery-current-state.md](global-mastery-current-state.md) |
-| Runes and attunement | Shipped; current action/loadout contract is source-backed | [rune-system-current-state.md](rune-system-current-state.md) |
-| Gear evolution/reconstruction | Shipped; ordinary predecessor gate is +3, Core/Relic rank-up is +0 | [gear-evolution-current-state.md](gear-evolution-current-state.md) |
-| Abilities, Stances, Rites, Charms, Cores, Relics | Shipped systems with ongoing content/balance work | their current-state pages in the documentation index |
+| Essence and modifier-family catalysts | Essence remains. The catalyst wallet was removed | [archive/aspects-catalysts-current-state.md](archive/aspects-catalysts-current-state.md) |
+| Biome Mastery and Global Mastery | Shipped. The shared rune-capacity use of Global Mastery was removed with Runic Points. The ordinary upgrade ladder is retired | [global-mastery-current-state.md](global-mastery-current-state.md) |
+| Runes and attunement | Loadouts remain. Crafted rune recipes and the shared Runic Point budget were removed | [rune-system-current-state.md](rune-system-current-state.md) |
+| Gear evolution/reconstruction | Removed (class-first rework) | [archive/gear-evolution-current-state.md](archive/gear-evolution-current-state.md) |
+| Abilities and charms | Ability data and charms remain. Stances, rites, the core slot, and relic items were removed (class-first rework). The relic slot holds the class boss trophy | [abilities-current-state.md](abilities-current-state.md), [charms-current-state.md](charms-current-state.md) |
 | Biome ecology and monster combat | Shipped structure for authored T1–T4 content; numbers remain evidence work | [biome-ecology-current-state.md](biome-ecology-current-state.md), [monster-combat-rework-current-state.md](monster-combat-rework-current-state.md) |
 | Bosses and dungeons | Shipped encounter structure for T1–T4; cleanup/tuning follow-up remains scoped | [boss-encounter-rework-current-state.md](boss-encounter-rework-current-state.md), [dungeon-current-state.md](dungeon-current-state.md) |
-| Regions and node modifiers | Shipped T1–T4 sparse world and modifier families | [map-variety-plan.md](map-variety-plan.md), [node-modifiers-current-state.md](node-modifiers-current-state.md) |
+| Regions and node modifiers | Shipped T1–T4 sparse world and modifier families | [map-variety-plan.md](map-variety-plan.md), [archive/node-modifiers-current-state.md](archive/node-modifiers-current-state.md) |
 | UI and presentation | Incremental maintenance and readability work | [ui-redesign-plan.md](ui-redesign-plan.md), current client docs |
 | Balance/release tooling | Active; evidence quality is part of the feature | [balance-lab-current-state.md](balance-lab-current-state.md), [bot-experience-command-center.md](bot-experience-command-center.md) |
 

@@ -1,3 +1,5 @@
+> **ARCHIVED (2026-10-15): the class-first rework removed this system (bible §4).** Design authority: [class-first-bible.md](../class-first-bible.md). Kept for history only.
+
 # Core Cast — Tier 4
 
 ## Status
@@ -6,7 +8,7 @@
 supersedes its "Tier 4 — Candidate Unrestricted Mechanic Cores" and "Evolution
 Directions" sections where they disagree.
 
-Live T2/T3 state: `docs/cores-current-state.md`. Numbers are **not** in this document —
+Live T2/T3 state: `docs/archive/cores-current-state.md`. Numbers are **not** in this document —
 it specifies identities, hooks, and implementation cost. The balance pass is separate.
 
 ---

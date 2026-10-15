@@ -1,6 +1,8 @@
 # Frozen Bot Experiment Runner — Current State
 
-Last updated: 2026-09-30.
+> Class-first rework (2026-10-15): the class and campaign routes were removed (D5); class routes return per class.
+
+Last updated: 2026-10-15. The isolation runner below is still the code in `scripts/experiment/`. The only registered route is `smoke-t1`.
 
 ## Purpose
 
@@ -42,7 +44,7 @@ From the repository root:
 
 ```powershell
 # Freeze an exact committed revision. Quote comma-separated routes in PowerShell.
-pnpm experiment:create --revision=HEAD --routes="striker-t1,squire-t1" --workers=2
+pnpm experiment:create --revision=HEAD --routes="smoke-t1" --workers=2
 
 # The create command prints the experiment id. "latest" is also accepted.
 pnpm experiment:launch --id=latest
@@ -76,11 +78,18 @@ the frozen image.
 
 ## Canonical and smoke modes
 
-`canonical-isolated` is the default. It enforces 1x rewards, the authored full
-gauntlet, no fast boss retry, no synthetic tier-entry profile, and a real
-Snapshot B input for Tier-2 routes. A snapshot directory is resolved by class;
-missing/rejected class input fails instead of silently falling back to a
-synthetic template.
+`canonical-isolated` is the default. It enforces 1x rewards and no fast boss
+retry. Class routes, campaign routes, and synthetic tier-entry starts are gone
+(D5). The bot ignores unknown flags the runner can still forward
+(`--tierEntrySnapshotDir`, `--entryEconomy`, `--requireTierEntrySnapshot`).
+Canonical mode still refuses a synthetic `--tierEntry` profile. A named
+continuation still reads one `--tierEntrySnapshot` file when the route
+declares `progressionEntry`. `smoke-t1` does not declare one, so a snapshot
+passed to it fails. `scripts/experiment/lib.mjs` still requires a snapshot
+when a route id contains `-t2`, and no such route is registered. `smoke-t1`
+is the only route the registry accepts; it plays whichever class `--class`
+names on a direct `bot:run`, and the experiment runner launches the route id
+you pass.
 
 `smoke-isolated` allows accelerated rewards and `next-tier` completion for
 pipeline and resource qualification. Its results are non-canonical whenever
@@ -90,14 +99,11 @@ evidence.
 Examples:
 
 ```powershell
-# Canonical T1 cohort.
-pnpm experiment:create --revision=<full-sha> --routes="striker-t1,squire-t1" --workers=2
-
-# Canonical T2 continuation from real T1 Snapshot B artifacts.
-pnpm experiment:create --revision=<full-sha> --routes="striker-t2-mid" --tierEntrySnapshotDir="C:\path\to\t1-runs"
+# The only registered route, at 1x.
+pnpm experiment:create --revision=<full-sha> --routes="smoke-t1" --workers=2
 
 # Short resource/pipeline qualification, never balance evidence.
-pnpm experiment:create --revision=<full-sha> --routes="striker-t1,squire-t1" --mode=smoke-isolated --completion=next-tier --rewardMultiplier=1000 --workers=2
+pnpm experiment:create --revision=<full-sha> --routes="smoke-t1" --mode=smoke-isolated --completion=next-tier --rewardMultiplier=1000 --workers=2
 ```
 
 ## Deliberately deferred
@@ -110,6 +116,10 @@ version.
 
 Qualification is executed from a detached test commit so working-copy edits
 made after image creation are intentionally absent from the frozen image.
+
+The workloads below were the class routes D5 later removed (`striker-t1` and
+its siblings, plus one Striker T2 continuation). The table is a past
+measurement of the runner, not a route you can launch.
 
 Qualification revision: `405411607ddc1cf6e69d798e5739d4dadaa60bf2`
 (detached local test commit; no project branch was moved). The resource routes
@@ -140,7 +150,8 @@ revision, source tree, and build ID. The worker and dev server were on different
 Docker networks. The experiment PostgreSQL contained only its unique `g_*` and
 `l_*` databases; experiment services published no host ports.
 
-A real canonical Snapshot B was also mounted read-only into an isolated
+The Snapshot B mount below is the same past qualification, not a launch step.
+A real canonical Snapshot B was mounted read-only into an isolated
 Striker T2 continuation. Its profile validation passed 122/122 checks, live
 spawn validation passed 89/89 checks, and the run completed. Real snapshot
 entries are not labeled `SYNTHETIC_TIER_ENTRY`; canonical mode additionally

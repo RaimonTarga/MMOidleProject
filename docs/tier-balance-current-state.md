@@ -1,5 +1,7 @@
 # Tier Balance — current state
 
+> Class-first rework (2026-10-15): combat stances were removed; the Defensive, Offensive, and Berserker arms in §7 are a past measurement, not a live split. See the bible.
+
 **Living truth for the T1–T4 numerical baseline.** Established 2026-08-23.
 Plan of record: [`archive/briefs/t2-t4-numerical-baseline-handoff-2026-08-23.md`](archive/briefs/t2-t4-numerical-baseline-handoff-2026-08-23.md) (now fulfilled and archived).
 Method and formulas: [`briefs/t1-balance-context-2026-08-18.md`](briefs/t1-balance-context-2026-08-18.md).
@@ -163,8 +165,9 @@ top ladder biome's trash HP — pinned T4 bosses to Wasteland, the thinnest tras
 while the player's weapon ladder doubled damage again. Measured T4 median kills were 29–42 s
 against a 180 s target, shorter than T3.
 
-Contract (boss lineage redesign §2): median build **T3 ~120 s, T4 ~180 s**, measured as the
-midpoint of the breadth reference builds on Defensive and on Offensive stance. Per boss, HP
+Contract (boss lineage redesign §2): median build **T3 ~120 s, T4 ~180 s**, measured on
+2026-09-27 as the midpoint of the breadth reference builds on the Defensive and Offensive
+stances. Those stance arms were removed with the class-first rework (D2). Per boss, HP
 was iterated in the live fight until that midpoint landed; each boss then kept its previous
 win rate (the killing mechanic was re-timed or softened where longer fights made it lethal).
 
@@ -204,8 +207,9 @@ Detonate, every class's ceiling). Floor: every Spirit spec +15% attack; Shockbla
 25 → 75; Pyromancer stacks 40% → 55% and max-stack bonus ×1.25 → ×1.5; Firebrand ignition 35% → 50%.
 Result: class medians 0.91–1.07 (Spirit 0.85–0.89 → 0.92–0.99, Squire 1.06 → 1.00), top live spec
 1.20–1.24 except Melter (1.28–1.34, but it loses 14–43% of fights: left alone), top ceiling 1.38 →
-1.24. The T4 boss midpoint stayed on contract (177 s, wins 91/84%). Berserker stance was left alone:
-best on a dummy, but on live T4 bosses it costs ~10 points of win rate for ~20% speed.
+1.24. The T4 boss midpoint stayed on contract (177 s, wins 91/84%). The Berserker stance was left alone
+in that measurement: best on a dummy, but on the T4 bosses of that pass it cost ~10 points of win
+rate for ~20% speed. That stance was later removed (D2).
 
 ---
 

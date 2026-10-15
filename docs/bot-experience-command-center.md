@@ -1,6 +1,8 @@
 # Bot experience experiments: command-center handoff
 
-Implemented 2026-09-11. This is the operating guide for the external model coordinating practical economy, route and build experiments. These features collect and compare real character runs; they do not calculate simulated balance outcomes or automatically change game balance.
+> Class-first rework (2026-10-15): the class and campaign routes were removed (D5); class routes return per class.
+
+Implemented 2026-09-11. This is the operating guide for the external model coordinating practical economy, route and build experiments. These features collect and compare real character runs; they do not calculate simulated balance outcomes or automatically change game balance. The timeline, policies, experiment plan/compare, calibration, and choice mechanism are still the code. The only registered route is `smoke-t1`.
 
 ## Capabilities
 
@@ -16,7 +18,9 @@ Use `pnpm bot:preflight` before long runs. It includes the real socket/build har
 
 ## First study
 
-All commands below run from the repository root. Paths containing spaces need PowerShell quotes. The examples are checked-in JSON files; the planner reads them without starting Docker or characters.
+All commands below run from the repository root. Paths containing spaces need PowerShell quotes. The planner reads a study file without starting Docker or characters. It checks the JSON shape only; it does not check that the route is registered.
+
+The checked-in examples name routes D5 removed. `scripts/experiment/examples/affordable-upgrades.json` uses `striker-t1`. `scripts/experiment/examples/boss-preparation.json` uses `striker-decisions-t1`. Those files were left in place. A launch will not run until class routes return and the examples name them. Do not treat the commands below as a study you can run today.
 
 ```powershell
 pnpm experiment:plan --revision=HEAD --study=scripts/experiment/examples/affordable-upgrades.json --count=3 --out=tmp/affordable-plan.json
@@ -32,7 +36,7 @@ pnpm experiment:report --id=EXPERIMENT_ID
 pnpm experiment:compare --id=EXPERIMENT_ID --out=tmp/affordable-comparison.json
 ```
 
-Replace `EXPERIMENT_ID` with the actual create result. The implementation has not automatically committed this checkout or launched these studies. `--revision=HEAD` excludes dirty working-tree edits. Creation rejects a study revision lacking the choice implementation. All existing isolation, snapshot sealing, worker limits and zero automatic retries remain in force. Canonical T2 still requires a real Snapshot B file/directory; pass `--requireTierEntrySnapshot=true` to forbid fallback. Never use synthetic starts or accelerated rewards for economy conclusions.
+Replace `EXPERIMENT_ID` with the actual create result. The implementation has not automatically committed this checkout or launched these studies. `--revision=HEAD` excludes dirty working-tree edits. Creation rejects a study revision lacking the choice implementation. Isolation, worker limits, and zero automatic retries remain in force. Canonical mode still requires 1x rewards and forbids a synthetic `--tierEntry` profile. Never use accelerated rewards for economy conclusions. Tier-entry snapshots are not a launch step for `smoke-t1`: that route does not declare `progressionEntry`.
 
 `experiment:report` remains the existing resource/cohort report. `experiment:compare` is the new gameplay comparison. It verifies the manifest checksum and reads the summary path recorded for each scheduled run; missing or malformed summaries stay visible as unavailable/invalid evidence.
 
@@ -45,19 +49,19 @@ Replace `EXPERIMENT_ID` with the actual create result. The implementation has no
   "factor": "choice",
   "choiceId": "boss-preparation",
   "arms": [
-    { "id": "prepared", "route": "striker-decisions-t1", "policy": "intended", "choices": { "boss-preparation": "prepared" } },
-    { "id": "early", "route": "striker-decisions-t1", "policy": "intended", "choices": { "boss-preparation": "early" } }
+    { "id": "prepared", "route": "route-that-authors-the-choice", "policy": "intended", "choices": { "boss-preparation": "prepared" } },
+    { "id": "early", "route": "route-that-authors-the-choice", "policy": "intended", "choices": { "boss-preparation": "early" } }
   ]
 }
 ```
 
-There are 2–8 arms; IDs use lowercase letters, digits and hyphens. `factor` is `route`, `policy`, or `choice`. Only that declared input may vary. For `choice`, name `choiceId` and set it explicitly in every arm. Unknown fields, repeated arm IDs, duplicate treatments and changes to additional inputs are rejected. Do not combine `--study` with `--routes` or `--policies`. `--count` is replicas per arm, not total characters.
+There are 2–8 arms; IDs use lowercase letters, digits and hyphens. `factor` is `route`, `policy`, or `choice`. Only that declared input may vary. For `choice`, name `choiceId` and set it explicitly in every arm. Unknown fields, repeated arm IDs, duplicate treatments and changes to additional inputs are rejected. Do not combine `--study` with `--routes` or `--policies`. `--count` is replicas per arm, not total characters. The route id in the example is a placeholder. No registered route authors `boss-preparation`. `smoke-t1` authors no choices.
 
 Source revision, snapshot inputs, reward settings, budget and completion mode are shared at experiment level. Arm IDs, replica/pair IDs and choices are preserved through plan, manifest/state and worker configuration. The first arm is the comparison baseline. Launch order rotates by replica. Pairing shares inputs; it does **not** imply matched random seeds, synchronized encounters or deterministic combat.
 
 A `policy` factor may alter several player decisions. A `route` factor may alter several build/ordering decisions. Those estimate the whole policy/route effect, not an isolated mechanic. To isolate one decision, use a `choice` study and hold the other inputs constant.
 
-## Profiles and shipped decision route
+## Profiles
 
 | Policy | Behavior |
 | --- | --- |
@@ -70,30 +74,21 @@ A `policy` factor may alter several player decisions. A `route` factor may alter
 
 Affordable upgrades do not reserve a percentage of the wallet, skip mandatory crafts, or revisit deferred purchases automatically. Later authored upgrade steps may buy more. Other route farming can still earn currency. This isolates “farm specifically for upgrades” from the existing intended policy.
 
-Early-boss and familiar-gear profiles require the corresponding decision in the selected route; unsupported routes fail before connecting. Explicit arm choices override profile preferences. They do not add tactical intelligence or bypass Rune constraints.
-
-`striker-decisions-t1` is an opt-in derivative of the current Striker baseline:
-
-- `boss-preparation=prepared` (default): upgrades stay at their original progression locations.
-- `boss-preparation=early`: all top-level upgrade steps before the first boss are postponed until after that boss step. The boss step can end in victory or attempt exhaustion. Other farming, crafts, skills and Rune preparation remain authored. This also changes equipment strength during pre-boss farming; it is a progression policy, not a boss-only damage test.
-- `gear-adoption=replace` (default): retain the baseline's later boss equipment swaps.
-- `gear-adoption=keep`: keep the first boss kit instead of the later equipment swaps. Techniques and Guards still follow the route.
-
-The existing baseline IDs and controlled-cohort membership are unchanged. The `boss-preparation.json` example exercises the first choice. Change that example to a `gear-adoption` choice study to compare `replace` with `keep`.
+`early-boss` requires an authored `boss-preparation` choice. `familiar-gear` requires an authored `gear-adoption` choice. `smoke-t1` authors neither, so both profiles fail on it before the route runs (`profile requires authored route choice`). Explicit arm choices override profile preferences. They do not add tactical intelligence or bypass Rune constraints. The controlled cohort is `smoke-t1` only.
 
 ## Authoring more decisions
 
 Add `choice: { id, option, defaultOption }` to existing `RouteStep` entries. Every step tagged with the selected option remains in the route; the other options are removed once before execution. Untagged steps always remain. Several steps can belong to one option. The same decision must use one default, and that default must exist. Unknown overrides/options are errors. Nested `repeatUntil` and `ifPossible` steps are traversed too.
 
 ```typescript
-{ type: "craftStance", recipeId: VALID_STANCE_RECIPE,
-  choice: { id: "stance-timing", option: "early", defaultOption: "early" } },
+{ type: "milestone", id: "early",
+  choice: { id: "boss-preparation", option: "early", defaultOption: "late" } },
 // ... shared authored progression ...
-{ type: "craftStance", recipeId: VALID_STANCE_RECIPE,
-  choice: { id: "stance-timing", option: "later", defaultOption: "early" } },
+{ type: "milestone", id: "late",
+  choice: { id: "boss-preparation", option: "late", defaultOption: "late" } },
 ```
 
-`VALID_STANCE_RECIPE` is a placeholder: resolve a live legal recipe before authoring. Use the same mechanism for evolution/reconstruction sequences, weapon adoption, or alternative biome ordering. Include all required equip/unequip/build dependencies in each branch. A branch doing nothing can contain a named milestone. Route completion and milestones remain shared; use distinct routes if endpoints differ, and do not treat unlike endpoints as a fair duration comparison.
+That is the shape `bot/src/policy/choices.test.ts` uses. A choice works on any `RouteStep`. Include the equip, unequip, and build dependencies each branch needs. A branch doing nothing can contain a named milestone. Route completion and milestones remain shared; use distinct routes if endpoints differ, and do not treat unlike endpoints as a fair duration comparison. No checked-in route authors a choice yet.
 
 Selected choices appear in `run.behavior.choices`; successfully reached tagged steps emit `build-change/system=policy-choice` and appear in the final `run.behavior.reachedChoices`. Selection is not proof a branch was reached. The comparison refuses a choice contrast without reached-choice evidence. Use explicit treatment assertions at important boundaries to prove the desired equipment/build actually existed; a reached step does not prove every subsequent prerequisite succeeded. Test every authored branch, not just the default. The raw route registry contains all alternatives, so static ordering tools must resolve choices before reasoning about a particular treatment.
 
@@ -147,8 +142,8 @@ The caller must verify equivalent starting gear, mastery, location and activitie
 5. Produce the existing resource report, the study comparison, and timelines for outliers/incomplete runs.
 6. Report observations, interpretation, uncertainty and proposed tuning separately. Human realism remains a calibration question requiring actual playtests.
 
-Implementation locations: `bot/src/policy/choices.ts`, `bot/src/policy/profiles.ts`, `bot/src/routes/strikerDecisionsT1.ts`, telemetry recorder/summary, and `scripts/experiment/{study,experience,experience-cli}.mjs`. Party experiments, optimized play agents, automatic tuning, exact replay and matched RNG seeds are not implemented by this change.
+Implementation locations: `bot/src/policy/choices.ts`, `bot/src/policy/profiles.ts`, telemetry recorder/summary, and `scripts/experiment/{study,experience,experience-cli}.mjs`. Party experiments, optimized play agents, automatic tuning, exact replay and matched RNG seeds are not implemented by this change.
 
 ## Implementation validation
 
-Validated locally on 2026-09-11: `pnpm typecheck` passed across packages and benches; final `pnpm bot:preflight` passed, including real socket/build checks, native human recorder, new activity sampling, choices/affordable spending, existing route/template checks, paired-study reports and calibration fixtures. Both shipped study examples produced six-run dry plans. Scoped whitespace checks passed. No long economy cohort or new human calibration session was launched, and this turn did not rerun the entire repository test suite. These are implementation checks, not new balance findings.
+Validated locally on 2026-09-11: `pnpm typecheck` passed across packages and benches; final `pnpm bot:preflight` passed, including real socket/build checks, native human recorder, new activity sampling, choices/affordable spending, existing route/template checks, paired-study reports and calibration fixtures. Both study examples then produced six-run dry plans. Those examples named class routes that D5 later removed. Scoped whitespace checks passed. No long economy cohort or new human calibration session was launched, and this turn did not rerun the entire repository test suite. These are implementation checks, not new balance findings.

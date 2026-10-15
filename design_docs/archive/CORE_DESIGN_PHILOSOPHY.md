@@ -1,3 +1,5 @@
+> **ARCHIVED (2026-10-15): the class-first rework removed this system (bible §4).** Design authority: [class-first-bible.md](../class-first-bible.md). Kept for history only.
+
 # Core Design Philosophy
 
 ## Status

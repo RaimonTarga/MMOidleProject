@@ -1,3 +1,5 @@
+> **ARCHIVED (2026-10-15): the class-first rework removed this system (D2).** Design authority: [class-first-bible.md](../../design_docs/class-first-bible.md). Kept for history only.
+
 # Stances — Future Design Notes
 
 Status: **design notes.** The four candidate postures below were IMPLEMENTED on
@@ -8,8 +10,8 @@ are now deliberate Tier-4 rewards under the locked 2026-09-04 redistribution.
 The rest of this document is the design intent as written, kept because the reasoning
 behind each posture is what should govern its placement and tuning.
 
-Live implementation state: `docs/stances-current-state.md`. Authoring rules:
-`docs/stances-authoring-guide.md`.
+Live implementation state: `docs/archive/stances-current-state.md`. Authoring rules:
+`docs/archive/stances-authoring-guide.md`.
 
 ## Current design direction
 

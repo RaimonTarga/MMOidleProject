@@ -30,10 +30,10 @@ balance-pass territory, not fixed here.
 
 **Shipped consequences:**
 - **Superseded** part of the Step 2 Catalyst system as shipped
-  (`docs/system-rework-status.md`, Step 2): catalysts re-key from per-biome-group to
-  per-combat-family. This was a rework with hard consequences, not an addition: live recipe,
-  stance, rite, and reconstruction costs now use modifier families, and the old player
-  catalyst wallets/progress were **wiped to zero** on migration.
+  (`docs/system-rework-status.md`, Step 2): catalysts were re-keyed from per-biome-group to
+  per-combat-family, and the old player catalyst wallets were wiped on that migration.
+  The class-first rework then removed catalysts, stances, rites, and gear evolution.
+  Those are not live costs.
 - **Resolved "Map traversal"** from the old roadmap: the live world is one sparse registry
   with authored exits and organic region frontiers, not separate maps.
 - Interacts with the parked **essence drop-volume tension** watch item
@@ -92,7 +92,7 @@ economy through some other key. Bosses remain one-per-biome exams (Step 13), not
 > bursts, opening strikes) were deleted. The catalyst-per-modifier rule and the
 > one-name-for-node-tag-and-catalyst principle both survive; the family list, effects,
 > and per-biome native/ban tables below do not. Live behavior and numbers:
-> [node-modifiers-current-state.md](node-modifiers-current-state.md).
+> [archive/node-modifiers-current-state.md](archive/node-modifiers-current-state.md).
 
 These are the game's five **distinctive combat patterns**, not a 1:1 list of its five base
 weapons. Rapier, Hammer, DoT-conversion, Chaotic Axe, and Ambush each express one clearly;
@@ -228,7 +228,7 @@ Mountain assignment. Exhaustive per-biome coverage now satisfies this rule by co
 > threat/reward-neutral trades. `DENSITY_MODIFIERS_ENABLED` and the overlay machinery
 > are gone. The remainder of this section is the shelved two-axis proposal, kept for
 > its threat/reward reasoning only. Live behavior:
-> [node-modifiers-current-state.md](node-modifiers-current-state.md).
+> [archive/node-modifiers-current-state.md](archive/node-modifiers-current-state.md).
 
 - **Swarming** — non-elite spawn count way up, pool biased away from elites.
 - **Elite Ground** — spawn count down, pool biased toward the biome's toughest entries.
@@ -321,9 +321,9 @@ combination of the five family catalysts. It does not gain a sixth "Swarming" fa
 all five separately, or bypass catalyst milestones entirely. Other truly family-neutral
 milestones may use the same generalist rule sparingly.
 
-The existing shipped sinks (forest worked example, stance/rite catalyst costs,
-`reconstructCatalystCost`) are re-authored from their actual combat-family tags as part of the
-mandatory re-key, not copied mechanically from biome keys and not removed. Full cutover
+The sinks this re-key re-authored (forest worked example, stance/rite catalyst costs,
+`reconstructCatalystCost`) were later removed with stances, rites, and gear evolution
+(class-first rework, D1/D2). They are not current costs. Full cutover
 (catalyst on every recipe) and new-content-only were both rejected: the former over-gates T1,
 the latter recreates today's bolted-on catalyst.
 

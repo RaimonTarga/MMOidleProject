@@ -1,22 +1,24 @@
+> **ARCHIVED (2026-10-15): the class-first rework removed this system (D1).** Design authority: [class-first-bible.md](../../design_docs/class-first-bible.md). Kept for history only.
+
 # Lineage Trees — Current State
 
 **Audited:** 2026-10-06, the legibility run (design §26: the T1 band is a ranked lean trio
 and the weapon's own verb, one damage-over-time record per weapon, T1 nodes as rosters, the
 HUD and panels — report:
-[`briefs/legibility-report-2026-10-05.md`](briefs/legibility-report-2026-10-05.md); §3a and
+[`briefs/legibility-report-2026-10-05.md`](../briefs/legibility-report-2026-10-05.md); §3a and
 §16 below). Before that 2026-10-03, twice: the course-correction run (design §24: the T1 lean and
 verb, one shard per node, non-weapon trees parked, the ladder retired on every slot, the
 weapon page and the rhythm readout — report:
-[`briefs/course-correction-report-2026-10-03.md`](briefs/course-correction-report-2026-10-03.md)),
+[`briefs/course-correction-report-2026-10-03.md`](../briefs/course-correction-report-2026-10-03.md)),
 then the verbs-that-fire run (design §24.9: leans seed their condition, the Empowered cap,
 T2+ bands compose, the tutorial on the fighting weapon — report:
-[`briefs/verbs-that-fire-report-2026-10-03.md`](briefs/verbs-that-fire-report-2026-10-03.md)).
+[`briefs/verbs-that-fire-report-2026-10-03.md`](../briefs/verbs-that-fire-report-2026-10-03.md)).
 Earlier audit 2026-10-01 (run 3: keystones, T3/T4 bands, defensive lineages, ability
 nodes, re-homed forms, T2 amplifiers, band collapse).
 
-**Design authority:** [`design_docs/progression-rework-design.md`](../design_docs/progression-rework-design.md)
+**Design authority:** [`design_docs/progression-rework-design.md`](../../design_docs/progression-rework-design.md)
 §2–9, §18, §19, §21, §23, §24, §26 (§26 supersedes §24 where they differ; §24 supersedes
-§18.9's ±3pp band, and §17's non-weapon trees while they are parked). **History:** [`archive/progression-rework-plan.md`](archive/progression-rework-plan.md)
+§18.9's ±3pp band, and §17's non-weapon trees while they are parked). **History:** [`archive/progression-rework-plan.md`](progression-rework-plan.md)
 §1–§5 and their progress notes are the detailed build log, including every divergence from
 the original sketch; read the code where this page and that history disagree.
 
@@ -380,7 +382,7 @@ moment**, so the cadence stays 4–6 s and the caps stay 5 s / 4 s.
 - The T2 instrument is the boss lab one tier up (`_t1BossPlan.ts --matrix=composition
   --tier=2 [--leans]`): the band-2 form with its T2 lean and verb against the same form
   with no cards, the tutorial kit's T2 items, the five T1 biomes' T2 bosses.
-  [`reports/verbs-that-fire/t2-matrix.md`](../reports/verbs-that-fire/t2-matrix.md): on the
+  [`reports/verbs-that-fire/t2-matrix.md`](../../reports/verbs-that-fire/t2-matrix.md): on the
   Rapier and Broadsword the verb's own share is at least its T1 share in 16 of 18 pairs
   (the two short by 0.3–0.4 pp, inside the lab's noise); every whole pair that reads lower
   at T2 loses it in the LEAN (the Rapier's Tempo lean is worth 0 at T2 to the tick
@@ -444,9 +446,9 @@ weapon-eligible packet has at least one tagged path (tempo 15, empowered 20, aff
 (no class attack path should name a defensive-only lane). The T3 class paths themselves
 are reviewed as a whole after the rework — these tags are a label on existing paths, not
 a rewrite of them. The ability pass re-homed five (design §22.5; see
-[`abilities-current-state.md`](abilities-current-state.md) "T3 path re-homes"), which
+[`abilities-current-state.md`](../abilities-current-state.md) "T3 path re-homes"), which
 closed the Pyromancer and Warmonger overlaps with their root's frame loop; see
-[`frames-current-state.md`](frames-current-state.md) §3.
+[`frames-current-state.md`](../frames-current-state.md) §3.
 
 ## 6. Re-homed forms
 
@@ -491,7 +493,7 @@ ability also fires the chosen packet's payoff at a share when it lands (Techniqu
 casts (Guard)", through the lineage payoff runtime. Nodes decide *what* an ability does;
 runes still decide *when* it fires. The keystone row is the one place a node is bespoke
 (the keystone table, fire-shapes, tier rule and cast axis are in
-[`abilities-current-state.md`](abilities-current-state.md) "The ability pass"; the verbs
+[`abilities-current-state.md`](../abilities-current-state.md) "The ability pass"; the verbs
 are design §22.4 / §22.11).
 
 | Row | Tier | What it is |
@@ -511,7 +513,7 @@ are design §22.4 / §22.11).
   `cleanse`) are never offered as a "half" share. Names, icons and animations grow
   with the rows (`shared/src/data/abilityNodes/flavor.ts`: the name grammar behind
   `abilityDisplayName` and the composed icon's layer list; the keystone animations in
-  [`combat-animation-current-state.md`](combat-animation-current-state.md));
+  [`combat-animation-current-state.md`](../combat-animation-current-state.md));
   `abilities-current-state.md` has the summary.
 - **Tier rule:** `abilityNodeRowTier(ability, row)` = home tier + 0/1/2/3, NOT clamped
   (design §22.10): a T1 ability reads 1/2/3/4, a T2 one 2/3/4/5. Rows above
@@ -590,7 +592,7 @@ and there is no within-tier number grind anywhere.
   stats AND `mechanicEffects` steps — is in its base, and no recipe carries `upgrades`.
   `shared/src/data/recipes/recipeCurve.test.ts` pins every fold against
   `nonWeaponLadders.fixture.ts` (the original bases and steps); `weaponCurve.test.ts` still
-  pins the weapons. Report: [`briefs/cc-fold-report-2026-10-03.md`](briefs/cc-fold-report-2026-10-03.md).
+  pins the weapons. Report: [`briefs/cc-fold-report-2026-10-03.md`](../briefs/cc-fold-report-2026-10-03.md).
 - **The upgrade path** refuses for every slot (`checkUpgrade`, server `upgradeItem`);
   `getMaxUpgrade` is 0; `stats.ts` no longer reads `itemUpgrades`, so a stale `+5` adds
   nothing (it would double the fold). The Upgrade tab, its menu entries and every `+N`
@@ -615,7 +617,7 @@ Both wallets live on `TracksProgression` (`shards: Partial<Record<PacketId, numb
 Phase 2b deleted the catalyst accumulator outright.
 
 - **Shards.** Granted by `grantLineageMaterials` on every non-boss kill, by the NODE
-  (design §24.3; see [`variants-current-state.md`](variants-current-state.md) §4):
+  (design §24.3; see [`variants-current-state.md`](../variants-current-state.md) §4):
   `shards[nodeShard(nodeId)] += max(1, round(SHARD_BASE_PER_KILL ×
   SHARD_TIER_MULT[biomeTier] × debugMult))`, where `nodeShard` is the node's dominant
   family's `drops`. A node with no blend (a dungeon) pays the dead mob's own family shard,
@@ -624,7 +626,7 @@ Phase 2b deleted the catalyst accumulator outright.
   pays a family it fields**: its leader has a body in its tier pool (`nodeShards.test.ts`,
   no allowlist; the eight T2–T4 nodes that paid a bodiless family were re-led by the
   verbs-that-fire run, then restored to their authored leads on 2026-10-12 when six new
-  mobs gave those families bodies — table in [`variants-current-state.md`](variants-current-state.md) §4).
+  mobs gave those families bodies — table in [`variants-current-state.md`](../variants-current-state.md) §4).
 - **Capstones.** Granted on every boss kill whose biome has a capstone material: `+= max(1,
   round(debugMult))` per kill — not scaled by node identity.
 - **Boss Lane-A stopgap (design §18.6, provisional).** Every biome boss kill also drops
@@ -671,7 +673,7 @@ active card per owned row plus the worn form's capstone.
 - Each application pushes one `card-fx` event (with the firing card's `cardId`, the
   payload's applied `durationMs`, and for a refund the `abilityIds` it moved); a
   Kill-chain load also pushes `lineage-load` when it arms and when it is spent. A composed
-  firing draws its PAYLOAD's fx key ([`combat-animation-current-state.md`](combat-animation-current-state.md), "Lineage payloads").
+  firing draws its PAYLOAD's fx key ([`combat-animation-current-state.md`](../combat-animation-current-state.md), "Lineage payloads").
 - Every card the player buys adds one visible signature on screen (`LineageFxKey`) —
   "a card with no signature is a stat," per design §8. T2 payoff/amplifier cards and
   defensive capstones mostly **reuse** their lane's existing T1 fx key rather than minting
@@ -773,7 +775,7 @@ the composed heavy bleed, the Affliction re-dose, `poison-stack`, a standalone
 - Attack timing is quantised to the 10 Hz tick (design §24.9, open): the Rapier's Tempo
   lean is worth 0 to three classes at T1 and to every class measured at T2.
 - All T3/T4 family and blend data behind the shard economy is PROVISIONAL — see
-  [`variants-current-state.md`](variants-current-state.md).
+  [`variants-current-state.md`](../variants-current-state.md).
 - The T3 path `packet` tags are PROVISIONAL labels, not a class-path rewrite.
 - `ABILITY_NODE_SHARE` is unbenched.
 - Bulwark and Barrier-tempo have NO shard income while their trees are parked (the boss
@@ -872,12 +874,12 @@ lane out-uplift the punished lane, and by what margin (reported, never threshold
   `composition-matrix.md`: per weapon a 3 × 3 lean × verb grid of
   median uplift and verb firings per minute, per-class rows, the floor and the outliers
   (above 1.5× / below 0.9× of the median), never-fired verbs, refusals and deaths. The
-  latest is [`reports/verbs-that-fire/composition-matrix.md`](../reports/verbs-that-fire/composition-matrix.md)
+  latest is [`reports/verbs-that-fire/composition-matrix.md`](../../reports/verbs-that-fire/composition-matrix.md)
   (at `57916b52`): 12 of 45 pairs under the floor on both instruments, four of them because
   the verb never fires (an off-lane lean on a conditional verb, no other source of the
   condition), four Control-lean pairs whose slow and root a DPS metric cannot see, and four
   small or boss-starved (the Broadsword's Technique lean, Kill chain on bosses). The first
-  run is [`reports/course-correction/composition-matrix.md`](../reports/course-correction/composition-matrix.md).
+  run is [`reports/course-correction/composition-matrix.md`](../../reports/course-correction/composition-matrix.md).
 - **DPS is the only metric the floor reads.** The Control pure pair's value on a boss is
   survival (the Hammer's win rate against the no-card control +16 pp, the Dagger's +12 pp),
   which the floor does not see; the run report carries the win-rate column per pair.
@@ -886,14 +888,14 @@ lane out-uplift the punished lane, and by what margin (reported, never threshold
   control — 11 rows × 6 classes × 5 bosses × 10 seeds = 16,500 boss-lab fights
   (`compositionPairs.ts`, `_t1BossPlan.ts --matrix=composition`, `compositionReport.ts`
   tables T1 as lean × rank). The T2 instrument keeps its 45 pairs. Latest:
-  [`reports/legibility/after-composition.md`](../reports/legibility/after-composition.md)
+  [`reports/legibility/after-composition.md`](../../reports/legibility/after-composition.md)
   (boss lab only; the lane bench was not rerun).
 
 ## 16. The HUD and the panels (design §26.4, legibility run 2026-10-05)
 
 **The rule: panels may be dense; the HUD may not.** Each fact has one channel. Screenshots
 (desktop 1440×900 and portrait 390×844) are in
-[`reports/legibility/screens/`](../reports/legibility/screens/).
+[`reports/legibility/screens/`](../../reports/legibility/screens).
 
 - **The ring** (`client/src/hud/RhythmReadout.tsx`, `rhythmReadoutModel.ts`,
   `rhythmReadout.css`): one ring per active verb, **named** (the verb's short name under the

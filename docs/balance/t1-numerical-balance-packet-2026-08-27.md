@@ -171,7 +171,9 @@ Equipment mechanics [S/D]: absorb converts the authored fraction of final non-Do
 
 ## F. Rune combat tools
 
-RP is Global Mastery rune budget: `8 + floor(globalMastery / 10)` [D], so GM0 has 8 RP. Action/condition costs below are the current catalog costs, not essence crafting costs.
+> Class-first rework (2026-10-15): Runic Points, the rune budget `8 + floor(globalMastery / 10)`, and crafted rune recipes were removed (D2). Rules cost nothing. The costs below are this packet's 2026-08-27 catalog, not a live price list. Summoner reconstruction cost in the observations is the minion rebuild payment, which remains.
+
+At the time of this packet, RP was the Global Mastery rune budget: `8 + floor(globalMastery / 10)` [D], so GM0 had 8 RP. Action/condition costs below are that catalog, not essence crafting costs.
 
 | Rune tool | RP cost | Current semantics and numeric behavior |
 |---|---:|---|
@@ -188,7 +190,7 @@ Current important condition costs: `always` 0; `in-combat` 1; `when-idle` 1; `hp
 
 ### Step Back recipe
 
-The current Mountain mastery 2 recipe is `rune-recipe-step-back`: T1, recipe group Mountain, required biome level 2, essence cost **180 blue + 80 yellow**, rune action cost **2 RP**. This is separate from the 20 px runtime escape clearance.
+The Mountain mastery 2 recipe in this packet was `rune-recipe-step-back`: T1, recipe group Mountain, required biome level 2, essence cost **180 blue + 80 yellow**, rune action cost **2 RP**. Crafted rune recipes were removed (D2). This is separate from the 20 px runtime escape clearance.
 
 ## Documentation/live-code contradictions
 

@@ -257,8 +257,6 @@ server/src/
       economy/                ← inventory, crafting
       progression/            ← skills, rewards, quests
       abilities/               ← abilityFiring.ts, abilityEffects.ts (Technique/Guard)
-      stances/                 ← stanceSwitch.ts
-      rites/                   ← riteOoc.ts
     world/                    ← movement, spawning, transitions, testRoomInteract, mobility/mobilityBoots.ts
     world/dungeons/dungeon.ts ← guarded-altar dungeon state machine
     combatBootstrap.ts        ← initCombatSystems(): the only place combat-pipeline listeners register
@@ -281,7 +279,6 @@ updatePartyFollow(world, now);
 updateAutoTraverse(world);
 updateAutoTargets(world, now);
 updateAbilityFiring(world);            // Technique/Guard: fires abilities, arms hasArmedAbility
-updateStanceSwitch(world);             // switches activeStance (anti-thrash cooldown), recalcs stats
 updateKnockback(world, dt);
 updateMobilityState(world, dt);        // boot ramp timers, on-acquire edge detection
 updateMovement(world, dt, now);
@@ -302,7 +299,7 @@ updateDeadPlayersInWorld(world, now);
 tickDungeons(world, now);              // guarded-altar dungeon state machine
 ```
 
-Each system iterates a narrow miniplex query (`world.dottedMonsters`, `world.cadencePlayers`, …). Archetypes register themselves through the mechanic registry; new *loadout* layers (abilities/stances/rites) instead added one ordered call each directly in `tick()` — they aren't archetypes, so they don't go through the mechanic registry, but each is still a single self-contained system call reading component presence, not a branch inside an existing one. `World.tick()` grows by one line per genuinely new system; it never grows for a new archetype, ability, stance, rite, core, or buff.
+Each system iterates a narrow miniplex query (`world.dottedMonsters`, `world.cadencePlayers`, …). Archetypes register themselves through the mechanic registry. A genuinely new system is one ordered call in `tick()`, reading component presence, not a branch inside an existing system. `World.tick()` grows by one line for that system. It does not grow for a new archetype, ability, or buff. Stances, rites, and the core slot are not extension points; the class-first rework removed them.
 
 ### Combat pipeline
 
@@ -335,7 +332,7 @@ Component attach/detach automatically marks the slice dirty; the encoder reads `
 
 `server/src/db/` (Drizzle over Postgres) persists one JSON blob per long-lived player slice: `isPlayer`, `hasPosition`, `hasHealth`, `tracksProgression`, `holdsInventory`, `usesSkills`. `playerRepo.ts` is the hydrate/save boundary. Runtime-only slices and derived state (passives, archetype slices, combat state) are rebuilt on attach via `syncArchetypeSlices` + `recalculatePlayerEntityStats`. Save fires on disconnect and every 30 s.
 
-Every post-rework loadout system (abilities, stances, rites, cores, catalysts, global mastery) added **zero new persisted slices** — they all fold into the existing `tracksProgression` JSON blob (`knownAbilities`/`equippedAbilities`, `knownStances`/`equippedStances`/`activeStance`, `knownRites`/`equippedRites`, `catalysts`/`catalystProgress`) or, for cores, into the existing `holdsInventory.equipment` map as a 5th slot. This is the intended pattern for new player-facing state: extend an existing whole-slice JSON blob rather than adding a persisted column, unless the state is genuinely a new top-level concern.
+Abilities, runes, and global mastery fold into the existing `tracksProgression` JSON blob (`knownAbilities`, `attunedAbilities`, `runesOwned`, `runesEquipped`). They did not add a persisted column. Stances, rites, catalysts, and the core equipment slot are gone. The equipment map is weapon, armor, recovery, mobility, and relic. The relic slot holds the class boss trophy. New player-facing state still extends an existing whole-slice JSON blob unless it is genuinely a new top-level concern.
 
 ### Buffs
 
@@ -348,7 +345,7 @@ defineBuff('ability-guard', (ctx) => {
 }, { label: 'GUARD', color: '#88ccff', category: 'neutral' });
 ```
 
-`syncPlayerBuffs` projects every descriptor and writes the result to `hasStatus.activeBuffs`. Adding a buff is one descriptor in the owning module and requires *zero* client changes — `BuffBar.tsx` reads the wire payload and renders. Abilities, stances, and mobility boots all add their buffs this way (`abilityBuffs.ts`, `MOBILITY_BUFFS` in `mobilityBoots.ts`) rather than inventing their own status-bar plumbing.
+`syncPlayerBuffs` projects every descriptor and writes the result to `hasStatus.activeBuffs`. Adding a buff is one descriptor in the owning module and requires *zero* client changes — `BuffBar.tsx` reads the wire payload and renders. Abilities and mobility boots add their buffs this way (`abilityBuffs.ts`, `MOBILITY_BUFFS` in `mobilityBoots.ts`) rather than inventing their own status-bar plumbing.
 
 ---
 
@@ -356,49 +353,25 @@ defineBuff('ability-guard', (ctx) => {
 
 The systems below shipped in the "system rework" (see `docs/system-rework-status.md` and each system's `docs/<system>-current-state.md`). They are covered here at architecture level only — where state lives, who owns the mechanic, and the extension point. Balance numbers, per-biome content, and exhaustive item lists live in the paired docs, not here. Where a current-state doc's prose disagreed with the code as of this refresh, the note below says so explicitly; code wins.
 
-Four of these (Abilities, Stances, Rites, Cores) are **loadout layers**: player-chosen, slotted, persisted in `TracksProgression` (or, for Cores, the existing equipment map), and folded into `recalculatePlayerEntityStats` alongside skills and gear. They are listed in decreasing "activity": Abilities fire on triggers mid-combat, Stances switch reactively, Rites are always-on, Cores are pure equipped modifiers.
+Abilities are a loadout layer: player-chosen, persisted in `TracksProgression`, and folded into `recalculatePlayerEntityStats` alongside skills and gear. Stances, rites, and cores were removed (class-first rework). Do not add a `StanceDef`, a `RiteDef`, or a core slot.
 
 ### Abilities (Technique / Guard)
 
 - **State:** `TracksProgression.knownAbilities` (learned) + ordered `attunedAbilities: {techniques, guards}` (networked and persisted in the existing progression JSON). A server-only, non-networked sibling component `HasArmedAbility` (`server/src/ecs/entity.ts`) tracks "next hit fires the armed Technique," deliberately kept separate from the pre-existing class-owned `HasEmpoweredAttack` so the two "next hit is special" mechanisms never collide. The networked, non-persisted `QueuesAbilities` component is the authoritative set of manual one-shot intents waiting for legal activation; it exists only while at least one intent is pending.
 - **Owner:** `server/src/systems/player/abilities/abilityFiring.ts` owns `updateAbilityFiring` (automatic/Rune triggers), `requestManualAbilityUse` (hotbar intent/toggle), and retrying queued manual intents. The automatic driver runs only under Auto Combat or the temporary Fight Back travel-combat owner; manual requests and their queue remain independent of that gate. A legal press activates immediately, a temporarily blocked press queues, and pressing the same queued ability cancels it. The first successful activation consumes the queue entry. Direct and queued requests converge on the same cooldown, Technique/Guard arbitration, cast and effect functions; manual enemy-facing use merely requires the current combat target instead of automatic targeting's nearest fallback. `abilityEffects.ts` registers the Technique's `onHit` rider and the Guard's `onDamageTaken` reader through `initCombatSystems()`.
-- **Extension point:** a new ability is one `AbilityDef` (trigger + effect kind) in `shared/src/abilities.ts` plus one `AbilityRecipe` (biome-level gated, same shape as `RuneRecipe`). New trigger/effect *kinds* need a branch in `abilityFiring.ts`/`abilityEffects.ts`; existing kinds need nothing else.
-- **Composition:** Technique riders are ordinary combat-pipeline listeners; Guard effects are ordinary buffs; both Technique and Guard have an optional rune override on two new but structurally ordinary rune-action channels (`TECHNIQUE`/`GUARD`), parallel to the pre-existing `CONTROL` channel pattern (e.g. `taunt.ts`).
-
-### Stances
-
-- **State:** `TracksProgression.knownStances`, `attunedStances`, `equippedStances: {default}`, and authoritative `activeStance`. The separate networked, non-persisted `OverridesStance` component marks runtime manual ownership, including the reserved `no-stance` neutral posture. Auto Combat and temporary Fight Back own automated stance selection and release this marker.
-- **Owner:** `server/src/systems/player/stances/stanceSwitch.ts` owns automatic/Rune reconciliation and live manual selection. Manual attuned or neutral ownership takes precedence only while Auto Combat is off and Fight Back is inactive; both paths use the same anti-thrash cooldown, stance-change helper, stat rebuild and event.
-- **Input:** the rebindable client control table maps `Shift+1` to Neutral and `Shift+2` through `Shift+9` to the attuned stance rail in displayed order. Modifier-aware matching keeps these chords disjoint from ability slots `1` through `9`.
-- **Extension point:** a new stance is one `StanceDef` (`statEffects`/`mechanicEffects`) in `shared/src/stances.ts` plus a `StanceRecipe`. Pure stat-delta stances need no other code — the stats pipeline already folds any equipped stance's effects in.
-- **Composition:** stance stat deltas fold into the same accumulators skill-tree nodes and gear use in `shared/src/systems/stats.ts`; switching rides a new `STANCE` rune channel + `switch-stance` action, structurally identical to every other rune-derived flag. One deliberate one-off: a stance's `damageReduction` is folded *after* the mid-pipeline `[0, 0.9]` DR clamp so a negative-DR tradeoff stance still combines correctly with gear before the final clamp.
+- **Extension point:** a new ability is one `AbilityDef` (trigger + effect kind) in `shared/src/abilities.ts` plus one `AbilityRecipe` in `shared/src/abilityRecipes.ts`. New trigger/effect *kinds* need a branch in `abilityFiring.ts`/`abilityEffects.ts`; existing kinds need nothing else.
+- **Composition:** Technique riders are ordinary combat-pipeline listeners. Guard effects are ordinary buffs. A `use-ability` rule on the `ABILITY` channel carries `targetAbilityId`. There is no `TECHNIQUE`, `GUARD`, or `STANCE` channel.
 
 ### Manual reload
 
 - **Input and authority:** `R` emits `player:manualReload` only while the local combat archetype is Reload/Slinger. The server repeats that validation and routes a partial magazine through `startReloadTimer` plus `emitReloadStart`, preserving the single authoritative reload lifecycle and all registered clip/passive hooks. Other classes are rejected; full magazines, active reloads, and the Laser heat path are no-ops.
 
-### Rites
+### Aspects and the removed catalyst wallet
 
-- **State:** `TracksProgression.knownRites` + `equippedRites` (type alias `EquippedRites = string[]`) — a flat, interchangeable list, unlike Abilities'/Stances' role-based slots. No `activeStance`-style runtime field: rites are always-on while equipped.
-- **Owner:** no per-tick driver exists — rites have no firing logic and no rune-action channel at all (a deliberate divergence: a channel would contradict "always-on passive" framing). `server/src/systems/player/rites/riteOoc.ts` exposes out-of-combat hooks (`oocRegenDelay()`, read by `combat.ts`; `runRiteOoc()`, called from `defense/index.ts` gated to out-of-combat) and one `onKill` combat listener registered through `initCombatSystems()`. `riteSlotCount(globalMastery)` in `shared/src/rites.ts` is currently a stub hardcoded to 2.
-- **Extension point:** a new rite is one `RiteDef` (`mechanicEffects`, `rite.*` keys) plus a `RiteRecipe` (T3-band biome gate). A rite that only sets a passive already read somewhere (regen delay, cleanse, buff decay) needs no other code; a new *behavior* needs a new read site in `riteOoc.ts` or a new combat listener.
-- **Composition:** rites fold into `usesSkills.passives` via the same `mergePassives` path as skills/stances/equipment — no bespoke state. Note: Rites' harmful-debuff predicate (`isHarmfulPlayerStatusEffect`, used by Cleansing Breath) is shared authority also used by Abilities' Cleanse — changing that one function changes both systems.
-
-### Cores
-
-- **State:** no new component at all — `'core'` is simply the 5th value of `EquipmentSlot`, living inside the pre-existing `HoldsInventory.equipment` map. Fully networked and persisted for free through the existing equipment plumbing (old saves default the slot to `null` via `emptyEquipment()`).
-- **Owner:** no bespoke tick system. The only core-specific logic is `coreIsActive(rangeTag, selectedRange)` (`shared/src/systems/cores.ts`), called from the equipment loop in `shared/src/systems/stats.ts` to skip a directional core's stats/effects entirely when it doesn't match the player's `selectedRange` (a pre-existing, already-mechanical field). Rank-ups reuse the gear evolution machinery (`shared/src/systems/evolution.ts`) with `requiredPlusFor(recipe)` returning `0` for the `core` slot — cores rank up by owning the predecessor outright, not by upgrading it to +3 first like every other slot.
-- **Extension point:** a new core is an ordinary `Recipe`/item with `slot: 'core'` and a `rangeTag` (`close`/`mid`/`far`/`universal`/`party`) — it flows through `ITEM_DATABASE` and the generic equip/forge UI automatically.
-- **Composition:** the strongest reuse case of the four loadout layers — equip, persist, network, and most UI needed **zero** new code; only the stats-loop range-gate and the evolution required-plus parameter are genuinely new.
-
-### Aspects & Biome Catalysts economy
-
-- **State:** `TracksProgression.essences` (existing) plus `catalysts` and `catalystProgress` (both `Record<string, number>` keyed by node-modifier family) — all inside the already-networked/persisted `tracksProgression` slice, so no allowlist or migration work was needed to add them.
-- **Owner:** `grantCatalystProgress()` (`server/src/systems/player/progression/rewards.ts`) accumulates per-kill weight and mints whole catalysts at a configured threshold, carrying the remainder. Every crafting/upgrade/evolution site that spends catalysts follows the same read-then-subtract pattern as essence spending.
-- **Extension point:** a new catalyst axis is just a new key in the `Record<string, number>` maps plus a weight source and a cost entry at the relevant crafting site.
-- **Note:** The implementation record is `docs/aspects-catalysts-current-state.md`.
-  Catalyst wallets are keyed by node-modifier family; the former biome-keyed
-  design and pre-implementation snapshot are historical.
+- **State:** `TracksProgression.essences` is the wallet. `catalysts` and `catalystProgress` are gone. Do not add them back as a new key on that slice.
+- **Owner:** essence grants stay on the rewards path. There is no `grantCatalystProgress()`.
+- **Extension point:** none. A new currency is a new design, not a catalyst key.
+- **Note:** The old implementation record is `docs/archive/aspects-catalysts-current-state.md`.
 
 ### Biome ecology AI primitives (packs, patrol, swarm, telegraphs)
 
@@ -455,14 +428,14 @@ client/src/
   fx/                         ← one file per attack style
   input/                      ← clickToMove, autoPath, keyboard, debug
   audio/                      ← sound engine
-  hud/                        ← React HUD components (BuffBar, StatPanel, AbilityBar, CatalystPanel, ...)
+  hud/                        ← React HUD components (BuffBar, StatPanel, AbilityBar, ...)
   ui/                         ← React panels (SkillTree, Inventory, Crafting, Map, Quest,
-                                 AbilitiesPanel, StancesPanel, RitesPanel, BuildRunesTab, MasteryPanel)
+                                 AbilitiesPanel, BuildRunesTab, MasteryPanel)
   hudBus.ts                   ← reactive event bus for HUD state
   main.ts                     ← Phaser bootstrap + React mounts
 ```
 
-Each new post-rework loadout system (abilities, stances, rites, cores, catalysts, mastery) shipped as one more React panel reading its own slice of `PlayerView` off `hudBus` — no new render pipeline, no god object. The pattern in "Pipeline" below still holds unchanged.
+Abilities, runes, and mastery each read their own slice of `PlayerView` off `hudBus`. There is no stance panel, rite panel, catalyst panel, or core slot. The pattern in "Pipeline" below still holds.
 
 ### Pipeline
 
@@ -567,9 +540,6 @@ Add one `defineBuff(...)` descriptor in the owning module. Add the `BuffId` to `
 | New persistent visual overlay | descriptor in `shared/src/registries/effects.ts`; server emits the ID; client overlay system picks it up |
 | New attack-style FX | one file in `client/src/fx/` + one dispatcher entry |
 | New ability | `AbilityDef` in `shared/src/abilities.ts` + `AbilityRecipe`; new trigger/effect kinds need a branch in `abilityFiring.ts`/`abilityEffects.ts` |
-| New stance | `StanceDef` in `shared/src/stances.ts` + `StanceRecipe`; pure stat deltas need no other code |
-| New rite | `RiteDef` in `shared/src/rites.ts` + `RiteRecipe`; new OOC behavior needs a read site in `riteOoc.ts` |
-| New core | ordinary `Recipe`/item with `slot: 'core'` + `rangeTag`; flows through `ITEM_DATABASE` and generic equip/forge UI |
 | New biome ecology retrofit | `pack`/`swarm`/`patrol`/`chargeOnAggro` fields on that biome's monster defs in `shared/src/data/monsters/` |
 | New elite mob | `elite: true` on the monster def; client outline + `focus-elites` targeting bonus apply with no further wiring |
 | New T1 boss exam | `preEncounter` group + `unclearedThreat` mode + `bossScript` in `gauntletDatabase.ts` — data over existing primitives |

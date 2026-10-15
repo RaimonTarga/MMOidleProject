@@ -2,6 +2,8 @@
 
 Development-only infrastructure for a captured progression boundary and a separately authored continuation. This extends the existing `T1CharacterSnapshot` artifact, `--tierEntrySnapshot`, route executor, authoritative player attachment, and experiment input sealing. Existing Snapshot A/B and specialized checkpoint imports retain their existing rules.
 
+> Class-first rework (2026-10-15): catalyst wallets, stances, rites, and crafted rune recipes are not stored. `TracksProgression` keeps essence wallets, learned abilities, and rune ownership and loadout. The demonstration route ids below are not in the bot registry; the only registered route is `smoke-t1` (D5). The PowerShell blocks are the 2026-09 acceptance record.
+
 ## Author a boundary
 
 If the preceding travel ends at a gate, author `{ type: 'moveWithinNode', nodeId: 'node-t3-sanctuary', position: { x: 2400, y: 2400 } }` first. This uses ordinary movement and requires the authoritative view to confirm stationary arrival; it is not relocation during capture.
@@ -16,10 +18,10 @@ Allowed locations are an earned, visited Sanctuary (including an earlier tier's 
 
 The server synchronously clones the actual `TracksProgression`, `HoldsInventory`, `UsesSkills`, `HasPosition`, optional persisted `SummonsMinions`, and composed `PlayerView`. This follows the component-shaped `PersistedPlayerSlices`/`saveCharacter` schema:
 
-- Entire progression is preserved: XP/mastery, level, unspent points, tier, seals, quest progress, visited/cleared nodes, unlocked recipes, all wallets and partial catalyst progress, learned/attuned abilities and stances, Rites and ordered Rune rules/ownership/recipes.
+- Entire progression is preserved: XP/mastery, level, unspent points, tier, seals, quest progress, visited/cleared nodes, unlocked recipes, essence wallets, learned and attuned abilities, and ordered Rune rules and ownership. A checkpoint does not store catalyst progress, stances, rites, or crafted rune recipes; those were removed.
 - Entire inventory and upgrade history is preserved, including still-valid historical upgrade entries for items no longer owned. Root/frame/range and later specialization unlocks are preserved in order.
 - Character/account/socket identity is new in each run. Position node/coordinates are preserved; speed, passives, HP maximum and other derived combat stats are recomputed by normal authoritative formulas. Old computed values remain audit evidence.
-- Runtime stance resets to the saved default. Auto, navigation, attacks, party, engagement, ability cooldowns, buffs, Heat/Chill, DoT, targets and transient combat markers reset. HP and ordinary barrier start full under the declared `safe-rested-v1` policy.
+- Auto, navigation, attacks, party, engagement, ability cooldowns, buffs, Heat/Chill, DoT, targets and transient combat markers reset. There is no combat stance to restore. HP and ordinary barrier start full under the declared `safe-rested-v1` policy.
 - Class slices use their ordinary fresh initializers and stat recalculation: no imported Energy, Cadence, execution/charge counters or other banked power. Reload readiness follows its normal initializer/recalculation. Warm-up belongs in the continuation; a restored character is not asserted to have all combat abilities precharged.
 - Summoner logical slot IDs/roles are retained and checked against the authoritative class profile. Minion entities are fresh/absent at the receipt; reconstruction progress, queue, timers, target, cursors and charges reset to ordinary initial state. Allow an explicit readiness observation if an encounter requires a rebuilt formation.
 
@@ -41,7 +43,7 @@ progressionEntry: {
 
 Supply exactly one named artifact through `--tierEntrySnapshot`. No directory selection, generic tier-entry template or fallback is permitted. The server requires a fresh character, checks state integrity and current progression/build definitions, validates legal placement, stages ordinary attachment/recalculation, and compares persistent readback before replacing the fresh character. The bot then checks the authoritative receipt, expected class/boundary/node/tier and prerequisites before executing the continuation.
 
-`checkpoint-restore.json` records input SHA256, both revisions, source and actual restored state, normalized policy, inherited provenance, source route/version/policy/choices, new continuation/version/policy/choices, setup/restore timing and changed definition-hash sections. Put `measurement-start` after treatment/approach/readiness; route-step timing separates these from measurement. Header/summary retain checkpoint and inherited taints and starting wallets. Inherited catalysts are seeded as the telemetry baseline, not counted as freshly earned. Skipped preparation has unknown/inherited cost, never zero full-route cost.
+`checkpoint-restore.json` records input SHA256, both revisions, source and actual restored state, normalized policy, inherited provenance, source route/version/policy/choices, new continuation/version/policy/choices, setup/restore timing and changed definition-hash sections. Put `measurement-start` after treatment/approach/readiness; route-step timing separates these from measurement. Header/summary retain checkpoint and inherited taints and starting wallets. There is no catalyst wallet to seed. Skipped preparation has unknown/inherited cost, never zero full-route cost.
 
 The default requires the same source revision and definitions digest. To intentionally test a newer balance revision, author `revisionPolicy: 'explicit-current-revision'` on that continuation and select the newer revision in `experiment:create`. Both revisions and changed definition sections remain visible; full current-definition validation still runs. No saved skills, loadout, upgrade levels or progression are rewritten to make an old checkpoint valid. Definition sections include monster data, so a monster-only HP change is detectable without requiring the preparation again.
 
@@ -97,7 +99,7 @@ Use these variables with the continuation create command above. Pin this revisio
 
 ## Checks and acceptance
 
-Executed focused tests: named server capture/readback, T4 specialization/unspent points, ordered Rune/Rite build, summoner slots/runtime reset, two independent worlds, immutable artifacts, unsafe/corrupt/wrong-boundary/current-definition rejection, production guard, failed-stage atomicity, and actual continuation executor behavior. Existing tier-entry bootstrap and Snapshot A/B tests remain covered.
+Executed focused tests: named server capture/readback, T4 specialization/unspent points, ordered Rune loadout, summoner slots/runtime reset, two independent worlds, immutable artifacts, unsafe/corrupt/wrong-boundary/current-definition rejection, production guard, failed-stage atomicity, and actual continuation executor behavior. Existing tier-entry bootstrap and Snapshot A/B tests remain covered.
 
 Command-center live acceptance passed: one corrected capture run saved two names, then two independent real-server runs restored the same file with exactly equal persistent state before treatment. One arm legally bought/equipped Desert Boots for 58 yellow essence. An initial gate-position rejection was retained and corrected through ordinary walking. Timings, hashes, evidence paths, normalization and released resources are recorded in [the acceptance report](briefs/named-checkpoint-acceptance.md). Unit tests are listed separately from this live demonstration; the complete test suite was not run.
 

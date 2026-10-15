@@ -1,5 +1,7 @@
 # Biome Mastery and Global Mastery — Current State
 
+> Class-first rework (2026-10-15): the Runic Point budget Global Mastery used to size, and the core and relic upgrade exceptions, removed; see the bible.
+
 **Audited:** 2026-09-27
 **Implementation:** shared/src/config/gameConfig.ts,
 shared/src/runeDatabase.ts, shared/src/systems/itemUpgrades.ts,
@@ -76,20 +78,16 @@ that tier. They are not a promise that a character has reached the value.
 
 ### Rune capacity
 
-The rune budget is:
-
-- base capacity: 16 points;
-- one additional point per five Global Mastery;
-- non-negative, finite Global Mastery is clamped before calculation.
-
-The authority is runeBudgetForGlobalMastery in shared/src/runeDatabase.ts.
-Old tier-based or crafted rune-point formulas are not current.
+Global Mastery does not size a rune budget. `runeBudgetForGlobalMastery` is gone.
+Rules cost nothing. A class owns the runes it may use (`runeIdsForArchetype`).
 
 ### Item upgrade ceiling
 
-MAX_UPGRADE is 5 for ordinary fallback items. An item's explicit upgrades array
-may set a different structural length. Cores and Relics are intentionally off
-the ordinary +N track and return a maximum of 0 from getMaxUpgrade.
+`getMaxUpgrade` returns 0 for every item. The +N ladder is retired, so nothing in
+the game applies an upgrade step. `globalMasteryRequiredForUpgrade` still spreads
++1 through +5 across a tier's Global Mastery band, and the bot's milestones still
+read that function. The core slot and relic items are gone; they are not a special
+case of this ladder. The relic slot holds the class boss trophy.
 
 globalMasteryRequiredForUpgrade spreads +1 through +5 across the current tier's
 Global Mastery band:

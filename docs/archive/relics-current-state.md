@@ -1,7 +1,9 @@
+> **ARCHIVED (2026-10-15): the class-first rework removed this system (F5).** Design authority: [class-first-bible.md](../../design_docs/class-first-bible.md). Kept for history only.
+
 # Relics — Current State
 
 **Implemented:** 2026-08-04  
-**Living design:** `design_docs/relics-design.md`  
+**Living design:** `design_docs/archive/relics-design.md`  
 **Historical build plan:** `docs/archive/relics-implementation-plan.md`
 
 ## Shipped contract

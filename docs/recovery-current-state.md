@@ -1,10 +1,12 @@
 # Recovery — Current State
 
+> Class-first rework (2026-10-15): `core.recovery-mult`, Recuperating Stance, and reconstruction's queue heal removed; see the bible.
+
 What the code does today. Paired with `design_docs/archive/RECOVERY_REGEN_REWORK_HANDOFF.md`
 (the original design handoff, kept for rationale). Shipped 2026-08-22; moved to the
 flat HP/s model on 2026-09-30 (progression rework Phase 0b, design bible §15); five
 correctness fixes from run 4's code review folded in on 2026-10-02 (the tier-up recalc in
-§1, the minion clock in §3, `core.recovery-mult`'s quantization in §4, and the stat panel's
+§1, the minion clock in §3, and the stat panel's
 formatting in §7).
 
 **This was a systems overhaul, not a balance pass.** Every coefficient below is a
@@ -56,7 +58,7 @@ by a clamp.
 
 | Passive | Shape |
 |---|---|
-| `defense.recovery-active-pct` | Permanent while in combat (Squire root, Recuperating Stance) |
+| `defense.recovery-active-pct` | Permanent while in combat (Squire root) |
 | `defense.recovery-pulse-pct` + `-interval-ms` + `-duration-ms` | Every interval, on for duration (Striker root, swamp charms) |
 | `defense.recovery-on-kill-pct` + `-ms` | A kill switches it on; further kills **refresh** (Slinger root, plains charm) |
 | `defense.recovery-ramp-start-pct` / `-max-pct` / `-ramptime-ms` | Climbs start→max over a fight, resets on leaving combat (jungle charm) |
@@ -96,8 +98,8 @@ tick (`minionRecoveryFor` in `summoner/spawn.ts`), so a small body refills on th
 clock. `runMinionRegen` only ever runs out of combat, which is why the out-of-combat rule
 is the right one: until 2026-10-02 the rate came from the owner's IN-combat Recovery
 instead, which ran a naked T1 summoner's bodies at ~5%/s against the player's fixed 10%/s
-and let Recovery gear buy a faster downtime clock. Reconstruction's in-combat queue heal
-is a share of the owner's flat rate, and that one is correctly the in-combat stat.
+and let Recovery gear buy a faster downtime clock. The owner's in-combat Recovery
+is the rate those in-combat fractions use.
 
 Timed sources are two resources each on `TracksCombat`
 (`recovery.<id>Ms` / `recovery.<id>Pct`). The fraction is **stored at activation**
@@ -115,20 +117,11 @@ test that calls `runRecovery` without `tickCooldowns` will wedge the pulse
 permanently on its first interval. `server/test/recovery.test.ts` mirrors the real
 order via its `advance()` helper.
 
-## 4. `core.recovery-mult` applies exactly once
+## 4. No core multiplier
 
-On the **stat**, in `shared/src/systems/stats.ts`. Never in `applyHealToPlayer`.
-
-Quantized to a **tenth**, not to a whole number like the four integer core multipliers
-beside it. Until 2026-10-02 it shared their `Math.round`, which on a fractional HP/s rate
-ate most of the bonus: the Survivalist core's +30% on a naked T1's 6.5 HP/s is 8.45, which
-rounded to 8 and paid +1.5 of +1.95.
-
-Because every in-combat regen effect is a fraction of the rate, scaling the rate
-already covers all of them; re-applying it per-heal would compound it (a +25% core
-landing as +56%). The tradeoff, taken deliberately: it no longer touches the heals
-that are *not* Recovery-derived — the absorb drain —
-which is correct, since that is a separate system (§6).
+`core.recovery-mult` is gone with the core slot. In-combat regen is a fraction of
+the Recovery stat. Heals that are not Recovery-derived, including the absorb drain,
+stay a separate system (§6).
 
 ## 5. Recovery Skill Potency
 
@@ -183,7 +176,7 @@ The Phase 0 note below says the live-bot `combat.fights` column is "the real pha
 and unmeasured because Docker was down. Docker was up on 2026-10-01 and a live run
 happened, so here is what it actually produced — and why it still does not close that gate.
 
-Route `striker-lineage-forest-t1` (cadence-root / cadence-balanced, Forest), **25× reward
+This measurement used the removed route `striker-lineage-forest-t1` (cadence-root / cadence-balanced, Forest), **25× reward
 multiplier**, one session of **955.9 s (15 m 56 s)**, ended by the operator's timeout.
 The harness labelled the run `NON_CANONICAL_REWARD_MULTIPLIER` itself.
 
@@ -196,7 +189,7 @@ The harness labelled the run `NON_CANONICAL_REWARD_MULTIPLIER` itself.
 **Why this is not the gate.** Two reasons, both disqualifying:
 
 1. **25× makes it an economy pipeline test, not an evaluation** — the harness says so in
-   its own banner. Kill pacing, essence and shard income are all compressed.
+   its own banner. Kill pacing and income are compressed. The shard income that run counted is gone with the shard currency.
 2. **`combat.fights` in the Phase 0 sense was never emitted.** That metric is the
    per-fight HP series from `bot/src/telemetry/fightHp.ts` (end-of-fight HP fraction, time
    inside the 20–80% band), and it is written when the session writes its report. This
@@ -379,8 +372,8 @@ Two things to know before reading the numbers as settled:
 - **The normal-node sanity clause was already breached before the raise** — median
   fight-end HP is 0.89 at T1 and 1.00 at T2–T4 at factor 1.00, against an 0.80 ceiling, and
   the raise contributes +0.03 at T1 and nothing above. The pool is not what makes an
-  ordinary node unthreatening; the lineage band is. That clause cannot brake anything until
-  Phase 4's monster pass answers the band.
+  ordinary node unthreatening. The lineage band that note named was removed with
+  the item trees (D1).
 
 ### Still open
 
