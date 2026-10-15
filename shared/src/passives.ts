@@ -152,6 +152,12 @@ export const DEFENSE_KEYS = [
   'spirit.afterstorm-x',  // Afterstorm: after a big hit the storm gathers this many times as fast for a few seconds
   'spirit.ironbound',  // Ironbound: plating multiplied while your storm is empty
   'spirit.capacitor',  // Capacitor: the flow wasted at a full storm heals you (this share)
+  'spirit.first-free',  // Lurker's Rod: your first spend on each new target costs nothing
+  'spirit.reach-x',  // Sirocco Staff: your spends reach this many times as far
+  'spirit.stormsense',  // Stormsense: an ambush cannot drain the storm below your floor
+  'spirit.monsoon-x',  // Monsoon: after an ambush hits you, the storm gathers this many times as fast for a few seconds
+  'spirit.ranged-cost',  // Sandshroud: ranged hits drain the storm at this share of cost
+  'spirit.oasis-pct',  // Oasis: while you are marked or slowed, the storm gathers this much faster
   'apprentice.branching',  // Branching Wand: each hit also lays a sigil on the nearest other enemy
   'apprentice.tick-speed',  // Thornwood Rod: sigils tick this many times as fast, for the inverse as long
   'apprentice.linger',  // Bog Censer: sigils last this many times as long
