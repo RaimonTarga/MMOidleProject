@@ -90,7 +90,6 @@ function gearScore(recipe: Recipe, slot: Exclude<GearSlot, 'relic'>): number {
 // Relic scoring lives below the shared path-profile helpers because it needs the
 // selected build's passives, not authored magnitude alone.
 const RELIC_BUFF_PASSIVES = [
-  'cadence.momentum-echo',
   'cooldown.overdrive',
   'reload.hair-trigger',
   'energy.overdrive',
@@ -98,9 +97,6 @@ const RELIC_BUFF_PASSIVES = [
 ] as const satisfies readonly PassiveKey[];
 
 const RELIC_DEBUFF_PASSIVES = [
-  'cadence.hemorrhage',
-  'cadence.debuff-vuln-pct',
-  'cadence.debuff-plating-shred',
   'reload.suppressing-fire',
 ] as const satisfies readonly PassiveKey[];
 

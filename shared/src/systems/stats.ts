@@ -281,18 +281,7 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
     p.resetCadenceCounters(profile.threshold.after);
   }
 
-  // 3a. Shockblade (cadence-light-t3-a): flat on-hit damage scaling with the
-  // player's tier, always active while the passive is unlocked. The per-tier
-  // rate is authored on the node ('cadence.aftershock-onhit-per-tier'), so this
-  // only affects the Shockblade branch.
-  // Path specs unlock at playerTier 4, so scaling counts from there: 1× at unlock,
-  // +1 per tier after (max(1, playerTier − 4 + 1)).
-  const aftershockOnHitPerTier = p.usesSkills.passives['cadence.aftershock-onhit-per-tier'] ?? 0;
-  if (aftershockOnHitPerTier > 0) {
-    p.dealsDamage.onHitDamage += Math.max(1, (p.playerTier ?? 4) - 4 + 1) * aftershockOnHitPerTier;
-  }
-
-  // 3b. Dualslinger (reload-balanced-t3-c): same per-tier on-hit scaling, authored on
+  // 3b. Dualslinger (reload-balanced-t3-c): per-tier on-hit scaling, authored on
   // the node ('reload.alternating-onhit-per-tier'). Rewards the on-hit half of its
   // attack/on-hit split — the odd (2× on-hit) shots scale up with tier.
   const altOnHitPerTier = p.usesSkills.passives['reload.alternating-onhit-per-tier'] ?? 0;

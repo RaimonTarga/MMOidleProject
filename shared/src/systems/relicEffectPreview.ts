@@ -42,20 +42,6 @@ export function relicEffectPreview(
     const before = value;
     result.push({ kind, label, unit, before, after: scaleMechanicMagnitude(id, field, before, resolveRelicMagnitudeMultiplier(kind === 'buff' ? ratings.buffEffect : ratings.debuffEffect), registry) });
   };
-  if (archetype === 'cadence') {
-    if ((p['cadence.momentum-echo'] ?? 0) > 0) add('buff', 'cadence-echo', 'damageBonus', 'Echo bonus damage', p['cadence.momentum-echo-bonus'] ?? 0.5, 'percent');
-    if ((p['cadence.hemorrhage'] ?? 0) > 0) add('debuff', 'cadence-hemorrhage', 'damagePerTick', 'Hemorrhage tick damage', 1, 'multiplier');
-    if ((p['cadence.debuff-vuln-pct'] ?? 0) > 0) {
-      // Display the bonus fraction; the runtime registry stores 1 + this fraction.
-      const before = (p['cadence.debuff-vuln-pct'] ?? 0) / 100;
-      result.push({ kind: 'debuff', label: 'Vulnerability damage taken', before, after: before * resolveRelicMagnitudeMultiplier(ratings.debuffEffect), unit: 'percent' });
-    }
-    if ((p['cadence.debuff-plating-shred'] ?? 0) > 0) add('debuff', 'plating-shred', 'platingReduction', 'Plating removed per finisher', p['cadence.debuff-plating-shred']!, 'flat');
-    if ((p['cadence.rampage'] ?? 0) > 0) {
-      add('buff', 'cadence-rampage', 'multPerStack', 'Rampage finisher damage per stack', p['cadence.rampage-mult-per-stack'] ?? 0.15, 'percent');
-      add('buff', 'cadence-rampage', 'apsPerStackMs', 'Rampage attack cooldown reduction per stack', p['cadence.rampage-aps-per-stack-ms'] ?? 30, 'flat');
-    }
-  }
   if (archetype === 'cooldown' && (p['cooldown.overdrive'] ?? 0) > 0) add('buff', 'cooldown-overdrive', 'attackSpeedPct', 'Overdrive attack-speed bonus', p['cooldown.overdrive-attack-speed-pct'] ?? 1, 'percent');
   if (archetype === 'reload') {
     if ((p['reload.suppressing-fire'] ?? 0) > 0) add('debuff', 'reload-suppress-shred', 'platingReduction', 'Suppressing Fire plating removed per stack', p['reload.suppress-shred'] ?? 4, 'flat');

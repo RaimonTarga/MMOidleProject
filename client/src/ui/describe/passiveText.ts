@@ -101,7 +101,6 @@ const WORD_OVERRIDES: Record<string, string> = {
  * module exists to prevent. Anything genuinely unit-less stays out of this list.
  */
 const PERCENT_KEYS = new Set([
-  'cadence.momentum-buildup',
   'cooldown.reverb-echo-strength',
   'cooldown.rupture-dr-pierce',
   'defense.debuff-resist',
@@ -161,7 +160,7 @@ export function passiveNamespaceLabel(key: string): string {
   return NAMESPACE_LABELS[namespace] ?? humanize(namespace);
 }
 
-/** The feature name, without its namespace: `cadence.debuff-vuln` → "Debuff Vulnerability". */
+/** The feature name, without its namespace: `cooldown.overdrive-attack-speed` → "Overdrive Attack Speed". */
 function stemLabel(stem: string): string {
   const dot = stem.indexOf('.');
   return humanize(dot === -1 ? stem : stem.slice(dot + 1));
@@ -200,8 +199,6 @@ export function formatPassiveValue(
   const withSign = options.signed ?? false;
 
   // Keys whose unit the naming convention does not carry.
-  // This authored value uses whole percentage points (25 means 25%).
-  if (key === 'cadence.debuff-vuln-pct') return formatPercent(value / 100, withSign);
   // This is an additive bonus: combat multiplies by (1 + value).
   if (key === 'shared.damage-mult') return formatPercent(value, true);
   if (PERCENT_KEYS.has(key)) return formatPercent(value, withSign);
@@ -334,7 +331,7 @@ export function passiveLines(
 
   const lines: PassiveLine[] = [];
   for (const [stem, entries] of groups) {
-    // The headline is the key that IS the feature (a flag like `cadence.rampage`)
+    // The headline is the key that IS the feature (a flag like `cooldown.overdrive`)
     // when present, otherwise the most magnitude-like qualifier.
     const bare = entries.find((entry) => entry.suffix === null);
     const headline = bare

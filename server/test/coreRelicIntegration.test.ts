@@ -181,7 +181,7 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy'] as const) 
   assert(inert.includes('Debuff effect · No eligible mechanic debuff in this build'), 'inert debuff rating is explicit');
 
   // An unrated relic earns no secondary headings even where effects are registered.
-  const unrated = formatResolvedRelicProfile(resolveRelicPreview('cadence', { 'cadence.momentum-echo': 1 }, { ...ZERO_RELIC_RATINGS, frequency: 0.2 }));
+  const unrated = formatResolvedRelicProfile(resolveRelicPreview('cooldown', { 'cooldown.overdrive': 1 }, { ...ZERO_RELIC_RATINGS, frequency: 0.2 }));
   assert(!unrated.some(line => /^(Buff|Debuff) effect/.test(line)), 'no secondary rating, no secondary lines');
   assert(!unrated.some(line => line.includes('relic.mechanic')), 'raw relic keys stay hidden');
 }

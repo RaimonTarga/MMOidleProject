@@ -17,4 +17,4 @@ console.log('Skill previews: every class root previews on its own.');
 
 assert.equal(formatPassiveValue('shared.damage-mult', 0.1), '+10%');
 assert.equal(formatPassiveValue('shared.damage-mult', -0.1), '−10%');
-assert.equal(formatPassiveValue('cadence.extra-trigger-damage-mult', 0.7), '×0.7');
+assert.equal(formatPassiveValue('cadence.empowered-mult', 0.7), '×0.7');

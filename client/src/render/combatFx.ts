@@ -35,7 +35,6 @@ import { getDotPath, type DotPath } from "../fx/dot";
 import { fxDotTick } from "../fx/dotTick";
 import { fxHeavyShell } from "../fx/heavyShell";
 import { fxLightningDagger } from "../fx/lightningDagger";
-import { fxBleedOpen } from "../fx/bleedOpen";
 import { fxEquinoxArc } from "../fx/equinoxArc";
 import {
   fxSunderShatter,
@@ -952,8 +951,7 @@ export function dispatchCombatEvent(
       else if (ev.element === "lightning") fxLightning(scene, tx, ty - 130, tx, ty, true);
       else if (ev.element === "doom") fxDoomTick(scene, tx, ty);
       // Everything else — bleed, poison, frost, fire — used to render as a bare
-      // damage number. Hemomancer in particular converts its whole finisher into
-      // a bleed, so it had no in-world presence at all.
+      // damage number.
       else if (ev.element) fxDotTick(scene, tx, ty, ev.element);
     }
     return;
@@ -1855,13 +1853,6 @@ function runFxForAttackStyle(
   const isLightningDagger =
     player.combatArchetype === "energy" &&
     (player.passives["energy.flash"] ?? 0) > 0;
-  // Hemomancer's finisher converts entirely into a bleed and lands no direct
-  // damage, so only the EMPOWERED hit gets the wound treatment; its regular
-  // attacks are ordinary and keep the normal crescent.
-  const isBleedOpen =
-    ev.empowered &&
-    player.combatArchetype === "cadence" &&
-    (player.passives["cadence.hemorrhage"] ?? 0) > 0;
   // Equinox: the phase is already on the wire as the aura id, so the attack can
   // match the glow without a protocol change of its own.
   const isEquinox =
@@ -1917,8 +1908,6 @@ function runFxForAttackStyle(
   } else if (isVoidDischarge) {
     // Voidwalker singularity discharge: void implosion → detonation on the target.
     fxVoidDischarge(scene, to.x, to.y);
-  } else if (isBleedOpen) {
-    fxBleedOpen(scene, from.x, from.y, to.x, to.y, ev.empowered);
   } else if (isHeavyShell) {
     playEmpoweredRing(args);
     fxHeavyShell(scene, from.x, from.y, to.x, to.y, ev.empowered, tint);
