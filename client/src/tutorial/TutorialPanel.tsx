@@ -77,7 +77,7 @@ function RouteStrip({ script, index }: { script: TutorialScript; index: number }
     <div
       className="tutorial-route"
       role="progressbar"
-      aria-label="Tier 1 route"
+      aria-label="Guide route"
       aria-valuemin={0}
       aria-valuemax={total}
       aria-valuenow={index}
@@ -209,9 +209,9 @@ export function TutorialPanel() {
   if (choice === null) {
     return (
       <HudPanel className="sidebar-panel tutorial-panel tutorial-panel--offer">
-        <div className="panel-title">Guided Tier 1</div>
+        <div className="panel-title">Guided play</div>
         <p className="tutorial-panel__line">
-          Let the guide play Tier 1 with you. It makes every choice and says why; you just press Next.
+          Let the guide play with you, tier by tier. It makes every choice and says why; you just press Next.
         </p>
         {view.playerTier >= 1 && (
           <p className="tutorial-panel__note">It picks up from where you are and does the fighting. You press Next.</p>
