@@ -14,8 +14,10 @@ import type {
   SpectateStatus,
   HumanPlaytestStatus,
 } from '@mmo-idle/shared';
+import { intents } from '../intents';
 import { getSessionToken, watchTargetFromUrl } from './session';
 import { SERVER_URL } from './serverUrl';
+import { sendSetClassConfig } from './intents';
 
 export type GameSocket = Socket<ServerToClientEvents, ClientToServerEvents>;
 
@@ -83,6 +85,18 @@ export function wireSocketHandlers(
   socket.on('node:preparing', (p) => h.onNodePreparing(p));
   socket.on('crafting:result', (r) => h.onCraftResult(r));
   socket.on('build:loadoutResult', (r) => h.onBuildLoadoutResult(r));
+  socket.on('class:configResult', (result) => {
+    if (result.ok) return;
+    const reasons = (result.reasons ?? []).map((reason) => reason.trim()).filter((reason) => reason.length > 0);
+    window.dispatchEvent(new CustomEvent('hud:classConfigResult', {
+      detail: { reasons: reasons.length > 0 ? reasons : ['The server rejected that setup.'] },
+    }));
+  });
+  // The class screen emits `setClassConfig`. The listener lives here so the
+  // intent reaches the socket; hudEvents.ts is outside this task's file list.
+  const stopClassConfig = intents.on('setClassConfig', (config) => {
+    sendSetClassConfig(socket, config);
+  });
   socket.on('player:died', (p) => h.onPlayerDied(p));
   socket.on('player:ascended', (t) => h.onPlayerAscended(t));
   socket.on('world:bossFelled', (m) => h.onBossFelled(m));
@@ -96,6 +110,7 @@ export function wireSocketHandlers(
   });
 
   return () => {
+    stopClassConfig();
     socket.off('connect');
     socket.off('connect_error');
     socket.off('disconnect');
@@ -111,6 +126,7 @@ export function wireSocketHandlers(
     socket.off('node:preparing');
     socket.off('crafting:result');
     socket.off('build:loadoutResult');
+    socket.off('class:configResult');
     socket.off('player:died');
     socket.off('player:ascended');
     socket.off('world:bossFelled');

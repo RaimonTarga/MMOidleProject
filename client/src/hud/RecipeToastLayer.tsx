@@ -3,6 +3,7 @@ import { useAtomValue } from 'jotai';
 import { BIOME_DATABASE } from '@mmo-idle/shared';
 import { hudBus } from '../hudBus';
 import { takeSessionNotice } from '../net/session';
+import { ClassUnlockToasts } from '../ui/class/ClassUnlockToasts';
 import { combatControlFeedbackAtom } from './atoms';
 
 interface Toast {
@@ -22,6 +23,7 @@ export function RecipeToastLayer() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [sessionNotice, setSessionNotice] = useState(takeSessionNotice);
   const [loadoutError, setLoadoutError] = useState<string | null>(null);
+  const [classConfigError, setClassConfigError] = useState<string[] | null>(null);
   const combatFeedback = useAtomValue(combatControlFeedbackAtom);
   const [combatError, setCombatError] = useState<string | null>(null);
 
@@ -65,7 +67,16 @@ export function RecipeToastLayer() {
     return () => window.removeEventListener("hud:loadoutResult", handler);
   }, []);
 
-  if (toasts.length === 0 && !sessionNotice && !loadoutError && !combatError) return null;
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const result = (event as CustomEvent<{ reasons?: string[] }>).detail;
+      const reasons = result?.reasons?.filter((reason) => reason.length > 0) ?? [];
+      setClassConfigError(reasons.length > 0 ? reasons : ["The server rejected that setup."]);
+      window.setTimeout(() => setClassConfigError(null), DISPLAY_MS);
+    };
+    window.addEventListener("hud:classConfigResult", handler);
+    return () => window.removeEventListener("hud:classConfigResult", handler);
+  }, []);
 
   return (
     <div style={{
@@ -108,6 +119,22 @@ export function RecipeToastLayer() {
           <span style={{ color: '#ef7668', marginRight: 8 }}>!</span>{loadoutError}
         </div>
       )}
+      {classConfigError && (
+        <div
+          role="status"
+          style={{
+            background: 'rgba(35, 12, 22, 0.96)', border: '1px solid #ef7668', borderRadius: 7,
+            padding: '10px 18px', color: '#ffd7dc', fontFamily: 'monospace', fontSize: 13,
+            maxWidth: 'min(520px, 88vw)', boxShadow: '0 2px 16px rgba(0,0,0,0.7)',
+          }}
+        >
+          {classConfigError.map((reason, index) => (
+            <div key={index}>
+              <span style={{ color: '#ef7668', marginRight: 8 }}>!</span>{reason}
+            </div>
+          ))}
+        </div>
+      )}
       {combatError && (
         <div className="combat-control-feedback" role="status">
           <span aria-hidden="true">!</span>{combatError}
@@ -138,6 +165,7 @@ export function RecipeToastLayer() {
           <span>{t.name} unlocked</span>
         </div>
       ))}
+      <ClassUnlockToasts />
     </div>
   );
 }

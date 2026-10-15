@@ -254,6 +254,21 @@ export function classPathEmblemIconSource(nodeId: string): AssetIconSource {
   return source('paths', nodeId, 'class-path-crests-v1');
 }
 
+/** A class piece (technique, response, payoff, clip, threshold, summon). */
+export function classPieceIconSource(id: string): AssetIconSource {
+  return source('class-pieces', id, 'class-pieces-v1');
+}
+
+/** A boss trophy equipped in the class relic slot. */
+export function trophyIconSource(id: string): AssetIconSource {
+  return source('trophies', id, 'trophies-v1');
+}
+
+/** A discipline crest. T2+ art may be missing; GameIcon falls back. */
+export function disciplineIconSource(id: string): AssetIconSource {
+  return source('disciplines', id, 'disciplines-v1');
+}
+
 export function conceptAbilityIconSource(id: string): AssetIconSource | null {
   const iconId = ABILITY_ICON_ALIASES[id] ?? id;
   return ABILITY_IDS.has(iconId) ? source('abilities', iconId) : null;

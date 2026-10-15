@@ -2,6 +2,9 @@ import { BehaviorPanel } from './BehaviorPanel';
 import { useEffect, useMemo, useState, useRef, type ReactNode } from 'react';
 import { useAtom, useAtomValue, useSetAtom } from 'jotai';
 import { hudBus } from '../hudBus';
+import { ClassPanel } from '../ui/class/ClassPanel';
+import { useClassScreen } from '../ui/class/useClassScreen';
+import { classEmblemIconSource } from '../ui/conceptIcons';
 import { SkillTreePanel } from '../ui/SkillTreePanel';
 import { BuildPanel } from '../ui/BuildPanel';
 import { MasteryPanel } from '../ui/MasteryPanel';
@@ -66,6 +69,7 @@ type MobileView =
   | 'quests'
   | 'build'
   | 'mastery'
+  | 'class'
   | 'more'
   | null;
 
@@ -78,6 +82,7 @@ interface MoreEntry {
   fallback: ReactNode;
   unlockSystem?: UiUnlockSystem;
   disabled?: boolean;
+  badge?: boolean;
   onSelect: () => void;
 }
 
@@ -115,6 +120,7 @@ function MobileHUDContent() {
   const makeEntries = useMakeEntries();
   const eligibleRecipeKeys = useMemo(() => eligibleMakeKeys(makeEntries), [makeEntries]);
   const playerId = useAtomValue(playerIdAtom);
+  const classScreen = useClassScreen();
   const newRecipes = useNewEntries('craft', playerId, eligibleRecipeKeys);
 
   // ── HP-bar layers (all as % of maxHp), mirroring the desktop crown ──
@@ -146,6 +152,7 @@ function MobileHUDContent() {
     if (!visibility.crafting && view === 'craft') setView(null);
     if (!visibility.loadout && view === 'build') setView(null);
     if (!visibility.map && view === 'map') setView(null);
+    if (!classScreen.view && view === 'class') setView(null);
   }, [
     view,
     visibility.mastery,
@@ -154,9 +161,14 @@ function MobileHUDContent() {
     visibility.crafting,
     visibility.loadout,
     visibility.map,
+    classScreen.view,
   ]);
 
   const close = () => setView(null);
+
+  useEffect(() => {
+    setView((current) => (current === 'class' ? null : current));
+  }, [playerId]);
 
   function toggle(key: Exclude<MobileView, null>) {
     if ((key === 'bag' || key === 'craft') && dead) return;
@@ -225,6 +237,7 @@ function MobileHUDContent() {
       icon: nodeIcon('☰'),
       fallback: '☰',
       label: 'More',
+      badge: classScreen.hasNew,
       unlockSystems: [
         'loadout',
         'mastery',
@@ -241,6 +254,16 @@ function MobileHUDContent() {
   ];
 
   const moreEntries: MoreEntry[] = [
+    ...(classScreen.view
+      ? [{
+        key: 'class',
+        label: classScreen.view.systemName,
+        icon: classEmblemIconSource(classScreen.view.archetype),
+        fallback: classScreen.view.systemName.charAt(0),
+        badge: classScreen.hasNew,
+        onSelect: () => setView('class'),
+      }]
+      : []),
     ...buildRows
       .filter((row) => visibility[row.gate])
       .map((row) => ({
@@ -423,7 +446,10 @@ function MobileHUDContent() {
                   fallback={entry.fallback}
                   decorative
                 />
-                <span className="mhud-more__label">{entry.label}</span>
+                <span className="mhud-more__label">
+                  {entry.label}
+                  {entry.badge && <span className="class-panel__new">NEW</span>}
+                </span>
               </button>
             ))}
           </div>
@@ -437,6 +463,7 @@ function MobileHUDContent() {
       {view === 'map'    && <MapPanel onClose={close} />}
       {view === 'build' && <BuildPanel onClose={close} />}
       {view === 'mastery' && <MasteryPanel onClose={close} />}
+      {view === 'class' && <ClassPanel onClose={close} />}
       {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} />}
       {charSelectPrompt && <CharacterSelectPrompt onCancel={() => setCharSelectPrompt(false)} />}
     </>

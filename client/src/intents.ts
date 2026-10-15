@@ -1,4 +1,4 @@
-import type { AutocombatConfig, EquipmentSlot, EquippedRule, Vec2 } from '@mmo-idle/shared';
+import type { AutocombatConfig, ClassConfig, EquipmentSlot, EquippedRule, Vec2 } from '@mmo-idle/shared';
 
 export interface IntentMap {
   toggleAuto: undefined;
@@ -17,6 +17,8 @@ export interface IntentMap {
   equipItem: string;
   unequipItem: EquipmentSlot;
   craftRecipe: string;
+  /** The class screen's one intent: the whole setup, auto or custom. */
+  setClassConfig: ClassConfig;
   navigateTo: { path: string[] };
   goToTestRoom: undefined;
   teleportToNode: string;

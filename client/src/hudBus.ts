@@ -1,4 +1,4 @@
-import type { AutocombatConfig, EquipmentSlot, EquippedRule, Vec2 } from '@mmo-idle/shared';
+import type { AutocombatConfig, ClassConfig, EquipmentSlot, EquippedRule, Vec2 } from '@mmo-idle/shared';
 import { intents } from './intents';
 
 type RecipeUnlockListener = (name: string, biomeGroup: string) => void;
@@ -69,6 +69,11 @@ export const hudBus = {
   /** Called by CraftingPanel — GameScene picks this up and emits the socket event. */
   requestCraftRecipe(recipeId: string): void {
     intents.emit('craftRecipe', recipeId);
+  },
+
+  /** Called by the class screen — the server answers with `class:configResult`. */
+  requestSetClassConfig(config: ClassConfig): void {
+    intents.emit('setClassConfig', config);
   },
 
   /** Navigate the player to a node via BFS auto-path. `path` is the sequence of

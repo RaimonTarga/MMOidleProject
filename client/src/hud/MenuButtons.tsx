@@ -5,6 +5,9 @@ import { useAtom, useAtomValue } from "jotai";
 import { TUTORIAL_ANCHORS } from "@mmo-idle/shared";
 import { GameIcon, type IconSource } from "../ui/GameIcon";
 import { hudBus } from "../hudBus";
+import { ClassPanel } from "../ui/class/ClassPanel";
+import { useClassScreen } from "../ui/class/useClassScreen";
+import { classEmblemIconSource } from "../ui/conceptIcons";
 import { SkillTreePanel } from "../ui/SkillTreePanel";
 import { BuildPanel } from "../ui/BuildPanel";
 import { buildSectionIconSource, menuIconSource, statIconSource } from "../ui/systemIcons";
@@ -34,6 +37,7 @@ import {
 } from "../input/overlayStack";
 import {
   buildPanelTabAtom,
+  classOpenAtom,
   essencesAtom,
   passivesAtom,
   unlockedRecipesAtom,
@@ -154,6 +158,8 @@ export function RightSidebar() {
   const [mapOpen, setMapOpen] = useAtom(mapOpenAtom);
   const [mapHighlightNodes, setMapHighlightNodes] = useAtom(mapHighlightNodesAtom);
   const [settingsOpen, setSettingsOpen] = useAtom(settingsOpenAtom);
+  const [classOpen, setClassOpen] = useAtom(classOpenAtom);
+  const classScreen = useClassScreen();
   const skillPoints = useAtomValue(skillPointsAtom);
   const globalMastery = useAtomValue(globalMasteryAtom);
   const showMastery = masteryIsVisible(globalMastery);
@@ -176,6 +182,14 @@ export function RightSidebar() {
   useEffect(() => {
     if (!showMastery && masteryOpen) setMasteryOpen(false);
   }, [masteryOpen, setMasteryOpen, showMastery]);
+
+  useEffect(() => {
+    if (!classScreen.view && classOpen) setClassOpen(false);
+  }, [classOpen, classScreen.view, setClassOpen]);
+
+  useEffect(() => {
+    setClassOpen(false);
+  }, [playerId, setClassOpen]);
 
   // A tablet rotating across the breakpoint unmounts this rail. Clear the
   // desktop dialog atoms so the state cannot describe an overlay that nothing
@@ -222,6 +236,16 @@ export function RightSidebar() {
       <BehaviorPanel />
 
       <nav className="right-system-nav" aria-label="Character systems">
+        {classScreen.view && (
+          <RightNavButton
+            label={classScreen.view.systemName}
+            icon={classEmblemIconSource(classScreen.view.archetype)}
+            selected={classOpen}
+            badge={classScreen.hasNew}
+            badgeCount={classScreen.newCount}
+            onClick={() => togglePrimaryOverlay("class")}
+          />
+        )}
         {visibility.passiveTree && (
           <RightNavButton
             label="Passive Tree"
@@ -318,6 +342,7 @@ export function RightSidebar() {
       <AudioPanel />
       <ChangelogPanel />
 
+      {classOpen && <ClassPanel onClose={() => setClassOpen(false)} />}
       {treeOpen && <SkillTreePanel onClose={() => setTreeOpen(false)} />}
       {buildOpen && <BuildPanel onClose={() => setBuildOpen(false)} />}
       {masteryOpen && <MasteryPanel onClose={() => setMasteryOpen(false)} />}

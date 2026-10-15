@@ -1,6 +1,7 @@
 import { getDefaultStore } from 'jotai';
 import {
   buildPanelTabAtom,
+  classOpenAtom,
   craftTabAtom,
   debugPanelOpenAtom,
   inventoryOpenAtom,
@@ -24,7 +25,8 @@ export type PrimaryOverlay =
   | 'stats'
   | 'map'
   | 'quests'
-  | 'settings';
+  | 'settings'
+  | 'class';
 
 function primaryOverlayIsOpen(overlay: PrimaryOverlay): boolean {
   const store = getDefaultStore();
@@ -38,6 +40,7 @@ function primaryOverlayIsOpen(overlay: PrimaryOverlay): boolean {
     case 'map': return store.get(mapOpenAtom);
     case 'quests': return store.get(questOpenAtom);
     case 'settings': return store.get(settingsOpenAtom);
+    case 'class': return store.get(classOpenAtom);
   }
 }
 
@@ -52,6 +55,7 @@ export function closePrimaryOverlays(): void {
   store.set(mapOpenAtom, false);
   store.set(questOpenAtom, false);
   store.set(settingsOpenAtom, false);
+  store.set(classOpenAtom, false);
 }
 
 /** Primary dialogs are mutually exclusive. Secondary overlays remain independent. */
@@ -68,6 +72,7 @@ export function openPrimaryOverlay(overlay: PrimaryOverlay): void {
     case 'map': store.set(mapOpenAtom, true); break;
     case 'quests': store.set(questOpenAtom, true); break;
     case 'settings': store.set(settingsOpenAtom, true); break;
+    case 'class': store.set(classOpenAtom, true); break;
   }
 }
 
@@ -135,6 +140,10 @@ export function closeTopmostOverlay(): void {
   }
   if (store.get(skillTreeOpenAtom)) {
     store.set(skillTreeOpenAtom, false);
+    return;
+  }
+  if (store.get(classOpenAtom)) {
+    store.set(classOpenAtom, false);
     return;
   }
   if (store.get(debugPanelOpenAtom)) {
