@@ -5,7 +5,7 @@
  * floor decide when a spend fires. The relic's twist, the weapon's shape and the gear lines bend
  * it; at T2 the discipline reshapes the storm itself (Overflow's brim, Tide's ebb and surge,
  * Reservoir's deep bank); at T3 the specialization bends that shape (spiritT3.ts holds what its lessons do in
- * the world). Wiring only: every number is a kit `params` placeholder or a constant below.
+ * the world); at T4 the leaves turn what empties the storm (spiritT4.ts holds the T4 lessons). Wiring only: every number is a kit `params` placeholder or a constant below.
  *
  * `usesEnergy.energy` is the storm in HP-like units and `energyMax` its size: `pips` (the class
  * budget) times `STORM_PIP` times the tier scale. Gear never grows the pool (bible §11.2).
@@ -31,9 +31,11 @@ import type { World } from '../../../../world/World';
 import { isPlayerInCombat } from '../../../combat/ai/engagement';
 import { applyPlayerAoeTo, playerAoeTargets } from '../../../combat/damage/aoeDamage';
 import { registerCombatListener, attackNow } from '../../../combat/engine/combatPipeline';
-import { conditionsHold, momentActive } from '../../../combat/moments/moments';
+import { conditionsHold, momentActive, momentTick } from '../../../combat/moments/moments';
 import { cleansePlayerAfflictions } from '../../../combat/status/cleanse';
+import { monsterIgnoresControl } from '../../../combat/status/controlImmunity';
 import { applyStun } from '../../../combat/status/stun';
+import { repositionPlayer } from '../../../combat/damage/knockback';
 import { applyHealToPlayer } from '../../../defense/regen/healing';
 import { classConfigContextOf } from '../../../player/progression/classConfig';
 import {
@@ -43,6 +45,10 @@ import {
   chillOf, fireDownburst, fireFoehn, fireTailwind, forkTargets, heatOf, isFireHit, isShelledTarget, pyroBurst, slowChillBuild,
   startGlaze, stormdancerBlink, tickGlaze,
 } from './spiritT3';
+import {
+  debuffCountOf, fireGroundCharge, fireMaelstrom, hastenDebuffs, newRisenNear, startThunderstorm, strayTarget, thunderstormCount,
+  tickGroundCharge, tickThunderstorm,
+} from './spiritT4';
 
 /** One pip of the storm at T1, in HP-like units. PLACEHOLDER. */
 const STORM_PIP = 12;
@@ -118,6 +124,11 @@ const TIDE_COUNT = 'spirit.tideCount';
 const TIDE_HIGH = 'spirit.tideHigh';
 const SURGE_SPENT = 'spirit.surgeSpent';
 const HELD_SINCE = 'spirit.heldSince';
+const SHUNT_AT = 'spirit.shuntAt';
+const WADE_AT = 'spirit.wadeAt';
+const TURN_UNTIL = 'spirit.turnUntil';
+const DEPTH_ARMED = 'spirit.depthArmed';
+const DEPTH_TICK = 'spirit.depthTick';
 
 const PIECES = new Map<string, SpiritPiece>(SPIRIT_KIT.pieces.map((piece) => [piece.id, piece]));
 const TROPHIES = new Map<string, SpiritTrophy>(SPIRIT_KIT.trophies.map((trophy) => [trophy.id, trophy]));
@@ -134,8 +145,16 @@ export interface Thresholds {
   discipline: string | null;
   /** The T3 specialization, once picked (an unlocked Passive Tree node of the discipline). */
   spec: string | null;
+  /** The T4 leaves picked (unlocked Passive Tree nodes of the discipline). */
+  leaves: ReadonlySet<string>;
   pips: number;
 }
+
+/** The leaves' ids, with the discipline each belongs to. */
+const LEAF_DISCIPLINE = new Map<string, string>(SPIRIT_KIT.leaves.map((leaf) => [leaf.id, leaf.disciplineId]));
+const LEAF_PARAMS = new Map<string, Readonly<Record<string, number>>>(SPIRIT_KIT.leaves.map((leaf) => [leaf.id, leaf.params]));
+/** A leaf's number; the leaf's id and the key are the kit's. */
+const leafParam = (leaf: string, key: string, fallback: number): number => LEAF_PARAMS.get(leaf)?.[key] ?? fallback;
 
 const SPEC_DISCIPLINE = new Map<string, string>(SPIRIT_KIT.specializations.map((spec) => [spec.id, spec.disciplineId]));
 
@@ -159,6 +178,7 @@ export function thresholdsOf(world: World, player: PlayerEntity): Thresholds | n
         trophyRank: relic ? (ctx.trophyRanks.get(relic) ?? 1) : 0,
         discipline: ctx.disciplineId,
         spec: player.usesSkills.unlockedSkills.find((id) => ctx.disciplineId !== null && SPEC_DISCIPLINE.get(id) === ctx.disciplineId) ?? null,
+        leaves: new Set(player.usesSkills.unlockedSkills.filter((id) => ctx.disciplineId !== null && LEAF_DISCIPLINE.get(id) === ctx.disciplineId)),
         pips: ctx.budget,
       };
     }
@@ -206,7 +226,21 @@ export function drainStorm(
   const energy = player.usesEnergy;
   if (!t || !energy || energy.energy <= 0 || damage <= 0) return { damage, absorbed: 0 };
   const passives = player.usesSkills.passives;
+  const cs = player.tracksCombat;
   const floorAbs = (t.config.floorPct / 100) * energy.energyMax;
+  // Shunt: once every few seconds, a hit worth over a quarter of your storm goes into the spill instead.
+  const shuntAt = world.tickCounter * 100;
+  if (kind === 'hit' && t.leaves.has('spirit-shunt') && t.discipline === 'spirit-overflow' && shuntAt >= getResource(cs, SHUNT_AT)
+    && damage > energy.energy * leafParam('spirit-shunt', 'share', 0.25)) {
+    setResource(cs, SHUNT_AT, shuntAt + leafParam('spirit-shunt', 'everyMs', 5_000));
+    const arcs = spillDamage(player, damage);
+    if (arcs >= 1) spill(world, player, arcs, SPILL_RADIUS, SPILL_TARGETS);
+    return { damage: 0, absorbed: damage };
+  }
+  // Dam: while the bank is above your floor, no single hit drains more than a quarter of the bottle; the rest is lost.
+  if (kind === 'hit' && t.leaves.has('spirit-dam') && t.discipline === 'spirit-reservoir' && energy.energy > floorAbs) {
+    damage = Math.min(damage, energy.energyMax * leafParam('spirit-dam', 'share', 0.25));
+  }
   const eye = t.owned.has('spirit-eye-of-the-storm') && energy.energy <= floorAbs
     ? (PIECES.get('spirit-eye-of-the-storm')!.params['costMult'] ?? 0.5) : 1;
   const sealed = kind === 'dot' ? (passives['spirit.sealed-vessel'] ?? 0) || 1 : 1;
@@ -217,7 +251,16 @@ export function drainStorm(
   const flashSteam = kind === 'hit' && isFireHit(source) ? (passives['spirit.fire-cost'] ?? 0) || 1 : 1;
   // Slack Water: during the ebb, hits drain the storm at half cost.
   const slack = t.spec === 'spirit-slack-water' && getResource(player.tracksCombat, TIDE_SURGE) <= 0 ? SLACK_EBB_COST : 1;
-  const cost = eye * sealed * sandshroud * flashSteam * slack;
+  // Gravecloth: risen enemies' hits drain the storm at a share of cost. Deep Seal: so do all hits while you carry three debuffs.
+  const gravecloth = source?.isRaised ? (passives['spirit.risen-cost'] ?? 0) || 1 : 1;
+  const deepSeal = (passives['spirit.debuff-cost'] ?? 0) > 0 && debuffCountOf(player) >= 3 ? passives['spirit.debuff-cost']! : 1;
+  // Static Field: hits from enemies caught in your spill drain the storm less. Levee: so do hits while three or more enemies are on you.
+  const staticField = t.leaves.has('spirit-static-field') && energy.energy > energy.energyMax && !!source
+    && Math.hypot(source.hasPosition.current.x - player.hasPosition.current.x, source.hasPosition.current.y - player.hasPosition.current.y) <= SPILL_RADIUS
+    ? leafParam('spirit-static-field', 'costMult', 0.667) : 1;
+  const levee = t.leaves.has('spirit-levee') && momentActive(world, player, 'enemies-near', leafParam('spirit-levee', 'enemies', 3), 0)
+    ? leafParam('spirit-levee', 'costMult', 0.8) : 1;
+  const cost = eye * sealed * sandshroud * flashSteam * slack * gravecloth * deepSeal * staticField * levee;
   // Stormsense: an ambush cannot drain the storm below your floor.
   const stormsense = (passives['spirit.stormsense'] ?? 0) > 0 && momentActive(world, player, 'ambush', undefined, 0);
   const spendable = stormsense ? Math.max(0, energy.energy - floorAbs) : energy.energy;
@@ -256,7 +299,8 @@ function costOf(player: PlayerEntity, t: Thresholds, piece: SpiritPiece, now: nu
 
 const isArea = (piece: SpiritPiece): boolean =>
   piece.id === 'spirit-chain-lightning' || piece.id === 'spirit-thunderclap'
-  || piece.id === 'spirit-hailstorm' || piece.id === 'spirit-ball-lightning' || piece.id === 'spirit-forked-bolt';
+  || piece.id === 'spirit-hailstorm' || piece.id === 'spirit-ball-lightning' || piece.id === 'spirit-forked-bolt'
+  || piece.id === 'spirit-thunderstorm';
 
 /** Where this Spirit fights: its discipline's reach, Sirocco Staff's multiplier on top. */
 export function reachOf(player: PlayerEntity, t: Thresholds): number {
@@ -277,11 +321,22 @@ function targetOf(world: World, player: PlayerEntity, t: Thresholds): MonsterEnt
 const thunderheadFull = (t: Thresholds, energy: { energy: number; energyMax: number }): boolean =>
   t.trophy?.id === 'spirit-relic-mountain' && energy.energy >= energy.energyMax * (t.trophyRank >= 3 ? 0.8 : 0.98);
 
-function strikeDamage(player: PlayerEntity, t: Thresholds, piece: SpiritPiece, target: MonsterEntity, now: number, multOverride?: number): number {
+function strikeDamage(world: World, player: PlayerEntity, t: Thresholds, piece: SpiritPiece, target: MonsterEntity, now: number, multOverride?: number): number {
   const passives = player.usesSkills.passives;
   const energy = player.usesEnergy!;
   let damage = player.dealsDamage.attack * (multOverride ?? piece.params['mult'] ?? 1) * (passives['spirit.damage-mult'] ?? 1);
   damage *= 1 + (isArea(piece) ? (passives['spirit.area-pct'] ?? 0) : (passives['spirit.single-pct'] ?? 0));
+  // Tempest Staff: area spends hit harder for each enemy they hit.
+  if (isArea(piece) && (passives['spirit.area-count-pct'] ?? 0) > 0) {
+    damage *= 1 + (passives['spirit.area-count-pct'] ?? 0) * playerAoeTargets(world, player, target.hasPosition.current, piece.params['radius'] ?? 160).length;
+  }
+  // Abyssal Lantern: spends hit harder for each different debuff on you.
+  if ((passives['spirit.debuff-pct'] ?? 0) > 0) damage *= 1 + (passives['spirit.debuff-pct'] ?? 0) * debuffCountOf(player);
+  // Depth Charge: the first spend when the target resurfaces is doubled.
+  if (getResource(player.tracksCombat, DEPTH_ARMED) > 0) {
+    damage *= t.trophy?.id === 'spirit-relic-trench' ? (t.trophy.params['firstX'] ?? 2) : 1;
+    setResource(player.tracksCombat, DEPTH_ARMED, 0);
+  }
   // Thunderhead: a full storm makes the next spend twice as big.
   if (thunderheadFull(t, energy)) damage *= t.trophy!.params['mult'] ?? 2;
   // Running Storm: a spend whose target ran lands harder the farther it ran past your reach.
@@ -314,7 +369,10 @@ function strikeOne(world: World, player: PlayerEntity, t: Thresholds, target: Mo
   if (ignore > 0) target.mitigatesDamage.plating = plating * (1 - ignore);
   applyPlayerAoeTo(world, player, [target], damage, 'player', {}, {});
   if (ignore > 0) target.mitigatesDamage.plating = plating;
-  // Thunderhead IV (T4): that spend also staggers. Not wired at T2.
+  // Thunderhead IV: that spend also staggers.
+  if (boosted && t.trophyRank >= 4 && target.hasHealth.hp > 0 && !monsterIgnoresControl(target)) {
+    applyStun(target.tracksCombat, t.trophy!.params['staggerMs'] ?? 700, player.isPlayer.id);
+  }
 }
 
 function fire(world: World, player: PlayerEntity, t: Thresholds, piece: SpiritPiece, now: number, spent: number): boolean {
@@ -356,7 +414,7 @@ function fire(world: World, player: PlayerEntity, t: Thresholds, piece: SpiritPi
       const boosted = thunderheadFull(t, player.usesEnergy!);
       // Cloudburst: everything above the floor in one bolt, sized by what is spent (Gathering Dark: and by how long it was held).
       const perPip = piece.id === 'spirit-cloudburst' ? cloudburstMult(player, t, piece, spent, now) : undefined;
-      const damage = strikeDamage(player, t, piece, target, now, perPip);
+      const damage = strikeDamage(world, player, t, piece, target, now, perPip);
       if (piece.id === 'spirit-cloudburst' && t.spec === 'spirit-overcast') {
         // Overcast: one bolt per enemy around the target, the bank shared between them.
         const bodies = [target, ...playerAoeTargets(world, player, target.hasPosition.current, OVERCAST_RADIUS, target.isMonster.id)];
@@ -377,6 +435,11 @@ function fire(world: World, player: PlayerEntity, t: Thresholds, piece: SpiritPi
         const forks = forkTargets(world, player, target, piece.params['radius'] ?? 260, (piece.params['forks'] ?? 2) + (passives['spirit.area-extra'] ?? 0));
         if (forks.length > 0) applyPlayerAoeTo(world, player, forks, damage * (piece.params['leapPct'] ?? 0.6), 'player', {}, {});
       }
+      // Ash Lightning II: it also strikes the enemies around the target.
+      if (piece.id === 'spirit-ash-lightning' && rank >= 2) {
+        const around = playerAoeTargets(world, player, at, piece.params['splashRadius'] ?? 160, target.isMonster.id);
+        if (around.length > 0) applyPlayerAoeTo(world, player, around, damage * (piece.params['splashPct'] ?? 0.5), 'player', {}, {});
+      }
       if (piece.id === 'spirit-chain-lightning') nearest((piece.params['leaps'] ?? 3) + (passives['spirit.area-extra'] ?? 0), piece.params['leapPct'] ?? 0.6);
       // Crosswind: every spend also strikes the enemies nearest its target, weaker (rank II: one more).
       if (t.trophy?.id === 'spirit-relic-plains') nearest((t.trophy.params['extra'] ?? 2) + (t.trophyRank >= 2 ? (t.trophy.params['rank2Extra'] ?? 1) : 0), t.trophy.params['pct'] ?? 0.4);
@@ -396,19 +459,33 @@ function fire(world: World, player: PlayerEntity, t: Thresholds, piece: SpiritPi
     }
     case 'spirit-hailstorm': {
       if (!target) return false;
-      startHail(player, target.hasPosition.current, strikeDamage(player, t, piece, target, now), piece.params, now);
+      startHail(player, target.hasPosition.current, strikeDamage(world, player, t, piece, target, now), piece.params, now);
+      return true;
+    }
+    // Sleet: a narrow sheet on one target that breaks shells three times as fast (a Hailstorm with a thin footprint).
+    case 'spirit-sleet': {
+      if (!target) return false;
+      startHail(player, target.hasPosition.current, strikeDamage(world, player, t, piece, target, now), piece.params, now);
+      return true;
+    }
+    case 'spirit-thunderstorm': {
+      if (!target) return false;
+      startThunderstorm(player, strikeDamage(world, player, t, piece, target, now), piece.params, now);
       return true;
     }
     case 'spirit-ball-lightning': {
       if (!target) return false;
-      startOrb(player, target.hasPosition.current, strikeDamage(player, t, piece, target, now), piece.params, now);
+      startOrb(player, target.hasPosition.current, strikeDamage(world, player, t, piece, target, now), piece.params, now);
       return true;
     }
-    case 'spirit-gale': return fireGale(world, player, piece.params);
+    case 'spirit-gale':
+    case 'spirit-dust-wall': return fireGale(world, player, piece.params);
+    case 'spirit-ground-charge': return fireGroundCharge(player, piece.params, now);
+    case 'spirit-maelstrom': return fireMaelstrom(world, player, piece.params, now);
     case 'spirit-flare': return fireFlare(world, player, piece.params);
     case 'spirit-dust-devil': return fireDustDevil(world, player, piece.params, rank, now);
     case 'spirit-updraft': return fireUpdraft(world, player, piece.params, rank, now);
-    case 'spirit-downburst': return fireDownburst(world, player, piece.params);
+    case 'spirit-downburst': return fireDownburst(world, player, piece.params, rank);
     case 'spirit-tailwind': return fireTailwind(world, player, piece.params);
     case 'spirit-foehn': return fireFoehn(player, piece.params);
     default:
@@ -467,19 +544,32 @@ export function updateSpirit(world: World, player: PlayerEntity, dt: number, now
   // Things already in flight (Hailstorm's hail, Ball Lightning's orb) and the Sandstorm ring.
   tickLingering(world, player, dt, now);
   tickGlaze(world, player, now);
+  tickGroundCharge(world, player, now);
+  if (thunderstormCount(player) > 0) tickThunderstorm(world, player, now);
+  // Burn Off: while you overflow, poisons and bleeds on you end faster. Calm Depths: while the bank is full, debuffs last half as long.
+  if (t.leaves.has('spirit-burn-off') && overflow && energy.energy > max) hastenDebuffs(player, dt, leafParam('spirit-burn-off', 'decayX', 2), true);
+  if (t.leaves.has('spirit-calm-depths') && energy.energy >= max * 0.98) hastenDebuffs(player, dt, leafParam('spirit-calm-depths', 'decayX', 2), false);
+  // Depth Charge: the first spend after the target resurfaces is doubled (armed once per resurfacing).
+  if (t.trophy?.id === 'spirit-relic-trench') {
+    const surfaced = momentTick(player, 'target-resurfaces');
+    if (surfaced !== undefined && momentActive(world, player, 'target-resurfaces', undefined, now) && surfaced + 1 > getResource(cs, DEPTH_TICK)) {
+      setResource(cs, DEPTH_TICK, surfaced + 1);
+      setResource(cs, DEPTH_ARMED, 1);
+    }
+  }
   // Insulated: the Chill builds slower while the storm is above the floor.
   slowChillBuild(player, passives['spirit.chill-build'] ?? 0, energy.energy > floorAbs);
   // Pyrocumulus: a full storm boils over; while you stay full, a burst strikes around you every few seconds.
   if (t.trophy?.id === 'spirit-relic-volcanic' && energy.energy >= max * 0.98 && now >= getResource(cs, PYRO_AT)) {
     const p = t.trophy.params;
-    if (pyroBurst(world, player, Math.round(player.dealsDamage.attack * (p['mult'] ?? 1.5) * (passives['spirit.damage-mult'] ?? 1)), p['radius'] ?? 160)) {
+    if (pyroBurst(world, player, Math.round(player.dealsDamage.attack * (p['mult'] ?? 1.5) * (t.trophyRank >= 2 ? (p['rank2MultX'] ?? 1.5) : 1) * (passives['spirit.damage-mult'] ?? 1)), p['radius'] ?? 160)) {
       setResource(cs, PYRO_AT, now + (p['everyMs'] ?? 3000));
     }
   }
   if (t.trophy?.id === 'spirit-relic-desert' && energy.energy > floorAbs && now >= getResource(cs, SAND_RING_AT)) {
     setResource(cs, SAND_RING_AT, now + SAND_RING_EVERY_MS);
     const p = t.trophy.params;
-    sandRing(world, player, (p['radius'] ?? 180) * (t.trophyRank >= 2 ? (p['rank2RadiusX'] ?? 1.4) : 1), p['slowPct'] ?? 0.3);
+    sandRing(world, player, (p['radius'] ?? 180) * (t.trophyRank >= 2 ? (p['rank2RadiusX'] ?? 1.4) : 1), (p['slowPct'] ?? 0.3) * (t.trophyRank >= 3 ? (p['rank3SlowX'] ?? 1.5) : 1));
   }
 
   // The flow is constant: taking damage never pauses it. Out of combat it gathers faster (Still Air).
@@ -494,6 +584,16 @@ export function updateSpirit(world: World, player: PlayerEntity, dt: number, now
   // Aurora: while you are chilled, the storm gathers faster. Thermal: each step of the Heat adds a little.
   if ((passives['spirit.chill-flow-pct'] ?? 0) > 0 && chillOf(player) > 0) flow *= 1 + (passives['spirit.chill-flow-pct'] ?? 0);
   if ((passives['spirit.heat-flow-pct'] ?? 0) > 0) flow *= 1 + (passives['spirit.heat-flow-pct'] ?? 0) * heatOf(player);
+  // Abyssal Calm: each debuff on you makes the storm gather a little faster.
+  if ((passives['spirit.debuff-flow-pct'] ?? 0) > 0) flow *= 1 + (passives['spirit.debuff-flow-pct'] ?? 0) * debuffCountOf(player);
+  // Depth Charge: while your target is out of reach, the storm gathers faster.
+  if (t.trophy?.id === 'spirit-relic-trench' && momentActive(world, player, 'target-out-of-reach', undefined, now)) flow *= t.trophy.params['gatherX'] ?? 2;
+  // Turn of the Tide: after the turn, the storm gathers fast for a while.
+  if (getResource(cs, TURN_UNTIL) > now) flow *= leafParam('spirit-turn-of-the-tide', 'flowX', 2);
+  // Wake: each enemy that rises near you makes the storm gather a burst.
+  const wake = passives['spirit.risen-burst'] ?? 0;
+  const risen = wake > 0 ? newRisenNear(world, player, 600) : 0;
+  if (risen > 0) energy.energy = Math.min(cap, energy.energy + max * wake * risen);
   // Tide: the flow runs fast in the ebb and stops in the surge (you cannot gather while you break).
   let surging = tide && getResource(cs, TIDE_SURGE) > 0;
   if (tide) flow = surging ? 0 : flow * TIDE_EBB_FLOW_X;
@@ -540,6 +640,8 @@ export function updateSpirit(world: World, player: PlayerEntity, dt: number, now
       surging = true;
       setResource(cs, TIDE_SURGE, 1);
       setResource(cs, SURGE_SPENT, 0);
+      // Cleansing Tide: every turn of the tide washes a debuff off you.
+      if (t.leaves.has('spirit-cleansing-tide')) cleansePlayerAfflictions(player, 1, leafParam('spirit-cleansing-tide', 'debuffs', 1));
       // Storm Surge: the surge opens with a wave through the enemies in front of you.
       const wave = PIECES.get('spirit-storm-surge');
       if (wave && t.owned.has(wave.id)) {
@@ -550,6 +652,11 @@ export function updateSpirit(world: World, player: PlayerEntity, dt: number, now
       endSurge(world, player, t);
     }
     publishTide(world, player, tide, surging);
+    // Wading: enemies that follow you through the ebb are slowed.
+    if (!surging && t.leaves.has('spirit-wading') && now >= getResource(cs, WADE_AT)) {
+      setResource(cs, WADE_AT, now + SAND_RING_EVERY_MS);
+      sandRing(world, player, leafParam('spirit-wading', 'radius', 220), leafParam('spirit-wading', 'slowPct', 0.3));
+    }
     // In the ebb you cannot spend.
     if (!surging) return;
   }
@@ -609,6 +716,7 @@ function endSurge(world: World, player: PlayerEntity, t: Thresholds): void {
   setResource(cs, TIDE_SURGE, 0);
   const count = getResource(cs, TIDE_COUNT) + 1;
   setResource(cs, TIDE_COUNT, count);
+  if (t.leaves.has('spirit-cleansing-tide')) cleansePlayerAfflictions(player, 1, leafParam('spirit-cleansing-tide', 'debuffs', 1));
   setResource(cs, TIDE_HIGH, t.spec === 'spirit-spring-tide' && (count + 1) % SPRING_EVERY === 0 ? 1 : 0);
   if (t.spec === 'spirit-breakwater') {
     const pips = getResource(cs, SURGE_SPENT) / (STORM_PIP * tierScale(player));
@@ -632,7 +740,16 @@ function commit(world: World, player: PlayerEntity, t: Thresholds, piece: Spirit
     if (damage >= 1) applyPlayerAoeTo(world, player, [target], damage, 'player', {}, {});
   }
   // Ice Storm: every spend glazes the ground under its target.
-  if (t.trophy?.id === 'spirit-relic-tundra' && target) startGlaze(player, target.hasPosition.current, t.trophy.params, now);
+  // Ice Storm II: the glaze slows harder.
+  if (t.trophy?.id === 'spirit-relic-tundra' && target) {
+    const p = t.trophy.params;
+    startGlaze(player, target.hasPosition.current, t.trophyRank >= 2 ? { ...p, slowPct: (p['slowPct'] ?? 0.3) * (p['rank2SlowX'] ?? 1.5) } : p, now);
+  }
+  // Stray Bolts: every spend also strikes a random enemy elsewhere in the fight.
+  if (t.trophy?.id === 'spirit-relic-graveyard' && piece.family !== 'calm') {
+    const stray = strayTarget(world, player, t.trophy.params['reach'] ?? 700, target?.isMonster.id);
+    if (stray) applyPlayerAoeTo(world, player, [stray], Math.max(1, Math.round(player.dealsDamage.attack * (t.trophy.params['pct'] ?? 0.5) * (player.usesSkills.passives['spirit.damage-mult'] ?? 1))), 'player', {}, {});
+  }
   if (t.discipline === 'spirit-tide' && getResource(cs, TIDE_SURGE) > 0) setResource(cs, SURGE_SPENT, getResource(cs, SURGE_SPENT) + cost);
   energy.energy -= cost;
   // Squall II: count the spends in a row.
@@ -682,14 +799,24 @@ export function registerSpirit(): void {
   // Afterstorm: after a hit over a quarter of your HP, the storm gathers faster for a few seconds.
   // Monsoon: the same after an ambush hits you.
   registerCombatListener('afterHit', (ctx, world) => {
-    if (ctx.attackerType !== 'monster' || ctx.defenderType !== 'player' || ctx.damage <= 0) return;
+    if (ctx.attackerType !== 'monster' || ctx.defenderType !== 'player' || ctx.damage + Number(ctx.metadata['absorbed'] ?? 0) <= 0) return;
     const player = ctx.defender as PlayerEntity;
     const passives = player.usesSkills.passives;
     if ((passives['spirit.afterstorm-x'] ?? 0) > 1 && ctx.damage >= player.hasHealth.maxHp * BIG_HIT_SHARE) {
       setResource(player.tracksCombat, AFTERSTORM_UNTIL, attackNow(ctx) + AFTERSTORM_MS);
     }
-    if ((passives['spirit.monsoon-x'] ?? 0) > 1 && momentActive(world, player, 'ambush', undefined, 0)) {
+    if (ctx.damage > 0 && (passives['spirit.monsoon-x'] ?? 0) > 1 && momentActive(world, player, 'ambush', undefined, 0)) {
       setResource(player.tracksCombat, MONSOON_UNTIL, attackNow(ctx) + MONSOON_MS);
+    }
+    // Turn of the Tide: a hit over a quarter of your health during a surge turns the tide at once: you ebb, pull back and gather fast.
+    const t = thresholdsOf(world, player);
+    if (t?.leaves.has('spirit-turn-of-the-tide') && t.discipline === 'spirit-tide' && getResource(player.tracksCombat, TIDE_SURGE) > 0
+      && ctx.damage + Number(ctx.metadata['absorbed'] ?? 0) >= player.hasHealth.maxHp * leafParam('spirit-turn-of-the-tide', 'hpShare', 0.25)) {
+      endSurge(world, player, t);
+      setResource(player.tracksCombat, TURN_UNTIL, attackNow(ctx) + leafParam('spirit-turn-of-the-tide', 'flowMs', 4_000));
+      const near = aliveNear(world, player, 400).sort((a, b) => Math.hypot(a.hasPosition.current.x - player.hasPosition.current.x, a.hasPosition.current.y - player.hasPosition.current.y)
+        - Math.hypot(b.hasPosition.current.x - player.hasPosition.current.x, b.hasPosition.current.y - player.hasPosition.current.y))[0];
+      if (near) repositionPlayer(world, player, near.hasPosition.current, leafParam('spirit-turn-of-the-tide', 'distance', 160), false);
     }
   });
 }

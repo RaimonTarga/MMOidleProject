@@ -193,6 +193,13 @@ export const DEFENSE_KEYS = [
   'spirit.chill-flow-pct',  // Aurora: while chilled, the storm gathers this much faster
   'spirit.fire-cost',  // Flash Steam: fire hits drain the storm at this share of cost
   'spirit.heat-flow-pct',  // Thermal: each step of the Heat makes the storm gather this much faster
+  // Spirit T4 gear (class-first build plan T4-SPIRIT)
+  'spirit.area-count-pct',  // Tempest Staff: area spends hit this much harder for each enemy they hit
+  'spirit.risen-cost',  // Gravecloth: hits from risen enemies drain the storm at this share of cost
+  'spirit.risen-burst',  // Wake: each enemy that rises near you adds this share of the bottle to the storm
+  'spirit.debuff-pct',  // Abyssal Lantern: spends hit this much harder for each different debuff on you
+  'spirit.debuff-cost',  // Deep Seal: with three or more debuffs on you, hits drain the storm at this share of cost
+  'spirit.debuff-flow-pct',  // Abyssal Calm: each debuff on you makes the storm gather this much faster
   'apprentice.branching',  // Branching Wand: each hit also lays a sigil on the nearest other enemy
   'apprentice.tick-speed',  // Thornwood Rod: sigils tick this many times as fast, for the inverse as long
   'apprentice.linger',  // Bog Censer: sigils last this many times as long

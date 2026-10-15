@@ -12,6 +12,7 @@ import { stopEntity } from '../../../world/movement';
 import { findTelegraphEscapeDestination, telegraphsContainingPlayer } from '../../../combat/ai/telegraphEvasion';
 import { applyPlayerAoeTo, playerAoeTargets } from '../../../combat/damage/aoeDamage';
 import { applyKnockback } from '../../../combat/damage/knockback';
+import { isShelledTarget } from './spiritT3';
 import { monsterIgnoresControl } from '../../../combat/status/controlImmunity';
 import { applyMonsterRoot, applyMonsterSlow } from '../../../combat/status/monsterControl';
 import { applyStun } from '../../../combat/status/stun';
@@ -91,8 +92,10 @@ export function tickLingering(world: World, player: PlayerEntity, dt: number, no
     effect.nextAt = now + (effect.p['tickMs'] ?? 500);
     const victims = playerAoeTargets(world, player, effect.at, effect.p['radius'] ?? 100);
     if (effect.kind === 'hail') {
-      const shielded = victims.filter(hasBarrier);
-      const bare = victims.filter((m) => !hasBarrier(m));
+      // Sleet breaks shells (barriers, Ice Armor, shell-ups) three times as fast; Hailstorm's hailstones only barriers.
+      const breaks = effect.p['shells'] ? (m: MonsterEntity): boolean => isShelledTarget(m, now) : hasBarrier;
+      const shielded = victims.filter(breaks);
+      const bare = victims.filter((m) => !breaks(m));
       if (bare.length > 0) applyPlayerAoeTo(world, player, bare, effect.damage, 'player', {}, {});
       if (shielded.length > 0) applyPlayerAoeTo(world, player, shielded, effect.damage * (effect.p['shieldMult'] ?? 2), 'player', {}, {});
     } else if (victims.length > 0) {
@@ -104,10 +107,11 @@ export function tickLingering(world: World, player: PlayerEntity, dt: number, no
 
 // ── Squalls ───────────────────────────────────────────────────────────────────
 
-/** Gale: a gust in front of you blows enemies back; a charge caught in it stops dead. */
+/** Gale: a gust in front of you blows enemies back; a charge caught in it stops dead. Dust Wall (`allSides`) rolls out in every direction. */
 export function fireGale(world: World, player: PlayerEntity, p: Params): boolean {
   const at = player.hasPosition.current;
   const radius = p['radius'] ?? 200;
+  const allSides = (p['allSides'] ?? 0) > 0;
   const facing = facingOf(world, player, radius);
   if (!facing) return false;
   const fx = facing.hasPosition.current.x - at.x;
@@ -116,7 +120,7 @@ export function fireGale(world: World, player: PlayerEntity, p: Params): boolean
   for (const monster of playerAoeTargets(world, player, at, radius)) {
     if (monster.isRooted || monster.isMonster.isBoss || monsterIgnoresControl(monster)) continue;
     const to = monster.hasPosition.current;
-    if ((to.x - at.x) * fx + (to.y - at.y) * fy <= 0) continue; // behind you
+    if (!allSides && (to.x - at.x) * fx + (to.y - at.y) * fy <= 0) continue; // behind you
     const charging = (monster.controlsMonster?.chargeRemainingMs ?? 0) > 0;
     if (charging) {
       monster.controlsMonster.chargeRemainingMs = 0;

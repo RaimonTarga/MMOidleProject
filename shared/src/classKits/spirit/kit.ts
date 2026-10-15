@@ -57,8 +57,8 @@ function spiritSpecialization(entry: Omit<SpecializationDef, 'classId' | 'params
   return { classId: 'energy', params: {}, ...entry };
 }
 
-function spiritLeaf(entry: Omit<LeafDef, 'classId' | 'params' | 'tier'>): LeafDef {
-  return { classId: 'energy', params: {}, tier: 4, ...entry };
+function spiritLeaf(entry: Omit<LeafDef, 'classId' | 'params' | 'tier'> & { params?: LeafDef['params'] }): LeafDef {
+  return { classId: 'energy', tier: 4, ...entry, params: entry.params ?? {} };
 }
 
 const PIECES: readonly SpiritPiece[] = [
@@ -176,7 +176,7 @@ const PIECES: readonly SpiritPiece[] = [
   // ── T3 (§11.16) ──
   spiritPiece({
     id: 'spirit-downburst',
-    params: { costPips: 0.75, pinMs: 1200 },
+    params: { costPips: 0.75, pinMs: 1200, lineLength: 420, lineWidth: 70 },
     name: 'Downburst',
     family: 'squall',
     waitsFor: 'charging-at-me',
@@ -209,7 +209,7 @@ const PIECES: readonly SpiritPiece[] = [
   }),
   spiritPiece({
     id: 'spirit-ash-lightning',
-    params: { costPips: 1.5, mult: 2.2, heatPct: 0.08 },
+    params: { costPips: 1.5, mult: 2.2, heatPct: 0.08, splashRadius: 160, splashPct: 0.5 },
     name: 'Ash Lightning',
     family: 'strike',
     text: "The volcano's own lightning. It hits harder for each step of the fight's Heat.",
@@ -218,6 +218,7 @@ const PIECES: readonly SpiritPiece[] = [
   // ── T4 (§11.16) ──
   spiritPiece({
     id: 'spirit-sleet',
+    params: { costPips: 1.25, mult: 0.5, radius: 50, durationMs: 3000, tickMs: 500, shieldMult: 3, shells: 1 },
     name: 'Sleet',
     family: 'strike',
     sidegradeOf: 'spirit-hailstorm',
@@ -225,12 +226,14 @@ const PIECES: readonly SpiritPiece[] = [
   }),
   spiritPiece({
     id: 'spirit-ground-charge',
+    params: { costPips: 0.75, radius: 110, durationMs: 6000, stunMs: 1000, distance: 160 },
     name: 'Ground Charge',
     family: 'squall',
     text: 'A charged patch under you. The first enemy to leap at you is thrown back and stunned.',
   }),
   spiritPiece({
     id: 'spirit-dust-wall',
+    params: { costPips: 0.75, radius: 240, distance: 150, stunMs: 600, allSides: 1 },
     name: 'Dust Wall',
     family: 'squall',
     sidegradeOf: 'spirit-gale',
@@ -238,12 +241,14 @@ const PIECES: readonly SpiritPiece[] = [
   }),
   spiritPiece({
     id: 'spirit-thunderstorm',
+    params: { costPips: 1.5, mult: 0.5, radius: 300, durationMs: 4000, tickMs: 400 },
     name: 'Thunderstorm',
     family: 'strike',
     text: 'For a few seconds, lightning strikes at random among every enemy around you.',
   }),
   spiritPiece({
     id: 'spirit-maelstrom',
+    params: { costPips: 0.75, dragGap: 90 },
     name: 'Maelstrom',
     family: 'squall',
     waitsFor: 'target-out-of-reach',
@@ -326,7 +331,7 @@ const TROPHIES: readonly SpiritTrophy[] = [
   }),
   spiritTrophy({
     id: 'spirit-relic-mountain',
-    params: { mult: 2, ignorePlating: 0.5 },
+    params: { mult: 2, ignorePlating: 0.5, staggerMs: 700 },
     lineage: 'mountain',
     name: 'Thunderhead',
     kind: 'storm',
@@ -364,7 +369,7 @@ const TROPHIES: readonly SpiritTrophy[] = [
   }),
   spiritTrophy({
     id: 'spirit-relic-desert',
-    params: { radius: 180, slowPct: 0.3, rank2RadiusX: 1.4 },
+    params: { radius: 180, slowPct: 0.3, rank2RadiusX: 1.4, rank3SlowX: 1.5 },
     lineage: 'desert',
     name: 'Sandstorm',
     kind: 'storm',
@@ -377,7 +382,7 @@ const TROPHIES: readonly SpiritTrophy[] = [
   }),
   spiritTrophy({
     id: 'spirit-relic-tundra',
-    params: { radius: 90, durationMs: 5000, slowPct: 0.3 },
+    params: { radius: 90, durationMs: 5000, slowPct: 0.3, rank2SlowX: 1.5 },
     lineage: 'tundra',
     name: 'Ice Storm',
     kind: 'spend',
@@ -389,7 +394,7 @@ const TROPHIES: readonly SpiritTrophy[] = [
   }),
   spiritTrophy({
     id: 'spirit-relic-volcanic',
-    params: { radius: 160, mult: 1.5, everyMs: 3000 },
+    params: { radius: 160, mult: 1.5, everyMs: 3000, rank2MultX: 1.5 },
     lineage: 'volcanic',
     name: 'Pyrocumulus',
     kind: 'storm',
@@ -401,6 +406,7 @@ const TROPHIES: readonly SpiritTrophy[] = [
   }),
   spiritTrophy({
     id: 'spirit-relic-graveyard',
+    params: { pct: 0.5, reach: 700 },
     lineage: 'graveyard',
     name: 'Stray Bolts',
     kind: 'spend',
@@ -409,6 +415,7 @@ const TROPHIES: readonly SpiritTrophy[] = [
   }),
   spiritTrophy({
     id: 'spirit-relic-trench',
+    params: { gatherX: 2, firstX: 2 },
     lineage: 'trench',
     name: 'Depth Charge',
     kind: 'storm',
@@ -507,6 +514,7 @@ const SPECIALIZATIONS: readonly SpecializationDef[] = [
 const LEAVES: readonly LeafDef[] = [
   spiritLeaf({
     id: 'spirit-shunt',
+    params: { everyMs: 5000, share: 0.25 },
     disciplineId: 'spirit-overflow',
     column: 'spike',
     name: 'Shunt',
@@ -514,6 +522,7 @@ const LEAVES: readonly LeafDef[] = [
   }),
   spiritLeaf({
     id: 'spirit-static-field',
+    params: { costMult: 0.667 },
     disciplineId: 'spirit-overflow',
     column: 'swarm',
     name: 'Static Field',
@@ -521,6 +530,7 @@ const LEAVES: readonly LeafDef[] = [
   }),
   spiritLeaf({
     id: 'spirit-burn-off',
+    params: { decayX: 2 },
     disciplineId: 'spirit-overflow',
     column: 'slow-drain',
     name: 'Burn Off',
@@ -528,6 +538,7 @@ const LEAVES: readonly LeafDef[] = [
   }),
   spiritLeaf({
     id: 'spirit-turn-of-the-tide',
+    params: { hpShare: 0.25, flowX: 2, flowMs: 4000, distance: 160 },
     disciplineId: 'spirit-tide',
     column: 'spike',
     name: 'Turn of the Tide',
@@ -535,6 +546,7 @@ const LEAVES: readonly LeafDef[] = [
   }),
   spiritLeaf({
     id: 'spirit-wading',
+    params: { radius: 220, slowPct: 0.3 },
     disciplineId: 'spirit-tide',
     column: 'swarm',
     name: 'Wading',
@@ -542,6 +554,7 @@ const LEAVES: readonly LeafDef[] = [
   }),
   spiritLeaf({
     id: 'spirit-cleansing-tide',
+    params: { debuffs: 1 },
     disciplineId: 'spirit-tide',
     column: 'slow-drain',
     name: 'Cleansing Tide',
@@ -549,6 +562,7 @@ const LEAVES: readonly LeafDef[] = [
   }),
   spiritLeaf({
     id: 'spirit-dam',
+    params: { share: 0.25 },
     disciplineId: 'spirit-reservoir',
     column: 'spike',
     name: 'Dam',
@@ -556,6 +570,7 @@ const LEAVES: readonly LeafDef[] = [
   }),
   spiritLeaf({
     id: 'spirit-levee',
+    params: { enemies: 3, costMult: 0.8 },
     disciplineId: 'spirit-reservoir',
     column: 'swarm',
     name: 'Levee',
@@ -563,6 +578,7 @@ const LEAVES: readonly LeafDef[] = [
   }),
   spiritLeaf({
     id: 'spirit-calm-depths',
+    params: { decayX: 2 },
     disciplineId: 'spirit-reservoir',
     column: 'slow-drain',
     name: 'Calm Depths',

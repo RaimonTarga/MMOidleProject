@@ -253,7 +253,7 @@ export const SPIRIT_GEAR: ClassGearDef = {
       cost: { purple: 270 }, stats: { attack: 258 }, attacksPerSecond: 1.10, tier: 4,
       icon: 'items/weapons/plague-axe.png',
       description: 'Area spends hit harder for each enemy they hit.',
-      mechanicEffects: {},
+      mechanicEffects: { 'spirit.area-count-pct': 0.1 },
     },
     // The Swamp's Drenching Staff moves here.
     {
@@ -270,7 +270,7 @@ export const SPIRIT_GEAR: ClassGearDef = {
       cost: { green: 270 }, stats: { attack: 257 }, attacksPerSecond: 1.15, tier: 4,
       icon: 'items/weapons/abyssal-axe.png',
       description: 'Your spends hit harder for each different debuff on you.',
-      mechanicEffects: {},
+      mechanicEffects: { 'spirit.debuff-pct': 0.1 },
     },
     // The Cave's Lodestone Orb moves here.
     {
@@ -335,10 +335,10 @@ export const SPIRIT_GEAR: ClassGearDef = {
     'tundra-charm-t4': { name: 'Aurora', text: 'While you are chilled, the storm gathers faster.', effects: { 'spirit.chill-flow-pct': 0.5 } },
     'volcanic-vest-t4': { name: 'Flash Steam', text: 'Fire damage drains the storm at half cost.', effects: { 'spirit.fire-cost': 0.5 } },
     'volcanic-charm-t4': { name: 'Thermal', text: 'Each step of the Heat makes the storm gather a little faster.', effects: { 'spirit.heat-flow-pct': 0.05 } },
-    'graveyard-vest-t4': { name: 'Gravecloth', text: 'Hits from risen enemies drain the storm at half cost.', effects: {} },
-    'graveyard-charm-t4': { name: 'Wake', text: 'Each enemy that rises near you makes the storm gather a burst.', effects: {} },
-    'trench-vest-t4': { name: 'Deep Seal', text: 'While you carry three or more debuffs, hits drain the storm a third less.', effects: {} },
-    'trench-charm-t4': { name: 'Abyssal Calm', text: 'Each debuff on you makes the storm gather a little faster.', effects: {} },
+    'graveyard-vest-t4': { name: 'Gravecloth', text: 'Hits from risen enemies drain the storm at half cost.', effects: { 'spirit.risen-cost': 0.5 } },
+    'graveyard-charm-t4': { name: 'Wake', text: 'Each enemy that rises near you makes the storm gather a burst.', effects: { 'spirit.risen-burst': 0.05 } },
+    'trench-vest-t4': { name: 'Deep Seal', text: 'While you carry three or more debuffs, hits drain the storm a third less.', effects: { 'spirit.debuff-cost': 0.667 } },
+    'trench-charm-t4': { name: 'Abyssal Calm', text: 'Each debuff on you makes the storm gather a little faster.', effects: { 'spirit.debuff-flow-pct': 0.05 } },
   },
   // Retired-biome lines on the receiving biome's second base (`<id>-b`).
   // Copied from the origin's last tier: Forest and Plains at T2, Swamp and Cave at T3.

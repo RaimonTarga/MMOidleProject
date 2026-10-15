@@ -48,8 +48,8 @@ export function isFireHit(source: MonsterEntity | undefined): boolean {
 
 // ── Lessons ───────────────────────────────────────────────────────────────────
 
-/** Downburst: a column of wind slams down on a charging enemy and pins it for a moment. */
-export function fireDownburst(world: World, player: PlayerEntity, p: Params): boolean {
+/** Downburst: a column of wind slams down on a charging enemy and pins it for a moment. Rank II pins every enemy in a line. */
+export function fireDownburst(world: World, player: PlayerEntity, p: Params, rank = 1): boolean {
   const at = player.hasPosition.current;
   let nearest: MonsterEntity | undefined;
   let near = Infinity;
@@ -62,6 +62,22 @@ export function fireDownburst(world: World, player: PlayerEntity, p: Params): bo
   if (!nearest || monsterIgnoresControl(nearest)) return false;
   nearest.controlsMonster.chargeRemainingMs = 0;
   applyStun(nearest.tracksCombat, p['pinMs'] ?? 1200, player.isPlayer.id);
+  if (rank >= 2) {
+    // Every other enemy along the line from you through the charger, out to the column's length.
+    const to = nearest.hasPosition.current;
+    const length = p['lineLength'] ?? 420;
+    const ux = (to.x - at.x) / Math.max(1, near);
+    const uy = (to.y - at.y) / Math.max(1, near);
+    for (const other of playerAoeTargets(world, player, at, length, nearest.isMonster.id)) {
+      const ox = other.hasPosition.current.x - at.x;
+      const oy = other.hasPosition.current.y - at.y;
+      const along = ox * ux + oy * uy;
+      if (along <= 0 || along > length || Math.abs(ox * uy - oy * ux) > (p['lineWidth'] ?? 70)) continue;
+      if (monsterIgnoresControl(other)) continue;
+      if (other.controlsMonster) other.controlsMonster.chargeRemainingMs = 0;
+      applyStun(other.tracksCombat, p['pinMs'] ?? 1200, player.isPlayer.id);
+    }
+  }
   return true;
 }
 
