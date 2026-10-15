@@ -134,6 +134,17 @@
   margin-top: 4px;
 }
 
+.loadout-editor__discipline {
+  display: block;
+}
+
+.loadout-editor__called {
+  margin: 2px 0 0;
+  padding-left: 18px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 @media (max-width: 560px) {
   .loadout-editor__clip {
     grid-template-columns: 36px minmax(0, 1fr);

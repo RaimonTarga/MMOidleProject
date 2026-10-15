@@ -24,12 +24,13 @@ function gates(condition: Condition | TutorialCondition): (Condition | TutorialC
   return [condition];
 }
 
-/** The highest biome level the Slinger guide waits on in this zone. */
+/** The highest tier-1 biome level the Slinger guide waits on in this zone. */
 function tutorialLevel(biomeGroup: string): number {
   let level = 0;
   for (const beat of tutorialScriptFor(SLINGER_CLASS_ROOT).beats) {
     for (const step of beat.steps) {
       if (step.type !== "farm") continue;
+      if (step.at.kind === "biome" && step.at.tier !== 1) continue; // the T2 stretch is the T2 route's
       for (const gate of gates(step.until)) {
         if (gate.type === "biomeLevelAtLeast" && gate.biomeGroup === biomeGroup) {
           level = Math.max(level, gate.level);

@@ -22,6 +22,7 @@ import {
   type SlingerPiece,
   type SlingerTrophy,
 } from '@mmo-idle/shared';
+import { mutateSlice } from '../../../../ecs/dirtyHelpers';
 import type { MonsterEntity, PlayerEntity } from '../../../../ecs/entity';
 import type { World } from '../../../../world/World';
 import { isPlayerInCombat } from '../../../combat/ai/engagement';
@@ -39,7 +40,7 @@ import { classConfigContextOf } from '../../../player/progression/classConfig';
 import { applyFramePlatingShred } from '../../shared/frameLoop';
 import { applyTickDot } from '../../shared/tickDot';
 import { pickCalledTarget } from '../../slinger/calledShot';
-import { bankShell, fireShell, markShellPending, shellPending } from '../../slinger/shell';
+import { bankShell, fireShell, markShellPending, shellBank, shellPending } from '../../slinger/shell';
 import { lookoutAmbusher, revealTraced, shadeTick, traceTarget } from '../../slinger/tracer';
 import {
   CALLED_SHOT_MULT,
@@ -272,6 +273,23 @@ export function updateSlinger(world: World, player: PlayerEntity, dt: number, no
   const undergrowth = passives['slinger.undergrowth'] ?? 0;
   if (undergrowth > 0 && !isTargeted(world, player)) factor *= undergrowth;
   if (getResource(cs, SLINGER_RECOVERY_X) !== factor) setResource(cs, SLINGER_RECOVERY_X, factor);
+
+  syncDisciplineHud(world, player, discipline);
+}
+
+/**
+ * The two discipline facts the HUD cannot derive: Gunslinger's second gun and Siege's shell bank.
+ * Present on the networked slice only for that discipline, written only when they change.
+ */
+function syncDisciplineHud(world: World, player: PlayerEntity, discipline: string | null): void {
+  const reload = player.usesReload!;
+  const twin = discipline === GUNSLINGER ? getString(player.tracksCombat, TWIN_CLIP) || reload.clipId : undefined;
+  const shell = discipline === SIEGE ? Math.round(shellBank(player)) : undefined;
+  if (reload.twinClipId === twin && reload.shellBank === shell) return;
+  mutateSlice(world, player, 'usesReload', (slice) => {
+    if (twin === undefined) delete slice.twinClipId; else slice.twinClipId = twin;
+    if (shell === undefined) delete slice.shellBank; else slice.shellBank = shell;
+  });
 }
 
 // ── Rounds ───────────────────────────────────────────────────────────────────

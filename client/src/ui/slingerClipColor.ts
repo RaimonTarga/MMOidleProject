@@ -14,6 +14,18 @@ export function slingerClipName(id: string): string | null {
   return BY_ID.get(id)?.name ?? null;
 }
 
+/** The Slinger's three disciplines (bible §10.5), by the word the HUD uses. */
+export type SlingerDisciplineKind = 'gunslinger' | 'siege' | 'trickshot';
+
+export function slingerDisciplineKind(disciplineId: string | null | undefined): SlingerDisciplineKind | null {
+  switch (disciplineId) {
+    case 'slinger-gunslinger': return 'gunslinger';
+    case 'slinger-siege': return 'siege';
+    case 'slinger-trickshot': return 'trickshot';
+    default: return null;
+  }
+}
+
 /** Trophy rounds on the ring. The kit's `SLINGER_LAST_ROUND_COLOR`. */
 export const SLINGER_LAST_ROUND_CSS = SLINGER_LAST_ROUND_COLOR;
 

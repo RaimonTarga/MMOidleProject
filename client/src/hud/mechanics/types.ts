@@ -40,6 +40,15 @@ export type ReloadMechanicModel = {
   nextClipName: string | null;
   reloadRemainingMs: number;
   reloadDurationMs: number;
+  /** The Slinger's T2 discipline: twin guns, the shell, the called shot. Null without one. */
+  discipline: 'gunslinger' | 'siege' | 'trickshot' | null;
+  /** Gunslinger: the second gun's clip. The even rounds on the ring are its. */
+  twinClipColor: string | null;
+  twinClipName: string | null;
+  /** Siege: the damage banked in the shell. 0 when empty. */
+  shell: number;
+  /** Trickshot: the last round is next and will fly to the rule's pick. */
+  calledShot: boolean;
 };
 
 export type SummonerMechanicModel = {

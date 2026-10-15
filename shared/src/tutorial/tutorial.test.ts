@@ -329,6 +329,12 @@ const SLINGER_TAIL = [
   'slinger:mountain',
   'boss:mountain',
   'farewell',
+  // The T2 stretch: approach, lesson, boss, per zone.
+  ...['plains:buckshot', 'forest:snare-ii', 'mountain:shellbreaker', 'swamp:venom-ii', 'cave:breaching-ii', 'jungle:tracer', 'desert:hollow-point']
+    .flatMap((pair) => {
+      const [biome, lesson] = pair.split(':');
+      return [`t2:${biome}`, `slinger:${lesson}`, `boss:${biome}:2`];
+    }),
 ];
 
 function assertSlingerTail(script: TutorialScript): void {
@@ -352,7 +358,26 @@ function assertSlingerTail(script: TutorialScript): void {
     'Snare and Venom have their own beats');
   assert(say('slinger:breaching').includes('Breaching') && say('boss:mountain').includes('Stopping'),
     'Breaching and Stopping name the clip');
-  assert(tail[tail.length - 1].say === TUTORIAL_FAREWELL[0], 'the Slinger route still ends on the farewell line');
+  assert(tail.find((beat) => beat.id === 'farewell')?.say === TUTORIAL_FAREWELL[0], 'the Slinger route keeps the farewell line, ahead of the T2 stretch');
+  assert(say('t2:plains').includes('discipline') && say('t2:plains').includes('Passive Tree'), 'the first T2 beat points at the discipline pick');
+  for (const [lesson, name] of [
+    ['slinger:buckshot', 'Buckshot'], ['slinger:snare-ii', 'Snare'], ['slinger:shellbreaker', 'Shellbreaker'],
+    ['slinger:venom-ii', 'Venom'], ['slinger:breaching-ii', 'Breaching'], ['slinger:tracer', 'Tracer'], ['slinger:hollow-point', 'Hollow-point'],
+  ] as const) assert(say(lesson).includes(name), `${lesson} names its clip`);
+  for (const [biome, trophy] of [
+    ['plains', 'Stampede Round'], ['forest', 'Twin Round'], ['mountain', 'Quake Round'], ['swamp', 'Rot Round'],
+    ['cave', 'Splinter Round'], ['jungle', "Hunter's Round"], ['desert', 'Bounty Round'],
+  ] as const) {
+    const boss = tail.find((beat) => beat.id === `boss:${biome}:2`);
+    const step = boss?.steps[0];
+    assert(step?.type === 'attemptBoss' && step.biomeGroup === biome && step.tier === 2, `boss:${biome}:2 fights the tier-2 boss`);
+    assert(!!boss?.say.includes(trophy), `boss:${biome}:2 names ${trophy}`);
+    const approach = tail.find((beat) => beat.id === `t2:${biome}`);
+    const lesson = tail.find((beat) => beat.id.startsWith('slinger:') && beat.steps[0]?.type === 'farm' && beat.steps[0].at.kind === 'biome' && beat.steps[0].at.biomeGroup === biome && beat.steps[0].at.tier === 2);
+    assert(!!approach && !!lesson, `${biome} has its T2 approach and lesson`);
+    assert((farmGate(approach!, biome) ?? 0) < (farmGate(lesson!, biome) ?? 0), `${biome}: the approach stops at the lesson, the lesson runs on to the cap`);
+    assert(farmGate(lesson!, biome) === biomeLevelCap(2, biome), `${biome}: the lesson beat runs to the tier-2 cap`);
+  }
   for (const [approach, clip, biome] of [
     ['open:plains', 'slinger:scatter', 'plains'],
     ['zone:forest', 'slinger:snare', 'forest'],

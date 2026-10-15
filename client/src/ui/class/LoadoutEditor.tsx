@@ -1,5 +1,7 @@
 import { useEffect, useState, type CSSProperties } from 'react';
+import { useAtomValue } from 'jotai';
 import {
+  MOMENTS,
   SLINGER_KIT,
   withClipRule,
   withFreeRules,
@@ -10,6 +12,7 @@ import {
   type ClipView,
 } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
+import { disciplineIdAtom } from '../../hud/atoms';
 import { GameIcon } from '../GameIcon';
 import { classPieceIconSource, trophyIconSource } from '../conceptIcons';
 import { rankMark } from './format';
@@ -17,6 +20,14 @@ import { useLoadoutEditor } from './useLoadoutView';
 import './loadoutEditor.css';
 
 const PLAIN = SLINGER_KIT.pieces.find((piece) => piece.plain === true);
+
+/** The called shot's pick order when no rule is set (bible §10.13). */
+const DEFAULT_CALLED_SHOT = ['enemy-winds-up', 'target-elite', 'target-low'];
+
+function momentText(id: string): string {
+  const moment = (MOMENTS as Record<string, { text: string } | undefined>)[id];
+  return moment ? moment.text : id.split('-').join(' ');
+}
 
 function words(id: string): string {
   return id.split('-').join(' ');
@@ -29,6 +40,7 @@ function words(id: string): string {
  */
 export function LoadoutEditor({ view }: { view: ClassScreenView }) {
   const { loadout, problemsFor } = useLoadoutEditor();
+  const disciplineId = useAtomValue(disciplineIdAtom);
   const [tried, setTried] = useState<string[] | null>(null);
 
   useEffect(() => {
@@ -78,6 +90,12 @@ export function LoadoutEditor({ view }: { view: ClassScreenView }) {
           {problems.map((problem, index) => <p key={`${index}-${problem}`}>{problem}</p>)}
         </div>
       )}
+
+      <DisciplineNote
+        disciplineId={disciplineId}
+        calledShot={system.calledShot?.filter((ref) => !ref.not).map((ref) => ref.id as string)}
+        racked={loadout.racked.map((clip) => clip.name)}
+      />
 
       <div className="loadout-editor__pips" aria-label={`Rack: ${loadout.rack.used} of ${loadout.rack.slots}`}>
         {Array.from({ length: loadout.rack.slots }, (_, index) => (
@@ -227,6 +245,43 @@ export function LoadoutEditor({ view }: { view: ClassScreenView }) {
         </div>
       </article>
     </div>
+  );
+}
+
+/** The T2 discipline's rule, as it changes the rack: twin guns, the shell, the called shot. */
+function DisciplineNote({ disciplineId, calledShot, racked }: {
+  disciplineId: string | null;
+  calledShot: string[] | undefined;
+  racked: string[];
+}) {
+  const discipline = SLINGER_KIT.disciplines.find((entry) => entry.id === disciplineId);
+  if (!discipline) return null;
+  const order = calledShot && calledShot.length > 0 ? calledShot : DEFAULT_CALLED_SHOT;
+  return (
+    <article className="class-panel__card loadout-editor__discipline">
+      <div>
+        <div className="class-panel__card-title">
+          <span className="class-panel__name">{discipline.name}</span>
+          <span className="class-panel__family">discipline</span>
+        </div>
+        <p className="class-panel__line">{discipline.text}</p>
+        {discipline.id === 'slinger-gunslinger' && (
+          <p className="class-panel__line">
+            {racked.length > 1
+              ? 'The second gun takes the next clip whose rule holds, else a racked clip of another family.'
+              : 'Rack a second clip type and the second gun fires it.'}
+          </p>
+        )}
+        {discipline.id === 'slinger-trickshot' && (
+          <>
+            <p className="class-panel__line">The called shot picks, in order:</p>
+            <ol className="loadout-editor__called">
+              {order.map((id) => <li key={id}>{momentText(id)}</li>)}
+            </ol>
+          </>
+        )}
+      </div>
+    </article>
   );
 }
 
