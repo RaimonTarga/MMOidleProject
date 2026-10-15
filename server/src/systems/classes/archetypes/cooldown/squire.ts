@@ -13,13 +13,22 @@
  * **Responses** each answer one enemy action (a moment): Shove, Riposte, Steel Will, Guard,
  * Shield Bash at T1. Each costs Resolve and refunds more when it lands; a wasted one loses
  * its cost. Every number is in the kit's `params` or `SQUIRE_RESOLVE` (placeholders).
+ *
+ * Tier 3 (T3-SQUIRE, §8.6, §8.16): Anchor, Chain Hook, Frostward and Backdraft; Guard II's
+ * second catch; the nine specializations (read from `usesSkills.specializationId`); Deep
+ * Winter and Kindling; and the Tundra and Volcanic gear jobs. The three T3 moments the
+ * registry does not record yet (`drag-or-push`, `chill-threshold`, ordinary `target-flees`) are
+ * read here, in `LOCAL_MOMENTS`, until the conductor adds them to `moments/`.
  */
 import {
   ABILITY_UNYIELDING_EFFECT_ID,
+  DAMAGE_TAKEN_PCT_KEY,
   getCounter,
   getString,
   getStatusEffect,
   isMonsterDotStatusEffectId,
+  MONSTER_DATABASE,
+  monsterKites,
   navigationBodyHalfExtents,
   pieceParamsAt,
   PLATING_SHRED_EFFECT_ID,
@@ -29,7 +38,10 @@ import {
   setString,
   SQUIRE_KIT,
   SQUIRE_RESOLVE,
+  statusDamageAmplifierPct,
   trophyParamsAt,
+  TUNDRA_CHILL_EFFECT_ID,
+  VOLCANIC_HEAT_EFFECT_ID,
   type ClassConfigContext,
   type MomentId,
   type ConditionRef,
@@ -42,17 +54,19 @@ import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
 import { attachMarker, detachComponent } from '../../../../ecs/markerHelpers';
 import type { World } from '../../../../world/World';
 import { applyPlayerAoe, applyPlayerAoeTo, playerAoeTargets } from '../../../combat/damage/aoeDamage';
-import { applyKnockback } from '../../../combat/damage/knockback';
+import { applyKnockback, repositionPlayer } from '../../../combat/damage/knockback';
+import { bossPatternEscaping, runningBossPatternDef } from '../../../combat/ai/bossPatterns';
 import { guardableThreatsFor } from '../../../combat/ai/guardableThreats';
 import { setAggroTarget } from '../../../combat/ai/targeting';
 import { telegraphsContainingPlayer } from '../../../combat/ai/telegraphEvasion';
 import { attackNow, registerCombatListener, type CombatContext } from '../../../combat/engine/combatPipeline';
 import { abortMonsterCast, runPlayerAttack } from '../../../combat/engine/combat';
 import { HOLD_EMPOWERED_ATTACK, isEmpoweredAttack, setEmpoweredAttack } from '../../../combat/engine/empoweredAttacks';
-import { isChargeAoePlanted } from '../../../combat/engine/monsterMechanics';
+import { ATTACK_HASTE_PCT_KEY } from '../../../combat/engine/attackCadence';
+import { activeMonsterAbilityId, isChargeAoePlanted } from '../../../combat/engine/monsterMechanics';
 import { isConcealedEntity } from '../../../combat/invulnerability';
 import { conditionsHold, momentActive, momentTick, momentValue } from '../../../combat/moments/moments';
-import { applyMonsterRoot } from '../../../combat/status/monsterControl';
+import { applyMonsterRoot, applyMonsterSlow } from '../../../combat/status/monsterControl';
 import { syncPlayerControlLockout } from '../../../combat/status/playerControlLockout';
 import { PLAYER_HARD_CONTROL_EFFECTS, PLAYER_ROOT_EFFECTS } from '../../../combat/status/playerHardControl';
 import { applyStun } from '../../../combat/status/stun';
@@ -69,6 +83,10 @@ import { EXECUTION_MULTIPLIER } from './cooldownPrototype';
 export const SQUIRE_GUARD_EFFECT_ID = 'squire-guard';
 /** The brace a Parry puts up: the blow is negated and countered (Avenger, §8.5). */
 export const SQUIRE_PARRY_EFFECT_ID = 'squire-parry';
+/** Frostward's hold on the Chill (T3): the Chill can't climb past it, and Hearth heals while it stands. */
+export const SQUIRE_FROSTWARD_EFFECT_ID = 'squire-frostward';
+/** Rampage (T3 Juggernaut): the burst of faster swings a slam starts. */
+export const SQUIRE_RAMPAGE_EFFECT_ID = 'squire-rampage';
 
 const PIECES = new Map<string, SquirePiece>(SQUIRE_KIT.pieces.map((p) => [p.id, p]));
 const TROPHIES = new Map<string, SquireTrophy>(SQUIRE_KIT.trophies.map((t) => [t.id, t]));
@@ -87,6 +105,16 @@ const SHRED_REGROW = 'squire.shred.regrowMs';
 const PARRY_BY = 'squire.parry.by';         // the monster a Parry was raised against
 const AMBUSH_HANDLED = HANDLED_PREFIX + 'ambush-hit';
 const THROW_NEXT_AT = 'squire.throw.nextAt';
+const FREE_UNTIL = 'squire.secondNature.until';   // Second Nature: answers cost nothing until this time
+const BACKDRAFT_AT = 'squire.backdraft.at';
+const FIGHT_START = 'squire.fightStartTick';      // stored one up; 0 = no fight
+const CHILL_LAST = 'squire.chill.lastStacks';
+/** A planted brace that has caught its blow stays up this long, so the push that goes with the blow is resisted. PLACEHOLDER. */
+const PLANT_LINGER_MS = 400;
+/** Glacier Mace's frozen ground re-slows whatever stands on it for this long each tick. */
+const FROST_SLOW_REFRESH_MS = 600;
+/** Consecrate keeps the feet planted in pieces this long, renewed each tick. */
+const CONSECRATE_PLANT_MS = 500;
 /** World ticks per second (the logic rate), for windows kept in ticks. */
 const TICKS_PER_SEC = 10;
 /** Anything reaching further than this is a shooter, not something in contact (as the fight snapshot). */
@@ -134,6 +162,13 @@ function disciplineOf(r: Rules): { id: string; p: Readonly<Record<string, number
   return discipline ? { id: discipline.id, p: discipline.params } : undefined;
 }
 
+const SPECIALIZATIONS = new Map(SQUIRE_KIT.specializations.map((entry) => [entry.id, entry.params]));
+
+/** A specialization's numbers (§8.6) while the player has it picked, else undefined. */
+function specParams(player: PlayerEntity, id: string): Readonly<Record<string, number>> | undefined {
+  return player.usesSkills.specializationId === id ? SPECIALIZATIONS.get(id) : undefined;
+}
+
 /** A landed answer's fill: the Avenger's answers fill much more (§8.5). */
 function answerFill(world: World, player: PlayerEntity, r: Rules, pips: number): void {
   addResolve(world, player, pips * (disciplineOf(r)?.p['answerFillMult'] ?? 1));
@@ -179,15 +214,47 @@ function pullToPlayer(world: World, monster: MonsterEntity, player: PlayerEntity
   return true;
 }
 
-/** The Avenger's counter after a landed answer: a quick strike at the target, paid from Resolve (§8.5). */
-function avengerCounter(world: World, player: PlayerEntity, r: Rules): void {
+/**
+ * A counter's blow (Riposte, Parry, Backdraft, the Avenger's follow-up): `swings` times a plain
+ * swing. Measure for Measure adds a capped share of the blow its answer `prevented`; Sunderer
+ * ignores the target's plating and doubles against a raised barrier. A landed counter starts
+ * Second Nature's free window.
+ */
+function counterStrike(world: World, player: PlayerEntity, target: MonsterEntity, swings: number, now: number, prevented = 0): void {
+  const attack = player.dealsDamage.attack;
+  const bonus = 1 + (player.usesSkills.passives['squire.counter-damage-pct'] ?? 0);
+  let damage = attack * swings * bonus;
+  const measure = specParams(player, 'squire-measure-for-measure');
+  if (measure && prevented > 0) damage += Math.min(prevented * measure.sharePct, attack * measure.capAttackMult);
+  const sunder = specParams(player, 'squire-sunderer');
+  if (sunder && (target.hasStatus.enemyBarrier?.amount ?? 0) > 0) damage *= sunder.barrierMult;
+  const plating = target.mitigatesDamage.plating;
+  if (sunder) target.mitigatesDamage.plating = 0;
+  try {
+    applyPlayerAoeTo(world, player, [target], damage, 'player', {}, { feedsWeaponReservoir: true });
+  } finally {
+    if (sunder) target.mitigatesDamage.plating = plating;
+  }
+  const secondNature = specParams(player, 'squire-second-nature');
+  if (secondNature) setCounter(player.tracksCombat, FREE_UNTIL, now + secondNature.freeMs);
+}
+
+/** Second Nature: answers cost nothing for a few seconds after a counter lands. */
+function answersFree(player: PlayerEntity, now: number): boolean {
+  return !!specParams(player, 'squire-second-nature') && now < getCounter(player.tracksCombat, FREE_UNTIL);
+}
+
+/**
+ * The Avenger's counter after a landed answer: a quick strike at the target, paid from Resolve
+ * (§8.5). `prevented` is the blow the answer stopped, for Measure for Measure.
+ */
+function avengerCounter(world: World, player: PlayerEntity, r: Rules, now: number, prevented = 0): void {
   const discipline = disciplineOf(r);
   if (discipline?.id !== 'squire-avenger') return;
-  const cost = discipline.p['counterCost'] ?? 0;
+  const cost = answersFree(player, now) ? 0 : discipline.p['counterCost'] ?? 0;
   const target = attackTargetOf(world, player) ?? engagedWith(world, player)[0];
   if (!target || (player.usesCooldown?.resolve ?? 0) < cost) return;
-  const bonus = 1 + (player.usesSkills.passives['squire.counter-damage-pct'] ?? 0);
-  applyPlayerAoeTo(world, player, [target], player.dealsDamage.attack * (discipline.p['counterPct'] ?? 0) * bonus, 'player', {}, { feedsWeaponReservoir: true });
+  counterStrike(world, player, target, discipline.p['counterPct'] ?? 0, now, prevented);
   addResolve(world, player, -cost);
 }
 
@@ -197,9 +264,36 @@ function avengerCounter(world: World, player: PlayerEntity, r: Rules): void {
 export function addResolve(world: World, player: PlayerEntity, pips: number): void {
   const cd = player.usesCooldown;
   if (!cd || pips === 0) return;
+  if (pips > 0) pips *= kindlingMult(world, player);
   cd.resolve = Math.max(0, Math.min(cd.resolveMax, cd.resolve + pips));
   cd.executionCooldownPct = cd.resolveMax > 0 ? Math.round((cd.resolve / cd.resolveMax) * 100) : 0;
   markSliceDirty(world, player, 'usesCooldown');
+}
+
+/** Kindling (Volcanic trophy): every gain fills more for each `stepMs` the fight has lasted. */
+function kindlingMult(world: World, player: PlayerEntity): number {
+  const r = squireRulesOf(world, player);
+  if (r?.trophy?.id !== 'squire-relic-volcanic') return 1;
+  const start = getCounter(player.tracksCombat, FIGHT_START);
+  if (start === 0) return 1;
+  const tp = trophyParams(r, r.trophy);
+  const elapsedMs = (world.tickCounter + 1 - start) * (1000 / TICKS_PER_SEC);
+  return 1 + tp.perStep * Math.min(tp.maxSteps, Math.floor(elapsedMs / tp.stepMs));
+}
+
+/** The bar's cap: the budget, widened by Deep Winter (the Tundra trophy) and Bastion (T3). */
+function resolveCap(world: World, player: PlayerEntity, r: Rules): number {
+  const budget = r.ctx.budget;
+  let cap = budget;
+  if (r.trophy?.id === 'squire-relic-tundra') cap = budget * trophyParams(r, r.trophy).capMult;
+  const bastion = specParams(player, 'squire-bastion');
+  if (bastion) {
+    // Each enemy on you is a pip, a boss as several, up to `maxMult` times the bar.
+    let enemies = 0;
+    for (const monster of engagedWith(world, player)) enemies += monster.isMonster.isBoss ? SQUIRE_RESOLVE.bossCountsAs : 1;
+    cap += Math.min(budget * (bastion.maxMult - 1), enemies);
+  }
+  return cap;
 }
 
 /** The raw size of a hit (before armor) as pips. */
@@ -226,11 +320,16 @@ function trickle(world: World, player: PlayerEntity, r: Rules, dt: number): void
 }
 
 /** Juggernaut: a steady fill from your armor and max HP, hit or not (§8.5). */
-function steadyFill(world: World, player: PlayerEntity, r: Rules, dt: number): void {
+function steadyFill(world: World, player: PlayerEntity, r: Rules, dt: number, now: number): void {
   const discipline = disciplineOf(r);
   if (discipline?.id !== 'squire-juggernaut') return;
   const { steadyBasePips = 0, steadyPerPlating = 0, steadyPerMaxHp = 0 } = discipline.p;
-  const perSec = steadyBasePips + player.mitigatesDamage.plating * steadyPerPlating + player.hasHealth.maxHp * steadyPerMaxHp;
+  let perSec = steadyBasePips + player.mitigatesDamage.plating * steadyPerPlating + player.hasHealth.maxHp * steadyPerMaxHp;
+  // Inexorable: the bulk keeps filling between fights and while you walk.
+  const inexorable = specParams(player, 'squire-inexorable');
+  if (inexorable && (momentActive(world, player, 'out-of-combat', undefined, now) || momentActive(world, player, 'moving', undefined, now))) {
+    perSec *= inexorable.fillMult;
+  }
   addResolve(world, player, perSec * (dt / 1000));
 }
 
@@ -273,15 +372,14 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
     return 'landed';
   },
   // The third hit in a row from one enemy: strike it back at once (a full swing).
-  'squire-riposte': (world, player, p) => {
+  'squire-riposte': (world, player, p, now) => {
     const cs = player.tracksCombat;
     const attacker = world.getMonsterEntity(getString(cs, REPEAT_BY_KEY) ?? '');
     setCounter(cs, REPEAT_COUNT_KEY, 0);
     if (!attacker || attacker.hasHealth.hp <= 0) return 'none';
     // Counterbalance: after a Riposte, Recovery is multiplied for a few seconds.
     activateRecoveryBoost(cs, player.usesSkills.passives['squire.recovery-riposte-x'] ?? 0);
-    const counter = 1 + (player.usesSkills.passives['squire.counter-damage-pct'] ?? 0);
-    applyPlayerAoeTo(world, player, [attacker], player.dealsDamage.attack * p.damagePct * counter, 'player', {}, { feedsWeaponReservoir: true });
+    counterStrike(world, player, attacker, p.damagePct, now);
     return 'landed';
   },
   // A poison or bleed landed: shake it off (the one with the most time left).
@@ -322,15 +420,21 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
       }
     }
     const windowMs = Math.min(p.maxWindowMs, Math.max(0, endsAt - now) + 500);
-    // Planted: while braced, knockback and stuns don't move you.
+    // Planted: while braced, knockback and stuns don't move you. An Anchor already holding
+    // you in place keeps doing so under the new brace.
     const steadfast = (player.usesSkills.passives['squire.guard-steadfast'] ?? 0) > 0;
+    const live = getStatusEffect(player.tracksCombat, SQUIRE_GUARD_EFFECT_ID);
+    const planted = steadfast || (live && live.remainingMs !== 0 && (live.data['knockbackResistPct'] ?? 0) >= 1);
+    // A fresh brace, not a refresh: re-applying keeps the old data (a spent or held one).
+    removeStatusEffect(player.tracksCombat, SQUIRE_GUARD_EFFECT_ID);
     applyStatusEffect(player.tracksCombat, {
       id: SQUIRE_GUARD_EFFECT_ID,
       maxStacks: 1,
       remainingMs: windowMs,
       refreshable: true,
       sourceId: player.isPlayer.id,
-      data: { cut: p.cut, refund: p.refund, totalMs: windowMs, knockbackResistPct: steadfast ? 1 : 0 },
+      // Guard II: after a catch the brace stays up for a second telegraphed blow (`secondCatchMs`).
+      data: { cut: p.cut, refund: p.refund, totalMs: windowMs, knockbackResistPct: planted ? 1 : 0, secondCatchMs: p.secondCatchMs ?? 0 },
     });
     if (steadfast) {
       applyStatusEffect(player.tracksCombat, {
@@ -478,6 +582,7 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
     }
     if (taken === 0) return 'wasted';
     // The brace catches the blow like a Guard and refunds when it does.
+    removeStatusEffect(player.tracksCombat, SQUIRE_GUARD_EFFECT_ID);
     applyStatusEffect(player.tracksCombat, {
       id: SQUIRE_GUARD_EFFECT_ID,
       maxStacks: 1,
@@ -487,6 +592,49 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
       data: { cut: p.cut, refund: p.refund, totalMs: p.windowMs, knockbackResistPct: 0 },
     });
     return 'braced';
+  },
+
+  // ── Tier 3 (§8.16) ──
+  // A push or drag is coming: plant your feet. The brace is a Guard that cuts nothing, and
+  // while it stands forced movement can't move you (the Planted rule); catching the blow fills Resolve.
+  'squire-anchor': (world, player, p, now) => {
+    const endsAt = pushOrPullEndsAt(world, player, now);
+    if (endsAt === undefined) return 'none';
+    const windowMs = Math.min(p.maxWindowMs, Math.max(0, endsAt - now) + 500);
+    const live = getStatusEffect(player.tracksCombat, SQUIRE_GUARD_EFFECT_ID);
+    if (live && live.remainingMs !== 0 && !live.data['hold']) {
+      // A Guard is already up for this blow: it keeps its cut and refund and gains the plant.
+      live.data['knockbackResistPct'] = 1;
+      live.remainingMs = Math.max(live.remainingMs, windowMs);
+    } else {
+      plantFeet(player, windowMs, { refund: p.refund });
+    }
+    return 'braced';
+  },
+  // The target flees or kites: hook it and drag it back.
+  'squire-chain-hook': (world, player, p) => {
+    const target = attackTargetOf(world, player);
+    if (!target || !fleesOrKites(target)) return 'none';
+    const from = player.hasPosition.current;
+    const to = target.hasPosition.current;
+    if (isConcealedEntity(target) || Math.hypot(to.x - from.x, to.y - from.y) > p.range) return 'wasted';
+    return pullToPlayer(world, target, player) ? 'landed' : 'wasted';
+  },
+  // The Chill on you is at its threshold: hold it there, so Deep Freeze never opens (`updateFrostward` keeps it).
+  'squire-frostward': (_world, player, p) => {
+    const cs = player.tracksCombat;
+    const chill = getStatusEffect(cs, TUNDRA_CHILL_EFFECT_ID);
+    if (!chill || chill.stacks < p.thresholdStacks) return 'none';
+    chill.stacks = Math.min(chill.stacks, p.holdStacks);
+    applyStatusEffect(cs, {
+      id: SQUIRE_FROSTWARD_EFFECT_ID,
+      maxStacks: 1,
+      remainingMs: p.holdMs,
+      refreshable: true,
+      sourceId: player.isPlayer.id,
+      data: { totalMs: p.holdMs, holdStacks: p.holdStacks },
+    });
+    return 'landed';
   },
   // Every Squire, at low HP: the whole bar is spent to heal.
   'squire-last-breath': (world, player, p) => {
@@ -522,20 +670,20 @@ function runResponses(world: World, player: PlayerEntity, r: Rules, now: number)
     const handler = piece ? RESPONSES[piece.id] : undefined;
     if (!piece?.answers || !handler) continue;
     const rank = r.ctx.pieceRanks.get(piece.id) ?? 1;
+    const p = pieceParams(r, piece);
     const moments = [piece.answers, ...(EXTRA_TRIGGERS[piece.id]?.(rank) ?? [])]
-      .filter((moment) => momentActive(world, player, moment, undefined, now));
+      .filter((moment) => momentActive(world, player, moment, undefined, now) || LOCAL_MOMENTS[moment]?.(world, player, now, p) === true);
     if (moments.length === 0) continue;
     // An event is answered once; a state waits out its lockout.
     const ticks = moments.map((moment) => momentTick(player, moment)).filter((tick): tick is number => tick !== undefined);
     const eventTick = ticks.length > 0 ? Math.max(...ticks) : undefined;
-    const p = pieceParams(r, piece);
     if (p.lockoutMs !== undefined) {
       if (now < getCounter(cs, LOCKOUT_PREFIX + piece.id)) continue;
     } else if (eventTick !== undefined && getCounter(cs, HANDLED_PREFIX + piece.id) === eventTick + 1) {
       continue;
     }
     if (!conditionsHold(world, player, rule.conditions, now, classState(player))) continue;
-    const cost = costOf(player, piece, p);
+    const cost = answersFree(player, now) ? 0 : costOf(player, piece, p);
     if ((player.usesCooldown?.resolve ?? 0) < cost) continue;
     const outcome = handler(world, player, p, now, rank);
     if (eventTick !== undefined) setCounter(cs, HANDLED_PREFIX + piece.id, eventTick + 1);
@@ -544,22 +692,97 @@ function runResponses(world: World, player: PlayerEntity, r: Rules, now: number)
     addResolve(world, player, -cost);
     if (outcome === 'landed') {
       answerFill(world, player, r, p.refund);
-      avengerCounter(world, player, r);
+      avengerCounter(world, player, r, now);
+      // Second Nature: any counter that lands (Shield Bash and Splitting Blow too) opens the free window.
+      const secondNature = specParams(player, 'squire-second-nature');
+      if (secondNature && piece.family === 'counter') setCounter(cs, FREE_UNTIL, now + secondNature.freeMs);
     }
   }
 }
 
+// ── The T3 moments the registry does not record yet ──────────────────────────
+
+/** Whether a monster flees or kites: a boss getting away, or a kiter backing off (as the Apprentice reads it). */
+function fleesOrKites(monster: MonsterEntity): boolean {
+  if (monster.hasHealth.hp <= 0) return false;
+  if (bossPatternEscaping(monster)) return true;
+  const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
+  const kites = monster.scriptsBoss?.kiteOverride ?? (def ? monsterKites(def) : false);
+  return kites && monster.hasAggroTarget !== undefined && monster.isMoving !== undefined;
+}
+
+/**
+ * When the next push or drag aimed at this player completes, if one is coming: a charged attack
+ * or ability hit that carries knockback, or a boss pattern's `pull` step (Mire Lash, Magma
+ * Shove, Undertow). STAND-IN for the `drag-or-push` moment, read before the move happens.
+ */
+function pushOrPullEndsAt(world: World, player: PlayerEntity, now: number): number | undefined {
+  let endsAt: number | undefined;
+  for (const monster of engagedWith(world, player)) {
+    const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
+    for (const threat of guardableThreatsFor(world, monster, now)) {
+      if (threat.targetId !== player.isPlayer.id) continue;
+      let pushes = false;
+      if (threat.source === 'charged-attack') pushes = !!def?.chargedAttack?.knockback;
+      else if (threat.source === 'monster-ability') {
+        const ability = def?.monsterAbilities?.find((candidate) => candidate.id === activeMonsterAbilityId(monster));
+        pushes = !!ability?.actions.some((action) => 'knockback' in action && !!action.knockback);
+      }
+      if (pushes) endsAt = Math.max(endsAt ?? 0, threat.completesAtMs);
+    }
+    const pattern = monster.runsBossPattern;
+    const step = pattern ? runningBossPatternDef(monster)?.steps[pattern.stepIndex] : undefined;
+    if (pattern && step?.kind === 'pull' && pattern.stepStarted && pattern.stepEndsAtMs > now && pattern.targetId === player.isPlayer.id) {
+      endsAt = Math.max(endsAt ?? 0, pattern.stepEndsAtMs);
+    }
+  }
+  return endsAt;
+}
+
+/**
+ * Moments a Squire piece answers that `moments/` does not implement yet (reported to the
+ * conductor). They read false in the registry, so they are checked beside it. `p` is the
+ * piece's numbers.
+ */
+const LOCAL_MOMENTS: Partial<Record<MomentId, (world: World, player: PlayerEntity, now: number, p: Record<string, number>) => boolean>> = {
+  'drag-or-push': (world, player, now) => pushOrPullEndsAt(world, player, now) !== undefined,
+  'chill-threshold': (_world, player, _now, p) => (getStatusEffect(player.tracksCombat, TUNDRA_CHILL_EFFECT_ID)?.stacks ?? 0) >= (p['thresholdStacks'] ?? 3),
+  // The registry's `target-flees` only knows a boss getting away.
+  'target-flees': (world, player) => {
+    const target = attackTargetOf(world, player);
+    return !!target && fleesOrKites(target);
+  },
+};
+
+/**
+ * Plant the Squire's feet: a Guard that cuts nothing and holds against forced movement (the
+ * Planted rule reads this id). `hold` keeps it up until it runs out instead of spending it on
+ * the first telegraphed blow (Consecrate).
+ */
+function plantFeet(player: PlayerEntity, durationMs: number, opts: { refund?: number; hold?: boolean }): void {
+  removeStatusEffect(player.tracksCombat, SQUIRE_GUARD_EFFECT_ID);
+  applyStatusEffect(player.tracksCombat, {
+    id: SQUIRE_GUARD_EFFECT_ID,
+    maxStacks: 1,
+    remainingMs: durationMs,
+    refreshable: true,
+    sourceId: player.isPlayer.id,
+    data: { cut: 0, refund: opts.refund ?? 0, totalMs: durationMs, knockbackResistPct: 1, hold: opts.hold ? 1 : 0, secondCatchMs: 0 },
+  });
+}
+
 // ── The slam ─────────────────────────────────────────────────────────────────
 
-function slamThreshold(r: Rules, max: number): number {
-  return r.trophy?.id === 'squire-relic-forest' ? max * trophyParams(r, r.trophy).barShare : max;
+/** The Resolve a slam fires at: a full bar of the budget (a bar widened by Deep Winter or Bastion doesn't delay it). */
+function slamThreshold(r: Rules): number {
+  return r.trophy?.id === 'squire-relic-forest' ? r.ctx.budget * trophyParams(r, r.trophy).barShare : r.ctx.budget;
 }
 
 /** Arm the slam once the bar is full, unless the slam rule holds it. */
 function armSlam(world: World, player: PlayerEntity, r: Rules, now: number): void {
   const cd = player.usesCooldown!;
   if (isEmpoweredAttack(player) || cd.resolveMax <= 0) return;
-  if (cd.resolve + 1e-9 < slamThreshold(r, cd.resolveMax) && !executionerReady(world, player, r)) return;
+  if (cd.resolve + 1e-9 < slamThreshold(r) && !executionerReady(world, player, r)) return;
   if (r.config.holdSlam.length > 0 && conditionsHold(world, player, r.config.holdSlam, now, classState(player))) return;
   setEmpoweredAttack(world, player);
 }
@@ -609,6 +832,14 @@ function onSquireSlam(ctx: CombatContext, world: World): void {
   if (caughtAt > 0 && world.tickCounter + 1 - caughtAt <= caughtWindow) {
     mult *= 1 + (passives['squire.slam-after-guard-pct'] ?? 0);
   }
+  // Deep Winter: the bar was filled past full, and an overfull slam hits that much harder.
+  if (r.trophy?.id === 'squire-relic-tundra') {
+    const fill = (player.usesCooldown?.resolve ?? 0) / Math.max(1e-9, r.ctx.budget);
+    mult *= Math.max(1, Math.min(trophyParams(r, r.trophy).capMult, fill));
+  }
+  // Forge Hammer: each stack of the fight's Heat on you makes the slam bigger.
+  const heatPct = passives['squire.slam-heat-pct'] ?? 0;
+  if (heatPct > 0) mult *= 1 + heatPct * (getStatusEffect(cs, VOLCANIC_HEAT_EFFECT_ID)?.stacks ?? 0);
   ctx.damage = Math.max(1, Math.round(ctx.damage * mult));
   setCounter(cs, LAST_SLAM_AT, now);
 
@@ -679,9 +910,134 @@ function onSquireSlam(ctx: CombatContext, world: World): void {
     }
   }
 
-  // The slam spends the bar (Relentless spends the third it fired at).
+  // Glacier Mace: the slam leaves frozen ground that slows enemies standing on it.
+  const frostPx = passives['squire.slam-frost-px'] ?? 0;
+  if (frostPx > 0) {
+    const zones = frostZones.get(player) ?? [];
+    zones.push({ nodeId: player.hasPosition.nodeId, at: { ...player.hasPosition.current }, radius: frostPx, endsAt: now + (passives['squire.slam-frost-ms'] ?? 0), slowPct: passives['squire.slam-frost-slow-pct'] ?? 0 });
+    frostZones.set(player, zones);
+  }
+
+  // Reverb (Bulwark): the slam rings out again, at a share of its strength, a few seconds later.
+  const reverb = specParams(player, 'squire-reverb');
+  if (reverb) {
+    const echoes = reverbs.get(player) ?? [];
+    echoes.push({ nodeId: player.hasPosition.nodeId, at: { ...player.hasPosition.current }, radius, damage: ctx.damage * reverb.pct, dueAt: now + reverb.delayMs });
+    reverbs.set(player, echoes);
+  }
+  // Consecrate (Bulwark): the slam goes on as a channel; the circle is struck again and again.
+  const consecrate = specParams(player, 'squire-consecrate');
+  if (consecrate) {
+    channels.set(player, { endsAt: now + consecrate.channelMs, nextPulseAt: now + consecrate.pulseMs, radius, damage: ctx.damage * consecrate.pulsePct });
+  }
+  // Rampage (Juggernaut): each slam starts a burst of faster swings.
+  const rampage = specParams(player, 'squire-rampage');
+  if (rampage) {
+    applyStatusEffect(cs, {
+      id: SQUIRE_RAMPAGE_EFFECT_ID,
+      maxStacks: 1,
+      remainingMs: rampage.burstMs,
+      refreshable: true,
+      sourceId: player.isPlayer.id,
+      data: { [ATTACK_HASTE_PCT_KEY]: rampage.hastePct, totalMs: rampage.burstMs },
+    });
+  }
+
+  // The slam spends the bar: Relentless the third it fired at, a widened bar (Bastion) the bar's
+  // worth, anything else all of it.
   const cd = player.usesCooldown!;
-  addResolve(world, player, -(r.trophy?.id === 'squire-relic-forest' ? slamThreshold(r, cd.resolveMax) : cd.resolve));
+  const spent = r.trophy?.id === 'squire-relic-forest' ? slamThreshold(r)
+    : specParams(player, 'squire-bastion') && r.trophy?.id !== 'squire-relic-tundra' ? Math.min(cd.resolve, r.ctx.budget)
+    : cd.resolve;
+  addResolve(world, player, -spent);
+}
+
+// ── Specialization state (T3): runtime only, never persisted ─────────────────
+
+interface FrostZone { nodeId: string; at: { x: number; y: number }; radius: number; endsAt: number; slowPct: number }
+interface Echo { nodeId: string; at: { x: number; y: number }; radius: number; damage: number; dueAt: number }
+interface Channel { endsAt: number; nextPulseAt: number; radius: number; damage: number }
+
+const frostZones = new WeakMap<PlayerEntity, FrostZone[]>();
+const reverbs = new WeakMap<PlayerEntity, Echo[]>();
+const channels = new WeakMap<PlayerEntity, Channel>();
+
+/** Glacier Mace: enemies standing on the frozen ground are slowed while it lasts. */
+function updateFrostZones(world: World, player: PlayerEntity, now: number): void {
+  const zones = frostZones.get(player);
+  if (!zones) return;
+  const live = zones.filter((zone) => now < zone.endsAt && zone.nodeId === player.hasPosition.nodeId);
+  frostZones.set(player, live);
+  for (const zone of live) {
+    for (const monster of playerAoeTargets(world, player, zone.at, zone.radius)) {
+      applyMonsterSlow(world, monster, zone.slowPct, FROST_SLOW_REFRESH_MS, player.isPlayer.id);
+    }
+  }
+}
+
+/** Reverb: the echoes that have come due strike their circle again. */
+function updateReverb(world: World, player: PlayerEntity, now: number): void {
+  const echoes = reverbs.get(player);
+  if (!echoes || echoes.length === 0) return;
+  const due = echoes.filter((echo) => now >= echo.dueAt);
+  if (due.length === 0) return;
+  reverbs.set(player, echoes.filter((echo) => now < echo.dueAt));
+  for (const echo of due) {
+    if (echo.nodeId !== player.hasPosition.nodeId) continue;
+    applyPlayerAoe(world, player, echo.at, echo.radius, echo.damage, undefined, 'player', {}, { feedsWeaponReservoir: true });
+  }
+}
+
+/** Consecrate: while the channel lasts the circle is struck every pulse and nothing can move you. */
+function updateConsecrate(world: World, player: PlayerEntity, now: number): void {
+  const channel = channels.get(player);
+  if (!channel) return;
+  if (now >= channel.endsAt) {
+    channels.delete(player);
+    return;
+  }
+  const live = getStatusEffect(player.tracksCombat, SQUIRE_GUARD_EFFECT_ID);
+  if (!live || live.remainingMs === 0 || live.data['hold']) plantFeet(player, CONSECRATE_PLANT_MS, { hold: true });
+  const p = specParams(player, 'squire-consecrate');
+  while (p && now >= channel.nextPulseAt && channel.nextPulseAt < channel.endsAt) {
+    channel.nextPulseAt += p.pulseMs;
+    applyPlayerAoe(world, player, player.hasPosition.current, channel.radius, channel.damage, undefined, 'player', {}, { feedsWeaponReservoir: true });
+  }
+}
+
+/** Destroyer (Juggernaut): with the slam armed, you crash into a target that is out of reach. */
+function updateDestroyer(world: World, player: PlayerEntity): void {
+  const destroyer = specParams(player, 'squire-destroyer');
+  if (!destroyer || !isEmpoweredAttack(player)) return;
+  const target = attackTargetOf(world, player);
+  if (!target || isConcealedEntity(target) || target.hasPosition.nodeId !== player.hasPosition.nodeId) return;
+  const reach = player.performsAttack.attackRange;
+  if (world.collision.canReach(player, target, reach)) return;
+  const from = player.hasPosition.current;
+  const to = target.hasPosition.current;
+  const gap = Math.hypot(to.x - from.x, to.y - from.y);
+  if (gap > destroyer.chargeRangePx) return;
+  // Land just inside reach, so the armed slam is the next blow.
+  repositionPlayer(world, player, to, Math.max(0, gap - reach * 0.5), true);
+}
+
+/** Frostward: the Chill can't climb past the hold while it stands; Hearth heals each second. */
+function updateFrostward(world: World, player: PlayerEntity, dt: number): void {
+  const hold = getStatusEffect(player.tracksCombat, SQUIRE_FROSTWARD_EFFECT_ID);
+  if (!hold || hold.remainingMs === 0) return;
+  const chill = getStatusEffect(player.tracksCombat, TUNDRA_CHILL_EFFECT_ID);
+  if (chill) chill.stacks = Math.min(chill.stacks, hold.data['holdStacks'] ?? chill.stacks);
+  const heal = player.hasHealth.maxHp * (player.usesSkills.passives['squire.frostward-heal-pct'] ?? 0) * (dt / 1000);
+  if (heal > 0) applyHealToPlayer(player, player.tracksCombat, heal, world);
+}
+
+/** Frozen Resolve: each stack of Chill gained fills Resolve. */
+function updateChillFill(world: World, player: PlayerEntity): void {
+  const fill = player.usesSkills.passives['squire.chill-fill-pips'] ?? 0;
+  const cs = player.tracksCombat;
+  const stacks = getStatusEffect(cs, TUNDRA_CHILL_EFFECT_ID)?.stacks ?? 0;
+  if (fill > 0 && stacks > getCounter(cs, CHILL_LAST)) addResolve(world, player, (stacks - getCounter(cs, CHILL_LAST)) * fill);
+  setCounter(cs, CHILL_LAST, stacks);
 }
 
 /** Faultline's line: from you through the target, everything within `width` of it. */
@@ -720,6 +1076,13 @@ export function initSquire(): void {
     // Arrow Catcher fills extra from shooters.
     let pips = rawHitPips(player, raw) * (disciplineOf(r)?.p['hitFillMult'] ?? 1);
     if ((ctx.attacker.performsAttack?.attackRange ?? 0) > MELEE_MAX_REACH) pips *= player.usesSkills.passives['squire.ranged-fill-x'] || 1;
+    // Stoked: the Heat's extra damage on this hit fills extra Resolve.
+    const stoked = player.usesSkills.passives['squire.heat-fill-x'] ?? 0;
+    const heat = stoked > 0 ? getStatusEffect(player.tracksCombat, VOLCANIC_HEAT_EFFECT_ID) : undefined;
+    if (heat) {
+      const extra = statusDamageAmplifierPct(heat, DAMAGE_TAKEN_PCT_KEY);
+      pips *= 1 + (extra / (1 + extra)) * stoked;
+    }
     addResolve(world, player, pips);
   });
 
@@ -757,7 +1120,7 @@ export function initSquire(): void {
     if (heal > 0) applyHealToPlayer(player, cs, heal, world);
     if (p.staggerMs > 0) applyStun(ctx.attacker.tracksCombat, p.staggerMs, player.isPlayer.id);
     answerFill(world, player, r, p.refund);
-    avengerCounter(world, player, r);
+    avengerCounter(world, player, r, now, before - ctx.damage);
   });
 
   // Parry: a parried blow is negated and struck back at once (Avenger, §8.5).
@@ -772,10 +1135,10 @@ export function initSquire(): void {
     const r = squireRulesOf(world, player);
     if (!r) return;
     removeStatusEffect(cs, SQUIRE_PARRY_EFFECT_ID);
+    const before = ctx.damage;
     ctx.damage = Math.round(ctx.damage * (1 - (parry.data['cut'] ?? 1)));
     ctx.metadata['squireGuarded'] = true;
-    const bonus = 1 + (player.usesSkills.passives['squire.counter-damage-pct'] ?? 0);
-    applyPlayerAoeTo(world, player, [ctx.attacker], player.dealsDamage.attack * (parry.data['counterPct'] ?? 1) * bonus, 'player', {}, { feedsWeaponReservoir: true });
+    counterStrike(world, player, ctx.attacker, parry.data['counterPct'] ?? 1, attackNow(ctx), before - ctx.damage);
     answerFill(world, player, r, parry.data['refund'] ?? 0);
   });
 
@@ -785,13 +1148,28 @@ export function initSquire(): void {
     if (ctx.attackerType !== 'monster' || ctx.defenderType !== 'player') return;
     const player = ctx.defender;
     const brace = getStatusEffect(player.tracksCombat, SQUIRE_GUARD_EFFECT_ID);
-    if (!brace || brace.remainingMs === 0 || ctx.metadata['squireGuarded']) return;
+    // A held brace (Consecrate) and one already spent (lingering to hold the feet) catch nothing.
+    if (!brace || brace.remainingMs === 0 || ctx.metadata['squireGuarded'] || brace.data['hold'] || brace.data['spent']) return;
     // Guards catch telegraphs and big hits only; chip damage always lands (§8.3, rule 3).
     const telegraphed = ctx.metadata['empoweredAttack'] === true || typeof ctx.metadata['abilityName'] === 'string';
     if (!telegraphed) return;
+    const before = ctx.damage;
     ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - (brace.data['cut'] ?? 0))));
     ctx.metadata['squireGuarded'] = true;
-    removeStatusEffect(player.tracksCombat, SQUIRE_GUARD_EFFECT_ID);
+    const planted = (brace.data['knockbackResistPct'] ?? 0) >= 1;
+    const secondCatchMs = brace.data['secondCatchMs'] ?? 0;
+    if (secondCatchMs > 0) {
+      // Guard II: the same brace stays up for a second telegraphed blow.
+      brace.remainingMs = secondCatchMs;
+      brace.data['totalMs'] = secondCatchMs;
+      brace.data['secondCatchMs'] = 0;
+    } else if (planted) {
+      // The push that goes with this blow comes after it: stay planted a moment, spent.
+      brace.data['spent'] = 1;
+      brace.remainingMs = Math.min(brace.remainingMs, PLANT_LINGER_MS);
+    } else {
+      removeStatusEffect(player.tracksCombat, SQUIRE_GUARD_EFFECT_ID);
+    }
     if ((brace.data['knockbackResistPct'] ?? 0) > 0) removeStatusEffect(player.tracksCombat, ABILITY_UNYIELDING_EFFECT_ID);
     setCounter(player.tracksCombat, LAST_CAUGHT_TICK, world.tickCounter + 1);
     // Stone Patience: after a caught telegraph, Recovery is multiplied for a few seconds.
@@ -799,7 +1177,7 @@ export function initSquire(): void {
     const r = squireRulesOf(world, player);
     if (r) {
       answerFill(world, player, r, brace.data['refund'] ?? 0);
-      avengerCounter(world, player, r);
+      avengerCounter(world, player, r, attackNow(ctx), before - ctx.damage);
     } else {
       addResolve(world, player, brace.data['refund'] ?? 0);
     }
@@ -815,12 +1193,39 @@ export function initSquire(): void {
     const piece = PIECES.get('squire-unbowed')!;
     const p = pieceParams(r, piece);
     if (ctx.damage / Math.max(1, player.hasHealth.maxHp) < p.hpShare) return;
-    if (!ruleActive(world, player, r, piece.id, attackNow(ctx)) || (player.usesCooldown?.resolve ?? 0) < p.cost) return;
-    addResolve(world, player, -p.cost);
+    const now = attackNow(ctx);
+    const cost = answersFree(player, now) ? 0 : p.cost;
+    if (!ruleActive(world, player, r, piece.id, now) || (player.usesCooldown?.resolve ?? 0) < cost) return;
+    addResolve(world, player, -cost);
+    const before = ctx.damage;
     ctx.damage = Math.max(1, Math.round(ctx.damage - player.mitigatesDamage.plating * (p.platingMult - 1)));
     ctx.metadata['squireGuarded'] = true;
     answerFill(world, player, r, p.refund);
-    avengerCounter(world, player, r);
+    avengerCounter(world, player, r, now, before - ctx.damage);
+  });
+
+  // Backdraft (T3, a counter): a fire attack or burning shot is thrown back at its source.
+  // STAND-IN for the `fire-attack` moment: read when the blow lands, from the attacker's style.
+  registerCombatListener('onDamageTaken', (ctx, world) => {
+    if (ctx.attackerType !== 'monster' || ctx.defenderType !== 'player' || ctx.metadata['evadeFull'] === true) return;
+    const player = ctx.defender;
+    const r = player.usesCooldown ? squireRulesOf(world, player) : null;
+    if (!r || !MONSTER_DATABASE.get(ctx.attacker.isMonster.monsterTypeId)?.attackStyle.includes('fire')) return;
+    const piece = PIECES.get('squire-backdraft')!;
+    const now = attackNow(ctx);
+    const cs = player.tracksCombat;
+    const p = pieceParams(r, piece);
+    const cost = answersFree(player, now) ? 0 : p.cost;
+    if (!ruleActive(world, player, r, piece.id, now) || (player.usesCooldown?.resolve ?? 0) < cost) return;
+    if (now < getCounter(cs, BACKDRAFT_AT)) return;
+    setCounter(cs, BACKDRAFT_AT, now + p.cooldownMs);
+    addResolve(world, player, -cost);
+    counterStrike(world, player, ctx.attacker, p.damagePct, now);
+    // Cooling Breath: each Backdraft that lands heals a little.
+    const heal = player.hasHealth.maxHp * (player.usesSkills.passives['squire.backdraft-heal-pct'] ?? 0);
+    if (heal > 0) applyHealToPlayer(player, cs, heal, world);
+    answerFill(world, player, r, p.refund);
+    avengerCounter(world, player, r, now);
   });
 
   // The Squire's own blows (a thrown shield, Splitting Blow) are sized as they land.
@@ -906,11 +1311,21 @@ export function updateSquire(world: World, dt: number, now: number): boolean {
     if (!r) continue;
     any = true;
     const cd = player.usesCooldown;
-    if (cd.resolveMax !== r.ctx.budget) {
-      cd.resolveMax = r.ctx.budget;
+    // The bar's size: the budget, wider with Deep Winter or Bastion.
+    const cap = resolveCap(world, player, r);
+    if (cd.resolveMax !== cap) {
+      cd.resolveMax = cap;
       addResolve(world, player, 0);
       cd.resolve = Math.min(cd.resolve, cd.resolveMax);
+      cd.executionCooldownPct = cd.resolveMax > 0 ? Math.round((cd.resolve / cd.resolveMax) * 100) : 0;
       markSliceDirty(world, player, 'usesCooldown');
+    }
+    // Kindling counts the fight from the first enemy on you to the last.
+    if (r.trophy?.id === 'squire-relic-volcanic') {
+      const engaged = engagedWith(world, player).length > 0;
+      const started = getCounter(player.tracksCombat, FIGHT_START);
+      if (engaged && started === 0) setCounter(player.tracksCombat, FIGHT_START, world.tickCounter + 1);
+      else if (!engaged && started !== 0) setCounter(player.tracksCombat, FIGHT_START, 0);
     }
     // Muster: every enemy joining the fight fills a chunk.
     if (r.trophy?.id === 'squire-relic-plains') {
@@ -934,11 +1349,17 @@ export function updateSquire(world: World, dt: number, now: number): boolean {
       }
     }
     trickle(world, player, r, dt);
-    steadyFill(world, player, r, dt);
+    steadyFill(world, player, r, dt, now);
     throwShield(world, player, now);
     reforged(world, player, dt);
+    updateChillFill(world, player);
+    updateFrostward(world, player, dt);
+    updateFrostZones(world, player, now);
+    updateReverb(world, player, now);
+    updateConsecrate(world, player, now);
     runResponses(world, player, r, now);
     armSlam(world, player, r, now);
+    updateDestroyer(world, player);
   }
   return any;
 }

@@ -302,6 +302,15 @@ export const SQUIRE_KEYS = [
   'squire.watchful-heal-pct',        // Watchman's Ease: an ambush Watchful catches heals this share of the hit it stopped
   'squire.ranged-fill-x',            // Arrow Catcher: ranged hits on you fill Resolve this many times over
   'squire.challenge-heal-pct',       // Called Out: each enemy a Challenge pulls heals this share of max HP
+  // T3 jobs (T3-SQUIRE)
+  'squire.slam-frost-px',            // Glacier Mace: the slam leaves frozen ground this many px wide
+  'squire.slam-frost-slow-pct',      // Glacier Mace: enemies on it are slowed by this share
+  'squire.slam-frost-ms',            // Glacier Mace: for this long
+  'squire.slam-heat-pct',            // Forge Hammer: the slam is this much bigger per stack of Heat on you
+  'squire.chill-fill-pips',          // Frozen Resolve: each stack of Chill gained fills this much Resolve
+  'squire.frostward-heal-pct',       // Hearth: while Frostward holds, heals this share of max HP per second
+  'squire.heat-fill-x',              // Stoked: the Heat's extra damage on a hit fills Resolve this many times over (on top)
+  'squire.backdraft-heal-pct',       // Cooling Breath: each Backdraft that lands heals this share of max HP
 ] as const;
 
 export const CADENCE_KEYS = [

@@ -172,7 +172,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { blue: 124 }, stats: { attack: 162 }, attacksPerSecond: 0.50, tier: 3,
       icon: 'items/weapons/permafrost-maul.png',
       description: 'The slam leaves frozen ground that slows enemies on it.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-frost-px': 160, 'squire.slam-frost-slow-pct': 0.3, 'squire.slam-frost-ms': 3000 },
     },
     {
       id: 'squire-forge-hammer-t3', name: 'Forge Hammer',
@@ -180,7 +180,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { red: 140 }, stats: { attack: 70 }, attacksPerSecond: 1.65, tier: 3,
       icon: 'items/weapons/cinderlash.png',
       description: "Each step of the fight's Heat makes the slam bigger.",
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-heat-pct': 0.02 },
     },
     // moved from the Plains
     {
@@ -231,7 +231,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { blue: 273 }, stats: { attack: 378 }, attacksPerSecond: 0.50, tier: 4,
       icon: 'items/weapons/glacial-tyrant-maul.png',
       description: 'The slam leaves frozen ground that slows enemies on it.',
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-frost-px': 200, 'squire.slam-frost-slow-pct': 0.375, 'squire.slam-frost-ms': 3000 },
     },
     {
       id: 'squire-forge-hammer-t4', name: 'Forge Hammer',
@@ -239,7 +239,7 @@ export const SQUIRE_GEAR: ClassGearDef = {
       cost: { red: 308 }, stats: { attack: 119 }, attacksPerSecond: 1.80, tier: 4,
       icon: 'items/weapons/eruption-lash.png',
       description: "Each step of the fight's Heat makes the slam bigger.",
-      mechanicEffects: {},
+      mechanicEffects: { 'squire.slam-heat-pct': 0.025 },
     },
     // moved from the Plains
     {
@@ -323,10 +323,10 @@ export const SQUIRE_GEAR: ClassGearDef = {
     'jungle-charm-t3': { name: "Watchman's Ease", text: 'An ambush Watchful catches heals you for the hit it stopped.', effects: { 'squire.watchful-heal-pct': 1 } },
     'desert-vest-t3': { name: 'Arrow Catcher', text: 'Ranged hits on you fill double Resolve.', effects: { 'squire.ranged-fill-x': 2 } },
     'desert-charm-t3': { name: 'Called Out', text: 'Each enemy a Challenge pulls heals you a little.', effects: { 'squire.challenge-heal-pct': 0.013 } },
-    'tundra-vest-t3': { name: 'Frozen Resolve', text: 'The Chill building on you fills Resolve.', effects: {} },
-    'tundra-charm-t3': { name: 'Hearth', text: 'While Frostward holds, you heal a little each second.', effects: {} },
-    'volcanic-vest-t3': { name: 'Stoked', text: "The Heat's extra damage on you fills extra Resolve.", effects: {} },
-    'volcanic-charm-t3': { name: 'Cooling Breath', text: 'Each Backdraft that lands heals you a little.', effects: {} },
+    'tundra-vest-t3': { name: 'Frozen Resolve', text: 'The Chill building on you fills Resolve.', effects: { 'squire.chill-fill-pips': 0.2 } },
+    'tundra-charm-t3': { name: 'Hearth', text: 'While Frostward holds, you heal a little each second.', effects: { 'squire.frostward-heal-pct': 0.01 } },
+    'volcanic-vest-t3': { name: 'Stoked', text: "The Heat's extra damage on you fills extra Resolve.", effects: { 'squire.heat-fill-x': 2 } },
+    'volcanic-charm-t3': { name: 'Cooling Breath', text: 'Each Backdraft that lands heals you a little.', effects: { 'squire.backdraft-heal-pct': 0.01 } },
     // ── T4 ──
     'mountain-vest-t4': { name: 'Planted', text: "While guarding you can't be knocked back or stunned.", effects: { 'squire.guard-steadfast': 1 } },
     'mountain-charm-t4': { name: 'Stone Patience', text: 'After a caught telegraph, Recovery triples for a few seconds.', effects: { 'squire.recovery-caught-x': 3 } },
@@ -334,10 +334,10 @@ export const SQUIRE_GEAR: ClassGearDef = {
     'jungle-charm-t4': { name: "Watchman's Ease", text: 'An ambush Watchful catches heals you for the hit it stopped.', effects: { 'squire.watchful-heal-pct': 1 } },
     'desert-vest-t4': { name: 'Arrow Catcher', text: 'Ranged hits on you fill double Resolve.', effects: { 'squire.ranged-fill-x': 2 } },
     'desert-charm-t4': { name: 'Called Out', text: 'Each enemy a Challenge pulls heals you a little.', effects: { 'squire.challenge-heal-pct': 0.016 } },
-    'tundra-vest-t4': { name: 'Frozen Resolve', text: 'The Chill building on you fills Resolve.', effects: {} },
-    'tundra-charm-t4': { name: 'Hearth', text: 'While Frostward holds, you heal a little each second.', effects: {} },
-    'volcanic-vest-t4': { name: 'Stoked', text: "The Heat's extra damage on you fills extra Resolve.", effects: {} },
-    'volcanic-charm-t4': { name: 'Cooling Breath', text: 'Each Backdraft that lands heals you a little.', effects: {} },
+    'tundra-vest-t4': { name: 'Frozen Resolve', text: 'The Chill building on you fills Resolve.', effects: { 'squire.chill-fill-pips': 0.25 } },
+    'tundra-charm-t4': { name: 'Hearth', text: 'While Frostward holds, you heal a little each second.', effects: { 'squire.frostward-heal-pct': 0.0125 } },
+    'volcanic-vest-t4': { name: 'Stoked', text: "The Heat's extra damage on you fills extra Resolve.", effects: { 'squire.heat-fill-x': 2.5 } },
+    'volcanic-charm-t4': { name: 'Cooling Breath', text: 'Each Backdraft that lands heals you a little.', effects: { 'squire.backdraft-heal-pct': 0.0125 } },
     'graveyard-vest-t4': { name: 'Grave Plate', text: "Risen enemies' hits fill double Resolve.", effects: {} },
     'graveyard-charm-t4': { name: 'Rest Eternal', text: 'Each Lay to Rest that lands heals you a little.', effects: {} },
     'trench-vest-t4': { name: 'Abyssal Plate', text: 'While you carry three or more debuffs, guards cost nothing.', effects: {} },
