@@ -154,6 +154,118 @@ export function buildSpiritT2Beats(): TutorialBeat[] {
   });
 }
 
+/** The Spirit's Tier-3 stretch, in the order of the bible's T3 table (§11.16; the Plains and Forest have retired). */
+const T3_ZONES: ReadonlyArray<{
+  biome: KitBiome;
+  chapter: string;
+  lessonPieceId: string;
+  approach: string;
+  lesson: string;
+  boss: string;
+}> = [
+  {
+    biome: 'mountain',
+    chapter: 'Tier 3: The Mountain',
+    lessonPieceId: 'spirit-downburst',
+    approach: 'Tier 3. Pick a specialization under your discipline in the Passive Tree: it bends your storm again. Then climb the Mountain, where beasts charge in pairs.',
+    lesson: 'Downburst is a squall: it waits for a charge at you, then slams a column of wind down on the charger and pins it.',
+    boss: 'Fight the Mountain boss. Thunderhead ranks up again: a storm four-fifths full counts as full.',
+  },
+  {
+    biome: 'cave',
+    chapter: 'Tier 3: The Cave',
+    lessonPieceId: 'spirit-updraft',
+    approach: 'The Cave chases you through tunnels. Fight through it.',
+    lesson: 'Updraft ranks up: the gust also throws the surfacing enemy off its feet.',
+    boss: 'Fight the Cave boss. Static Web ranks up: a charged enemy passes its charge to one touching it.',
+  },
+  {
+    biome: 'swamp',
+    chapter: 'Tier 3: The Swamp',
+    lessonPieceId: 'spirit-tailwind',
+    approach: 'The Swamp now drags and shoves. Fight through the spores.',
+    lesson: 'Tailwind is a calm: when something drags or shoves you, a gust carries you back, away from the nearest enemy.',
+    boss: 'Fight the Swamp boss. Marsh Fire ranks up: its burst is bigger.',
+  },
+  {
+    biome: 'jungle',
+    chapter: 'Tier 3: The Jungle',
+    lessonPieceId: 'spirit-forked-bolt',
+    approach: 'The Jungle pursues, then flees. Fight into it.',
+    lesson: 'Forked Bolt is a sidegrade of Chain Lightning: it splits toward the two enemies farthest from you. Keep both and choose.',
+    boss: 'Fight the Jungle boss. Running Storm ranks up: a spend follows a fleeing target even harder.',
+  },
+  {
+    biome: 'desert',
+    chapter: 'Tier 3: The Desert',
+    lessonPieceId: 'spirit-dust-devil',
+    approach: 'The Desert has postures and a kiter that turns. Fight through it.',
+    lesson: 'Dust Devil ranks up: the enemy it drags cannot move away for a moment.',
+    boss: 'Fight the Desert boss. Sandstorm ranks up: the ring of sand is wider.',
+  },
+  {
+    biome: 'tundra',
+    chapter: 'Tier 3: The Tundra',
+    lessonPieceId: 'spirit-foehn',
+    approach: 'The Tundra is new: the Chill builds on you, and shells guard its beasts. Its bosses ignore control. Fight into it.',
+    lesson: 'Foehn is a calm: when the Chill on you nears its threshold, a warm wind melts it back down.',
+    boss: 'Fight the Tundra boss for Ice Storm: every spend glazes the ground under its target and slows what stands on it.',
+  },
+  {
+    biome: 'volcanic',
+    chapter: 'Tier 3: The Volcanic',
+    lessonPieceId: 'spirit-ash-lightning',
+    approach: 'The Volcanic is new: the Heat rises through the fight, and the bosses ignore control. Fight into it.',
+    lesson: "Ash Lightning is a strike: the volcano's own lightning hits harder for each step of the Heat.",
+    boss: 'Fight the Volcanic boss for Pyrocumulus: while your storm stays full, a burst strikes around you every few seconds.',
+  },
+];
+
+/** The biome level where a T3 zone teaches its lesson (absolute, as the game counts levels). */
+export function spiritT3LessonLevel(biome: KitBiome, pieceId: string): number {
+  const lesson = SPIRIT_KIT.lessons.find((entry) =>
+    entry.pieceId === pieceId && entry.source.kind === 'zone' && entry.source.tier === 3 && entry.source.biome === biome);
+  if (!lesson || lesson.source.kind !== 'zone') throw new Error(`spirit tutorial: no T3 ${pieceId} lesson in ${biome}`);
+  return absoluteZoneLevel(lesson.source);
+}
+
+/**
+ * The Tier-3 beats, after the Tier-2 stretch: the specialization pick, each zone's lesson and its
+ * boss's trophy rank-up or new trophy. Zone farms split at the lesson level like T1 and T2.
+ */
+export function buildSpiritT3Beats(): TutorialBeat[] {
+  return T3_ZONES.flatMap(({ biome, chapter, lessonPieceId, approach, lesson, boss }) => {
+    const at = { kind: 'biome', biomeGroup: biome, tier: 3, pick: 'uncleared' } as const;
+    const lessonLevel = spiritT3LessonLevel(biome, lessonPieceId);
+    const cap = biomeLevelCap(3, biome);
+    const name = biome.charAt(0).toUpperCase() + biome.slice(1);
+    return [
+      {
+        id: `t3:${biome}`,
+        chapter,
+        say: approach,
+        waiting: `Fighting the ${name} at Tier 3.`,
+        progress: [{ type: 'biomeLevel', biomeGroup: biome, level: lessonLevel }],
+        steps: [{ type: 'farm', at, until: { type: 'biomeLevelAtLeast', biomeGroup: biome, level: lessonLevel } }],
+      },
+      {
+        id: `spirit:${lessonPieceId.slice('spirit-'.length)}-t3`,
+        chapter,
+        say: lesson,
+        waiting: `Fighting the ${name} at Tier 3.`,
+        progress: [{ type: 'biomeLevel', biomeGroup: biome, level: cap }],
+        steps: [{ type: 'farm', at, until: { type: 'biomeLevelAtLeast', biomeGroup: biome, level: cap } }],
+      },
+      {
+        id: `t3boss:${biome}`,
+        chapter,
+        say: boss,
+        steps: [{ type: 'attemptBoss', biomeGroup: biome, tier: 3 }],
+      },
+    ] satisfies TutorialBeat[];
+  });
+}
+
 /** Beats after the shared Clearing opening for an energy-root character. */
 export function buildSpiritBeats(): TutorialBeat[] {
   const seal = buildSealRouteBeats();
@@ -200,5 +312,6 @@ export function buildSpiritBeats(): TutorialBeat[] {
     },
     sealBeat(seal, 'farewell'),
     ...buildSpiritT2Beats(),
+    ...buildSpiritT3Beats(),
   ];
 }

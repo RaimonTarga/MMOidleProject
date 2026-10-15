@@ -27,7 +27,7 @@ import { drainStorm, thresholdsOf, updateSpirit } from '../src/systems/classes/a
 import { fireFoehn, fireTailwind, glazeCount } from '../src/systems/classes/archetypes/energy/spiritT3';
 import { setAggroTarget, setAttackTarget } from '../src/systems/combat/ai/targeting';
 import { emitCombatEvent, makeCombatContext } from '../src/systems/combat/engine/combatPipeline';
-import { updatePlayerMoments } from '../src/systems/combat/moments/moments';
+import { recordMoment, updatePlayerMoments } from '../src/systems/combat/moments/moments';
 import { isMonsterStunned } from '../src/systems/combat/status/stun';
 import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { World } from '../src/world/World';
@@ -465,6 +465,25 @@ function release(spec: string | undefined, heldMs = 0): { rig: Rig; tank: Monste
     return before - player.usesEnergy!.energy;
   };
   assert.ok(Math.abs(drop(fire) * 2 - drop(cold)) < 1e-6, 'Flash Steam: a fire hit costs half');
+}
+
+{
+  // The T3 moments are live (T3-W2): Tailwind waits for drag-or-push, Foehn for chill-threshold, through the band.
+  const { world, player, spawn } = setup({ bands: ['spirit-tailwind'] });
+  spawn(440, 400);
+  run(world, player, 12_000);
+  assert.ok(player.hasPosition.current.x > 350, 'Tailwind sleeps until something drags or shoves you');
+  recordMoment(world, player, 'drag-or-push');
+  run(world, player, 100);
+  assert.ok(player.hasPosition.current.x < 300, 'drag-or-push fires Tailwind live');
+}
+{
+  const { world, player } = setup({ bands: ['spirit-foehn'] });
+  run(world, player, 12_000);
+  addStatus(player, 'tundra-chill', 5);
+  const before = getStatusEffect(player.tracksCombat, 'tundra-chill')?.stacks ?? 0;
+  run(world, player, 300);
+  assert.ok((getStatusEffect(player.tracksCombat, 'tundra-chill')?.stacks ?? 0) < before, 'chill-threshold fires Foehn live and melts the Chill');
 }
 
 console.log('spiritT3: ok');
