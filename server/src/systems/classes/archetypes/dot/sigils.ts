@@ -30,7 +30,17 @@ import { applyStun } from '../../../combat/status/stun';
 import { applyHealToPlayer } from '../../../defense/regen/healing';
 import { activateRecoveryBoost } from '../../../defense/regen/recovery';
 import { classConfigContextOf } from '../../../player/progression/classConfig';
-import { DOT_EFFECT_ID } from './constants';
+import { DOT_EFFECT_ID, FROST_DISCIPLINE, HELD_EFFECT_ID, POISON_DISCIPLINE } from './constants';
+import {
+  detonate,
+  disciplineParamsOf,
+  firePayoffT2,
+  momentHolds,
+  registerApprenticeT2,
+  trophyParam,
+  updateApprenticeT2,
+  freezeOrBrittle,
+} from './sigilsT2';
 
 /** A sigil's tick damage, as a share of the weapon's attack (potency), per tick. PLACEHOLDER. */
 const SIGIL_TICK_PCT = 0.12;
@@ -49,14 +59,24 @@ const BROOD_AT = 'apprentice.broodAt';
 const NUMBED_UNTIL = 'apprentice.numbedUntil';
 const SEIZED_UNTIL = 'apprentice.seizedUntil';
 const cdKey = (id: string): string => `apprentice.cd.${id}`;
+/** Distance (px) beyond which a target counts as far, for the Dune Staff. PLACEHOLDER. */
+const FAR_PX = 220;
+/** Slack over the player's attack range that counts as "within your reach" (Patient Hunter). PLACEHOLDER. */
+const REACH_SLACK_PX = 48;
 
-const PIECES = new Map<string, ApprenticePiece>(APPRENTICE_KIT.pieces.map((piece) => [piece.id, piece]));
+export const PIECES = new Map<string, ApprenticePiece>(APPRENTICE_KIT.pieces.map((piece) => [piece.id, piece]));
 const TROPHIES = new Map<string, ApprenticeTrophy>(APPRENTICE_KIT.trophies.map((trophy) => [trophy.id, trophy]));
 
-interface Payoffs {
+export interface Payoffs {
   config: PayoffsConfig;
   owned: ReadonlySet<string>;
+  /** Owned piece ranks (Numb II, Siphon II, ...). */
+  ranks: ReadonlyMap<string, number>;
   trophy: ApprenticeTrophy | undefined;
+  /** The equipped trophy's rank (1 when it has not been ranked up). */
+  trophyRank: number;
+  /** The T2 pick, once made. */
+  discipline: string | null;
   cap: number;
 }
 
@@ -71,11 +91,16 @@ export function payoffsOf(world: World, player: PlayerEntity): Payoffs | null {
   if (player.appliesDots && config?.system.kind === 'payoffs') {
     const ctx = classConfigContextOf(player);
     if (ctx) {
+      const trophy = config.relic[0] ? TROPHIES.get(config.relic[0]) : undefined;
+      const capShift = disciplineParamsOf(ctx.disciplineId)['capShift'] ?? 0;
       value = {
         config: config.system,
         owned: new Set(ctx.pieceRanks.keys()),
-        trophy: config.relic[0] ? TROPHIES.get(config.relic[0]) : undefined,
-        cap: ctx.budget + Math.round(player.usesSkills.passives['apprentice.cap-extra'] ?? 0),
+        ranks: ctx.pieceRanks,
+        trophy,
+        trophyRank: trophy ? ctx.trophyRanks.get(trophy.id) ?? 1 : 1,
+        discipline: ctx.disciplineId,
+        cap: Math.max(1, ctx.budget + Math.round(player.usesSkills.passives['apprentice.cap-extra'] ?? 0) + capShift),
       };
     }
   }
@@ -90,18 +115,23 @@ export function hasPayoffs(player: PlayerEntity): boolean {
 // ── Sigils ───────────────────────────────────────────────────────────────────
 
 /** Damage one sigil deals per tick: the weapon's potency and the tier, never the hit. */
-function sigilDamage(player: PlayerEntity): number {
+function sigilDamage(player: PlayerEntity, disciplineMult: number): number {
   const mult = player.usesSkills.passives['apprentice.tick-mult'] ?? 1;
-  return Math.max(1, Math.round(player.dealsDamage.attack * SIGIL_TICK_PCT * mult * pieceTierScale(1)));
+  return Math.max(1, Math.round(player.dealsDamage.attack * SIGIL_TICK_PCT * mult * disciplineMult * pieceTierScale(1)));
 }
 
 /** Lay `count` sigils on `target` (at most the cap, unless `past`). */
 export function laySigils(world: World, player: PlayerEntity, target: MonsterEntity, count: number, cap: number, past = false): void {
   if (count <= 0 || target.hasHealth.hp <= 0) return;
   const passives = player.usesSkills.passives;
-  const speed = Math.max(0.1, passives['apprentice.tick-speed'] ?? 1);
+  const dp = disciplineParamsOf(payoffsOf(world, player)?.discipline ?? null);
+  const speed = Math.max(0.1, (passives['apprentice.tick-speed'] ?? 1) * (dp['tickSpeed'] ?? 1));
   const tickMs = Math.round(SIGIL_TICK_MS / speed);
-  const lifeMs = Math.round((SIGIL_LIFE_MS * (passives['apprentice.linger'] ?? 1)) / speed);
+  // Dune Staff: sigils last longer on far enemies.
+  const far = Math.hypot(target.hasPosition.current.x - player.hasPosition.current.x, target.hasPosition.current.y - player.hasPosition.current.y) > FAR_PX;
+  const farLinger = far ? 1 + (passives['apprentice.far-linger'] ?? 0) : 1;
+  const lifeMs = Math.round((SIGIL_LIFE_MS * (passives['apprentice.linger'] ?? 1) * farLinger) / speed);
+  const damage = sigilDamage(player, dp['sigilDamageMult'] ?? 1);
   const effect = applyStatusEffect(target.tracksCombat, {
     id: DOT_EFFECT_ID,
     maxStacks: Math.max(cap, past ? 99 : cap),
@@ -109,7 +139,7 @@ export function laySigils(world: World, player: PlayerEntity, target: MonsterEnt
     sourceId: player.isPlayer.id,
     remainingMs: lifeMs,
     refreshable: true,
-    data: { damagePerStack: sigilDamage(player), nextTickIn: tickMs, tickIntervalMs: tickMs, tickOnExpire: 1 },
+    data: { damagePerStack: damage, nextTickIn: tickMs, tickIntervalMs: tickMs, baseTickMs: tickMs, tickOnExpire: 1 },
   });
   // Re-applying adds one stack at a time; add the rest, honouring the cap.
   for (let i = 1; i < count; i++) {
@@ -117,8 +147,9 @@ export function laySigils(world: World, player: PlayerEntity, target: MonsterEnt
     effect.stacks += 1;
   }
   if (!past && effect.stacks > cap) effect.stacks = cap;
-  effect.data['damagePerStack'] = sigilDamage(player);
+  effect.data['damagePerStack'] = damage;
   effect.data['tickIntervalMs'] = tickMs;
+  effect.data['baseTickMs'] = tickMs;
   effect.remainingMs = lifeMs;
   attachMarker(world, target, 'hasDot');
   // `mechanic-fired`: a full bar is the class's moment, once per target per fill.
@@ -132,12 +163,12 @@ export function laySigils(world: World, player: PlayerEntity, target: MonsterEnt
   }
 }
 
-function sigilsOn(player: PlayerEntity, monster: MonsterEntity): number {
+export function sigilsOn(player: PlayerEntity, monster: MonsterEntity): number {
   const effect = getStatusEffect(monster.tracksCombat, DOT_EFFECT_ID);
   return effect && effect.sourceId === player.isPlayer.id ? effect.stacks : 0;
 }
 
-function spend(monster: MonsterEntity): number {
+export function spend(monster: MonsterEntity): number {
   const effect = getStatusEffect(monster.tracksCombat, DOT_EFFECT_ID);
   if (!effect) return 0;
   const stacks = effect.stacks;
@@ -145,12 +176,12 @@ function spend(monster: MonsterEntity): number {
   return stacks;
 }
 
-const nearestTo = (monsters: MonsterEntity[], at: { x: number; y: number }): MonsterEntity[] =>
+export const nearestTo = (monsters: MonsterEntity[], at: { x: number; y: number }): MonsterEntity[] =>
   [...monsters].sort((a, b) => Math.hypot(a.hasPosition.current.x - at.x, a.hasPosition.current.y - at.y) - Math.hypot(b.hasPosition.current.x - at.x, b.hasPosition.current.y - at.y));
 
 // ── Payoffs ──────────────────────────────────────────────────────────────────
 
-function payoffMult(player: PlayerEntity): number {
+export function payoffMult(player: PlayerEntity): number {
   return 1 + (player.usesSkills.passives['apprentice.payoff-pct'] ?? 0);
 }
 
@@ -163,11 +194,7 @@ function firePayoff(world: World, player: PlayerEntity, p: Payoffs, piece: Appre
   switch (piece.id) {
     case 'apprentice-detonate': {
       if (sigils <= 0) return false;
-      const effect = getStatusEffect(target.tracksCombat, DOT_EFFECT_ID)!;
-      const ticksLeft = Math.max(1, Math.ceil(effect.remainingMs / Math.max(1, effect.data['tickIntervalMs'] ?? SIGIL_TICK_MS)));
-      const damage = effect.stacks * effect.data['damagePerStack']! * ticksLeft * (params['payoffPct'] ?? 0.8) * payoffMult(player);
-      spend(target);
-      applyPlayerAoeTo(world, player, [target], Math.max(1, damage), 'player', {}, {});
+      detonate(world, player, p, target, params['payoffPct'] ?? 0.8, now);
       return true;
     }
     case 'apprentice-spread':
@@ -188,7 +215,7 @@ function firePayoff(world: World, player: PlayerEntity, p: Payoffs, piece: Appre
       applyHealToPlayer(player, cs, heal, world);
       // Glut: the Siphon also drains every enemy near the target.
       if (p.trophy?.id === 'apprentice-relic-swamp') {
-        for (const other of playerAoeTargets(world, player, target.hasPosition.current, p.trophy.params['radius'] ?? 160, target.isMonster.id)) {
+        for (const other of playerAoeTargets(world, player, target.hasPosition.current, trophyParam(p, 'radius', 160), target.isMonster.id)) {
           const m = spend(other);
           if (m > 0) applyHealToPlayer(player, cs, m * (params['healPerSigil'] ?? 0.02) * player.hasHealth.maxHp * (1 + (passives['apprentice.siphon-pct'] ?? 0)), world);
         }
@@ -200,9 +227,21 @@ function firePayoff(world: World, player: PlayerEntity, p: Payoffs, piece: Appre
       if (n <= 0) return false;
       let hold = Math.min(HOLD_MAX_MS, (params['holdBase'] ?? 500) + n * (params['holdPerSigil'] ?? 150));
       // Petrify: the Seize holds longer, and the held enemy takes more damage.
-      if (p.trophy?.id === 'apprentice-relic-mountain') hold *= p.trophy.params['holdMult'] ?? 1.6;
-      applyStun(target.tracksCombat, Math.round(hold), player.isPlayer.id);
+      if (p.trophy?.id === 'apprentice-relic-mountain') hold *= trophyParam(p, 'holdMult', 1.6);
       const wasCasting = momentActive(world, player, 'enemy-winds-up', undefined, now);
+      if (p.discipline === FROST_DISCIPLINE) {
+        // Frost: Seize is a real freeze; a boss that accepts no control turns brittle instead.
+        freezeOrBrittle(world, player, p, target, Math.round(hold));
+      } else {
+        applyStun(target.tracksCombat, Math.round(hold), player.isPlayer.id);
+      }
+      // Petrify: the held enemy takes more damage (rank 2: from your ticks too).
+      if (p.trophy?.id === 'apprentice-relic-mountain') {
+        applyStatusEffect(target.tracksCombat, {
+          id: HELD_EFFECT_ID, maxStacks: 1, remainingMs: Math.round(hold), refreshable: true, sourceId: player.isPlayer.id,
+          data: { totalMs: Math.round(hold), damageTakenPct: trophyParam(p, 'damageTakenPct', 0.2), tickPct: trophyParam(p, 'tickDamageTakenPct', 0) },
+        });
+      }
       abortMonsterCast(world, target);
       setResource(target.tracksCombat, SEIZED_UNTIL, now + hold);
       // Still Mind: after a Seize breaks a wind-up, Recovery triples for a few seconds.
@@ -218,7 +257,7 @@ function firePayoff(world: World, player: PlayerEntity, p: Payoffs, piece: Appre
       return true;
     }
     default:
-      return false;
+      return firePayoffT2(world, player, p, piece, target, now);
   }
 }
 
@@ -236,6 +275,9 @@ export function updateApprentice(world: World, player: PlayerEntity, dt: number,
   const passives = player.usesSkills.passives;
   const target = targetOf(world, player);
 
+  // T2: the disciplines' running rules, Fuse, Seep, Scent and the debuff watch.
+  updateApprenticeT2(world, player, p, target, dt, now);
+
   // Payoff rules: at a moment, the first placement whose conditions hold fires.
   if (target) {
     const done = new Set<string>();
@@ -244,10 +286,11 @@ export function updateApprentice(world: World, player: PlayerEntity, dt: number,
       const piece = PIECES.get(placement.pieceId);
       if (!piece) continue;
       if (now < getResource(cs, cdKey(piece.id))) continue;
-      if (!momentActive(world, player, placement.moment, undefined, now)) continue;
+      if (!momentHolds(world, player, placement.moment, target, now)) continue;
       if (!conditionsHold(world, player, placement.conditions, now)) continue;
       // Spread acts continuously (below), but while its rule holds it is the one that answers the moment.
-      if (piece.id === 'apprentice-spread') { done.add(placement.moment); continue; }
+      // Under the Poison discipline the plague spreads on its own, so the moment is free.
+      if (piece.id === 'apprentice-spread') { if (p.discipline !== POISON_DISCIPLINE) done.add(placement.moment); continue; }
       if (!firePayoff(world, player, p, piece, target, now)) continue;
       done.add(placement.moment);
       let cd = piece.params['cooldownMs'] ?? 0;
@@ -258,10 +301,16 @@ export function updateApprentice(world: World, player: PlayerEntity, dt: number,
 
   // Spread: a full target keeps passing a sigil to its nearest neighbour (Outbreak: two).
   const spread = p.config.placements.find((placement) => placement.pieceId === 'apprentice-spread');
-  if (target && spread && p.owned.has('apprentice-spread') && now >= getResource(cs, SPREAD_AT)
+  if (target && spread && p.owned.has('apprentice-spread') && p.discipline !== POISON_DISCIPLINE && now >= getResource(cs, SPREAD_AT)
     && momentActive(world, player, spread.moment, undefined, now) && conditionsHold(world, player, spread.conditions, now)) {
-    const neighbours = p.trophy?.id === 'apprentice-relic-plains' ? p.trophy.params['neighbours'] ?? 2 : PIECES.get('apprentice-spread')!.params['neighbours'] ?? 1;
-    const others = nearestTo(playerAoeTargets(world, player, target.hasPosition.current, 200, target.isMonster.id), target.hasPosition.current)
+    const neighbours = p.trophy?.id === 'apprentice-relic-plains' ? trophyParam(p, 'neighbours', 2) : PIECES.get('apprentice-spread')!.params['neighbours'] ?? 1;
+    const nearby = nearestTo(playerAoeTargets(world, player, target.hasPosition.current, 200, target.isMonster.id), target.hasPosition.current);
+    // Dune Wind: a Spread can leap any distance to an enemy already carrying your sigils.
+    if (p.trophy?.id === 'apprentice-relic-desert') {
+      const far = nearestTo([...world.monsterEntitiesInNode(player.hasPosition.nodeId)].filter((m) => m !== target && m.hasHealth.hp > 0 && sigilsOn(player, m) > 0 && !nearby.includes(m)), target.hasPosition.current);
+      nearby.push(...far);
+    }
+    const others = nearby
       .filter((monster) => sigilsOn(player, monster) < p.cap)
       .slice(0, neighbours);
     if (others.length > 0) {
@@ -272,7 +321,7 @@ export function updateApprentice(world: World, player: PlayerEntity, dt: number,
 
   // Brood Sigils: an enemy carrying three or more grows another every few seconds.
   if (p.trophy?.id === 'apprentice-relic-cave' && now >= getResource(cs, BROOD_AT)) {
-    setResource(cs, BROOD_AT, now + (p.trophy.params['everyMs'] ?? 2000));
+    setResource(cs, BROOD_AT, now + trophyParam(p, 'everyMs', 2000));
     for (const monster of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
       if (monster.hasHealth.hp > 0 && sigilsOn(player, monster) >= (p.trophy.params['minSigils'] ?? 3)) laySigils(world, player, monster, 1, p.cap);
     }
@@ -284,6 +333,9 @@ export function updateApprentice(world: World, player: PlayerEntity, dt: number,
   let numbed = 0;
   let fullElite = false;
   let touching = false;
+  let inReach = 0;
+  let inReachCarrying = 0;
+  const reach = player.performsAttack.attackRange + REACH_SLACK_PX;
   for (const monster of world.monsterEntitiesInNode(player.hasPosition.nodeId)) {
     if (monster.hasHealth.hp <= 0) continue;
     const n = sigilsOn(player, monster);
@@ -292,11 +344,17 @@ export function updateApprentice(world: World, player: PlayerEntity, dt: number,
     if (n > 0 && Math.hypot(monster.hasPosition.current.x - player.hasPosition.current.x, monster.hasPosition.current.y - player.hasPosition.current.y) <= 70) touching = true;
     if (near && getResource(monster.tracksCombat, NUMBED_UNTIL) > now) numbed++;
     if (n >= p.cap && (monster.isMonster.isBoss === true)) fullElite = true;
+    if (Math.hypot(monster.hasPosition.current.x - player.hasPosition.current.x, monster.hasPosition.current.y - player.hasPosition.current.y) <= reach) {
+      inReach++;
+      if (n > 0) inReachCarrying++;
+    }
   }
   const feeding = passives['apprentice.feeding'] ?? 0;
   if (feeding > 0) recovery *= 1 + Math.min(carrying, 5) * feeding;
   if ((passives['apprentice.numbing-calm'] ?? 0) > 1 && numbed >= 2) recovery *= passives['apprentice.numbing-calm']!;
   if ((passives['apprentice.long-draw'] ?? 0) > 1 && fullElite) recovery *= passives['apprentice.long-draw']!;
+  // Patient Hunter: Recovery multiplied while every enemy within your reach carries your sigils.
+  if ((passives['apprentice.patient-hunter'] ?? 0) > 1 && inReach > 0 && inReachCarrying === inReach) recovery *= passives['apprentice.patient-hunter']!;
   if (getResource(cs, APPRENTICE_RECOVERY_X) !== recovery) setResource(cs, APPRENTICE_RECOVERY_X, recovery);
   const move = touching && (passives['apprentice.give-ground'] ?? 0) > 0 ? 1 + passives['apprentice.give-ground']! : 1;
   if (getResource(cs, APPRENTICE_MOVE_X) !== move) setResource(cs, APPRENTICE_MOVE_X, move);
@@ -317,7 +375,10 @@ export function registerApprentice(): void {
     const passives = player.usesSkills.passives;
     let count = Math.max(1, Math.round(passives['apprentice.sigils-per-hit'] ?? 1));
     // Firstbrand: the first hit on an enemy carrying none of your sigils lays three at once.
-    if (p.trophy?.id === 'apprentice-relic-forest' && sigilsOn(player, target) === 0) count = Math.max(count, p.trophy.params['sigils'] ?? 3);
+    if (p.trophy?.id === 'apprentice-relic-forest' && sigilsOn(player, target) === 0) {
+      const share = trophyParam(p, 'barShare', 0);
+      count = Math.max(count, share > 0 ? Math.ceil(p.cap * share) : trophyParam(p, 'sigils', 3));
+    }
     laySigils(world, player, target, count, p.cap);
     // Branching Wand: each hit also lays a sigil on the nearest other enemy.
     if ((passives['apprentice.branching'] ?? 0) > 0) {
@@ -344,5 +405,6 @@ export function registerApprentice(): void {
       ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - Math.min(1 / 3, n * weight))));
     }
   });
+  registerApprenticeT2();
   void attackNow;
 }

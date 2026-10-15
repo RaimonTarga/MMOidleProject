@@ -45,7 +45,7 @@ export function apprenticeTrophy(entry: Omit<ApprenticeTrophy, 'classId' | 'para
   return { classId: 'dot', ...entry, params: entry.params ?? {} };
 }
 
-function discipline(entry: Omit<DisciplineDef, 'classId' | 'params'>): DisciplineDef {
+function discipline(entry: Omit<DisciplineDef, 'classId' | 'params'> & { params?: DisciplineDef['params'] }): DisciplineDef {
   return { classId: 'dot', params: {}, ...entry };
 }
 
@@ -115,18 +115,21 @@ const PIECES: readonly ApprenticePiece[] = [
   // ── The discipline pieces (§9.5) ──
   payoff({
     id: 'apprentice-wither',
+    params: { lessPct: 0.25, ms: 4000, cooldownMs: 6000 },
     name: 'Wither',
     family: 'poison',
     text: "Spends the target's sigils so it deals less damage for a few seconds.",
   }),
   payoff({
     id: 'apprentice-fuse',
+    params: { fuseMs: 3000, cooldownMs: 6000 },
     name: 'Fuse',
     family: 'fire',
     text: "The target's sigils blow after a short fuse, and every sigil you lay on it meanwhile adds to the blast.",
   }),
   payoff({
     id: 'apprentice-cold-snap',
+    params: { radius: 180, slowPct: 0.35, ms: 2500, cooldownMs: 6000 },
     name: 'Cold Snap',
     family: 'frost',
     text: "Spends the target's sigils to chill every enemy around it.",
@@ -134,6 +137,7 @@ const PIECES: readonly ApprenticePiece[] = [
   // ── T2 (§9.16) ──
   payoff({
     id: 'apprentice-blast-back',
+    params: { payoffPct: 0.8, knockback: 120, cooldownMs: 3000 },
     name: 'Blast Back',
     family: 'fire',
     sidegradeOf: 'apprentice-detonate',
@@ -142,6 +146,7 @@ const PIECES: readonly ApprenticePiece[] = [
   }),
   payoff({
     id: 'apprentice-sear',
+    params: { payoffPct: 0.8, barrierMult: 2, cooldownMs: 4000 },
     name: 'Sear',
     family: 'fire',
     moment: 'target-shielded',
@@ -149,6 +154,7 @@ const PIECES: readonly ApprenticePiece[] = [
   }),
   payoff({
     id: 'apprentice-seep',
+    params: { tickMult: 2 },
     name: 'Seep',
     family: 'poison',
     moment: 'target-out-of-reach',
@@ -157,6 +163,7 @@ const PIECES: readonly ApprenticePiece[] = [
   }),
   payoff({
     id: 'apprentice-snag',
+    params: { rootMs: 1500, cooldownMs: 6000 },
     name: 'Snag',
     family: 'frost',
     moment: 'target-flees',
@@ -165,6 +172,7 @@ const PIECES: readonly ApprenticePiece[] = [
   }),
   payoff({
     id: 'apprentice-recoil',
+    params: { cooldownMs: 3000 },
     name: 'Recoil',
     family: 'poison',
     moment: 'debuff-landed',
@@ -274,7 +282,7 @@ const TROPHIES: readonly ApprenticeTrophy[] = [
     name: 'Outbreak',
     kind: 'payoff',
     text: 'Your Spread passes to two neighbours instead of one.',
-    ranks: [{ rank: 2, bossTier: 2, text: 'It passes to three neighbours.' }],
+    ranks: [{ rank: 2, bossTier: 2, text: 'It passes to three neighbours.', params: { neighbours: 3 } }],
   }),
   apprenticeTrophy({
     id: 'apprentice-relic-forest',
@@ -283,7 +291,7 @@ const TROPHIES: readonly ApprenticeTrophy[] = [
     name: 'Firstbrand',
     kind: 'sigil',
     text: 'Your first hit on an enemy carrying none of your sigils lays three at once.',
-    ranks: [{ rank: 2, bossTier: 2, text: 'That first hit lays half a bar.' }],
+    ranks: [{ rank: 2, bossTier: 2, text: 'That first hit lays half a bar.', params: { barShare: 0.5 } }],
   }),
   apprenticeTrophy({
     id: 'apprentice-relic-swamp',
@@ -293,7 +301,7 @@ const TROPHIES: readonly ApprenticeTrophy[] = [
     kind: 'payoff',
     text: 'Your Siphon also drains every enemy near the target.',
     ranks: [
-      { rank: 2, bossTier: 2, text: 'It drains from twice as far.' },
+      { rank: 2, bossTier: 2, text: 'It drains from twice as far.', params: { radius: 320 } },
       { rank: 3, bossTier: 3, text: 'Glut grows stronger.' },
     ],
   }),
@@ -305,7 +313,7 @@ const TROPHIES: readonly ApprenticeTrophy[] = [
     kind: 'payoff',
     text: 'Your Seize holds longer, and the held enemy takes more damage.',
     ranks: [
-      { rank: 2, bossTier: 2, text: 'The held enemy also takes more damage from your sigils as they tick.' },
+      { rank: 2, bossTier: 2, text: 'The held enemy also takes more damage from your sigils as they tick.', params: { tickDamageTakenPct: 0.2 } },
       { rank: 3, bossTier: 3, text: 'Petrify grows stronger.' },
       { rank: 4, bossTier: 4, text: 'Petrify grows stronger.' },
     ],
@@ -318,12 +326,13 @@ const TROPHIES: readonly ApprenticeTrophy[] = [
     kind: 'sigil',
     text: 'An enemy carrying three or more of your sigils grows another one every few seconds.',
     ranks: [
-      { rank: 2, bossTier: 2, text: 'They grow faster.' },
+      { rank: 2, bossTier: 2, text: 'They grow faster.', params: { everyMs: 1500 } },
       { rank: 3, bossTier: 3, text: 'Brood Sigils grows stronger.' },
     ],
   }),
   apprenticeTrophy({
     id: 'apprentice-relic-jungle',
+    params: { tickMult: 1.5 },
     lineage: 'jungle',
     name: 'Scent',
     kind: 'sigil',
@@ -382,6 +391,8 @@ const TROPHIES: readonly ApprenticeTrophy[] = [
 const DISCIPLINES: readonly DisciplineDef[] = [
   discipline({
     id: POISON,
+    // PLACEHOLDERS (§9.5 illustrative): the cap holds 2 more, ticks fast, each sigil small.
+    params: { capShift: 2, tickSpeed: 1.5, sigilDamageMult: 0.8, passEveryMs: 1000 },
     name: 'Poison',
     fantasy: 'I touch one, and the whole pack is already dying.',
     text: 'Your sigils turn to poison: every enemy holds more of them, and they tick fast. Spread happens on its own: a full enemy keeps passing sigils to its nearest neighbour, and a dying one passes on what it still carried.',
@@ -389,6 +400,9 @@ const DISCIPLINES: readonly DisciplineDef[] = [
   }),
   discipline({
     id: FIRE,
+    // PLACEHOLDERS: a hit into a full-burn target strikes this much harder; a detonation
+    // throws `chainSigils` burn onto everything within `chainRadius`.
+    params: { burnHitPct: 0.25, chainRadius: 160, chainSigils: 2 },
     name: 'Fire',
     fantasy: 'One spark, and they go up one after another.',
     text: 'Your sigils become burn, and your hits strike harder on a target full of it. A detonation throws burn onto every enemy around it, and any enemy it fills goes off too, each once per chain.',
@@ -396,6 +410,8 @@ const DISCIPLINES: readonly DisciplineDef[] = [
   }),
   discipline({
     id: FROST,
+    // PLACEHOLDERS: the cap holds 1 fewer, each sigil is heavy and slows its carrier.
+    params: { capShift: -1, sigilDamageMult: 1.5, slowPerSigil: 0.03, shatterMult: 2, shatterRadius: 160, chillPct: 0.3, chillMs: 2000, brittlePct: 0.3, brittleMs: 4000 },
     name: 'Frost',
     fantasy: 'I lock the giant in ice, then break it.',
     text: 'Your sigils turn to frost: fewer and heavier, each slowing its carrier a little, and Seize freezes its target (a boss that cannot be held turns brittle for a few seconds, taking more damage). A Detonate on a frozen or brittle target shatters it in a heavy hit whose cold chills its neighbours.',
