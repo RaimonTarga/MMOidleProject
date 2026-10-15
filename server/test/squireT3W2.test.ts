@@ -115,7 +115,7 @@ function setup(relic: string[] = []) {
   const ids = beats.map((b) => b.id);
   const first = ids.indexOf('squire3:specialization');
   assert(first > ids.indexOf('squire2:boss-desert'), 'the tier 3 stretch comes after the tier 2 one');
-  assert.equal(ids.at(-1), 'squire3:boss-volcanic');
+  assert.equal(ids[ids.indexOf('squire4:leaf') - 1], 'squire3:boss-volcanic', 'the tier 3 stretch ends on the Volcanic boss');
   assert(new Set(ids).size === ids.length, 'beat ids are unique');
   for (const beat of beats.slice(first)) assert(beat.say.length < 170, `${beat.id}: short enough`);
 }
