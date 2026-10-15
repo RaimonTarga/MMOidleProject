@@ -57,6 +57,16 @@ export interface PayoffsSpecializationView {
   text: string;
 }
 
+/** The T4 leaf as the Payoff rules show it: the pick, under the school it belongs to. */
+export interface PayoffsLeafView {
+  id: string;
+  name: string;
+  /** What reaches you: the column the leaf answers (charger, ambusher or shooter). */
+  column: string;
+  /** The rule, in words. */
+  text: string;
+}
+
 export interface PayoffsView {
   /** The sigil cap as the class budget plus the discipline's shift ("Sigils 6"). */
   sigils: { cap: number };
@@ -64,6 +74,8 @@ export interface PayoffsView {
   discipline: PayoffsDisciplineView | null;
   /** Null until the T3 pick; its rule runs on every payoff and sigil. */
   specialization: PayoffsSpecializationView | null;
+  /** Null until the T4 leaf pick; its rule runs on what reaches you. */
+  leaf: PayoffsLeafView | null;
   /** The moments you can place payoffs on: those with a placement, plus every one a lesson you own uses. */
   moments: MomentView[];
   /** Every payoff you know, to place. */
@@ -92,6 +104,8 @@ const NATURAL_MOMENT: Readonly<Record<string, MomentId>> = {
   'apprentice-spore-burst': 'target-full',
   'apprentice-signal-fire': 'target-full',
   'apprentice-cinderfall': 'target-full',
+  // T4: Frostcrack and Pyre name their own moments; Transference answers the full bar like Detonate.
+  'apprentice-transference': 'target-full',
 };
 
 function conditionText(condition: ConditionRef): string {
@@ -144,6 +158,7 @@ export function composePayoffsView(input: ClassScreenInput): PayoffsView | null 
   const picked = APPRENTICE_KIT.disciplines.find((entry) => entry.id === ctx.disciplineId);
   const school = picked ? (picked.id.replace('apprentice-', '') as ApprenticeSchool) : null;
   const spec = ctx.specializationId ? APPRENTICE_KIT.specializations.find((entry) => entry.id === ctx.specializationId && entry.disciplineId === ctx.disciplineId) : undefined;
+  const leafDef = input.leafId ? APPRENTICE_KIT.leaves.find((entry) => entry.id === input.leafId && entry.disciplineId === ctx.disciplineId) : undefined;
   const capShift = Math.round(picked?.params['capShift'] ?? 0);
   return {
     sigils: { cap: Math.max(1, ctx.budget + capShift) },
@@ -151,6 +166,7 @@ export function composePayoffsView(input: ClassScreenInput): PayoffsView | null 
       ? { id: picked.id, name: picked.name, school, text: picked.text, pieceName: (picked.pieceId && PIECES.get(picked.pieceId)?.name) || picked.name }
       : null,
     specialization: spec ? { id: spec.id, name: spec.name, text: spec.text } : null,
+    leaf: leafDef ? { id: leafDef.id, name: leafDef.name, column: leafDef.column, text: leafDef.text } : null,
     moments,
     available,
     relic: trophy

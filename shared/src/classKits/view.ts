@@ -86,6 +86,8 @@ export interface ClassScreenInput extends ClassStateInput {
   playerTier: number;
   /** The skill nodes taken (the Conduit's T4 leaf reads from here). */
   unlockedSkills?: readonly string[];
+  /** The T4 leaf picked (an unlocked kit leaf id), when the class shows it. */
+  leafId?: string | null;
 }
 
 export function biomeDisplayName(biome: string): string {
