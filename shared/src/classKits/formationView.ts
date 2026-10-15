@@ -1,0 +1,121 @@
+/**
+ * The Conduit's Formation editor, as a view model (class-first build plan CD.3/CD.6; bible
+ * §7.3). The class screen renders it; edits come back through `withRoster` and `withOrders`,
+ * and the shared validator's reasons are shown as they are.
+ */
+import { checkClassConfig, classConfigContextFromState } from './config';
+import type { ClassConfig, ConditionRef, FormationConfig, FormationOrders } from './configTypes';
+import { CLASS_STATE_CONDITIONS } from './configTypes';
+import { CONDUIT_KIT, type ConduitPiece, type ConduitTrophy } from './conduit/kit';
+import { MOMENTS, isMomentId } from './moments';
+import type { ClassScreenInput } from './view';
+
+export interface FormationPieceView {
+  pieceId: string;
+  name: string;
+  family: ConduitPiece['family'];
+  /** "Front", "middle" or "back": role sets the row. */
+  row: ConduitPiece['row'];
+  mode: ConduitPiece['mode'];
+  command: number;
+  text: string;
+}
+
+export interface FormationOrderChoice<T extends string> {
+  value: T;
+  options: { id: T; label: string }[];
+}
+
+export interface FormationView {
+  /** Command as pips: used of total (the weapon's Command is already in the total). */
+  command: { used: number; total: number };
+  /** The roster, one entry per body in order (repeats show once each). */
+  roster: FormationPieceView[];
+  /** Every summon you have bound, to add to the roster. */
+  available: FormationPieceView[];
+  orders: {
+    attackFirst: FormationOrderChoice<FormationOrders['attackFirst']>;
+    tanksGuard: FormationOrderChoice<FormationOrders['tanksGuard']>;
+    rebuildFirst: FormationOrderChoice<FormationOrders['rebuildFirst']>;
+    /** The Recall rule's conditions, in words; empty means never. */
+    recallWhen: string[];
+  };
+  /** The Soul in the relic slot: a free extra body, or none yet. */
+  soul: { trophyId: string | null; name: string; text: string };
+  problems: string[];
+}
+
+const PIECES = new Map<string, ConduitPiece>(CONDUIT_KIT.pieces.map((piece) => [piece.id, piece]));
+const SOULS = new Map<string, ConduitTrophy>(CONDUIT_KIT.trophies.map((trophy) => [trophy.id, trophy]));
+
+const ATTACK_FIRST: FormationOrderChoice<FormationOrders['attackFirst']>['options'] = [
+  { id: 'attacking-me', label: 'What attacks me' },
+  { id: 'closest', label: 'Closest' },
+  { id: 'weakest', label: 'Weakest' },
+  { id: 'elites', label: 'Elites and bosses' },
+];
+const TANKS_GUARD: FormationOrderChoice<FormationOrders['tanksGuard']>['options'] = [
+  { id: 'conduit', label: 'The Conduit' },
+  { id: 'back-row', label: 'The back row' },
+];
+const REBUILD_FIRST: FormationOrderChoice<FormationOrders['rebuildFirst']>['options'] = [
+  { id: 'tanks', label: 'Tanks' },
+  { id: 'damage', label: 'Damage' },
+  { id: 'supports', label: 'Supports' },
+  { id: 'as-fallen', label: 'In the order they fell' },
+];
+
+function conditionText(condition: ConditionRef): string {
+  const text = isMomentId(condition.id)
+    ? MOMENTS[condition.id].text
+    : (CLASS_STATE_CONDITIONS as Record<string, { text: string }>)[condition.id]?.text ?? condition.id;
+  return condition.not ? `not when ${text}` : `when ${text}`;
+}
+
+function pieceView(piece: ConduitPiece): FormationPieceView {
+  return { pieceId: piece.id, name: piece.name, family: piece.family, row: piece.row, mode: piece.mode, command: piece.command, text: piece.text };
+}
+
+/** The Formation editor for a Conduit's screen, or null for anyone else. */
+export function composeFormationView(input: ClassScreenInput): FormationView | null {
+  const ctx = classConfigContextFromState(input);
+  const config = input.classConfig;
+  if (!ctx || ctx.archetype !== 'summoner' || config?.system.kind !== 'formation') return null;
+  const system = config.system;
+
+  const roster = system.roster.map((id) => PIECES.get(id)).filter((piece): piece is ConduitPiece => !!piece).map(pieceView);
+  const available = CONDUIT_KIT.pieces.filter((piece) => ctx.pieceRanks.has(piece.id)).map(pieceView);
+  const soul = config.relic[0] ? SOULS.get(config.relic[0]) : undefined;
+  const check = checkClassConfig(config, ctx);
+  return {
+    command: { used: roster.reduce((sum, piece) => sum + piece.command, 0), total: ctx.budget },
+    roster,
+    available,
+    orders: {
+      attackFirst: { value: system.orders.attackFirst, options: ATTACK_FIRST },
+      tanksGuard: { value: system.orders.tanksGuard, options: TANKS_GUARD },
+      rebuildFirst: { value: system.orders.rebuildFirst, options: REBUILD_FIRST },
+      recallWhen: system.orders.recallWhen.map(conditionText),
+    },
+    soul: soul
+      ? { trophyId: soul.id, name: soul.name, text: soul.text }
+      : { trophyId: null, name: 'No Soul yet', text: 'Beat a boss and a Soul joins your formation for free.' },
+    problems: check.ok ? [] : check.reasons,
+  };
+}
+
+function withSystem(config: ClassConfig, system: FormationConfig): ClassConfig {
+  return { ...config, mode: 'custom', system };
+}
+
+/** The config with this roster (one id per body, in order). */
+export function withRoster(config: ClassConfig, roster: readonly string[]): ClassConfig {
+  if (config.system.kind !== 'formation') return config;
+  return withSystem(config, { ...config.system, roster: [...roster] });
+}
+
+/** The config with some orders changed (Recall's conditions included). */
+export function withOrders(config: ClassConfig, patch: Partial<FormationOrders>): ClassConfig {
+  if (config.system.kind !== 'formation') return config;
+  return withSystem(config, { ...config.system, orders: { ...config.system.orders, ...patch } });
+}
