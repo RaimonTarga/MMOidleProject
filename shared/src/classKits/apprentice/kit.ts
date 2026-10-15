@@ -37,12 +37,12 @@ export type ApprenticeTrophy = TrophyDef<ApprenticeTrophyKind>;
 /** The T4 leaves' question, "what reaches you?" (§9.7): one column per kind of threat. */
 type ApprenticeLeafColumn = 'charger' | 'ambusher' | 'shooter';
 
-export function payoff(piece: Omit<ApprenticePiece, 'classId' | 'params'>): ApprenticePiece {
-  return { classId: 'dot', params: {}, ...piece };
+export function payoff(piece: Omit<ApprenticePiece, 'classId' | 'params'> & { params?: ApprenticePiece['params'] }): ApprenticePiece {
+  return { classId: 'dot', ...piece, params: piece.params ?? {} };
 }
 
-export function apprenticeTrophy(entry: Omit<ApprenticeTrophy, 'classId' | 'params'>): ApprenticeTrophy {
-  return { classId: 'dot', params: {}, ...entry };
+export function apprenticeTrophy(entry: Omit<ApprenticeTrophy, 'classId' | 'params'> & { params?: ApprenticeTrophy['params'] }): ApprenticeTrophy {
+  return { classId: 'dot', ...entry, params: entry.params ?? {} };
 }
 
 function discipline(entry: Omit<DisciplineDef, 'classId' | 'params'>): DisciplineDef {
@@ -64,6 +64,7 @@ const FROST = 'apprentice-frost';
 const PIECES: readonly ApprenticePiece[] = [
   payoff({
     id: 'apprentice-detonate',
+    params: { payoffPct: 0.8, cooldownMs: 1500 },
     name: 'Detonate',
     family: 'fire',
     text: "Sets off every sigil on the target at once, dealing what they still had to deal in one blast.",
@@ -71,6 +72,7 @@ const PIECES: readonly ApprenticePiece[] = [
   // ── T1 (§9.4): every school twice ──
   payoff({
     id: 'apprentice-spread',
+    params: { everyMs: 1000, neighbours: 1 },
     name: 'Spread',
     family: 'poison',
     text: 'A target full of your sigils keeps passing one to its nearest neighbour.',
@@ -78,6 +80,7 @@ const PIECES: readonly ApprenticePiece[] = [
   }),
   payoff({
     id: 'apprentice-numb',
+    params: { slowBase: 0.2, slowPerSigil: 0.05, msBase: 2000, msPerSigil: 400, cooldownMs: 6000 },
     name: 'Numb',
     family: 'frost',
     text: "Spends the target's sigils to slow its attacks and movement for a few seconds, longer the more sigils it carried.",
@@ -85,6 +88,7 @@ const PIECES: readonly ApprenticePiece[] = [
   }),
   payoff({
     id: 'apprentice-siphon',
+    params: { healPerSigil: 0.02, cooldownMs: 8000 },
     name: 'Siphon',
     family: 'poison',
     text: "Spends the target's sigils to heal you. It needs a while to come back.",
@@ -92,6 +96,7 @@ const PIECES: readonly ApprenticePiece[] = [
   }),
   payoff({
     id: 'apprentice-seize',
+    params: { holdBase: 500, holdPerSigil: 150, cooldownMs: 5000 },
     name: 'Seize',
     family: 'frost',
     text: "Spends the target's sigils to hold it for a moment, breaking its wind-up.",
@@ -102,6 +107,7 @@ const PIECES: readonly ApprenticePiece[] = [
   }),
   payoff({
     id: 'apprentice-converge',
+    params: { radius: 180, cooldownMs: 4000 },
     name: 'Converge',
     family: 'fire',
     text: 'Pulls the sigils of every enemy near the target onto it, even past what it can normally hold.',
@@ -263,6 +269,7 @@ const LESSONS = [
 const TROPHIES: readonly ApprenticeTrophy[] = [
   apprenticeTrophy({
     id: 'apprentice-relic-plains',
+    params: { neighbours: 2 },
     lineage: 'plains',
     name: 'Outbreak',
     kind: 'payoff',
@@ -271,6 +278,7 @@ const TROPHIES: readonly ApprenticeTrophy[] = [
   }),
   apprenticeTrophy({
     id: 'apprentice-relic-forest',
+    params: { sigils: 3 },
     lineage: 'forest',
     name: 'Firstbrand',
     kind: 'sigil',
@@ -279,6 +287,7 @@ const TROPHIES: readonly ApprenticeTrophy[] = [
   }),
   apprenticeTrophy({
     id: 'apprentice-relic-swamp',
+    params: { radius: 160 },
     lineage: 'swamp',
     name: 'Glut',
     kind: 'payoff',
@@ -290,6 +299,7 @@ const TROPHIES: readonly ApprenticeTrophy[] = [
   }),
   apprenticeTrophy({
     id: 'apprentice-relic-mountain',
+    params: { holdMult: 1.6, damageTakenPct: 0.2 },
     lineage: 'mountain',
     name: 'Petrify',
     kind: 'payoff',
@@ -302,6 +312,7 @@ const TROPHIES: readonly ApprenticeTrophy[] = [
   }),
   apprenticeTrophy({
     id: 'apprentice-relic-cave',
+    params: { minSigils: 3, everyMs: 2000 },
     lineage: 'cave',
     name: 'Brood Sigils',
     kind: 'sigil',

@@ -14,6 +14,8 @@ const ED_DIMINISH_RATE  = 0.5;
  */
 export function computeScaledDotDamage(effect: StatusEffect): number {
   const { stacks, maxStacks, data } = effect;
+  // Sigils tick linearly (class-first Apprentice, bible §9.2): the front-loaded curve is gone for them.
+  if (data.sigil === 1) return Math.round(stacks * data.damagePerStack);
   if (maxStacks > 0) {
     return Math.round(data.damagePerStack * Math.sqrt(stacks * maxStacks));
   }

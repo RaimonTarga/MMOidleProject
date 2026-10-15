@@ -10,6 +10,7 @@ import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { COMBAT_ELAPSED_KEY } from '../core/pools';
 import { SLINGER_RECOVERY_X } from '../../classes/archetypes/reload/slinger';
+import { APPRENTICE_RECOVERY_X } from '../../classes/archetypes/dot/sigils';
 import { registerCombatListener } from '../../combat/engine/combatPipeline';
 import { applyHealToPlayer } from './healing';
 
@@ -142,6 +143,9 @@ function shareMultiplier(player: PlayerEntity): number {
   // The Slinger's Recovery lines (Breathing Room, Fleet, Snake Oil) write one factor each tick.
   const slinger = getResource(cs, SLINGER_RECOVERY_X);
   if (slinger > 0) factor *= slinger;
+  // The Apprentice's lines (Feeding Swarm, Numbing Calm, Long Draw) write one factor each tick.
+  const apprentice = getResource(cs, APPRENTICE_RECOVERY_X);
+  if (apprentice > 0) factor *= apprentice;
   return factor;
 }
 

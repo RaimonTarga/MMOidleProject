@@ -152,6 +152,22 @@ export const DEFENSE_KEYS = [
   'spirit.afterstorm-x',  // Afterstorm: after a big hit the storm gathers this many times as fast for a few seconds
   'spirit.ironbound',  // Ironbound: plating multiplied while your storm is empty
   'spirit.capacitor',  // Capacitor: the flow wasted at a full storm heals you (this share)
+  'apprentice.branching',  // Branching Wand: each hit also lays a sigil on the nearest other enemy
+  'apprentice.tick-speed',  // Thornwood Rod: sigils tick this many times as fast, for the inverse as long
+  'apprentice.linger',  // Bog Censer: sigils last this many times as long
+  'apprentice.sigils-per-hit',  // Runestone Staff: sigils laid per hit (1 normally)
+  'apprentice.cap-extra',  // Runestone Staff: more sigils every enemy can hold
+  'apprentice.payoff-pct',  // Deep Grimoire: payoffs pay this much more
+  'apprentice.tick-mult',  // Deep Grimoire: sigils tick this much (1 = normal)
+  'apprentice.siphon-pct',  // Bog Censer / Bitter Tonic: Siphon heals this much more
+  'apprentice.siphon-cd-pct',  // Bitter Tonic: Siphon comes back this much sooner
+  'apprentice.warding',  // Warding Sigils: damage you take is reduced this much per enemy carrying your sigils
+  'apprentice.feeding',  // Feeding Swarm: Recovery rises this much per enemy carrying your sigils
+  'apprentice.give-ground',  // Give Ground: speed while an enemy carrying your sigils is in melee reach
+  'apprentice.numbing-calm',  // Numbing Calm: Recovery multiplied while two or more enemies near you are numbed
+  'apprentice.still-mind',  // Still Mind: Recovery multiplied after a Seize breaks a wind-up
+  'apprentice.sigil-weight',  // Sigil Weight: a winding-up enemy's blow is weaker per sigil it carries (up to a third)
+  'apprentice.long-draw',  // Long Draw: Recovery multiplied while an elite or boss carries a full bar of your sigils
   'defense.recovery-hit-pct',         // Cairnstone: a hit over this share of max HP...
   'defense.recovery-hit-x',           // ...multiplies the Recovery share by this for a few seconds
   'squire.recovery-riposte-x',        // Counterbalance: after a Riposte, the Recovery share is multiplied by this

@@ -1,4 +1,5 @@
 import { drainStorm } from '../energy/spirit';
+import { hasPayoffs, laySigils, payoffsOf } from './sigils';
 import { incomingFinalDamage } from '../../../combat/damage/finalDamage';
 import { GAME_CONFIG, resolveDotStackCap } from '@mmo-idle/shared';
 import {
@@ -126,6 +127,12 @@ export function applyClassDotStack(
    */
   ctx?: Parameters<typeof emitMechanicFired>[2],
 ): void {
+  // A character with Payoff rules lays a sigil instead (`sigils.ts`).
+  const payoffs = payoffsOf(world, attacker);
+  if (payoffs) {
+    laySigils(world, attacker, defender, 1, payoffs.cap);
+    return;
+  }
   const effect = applyStatusEffect(defender.tracksCombat, {
     id: DOT_EFFECT_ID,
     maxStacks: application.maxStacks,
@@ -448,6 +455,8 @@ export function initDotArchetype(): void {
     // Query by component presence, not by combatArchetype string.
     const attacker = ctx.attacker;
     if (!attacker?.appliesDots) return;
+    // A character with Payoff rules lays sigils instead (`sigils.ts`): no conversion, no curve.
+    if (hasPayoffs(attacker)) return;
 
     const application = resolveClassDotStackApplication(attacker);
 

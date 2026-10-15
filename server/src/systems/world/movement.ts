@@ -1,6 +1,8 @@
 import { reloadMoveMult, regroupSpeedMult } from '../classes/archetypes/reload/slinger';
+import { APPRENTICE_MOVE_X } from '../classes/archetypes/dot/sigils';
 import {
   ABILITY_SIDESTEP_EFFECT_ID,
+  getResource,
   LAIR_DRAG_ROOT_EFFECT_ID,
   advanceMotion,
   buildNavGrid,
@@ -501,6 +503,9 @@ function playerSpeedMults(
   if (reloadMult !== null) mults.push(reloadMult);
   const regroup = regroupSpeedMult(player, now);
   if (regroup > 1) mults.push(regroup);
+  // The Apprentice's Give Ground: faster while an enemy carrying your sigils is in melee reach.
+  const giveGround = getResource(cs, APPRENTICE_MOVE_X);
+  if (giveGround > 1) mults.push(giveGround);
 
   const sidestep = getStatusEffect(cs, ABILITY_SIDESTEP_EFFECT_ID);
   if (sidestep && sidestep.remainingMs > 0) mults.push(1 + Math.max(0, sidestep.data['moveSpeedPct'] ?? 0));
