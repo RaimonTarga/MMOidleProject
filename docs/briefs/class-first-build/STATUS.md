@@ -3,7 +3,7 @@
 Kept by the conductor. Plan: [class-first-build-plan-2026-10-14.md](../class-first-build-plan-2026-10-14.md).
 Integration branch `rework/class-first` (conductor worktree `../mmo-rework`).
 
-**Updated:** 2026-10-15 (evening): the Conduit CD.1–CD.5 done; Striker, Squire and gear delegates merged; 74 new icons wired; CD6-UI, CD7-ROUTE, CD8-CLEANUP are the open delegate tasks.
+**Updated:** 2026-10-15 (night): the Conduit CD.1–CD.5 and the Slinger CL.1–CL.4 done; CD6–CD8 and CL5–CL7 are the open delegate tasks; Spirit and Apprentice next.
 **Baseline:** `rework/class-first` after the CQ7 merge: full suite **342/342** (biomeEcology flakes under load), typecheck clean.
 Codex hit rate limits on 2026-10-14, so D5, K1–K3, D1, T0 and D2 ran as Claude subagents of the conductor (same briefs, same worktrees).
 
@@ -27,6 +27,9 @@ Recorded in the bible (§4 Armor/charm row, §5) where they are design.
 | CD6-UI | [The Formation editor, Command pips, rebuild queue](CD-conduit-delegates.md) | Grok | `../mmo-rw-cd6-ui` · `rw/cd6-ui` | ready |
 | CD7-ROUTE | [The Conduit's guided tutorial and bot route](CD-conduit-delegates.md) | Codex or Grok | `../mmo-rw-cd7-route` · `rw/cd7-route` | ready |
 | CD8-CLEANUP | [Delete the Conduit's old frame, range and specialization content](CD-conduit-delegates.md) | Codex or Grok | `../mmo-rw-cd8-cleanup` · `rw/cd8-cleanup` | ready |
+| CL5-UI | [The Loadout editor and the ammo ring](CL-slinger-delegates.md) | Grok | `../mmo-rw-cl5-ui` · `rw/cl5-ui` | ready |
+| CL6-ROUTE | [The Slinger's guided tutorial and bot route](CL-slinger-delegates.md) | Codex or Grok | `../mmo-rw-cl6-route` · `rw/cl6-route` | ready |
+| CL7-CLEANUP | [Delete the Slinger's old frame, range and T3 content](CL-slinger-delegates.md) | Codex or Grok | `../mmo-rw-cl7-cleanup` · `rw/cl7-cleanup` | ready |
 | ICONS-3 | Redraw the Striker crests and flat T1 icons | the designer, via Codex | `../mmo-rw-icons-3` · `rw/icons-3` | **not merged**: superseded by the 74 style-recovery icons, wired in `ce68c66f` |
 
 ## Paste-ready prompts
@@ -66,6 +69,39 @@ run pnpm install. When you're done, commit on your branch, write your report whe
 brief says, and tell me.
 ```
 
+**CL5-UI (Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-cl5-ui`:
+
+```text
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/cl5-ui. First read docs/briefs/class-first-build/AGENT-RULES.md and
+CS5-striker-ui.md, then do the task marked CL5-UI in
+docs/briefs/class-first-build/CL-slinger-delegates.md. Work only in this folder; never
+run pnpm install. When you're done, commit on your branch, write your report where the
+brief says, and tell me.
+```
+
+**CL6-ROUTE (Codex or Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-cl6-route`:
+
+```text
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/cl6-route. First read docs/briefs/class-first-build/AGENT-RULES.md and
+CS6-striker-route.md, then do the task marked CL6-ROUTE in
+docs/briefs/class-first-build/CL-slinger-delegates.md. Work only in this folder; never
+run pnpm install. When you're done, commit on your branch, write your report where the
+brief says, and tell me.
+```
+
+**CL7-CLEANUP (Codex or Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-cl7-cleanup`:
+
+```text
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/cl7-cleanup. First read docs/briefs/class-first-build/AGENT-RULES.md and
+CS7-striker-cleanup.md, then do the task marked CL7-CLEANUP in
+docs/briefs/class-first-build/CL-slinger-delegates.md. Work only in this folder; never
+run pnpm install. When you're done, commit on your branch, write your report where the
+brief says, and tell me.
+```
+
 ## Queued (briefs written when their inputs land)
 
 | ID | Task | Agent | Waits for |
@@ -73,6 +109,15 @@ brief says, and tell me.
 | Next class | The Conduit ([C-conduit](C-conduit.md): CD.1–CD.5 done, CD6–CD8 are delegate tasks), then Slinger, Spirit, Apprentice | Conductor | — |
 
 ## Known follow-ups (not yet a task)
+
+- **Slinger stand-ins and gaps:** the "never reload inside a telegraph" free rule is stored but not
+  enforced (the reload still starts when the clip empties); double loads (T3) and the Gunslinger /
+  Siege / Trickshot disciplines are T2+; the Slinger's T1 power curve moved (the old 0.65 attack and
+  double-speed layers are gone: DPS per gun is now attack x its own fire rate): measure with
+  `bench:server` against the Striker and flag to the designer; typed rounds trade 10% damage, Venom and
+  Rot Round ride the bleed driver (red numbers), Snare slows movement only (no attack slow yet);
+  Regroup/Quickdraw/Elbow Room/Dig In/Hunker/Oilskin are wired but untuned; T2+ clips (Buckshot,
+  Shellbreaker, Tracer...) and trophy rounds (Hunter's...) have no runtime yet.
 
 - **Conduit stand-ins (designer to look at):** the Mountain Soul's shield is a heal (minions have no
   ward); the Cave Soul's spiderling is a free half-strength strike every 2 s (no temporary summon
@@ -131,6 +176,7 @@ brief says, and tell me.
 
 | ID | Task | Merged |
 |---|---|---|
+| CL.1–CL.4 | The Slinger: fire rate is the gun's stat (half-damage and double-speed layers gone); the Loadout picks the clip at each reload; per-round effects (Scatter, Snare, Venom, Stopping, Breaching); trophy rounds (Stampede, Twin, Rot, Quake, Splinter); the stationary reload; the six T1 guns and the T1 lines; `composeLoadoutView`; `slingerLoadout.test.ts` | `0d3e7ad6`, `6d975cf9`; 345/345 |
 | CS5-UI, CQ5-UI, G-GEAR-C | The Striker's Order editor and beat strip; the Squire's Response rules editor and Resolve pips; every class's moved lines on second bases (Grok); census tests skip `-b` bases | merges `5f44dbda`, `8791410c`, `75958acc` |
 | ICONS (designer) | The 74 style-recovery class-piece and trophy icons wired over the earlier versions; cache-busting v2 | `ce68c66f` |
 | CD.4, CD.5 | The Conduit's Souls (a free extra body plus the five T1 seed lines); the weapon jobs and T1 lines (Command from the weapon, multipliers, Poison Staff, Shared Plating, Herd, Deep Reserve, Bramble, Sapbark, Poison Shift, Bloodtithe, Big-Hit Intercept, You Tank); `composeFormationView` | `5bc76699`, `8cbe526f`, `df14e201` |
