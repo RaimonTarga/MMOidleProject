@@ -3,8 +3,8 @@
 Kept by the conductor. Plan: [class-first-build-plan-2026-10-14.md](../class-first-build-plan-2026-10-14.md).
 Integration branch `rework/class-first` (conductor worktree `../mmo-rework`).
 
-**Updated:** 2026-10-15 (overnight): D2, D3, G-GEAR-A/B merged; F6, S1, S3 and the F7 view model done by the conductor. Phase 0 is complete but for the F7 panel (Grok) and DOC-1; the Striker track starts next.
-**Baseline:** `rework/class-first` at `c0b3fda9` (D3 merged): full suite **332/332**, typecheck clean (verified in `../mmo-rw-verify2`).
+**Updated:** 2026-10-15 (overnight, later): Phase 0 done but the F7 panel (Grok). The Striker track has started: the Order runs at T1 (CS.1, CS.2) and its editor's view model is in (CS.5 conductor half). DOC-1 and ICONS-2B merged.
+**Baseline:** `rework/class-first` at `c3908184`: full suite **335/335**, typecheck clean (verified in `../mmo-rw-verify2`).
 Codex hit rate limits on 2026-10-14, so D5, K1–K3, D1, T0 and D2 ran as Claude subagents of the conductor (same briefs, same worktrees).
 
 ## Open tasks
@@ -12,12 +12,11 @@ Codex hit rate limits on 2026-10-14, so D5, K1–K3, D1, T0 and D2 ran as Claude
 | ID | Task | Agent | Worktree · branch | State |
 |---|---|---|---|---|
 | F7-PANEL | [The class screen's shell (client)](F7-class-screen-panel.md) | Grok | `../mmo-rw-f7-panel` · `rw/f7-panel` | ready |
+| CS6-ROUTE | [The Striker's guided tutorial and bot route](CS6-striker-route.md) | Codex or Grok | `../mmo-rw-cs6-route` · `rw/cs6-route` | ready |
 | ICONS-2A | [Striker, Squire, Apprentice T2–T4 pieces + discipline crests](ICONS-2.md) | Codex (image generation) | `../mmo-rw-icons-2a` · `rw/icons-2a` | running |
-| ICONS-2B | [Slinger, Spirit T2–T4 pieces + every T2–T4 trophy](ICONS-2.md) | Codex (image generation) | `../mmo-rw-icons-2b` · `rw/icons-2b` | running |
-| DOC-1 | [Docs pass for the removed systems](DOC-1-docs-pass.md) | Grok | `../mmo-rw-doc-1` · `rw/doc-1` | running |
 
-They touch disjoint files, so all can run at once. DOC-1 branched before D3: its `CLAUDE.md`
-socket list will still name the ability events, which the conductor fixes at merge.
+They touch disjoint files, so all can run at once. CS5-UI (the Order editor and beat strip) is
+briefed and waits for F7-PANEL: the conductor creates its worktree once the panel is merged.
 
 ## Paste-ready prompts
 
@@ -29,6 +28,16 @@ Open the agent **in the task's worktree folder** and paste its prompt.
 You're working on the MMO Idle class-first rework, in this folder, on branch
 rw/f7-panel. First read docs/briefs/class-first-build/AGENT-RULES.md, then do the
 task in docs/briefs/class-first-build/F7-class-screen-panel.md. Work only in this folder;
+never run pnpm install. When you're done, commit on your branch, write your report
+where the brief says, and tell me.
+```
+
+**CS6-ROUTE (Codex or Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-cs6-route`:
+
+```text
+You're working on the MMO Idle class-first rework, in this folder, on branch
+rw/cs6-route. First read docs/briefs/class-first-build/AGENT-RULES.md, then do the
+task in docs/briefs/class-first-build/CS6-striker-route.md. Work only in this folder;
 never run pnpm install. When you're done, commit on your branch, write your report
 where the brief says, and tell me.
 ```
@@ -49,39 +58,14 @@ its in-game size and regenerate any that don't read. When you're done, commit on
 branch, write your report where the brief says, and tell me.
 ```
 
-**ICONS-2B (Codex, image generation)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-icons-2b`:
-
-```text
-You're making game icons for the MMO Idle class-first rework, in this folder, on branch
-rw/icons-2b. First read docs/briefs/class-first-build/AGENT-RULES.md, then do the part
-marked ICONS-2B in docs/briefs/class-first-build/ICONS-2.md with your built-in image
-generation, one image per call. The new icons must look like they belong to the set the
-game already ships, above all the Tier 1 class icons in
-client/public/assets/concept-icons/class-pieces/ and .../trophies/: the same
-semi-painterly style, rim lighting, level of detail and near-black backdrop. Follow
-ICONS-T1.md's style rules and design_docs/visual_and_aesthetics_design/openai-icon-generation.md,
-and attach the reference icons the brief lists to every generation. Check every icon at
-its in-game size and regenerate any that don't read. When you're done, commit on your
-branch, write your report where the brief says, and tell me.
-```
-
-**DOC-1 (Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-doc-1`:
-
-```text
-You're working on the MMO Idle class-first rework, in this folder, on branch
-rw/doc-1. First read docs/briefs/class-first-build/AGENT-RULES.md, then do the
-task in docs/briefs/class-first-build/DOC-1-docs-pass.md. Work only in this folder;
-never run pnpm install. When you're done, commit on your branch, write your report
-where the brief says, and tell me.
-```
-
 ## Queued (briefs written when their inputs land)
 
 | ID | Task | Agent | Waits for |
 |---|---|---|---|
-| CS.1–CS.4 | [The Striker's T1 track](C-striker.md): the Order runtime, T1 pieces, gear lines | Conductor | — |
+| CS.4 | The Striker's T1 gear: weapon jobs and armor/charm line runtime | Conductor | in progress; Rhythm and Cairnstone wait on S4 |
+| CS5-UI | [The Order editor and beat strip](CS5-striker-ui.md) | Grok | F7-PANEL merged |
 | S2 | The rest of the T1 moments: enemy-casts, telegraph-at-me, target-closing-fast | Conductor | — |
-| S4 | Recovery and flow bound to a state (the charm-line mechanism) | Conductor | F6 (done) |
+| S4 | Recovery and flow bound to a state (the charm-line mechanism) | Conductor | the designer: what in-combat Recovery a class has before its charm line (the Striker's pulse is gone; "Recovery doubles/triples" lines need a base to multiply) |
 | S7 | XC1: the recharging barrier leaves the shared charms | Grok | the designer: what the Mountain and Tundra charm bases carry instead |
 
 ## Known follow-ups (not yet a task)
@@ -117,6 +101,11 @@ where the brief says, and tell me.
   Auto Combat / Fight Back gate on ability firing went with the loop (class runtimes decide);
   bench bots fire no abilities; scripts outside typecheck (`server/scripts/*Preflight`, the root
   `boss*.mjs`, `tools/uishot/mobile-audit.mjs`) still name removed things.
+- **Striker numbers (designer):** every T1 technique and trophy number is a placeholder in
+  `shared/src/classKits/striker/kit.ts` (`params`), the price in `configs/striker.ts`
+  (`STRIKER_TECHNIQUE_SWING`). Mastery picks the first techniques in beat order (stand-in: the
+  Order doesn't say which one a step masters; T1 never masters). Sunder II's plating loss has no
+  number yet.
 - **From S1:** monster-ability effects (generic slow/antiheal/sunder) and ambient ramps still
   reach players only; summons show no statuses on the client yet (the Conduit HUD decides).
 - **From D2:** `CrestDiamond` (primitive + CSS) is unused; `resolveFinalDamageMultipliers`
@@ -139,6 +128,10 @@ where the brief says, and tell me.
 | I3 | Bench fights real T1 nodes; `bench:summon-cap` (Grok) | `d1ba3b3b` |
 | K4–K6 | Slinger, Spirit, Conduit kits through T4 (Grok); 11 undesigned trophy ranks given placeholders | `07e6d86f`, `68711dd9`, `29b72c28`, `78d2fbb4` |
 | ICONS-T1 | 60 Tier 1 icons, 52 generated (Codex image generation); full-res sources kept in the main checkout's `art/candidates/openai-icons/` | `d04a6a85` |
+| CS.1, CS.2 | The Striker's Order at runtime with its T1 techniques (Sweep, Hamstring, Rend, Coil, Focus) and trophies (Wide Arc, Double Slash, Festering Cut, Skyfall, Sunder); class casts on the cast machine; the root's Recovery pulse removed | `8dc3fa6a`, `a311329f` |
+| CS.5 (view model) | `composeOrderView`, `withBeat`, `withRelic` | `eb43c183` |
+| DOC-1 | 15 docs archived, ~30 living docs corrected (Grok); runic attunement archived after D3 | `rw/doc-1` merge, `6be2ae0f` |
+| ICONS-2B | 30 Slinger/Spirit T2–T4 pieces, 36 T2–T4 trophies (Codex) | `rw/icons-2b` merge |
 | D3 | The shared abilities' player surface removed (subagent): learning, attunement, the hotbar, Use Ability, the panels; the engine kept behind `fireTechnique` / `fireGuard`. 265 files, −5.3k lines | `rw/d3-abilities` merge |
 | G-GEAR-A/B | Every class's weapons (33 each) and lines (52 each) through T4 (Grok ×2); weapon-curve, slot and economy suites taught about class gear | `rw/gear-a`, `rw/gear-b` merges, `6d81a93d`, `181364ee` |
 | F7 (view model) | `composeClassScreenView`, `classUnlockNotices` | `e97f7bde` |
