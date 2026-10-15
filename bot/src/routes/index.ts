@@ -1,13 +1,14 @@
 import { SKILL_TREE } from "@mmo-idle/shared";
 import type { Route } from "../route/types";
 import { DEFAULT_SMOKE_CLASS, SMOKE_T1_ID, smokeT1Route } from "./smokeT1";
+import { STRIKER_T1_ID, strikerT1Route } from "./strikerT1";
 
 /**
  * The route registry.
  *
- * Class routes are rebuilt per class in the class-first build (plan §5);
- * `smoke-t1` is the only route until then. Each class's route registers here
- * as data over the same executor.
+ * Class routes are rebuilt per class in the class-first build (plan §5).
+ * `smoke-t1` stays class-agnostic. `striker-t1` is the Striker's own route.
+ * Each route registers here as data over the same executor.
  */
 
 /**
@@ -19,9 +20,12 @@ const CLASS_AGNOSTIC_ROUTES = new Map<string, (classRoot: string) => Route>([
 ]);
 
 /** Authored routes, keyed by id; class-agnostic ones in their default class. */
-export const ROUTES = new Map<string, Route>(
-  [smokeT1Route(classRootFor(DEFAULT_SMOKE_CLASS))].map((route) => [route.id, route]),
-);
+const SMOKE_ROUTE = smokeT1Route(classRootFor(DEFAULT_SMOKE_CLASS));
+const STRIKER_ROUTE = strikerT1Route();
+export const ROUTES = new Map<string, Route>([
+  [SMOKE_ROUTE.id, SMOKE_ROUTE],
+  [STRIKER_ROUTE.id, STRIKER_ROUTE],
+]);
 
 /**
  * The class root for a command-line class: an archetype id (`cadence`) or the
@@ -63,7 +67,7 @@ export function isClassAgnosticRouteId(id: string): boolean {
  * joins this list when it is rebuilt; explicit one-off runs of anything else
  * need `--controlled=false`.
  */
-export const CONTROLLED_ROUTE_IDS: readonly string[] = [SMOKE_T1_ID];
+export const CONTROLLED_ROUTE_IDS: readonly string[] = [SMOKE_T1_ID, STRIKER_T1_ID];
 
 export function isControlledRouteId(id: string): boolean {
   return CONTROLLED_ROUTE_IDS.includes(id);
