@@ -257,6 +257,23 @@ function listenerGain(scene: GameScene, sourceX: number, sourceY: number): numbe
 type PlayerHitEvent = CombatEvent & { kind: "player-hit" };
 type PlayerKillEvent = CombatEvent & { kind: "player-kill" };
 
+/**
+ * A Squire slam with a trophy equipped calls the trophy out by name.
+ * Plain slams and ordinary ripostes (they are not execution hits) stay quiet.
+ * Shield Bash has no event of its own, so "INTERRUPTED" is not called out here.
+ */
+function announceTrophySlam(state: RenderState, scene: GameScene, ev: PlayerHitEvent): void {
+  if (!ev.execution || !shouldRunClientFx()) return;
+  const player = state.view.get(ev.playerId) as PlayerView | undefined;
+  const config = player?.classConfig;
+  if (!player || player.combatArchetype !== 'cooldown' || config?.system.kind !== 'responses') return;
+  const trophyId = config.relic[0];
+  if (!trophyId || !state.sprite.has(ev.playerId)) return;
+  const name = findTrophy(trophyId)?.name;
+  if (!name) return;
+  spawnSkillCallout(state, scene, ev.playerId, name, SQUIRE_SLAM_CALLOUT_COLOR);
+}
+
 /** Small captured render context; never retains a removed entity or Phaser sprite. */
 export interface PlayerAttackPresentation {
   player: PlayerView;
@@ -826,6 +843,8 @@ const GUARD_CALLOUT_COLORS: Record<string, string> = {
   recuperate: "#bdf3e4",
 };
 const GUARD_CALLOUT_FALLBACK = "#9cd2ff";
+/** A Squire trophy slam, in the cooldown class colour. A plain slam stays quiet. */
+const SQUIRE_SLAM_CALLOUT_COLOR = "#c9b0e8";
 /** Announced boss phase names: the boss-bar gold, so the callout and the label read as one. */
 const BOSS_PHASE_CALLOUT_COLOR = "#ffcc55";
 const TECHNIQUE_CALLOUT_COLOR = "#ffd24a";
@@ -979,6 +998,8 @@ export function dispatchCombatEvent(
     // The local player took a hit — play the damage cue (own-player only).
     if (ev.targetId === scene.myId && shouldRunClientFx()) playSfx("take-damage");
     if (ev.evadedPartial) spawnGrazeLabel(state, scene, ev.targetId);
+    // A caught Guard sets `squireGuarded` on the server exchange. This event
+    // has no field for that flag, so "GUARDED" cannot be called out from it.
     return;
   }
 
@@ -1720,6 +1741,7 @@ export function dispatchCombatEvent(
   if (ev.kind === "player-hit" && ev.empowered && !ev.fromSummon && shouldRunClientFx()) {
     announceTrophyFinisher(state, scene, ev.playerId, presentation?.player);
   }
+  if (ev.kind === "player-hit") announceTrophySlam(state, scene, ev);
 
   const isOwnPlayerEvent = ev.playerId === scene.myId;
   const isWatchedPlayerEvent =

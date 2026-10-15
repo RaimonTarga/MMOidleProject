@@ -1,5 +1,6 @@
 import { OrderStrip } from '../OrderStrip';
 import { useOrderView } from '../../ui/class/useOrderView';
+import { ResolveCompact } from './ResolvePips';
 import type { MechanicViewModel } from './types';
 
 const SUMMONER_COMPACT_LABELS = {
@@ -53,6 +54,7 @@ export function CompactMechanic({ model }: { model: MechanicViewModel }) {
   if (model.kind === 'cadence' && order) {
     return <OrderStrip order={order} count={model.count} armed={model.armed} compact />;
   }
+  if (model.kind === 'cooldown' && model.responses) return <ResolveCompact model={model} />;
   const state = compactState(model);
   const tone = model.kind === 'dot'
     ? model.element
