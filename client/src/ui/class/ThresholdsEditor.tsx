@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAtomValue } from 'jotai';
 import { withBand, withFloor, withPhase, type ClassConfig, type ClassScreenView, type ThresholdsView } from '@mmo-idle/shared';
 import { hudBus } from '../../hudBus';
-import { energyMaxAtom } from '../../hud/atoms';
+import { energyMaxAtom, playerTierAtom } from '../../hud/atoms';
 import { StormBottle, stormRule } from '../../hud/StormGauge';
 import { GameIcon } from '../GameIcon';
 import { classPieceIconSource, trophyIconSource } from '../conceptIcons';
@@ -36,6 +36,7 @@ function FloorEditor({ config, thresholds }: { config: ClassConfig; thresholds: 
 export function ThresholdsEditor({ view }: { view: ClassScreenView }) {
   const thresholds = useThresholdsView();
   const bottle = useAtomValue(energyMaxAtom);
+  const playerTier = useAtomValue(playerTierAtom);
   const config = view.config;
   if (!thresholds || !config || config.system.kind !== 'thresholds') {
     return <p className="class-panel__editor">Thresholds appear once this character&apos;s setup arrives.</p>;
@@ -59,6 +60,13 @@ export function ThresholdsEditor({ view }: { view: ClassScreenView }) {
       )}
       {thresholds.discipline && !thresholds.specialization && (
         <p className="class-panel__line">{`Tier 3: choose ${thresholds.specializationChoices.map((choice) => choice.name).join(', ')} in the Passive Tree.`}</p>
+      )}
+
+      {thresholds.leaves.map((leaf) => (
+        <p key={leaf.id} className="class-panel__line">{`${leaf.name}. ${leaf.text}`}</p>
+      ))}
+      {thresholds.discipline && playerTier >= 4 && thresholds.leaves.length === 0 && (
+        <p className="class-panel__line">{`Tier 4: choose ${thresholds.leafChoices.map((choice) => choice.name).join(', ')} in the Passive Tree.`}</p>
       )}
 
       <FloorEditor key={thresholds.floorPct} config={config} thresholds={thresholds} />

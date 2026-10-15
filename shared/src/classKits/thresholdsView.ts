@@ -38,6 +38,10 @@ export interface ThresholdsView {
   specialization: { id: string; name: string; text: string } | null;
   /** The specializations the picked discipline opens, for the "choose one" line before the pick. */
   specializationChoices: { id: string; name: string }[];
+  /** The T4 leaves picked under the discipline (the Passive Tree's `unlockedSkills`), with their rules. */
+  leaves: { id: string; name: string; text: string }[];
+  /** The picked discipline's nine-or-so leaf choices not yet taken, for the "choose one" line at T4. */
+  leafChoices: { id: string; name: string }[];
   /** Every spend and calm you know, with its band. */
   pieces: SpendView[];
   /** The trophy: a spend relic twists every spend, a storm relic twists the gauge. */
@@ -62,7 +66,7 @@ function waitsText(id: string): string {
 }
 
 /** The Thresholds editor for a Spirit's screen, or null for anyone else. */
-export function composeThresholdsView(input: ClassScreenInput): ThresholdsView | null {
+export function composeThresholdsView(input: ClassScreenInput & { unlockedSkills?: readonly string[] }): ThresholdsView | null {
   const ctx = classConfigContextFromState(input);
   const config = input.classConfig;
   if (!ctx || ctx.archetype !== 'energy' || config?.system.kind !== 'thresholds') return null;
@@ -90,6 +94,8 @@ export function composeThresholdsView(input: ClassScreenInput): ThresholdsView |
   const check = checkClassConfig(config, ctx);
   const discipline = SPIRIT_KIT.disciplines.find((entry) => entry.id === ctx.disciplineId);
   const specialization = SPIRIT_KIT.specializations.find((entry) => entry.id === ctx.specializationId && entry.disciplineId === ctx.disciplineId);
+  const taken = new Set(input.unlockedSkills ?? []);
+  const disciplineLeaves = discipline ? SPIRIT_KIT.leaves.filter((leaf) => leaf.disciplineId === discipline.id) : [];
   return {
     storm: { pips: ctx.budget },
     floorPct: system.floorPct,
@@ -99,6 +105,8 @@ export function composeThresholdsView(input: ClassScreenInput): ThresholdsView |
     specializationChoices: discipline
       ? SPIRIT_KIT.specializations.filter((entry) => entry.disciplineId === discipline.id).map((entry) => ({ id: entry.id, name: entry.name }))
       : [],
+    leaves: disciplineLeaves.filter((leaf) => taken.has(leaf.id)).map((leaf) => ({ id: leaf.id, name: leaf.name, text: leaf.text })),
+    leafChoices: disciplineLeaves.filter((leaf) => !taken.has(leaf.id)).map((leaf) => ({ id: leaf.id, name: leaf.name })),
     pieces,
     relic: trophy
       ? { trophyId: trophy.id, name: trophy.name, kind: trophy.kind, text: trophy.text }

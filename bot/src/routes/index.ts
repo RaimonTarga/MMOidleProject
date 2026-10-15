@@ -20,6 +20,7 @@ import { STRIKER_T4_ROUTE_IDS, strikerT4Route } from "./strikerT4";
 import { SPIRIT_T1_ID, spiritT1Route } from "./spiritT1";
 import { spiritT2Route } from "./spiritT2";
 import { spiritT3Route } from "./spiritT3";
+import { spiritT4Route } from "./spiritT4";
 
 /**
  * The route registry.
@@ -60,6 +61,7 @@ const SLINGER_T3_ROUTE = slingerT3Route();
 const SPIRIT_ROUTE = spiritT1Route();
 const SPIRIT_T2_ROUTE = spiritT2Route();
 const SPIRIT_T3_ROUTE = spiritT3Route();
+const SPIRIT_T4_ROUTE = spiritT4Route();
 const APPRENTICE_ROUTE = apprenticeT1Route();
 const APPRENTICE_T2_ROUTE = apprenticeT2Route();
 const APPRENTICE_T3_ROUTE = apprenticeT3Route();
@@ -81,6 +83,7 @@ export const ROUTES = new Map<string, Route>([
   [SPIRIT_ROUTE.id, SPIRIT_ROUTE],
   [SPIRIT_T2_ROUTE.id, SPIRIT_T2_ROUTE],
   [SPIRIT_T3_ROUTE.id, SPIRIT_T3_ROUTE],
+  [SPIRIT_T4_ROUTE.id, SPIRIT_T4_ROUTE],
   [APPRENTICE_ROUTE.id, APPRENTICE_ROUTE],
   [APPRENTICE_T2_ROUTE.id, APPRENTICE_T2_ROUTE],
   [APPRENTICE_T3_ROUTE.id, APPRENTICE_T3_ROUTE],

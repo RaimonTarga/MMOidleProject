@@ -57,4 +57,11 @@ assert(composeThresholdsView({ ...wrong, classConfig: defaultClassConfig(classCo
 const tailwind = t3View.pieces.find((p) => p.pieceId === 'spirit-tailwind');
 assert(tailwind === undefined || tailwind.waitsFor.includes('drags'), "Tailwind's moment reads in words");
 
+// T4: the picked leaf reads back with its rule; the rest of the discipline's leaves are the choices.
+const t4: ClassScreenInput & { unlockedSkills: string[] } = { ...t3, playerTier: 4, unlockedSkills: ['spirit-wading'] };
+const t4View = composeThresholdsView({ ...t4, classConfig: defaultClassConfig(classConfigContextFromState(t4)!) })!;
+assert(t4View.leaves.map((l) => l.id).join() === 'spirit-wading' && t4View.leaves[0].text.length > 0, 'the picked leaf reads back with its rule');
+assert(t4View.leafChoices.length === 2 && !t4View.leafChoices.some((l) => l.id === 'spirit-dam'), "only the discipline's own other leaves are offered");
+assert(t3View.leaves.length === 0 && t3View.leafChoices.length === 3, 'before the pick: no leaf, three choices');
+
 console.log('thresholdsView.test.ts: ok');

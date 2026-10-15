@@ -1,0 +1,110 @@
+import assert from "node:assert/strict";
+import {
+  biomeLevelCap,
+  bossClearKey,
+  classConfigContext,
+  globalMastery,
+  resolveClassConfig,
+  SKILL_TREE,
+  SPIRIT_KIT,
+  tutorialScriptFor,
+  validateClassConfig,
+  type TutorialCondition,
+} from "@mmo-idle/shared";
+import { isControlledRouteId, requireRoute, ROUTES } from "./index";
+import { SPIRIT_CLASS_ROOT } from "./spiritT1";
+import { SPIRIT_T2_DISCIPLINE, SPIRIT_T2_ZONES, spiritT2FarmLevel } from "./spiritT2";
+import { SPIRIT_T3_SPECIALIZATION, SPIRIT_T3_ZONES, spiritT3FarmLevel, spiritT3Route } from "./spiritT3";
+import {
+  SPIRIT_T4_ID,
+  SPIRIT_T4_LEAF,
+  SPIRIT_T4_ZONES,
+  spiritT4FarmLevel,
+  spiritT4LessonLevel,
+  spiritT4Route,
+} from "./spiritT4";
+
+function gates(condition: TutorialCondition): TutorialCondition[] {
+  if (condition.type === "allOf" || condition.type === "anyOf") return condition.of.flatMap(gates);
+  if (condition.type === "not") return gates(condition.of);
+  return [condition];
+}
+
+/** The deepest level the guide's Tier-4 farms ask of a biome. */
+function tutorialT4Level(biome: string): number {
+  return Math.max(...tutorialScriptFor(SPIRIT_CLASS_ROOT).beats.flatMap((beat) =>
+    beat.steps.flatMap((step) => step.type === "farm" && step.at.kind === "biome" && step.at.tier === 4
+      ? gates(step.until).flatMap((gate) =>
+        gate.type === "biomeLevelAtLeast" && gate.biomeGroup === biome ? [gate.level] : [])
+      : [])));
+}
+
+const route = spiritT4Route();
+const t3 = spiritT3Route();
+assert.equal(route.id, "spirit-t4");
+assert.equal(route.classRoot, "energy-root");
+assert.deepEqual(ROUTES.get(SPIRIT_T4_ID), route, "spirit-t4 is registered");
+assert.equal(requireRoute(SPIRIT_T4_ID), ROUTES.get(SPIRIT_T4_ID));
+assert.equal(isControlledRouteId(SPIRIT_T4_ID), false, "a one-off route until a live run clears it");
+assert.throws(() => requireRoute(SPIRIT_T4_ID, "cadence"), /authored for energy-root/);
+
+// It continues the T3 route unchanged, waits for tier 4, then picks a leaf under the discipline.
+assert.deepEqual(route.steps.slice(0, t3.steps.length), t3.steps, "the T3 route comes first");
+const wait = route.steps[t3.steps.length];
+assert(wait.type === "farm" && wait.until.type === "playerTierAtLeast" && wait.until.tier === 4, "waits for the tier-4 promotion");
+const pick = route.steps[t3.steps.length + 1];
+assert(pick.type === "unlockSkill" && pick.skillId === SPIRIT_T4_LEAF);
+const node = SKILL_TREE.get(SPIRIT_T4_LEAF);
+assert(node && node.classId === SPIRIT_CLASS_ROOT && node.disciplineId === SPIRIT_T2_DISCIPLINE, "the pick is a leaf of the route's discipline");
+
+// Each T4 zone: travel, farm to the guide's level, then its T4 boss.
+const t4 = route.steps.slice(t3.steps.length + 2);
+assert.equal(t4.length, SPIRIT_T4_ZONES.length * 3);
+for (const [index, { biome, pieceId }] of SPIRIT_T4_ZONES.entries()) {
+  const [travel, farm, boss] = t4.slice(index * 3, index * 3 + 3);
+  assert(travel.type === "travel" && travel.to.kind === "biome" && travel.to.biomeGroup === biome && travel.to.tier === 4);
+  const level = spiritT4FarmLevel(biome);
+  assert(farm.type === "farm" && farm.at.kind === "biome" && farm.at.tier === 4);
+  assert.deepEqual(farm.until, { type: "biomeLevelAtLeast", biomeGroup: biome, level });
+  assert.equal(level, biomeLevelCap(4, biome));
+  assert.equal(level, tutorialT4Level(biome), `${biome}: bot and guide finish at the same level`);
+  assert(spiritT4LessonLevel(biome, pieceId) <= level, `${biome}: the lesson lands before the cap`);
+  assert.deepEqual(boss, { type: "attemptBoss", biomeGroup: biome, tier: 4 });
+}
+
+// The auto config stays valid through the leaf and every T4 lesson and rank-up.
+const levels: Record<string, number> = {};
+const cleared: string[] = [];
+for (const biome of ["plains", "forest", "swamp", "mountain", "cave"]) {
+  levels[biome] = biomeLevelCap(1, biome);
+  cleared.push(bossClearKey(biome, 1));
+}
+for (const { biome } of SPIRIT_T2_ZONES) {
+  levels[biome] = spiritT2FarmLevel(biome);
+  cleared.push(bossClearKey(biome, 2));
+}
+for (const { biome } of SPIRIT_T3_ZONES) {
+  levels[biome] = spiritT3FarmLevel(biome);
+  cleared.push(bossClearKey(biome, 3));
+}
+const config = route.steps.find((step) => step.type === "classConfig");
+assert(config && config.type === "classConfig");
+for (const { biome } of SPIRIT_T4_ZONES) {
+  levels[biome] = spiritT4FarmLevel(biome);
+  cleared.push(bossClearKey(biome, 4));
+  const ctx = classConfigContext("energy", {
+    biomeLevel: levels, bossesCleared: cleared,
+    disciplineId: SPIRIT_T2_DISCIPLINE, specializationId: SPIRIT_T3_SPECIALIZATION,
+  }, globalMastery(levels));
+  const checked = validateClassConfig(config.config, ctx);
+  assert(checked.ok, checked.ok ? "" : `${biome}: ${checked.reasons.join("; ")}`);
+  assert.equal(resolveClassConfig(checked.config, ctx).mode, "auto");
+}
+
+const ids = route.milestones.map((milestone) => milestone.id);
+assert.equal(new Set(ids).size, ids.length);
+assert(ids.every((id) => /^[a-z0-9]+(-[a-z0-9]+)*$/.test(id)));
+assert(ids.includes("tier-4") && ids.includes("trench-t4-boss") && ids.includes("volcanic-t3-boss"));
+assert(SPIRIT_KIT.leaves.some((entry) => entry.id === SPIRIT_T4_LEAF));
+
+console.log("spiritT4: ok");
