@@ -52,3 +52,14 @@ unlock via `unlockSkill`, then the T4 zones to their caps and bosses; register i
   resolves merge conflicts keeping both sides.
 - The leaf pick goes through the Passive Tree panel (`player:unlockSkill`); check it lists your
   class's real leaves under the picked specialization, and fix it for your class only if not.
+
+## Wave 2 addenda (conductor, after Task 1 merged)
+
+- Status ids owed a client entry (run `pnpm test -- statusRegistry`; ids on summons need an
+  `ACCEPTED_GAPS` line in `server/scripts/statusAudit.ts` like `conduit-bark`): Conduit
+  `conduit-ice-shell`, `conduit-withdraw`, `conduit-last-stand`, `conduit-fall-back`, `conduit-seal`;
+  Slinger `debuff-immune` (Pressure Suit). Others: whatever the test lists for your class.
+- Conductor owns these (do not touch): the `risen` moment, `knockback.ts` hooks (Immovable, Anchor,
+  Steady Nerve), Numb II, the Apprentice's default Payoff placements, `TutorialPanel`.
+- After your Task 2 the whole game T1 to T4 should be walkable by your class's `<class>-t4` route
+  (statically; no live run is needed from you).
