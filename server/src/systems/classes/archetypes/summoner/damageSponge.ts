@@ -14,26 +14,7 @@ import { CONDUIT_KIT, type MinionMonsterType } from '@mmo-idle/shared';
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import type { World } from '../../../../world/World';
 import type { MinionEntity, PlayerEntity } from '../../../../ecs/entity';
-import { summonerProfileFor } from './profile';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
-
-export function pickLivingMinion(world: World, owner: PlayerEntity): MinionEntity | null {
-  if (!owner.summonsMinions) return null;
-  const summons = owner.summonsMinions;
-  const ids = summons.minionIds;
-  const candidates: MinionEntity[] = [];
-  for (const id of ids) {
-    if (!id) continue;
-    const m = world.getMinionEntity(id);
-    if (m && m.hasHealth.hp > 0) candidates.push(m);
-  }
-  if (candidates.length === 0) return null;
-  const defenseTwin = candidates.find((candidate) => candidate.isMinion.role === 'defense-twin');
-  if (defenseTwin) return defenseTwin;
-  const index = summons.redirectCursor % candidates.length;
-  summons.redirectCursor = (summons.redirectCursor + 1) % Math.max(1, summons.targetCount);
-  return candidates[index]!;
-}
 
 /** The living tank summon closest to the owner. */
 function nearestTank(world: World, owner: PlayerEntity): MinionEntity | null {
@@ -78,18 +59,7 @@ export function registerSummonerDamageSponge(): void {
       if (tank) {
         redirectDamageToMinion(tank, ctx.damage, world);
         ctx.damage = 0;
-        return;
       }
     }
-
-    const spongePct = summonerProfileFor(player).redirectionPct;
-    if (spongePct <= 0) return;
-
-    const minion = pickLivingMinion(world, player);
-    if (!minion) return;
-
-    const redirected = Math.max(1, Math.round(ctx.damage * spongePct));
-    ctx.damage = Math.max(0, ctx.damage - redirected);
-    redirectDamageToMinion(minion, redirected, world);
   });
 }

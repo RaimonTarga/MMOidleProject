@@ -410,7 +410,7 @@ function conduitSetup(id: string, subVariant: string | null, expectedCount: numb
   return { world, player, minions };
 }
 
-for (const [subVariant, count] of [[null, 4], ["light", 6], ["heavy", 2]] as const) {
+for (const [subVariant, count] of [[null, 4]] as const) {
   const { world, player, minions } = conduitSetup(
     `tempo-conduit-${subVariant ?? "root"}`,
     subVariant,

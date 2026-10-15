@@ -47,7 +47,7 @@ import { resolveRelicPreview } from './relicPreview';
 import { relicRatingsFromPassives, resolveRelicMagnitudeMultiplier } from './relics';
 import { resolveOnHitDamage, mitigateOnHitDamage } from './onHitDamage';
 import { resolveSummonerProfile, type SummonerProfileInput } from './summonerProfile';
-import { summonerSpecializationFor, type SummonerFrame } from '../data/summoner';
+
 import { estimatePlayerHitDamage } from './combatEstimates';
 import { weaponDotProfileForWeapon } from './weaponFamilies';
 import { weaponDotBasisFromResolvedDirectDamage } from './classSecondaryDamage';
@@ -313,19 +313,7 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
           parts.push({ label: 'Formation weapon damage over time', dps: (weaponDotVolley * 1000) / minionCdMs });
         }
       }
-      // Conduits fight only through their summons; Battle Bond is the single
-      // specialization that hands the weapon back. Same condition, same inputs,
-      // as the `cannotAttack` marker in recalculatePlayerStats.
-      const frame = (summoner?.profileInput.selectedSubVariant ?? 'root') as SummonerFrame;
-      const battleBond = summoner
-        ? summonerSpecializationFor(frame, summoner.profileInput.unlockedSkills) === 'battle-bond'
-        : false;
-      const cannotAttack = input.cannotAttack ?? !battleBond;
-      if (!cannotAttack) {
-        const profile = summoner ? resolveSummonerProfile(summoner.profileInput) : null;
-        const weight = profile ? profile.battleBondConduitOffenseWeight * profile.relicPotencyMult : 1;
-        parts.push({ label: 'Your attacks', dps: hitDamage(input, input.attack * weight, input.onHitDamage * weight, 1, input.attack * weight) / cdSec });
-      }
+      // A Conduit never swings. The formation is the damage.
       caveats.push('Assumes every summon is alive and in range of the target.');
       caveats.push('Generic weapon proc frequency follows the shared formation budget; proc-specific damage is excluded.');
       break;

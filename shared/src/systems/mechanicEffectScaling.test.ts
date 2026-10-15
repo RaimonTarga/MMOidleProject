@@ -1,5 +1,4 @@
 import {
-  SCALABLE_MECHANIC_BUFFS,
   SCALABLE_MECHANIC_DEBUFFS,
   scaleMechanicEffectConfig,
   scaleMechanicMagnitude,
@@ -9,9 +8,13 @@ function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
 }
 
+// The buff registry is empty since the class-first rework (the legacy mechanic buffs went with the
+// frames); the scaling rules still hold for any registry, so the test brings its own.
+const SCALABLE_MECHANIC_BUFFS = { 'test-buff': { fields: { damageMult: 'multiplier' as const } } };
+
 {
   const scaled = scaleMechanicMagnitude(
-    'summoner-grand-ritual',
+    'test-buff',
     'damageMult',
     1.6,
     1.25,
@@ -19,7 +22,7 @@ function assert(condition: boolean, message: string): void {
   );
   assert(Math.abs(scaled - 1.75) < 1e-9, 'registered state-backed buff magnitude scales');
   const timing = scaleMechanicMagnitude(
-    'summoner-grand-ritual',
+    'test-buff',
     'durationMs',
     5000,
     1.25,
@@ -42,7 +45,7 @@ function assert(condition: boolean, message: string): void {
 
 {
   const scaled = scaleMechanicEffectConfig(
-    { id: 'summoner-grand-ritual', sourceId: 'player', data: { damageMult: 1.2, baseCd: 1000 } },
+    { id: 'test-buff', sourceId: 'player', data: { damageMult: 1.2, baseCd: 1000 } },
     1.25,
     SCALABLE_MECHANIC_BUFFS,
   );

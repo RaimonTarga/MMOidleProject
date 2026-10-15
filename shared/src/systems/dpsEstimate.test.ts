@@ -11,7 +11,8 @@
 import { SLINGER_WEAPON_DOT_EFFECTIVENESS } from './classSecondaryDamage';
 import { estimatePlayerDps, type DpsEstimateInput } from './dpsEstimate';
 import type { PassiveMap } from '../passives';
-import { SUMMONER_CORE_TUNING, SUMMONER_FRAME_TUNING } from '../data/summoner';
+import { SUMMONER_CORE_TUNING } from '../data/summoner';
+import type { RosterBody } from './summonerProfile';
 
 function assert(cond: boolean, msg: string): void {
   if (!cond) throw new Error(msg);
@@ -37,6 +38,10 @@ const PASSIVES: Record<string, PassiveMap> = {
   summoner: { 'summoner.minion-damage-pct': 1 },
 };
 
+const THRALL: RosterBody = {
+  pieceId: 'conduit-thrall', family: 'generic', command: 1, mode: 'melee', row: 'middle', body: 'conduit-summon',
+};
+
 function inputFor(archetype: string): DpsEstimateInput {
   return {
     ...BASE,
@@ -47,9 +52,7 @@ function inputFor(archetype: string): DpsEstimateInput {
         summoner: {
           activeCount: 3,
           profileInput: {
-            selectedSubVariant: 'balanced' as const,
-            selectedRange: null,
-            unlockedSkills: [],
+            roster: [THRALL, THRALL, THRALL],
             passives: PASSIVES.summoner,
           },
         },
@@ -122,37 +125,13 @@ function testDotDirectHits(): void {
   assert(estimate.caveats.some((line) => line.includes('Sigils and payoffs')), 'the omitted damage is explicit');
 }
 
-/** The heavy-frame T3 node that is the sole exception to the conduit contract. */
-const BATTLE_BOND_SKILL = 'summoner-heavy-t3-b';
-
 function testSummonerWithoutAttackingStillReports(): void {
-  // The other outright-wrong case: a conduit cannot swing at all, and the old
-  // formula reported its damage as the player's own attack rate.
+  // A conduit cannot swing at all. The estimate is the formation.
   const conduit = estimatePlayerDps(inputFor('summoner'));
   assert(conduit.total > 0, 'a summoner who cannot attack still deals damage through minions');
   assert(
     conduit.parts.every((part) => part.label !== 'Your attacks'),
     'a build that cannot attack must not be credited with attacks',
-  );
-
-  // Battle Bond is the one specialization that hands the weapon back, and the
-  // estimator has to derive that from the skill list exactly as the server does
-  // — not from a flag a caller passes in and could get wrong.
-  const base = inputFor('summoner');
-  const bonded = estimatePlayerDps({
-    ...base,
-    summoner: {
-      activeCount: base.summoner!.activeCount,
-      profileInput: {
-        ...base.summoner!.profileInput,
-        selectedSubVariant: 'heavy',
-        unlockedSkills: [BATTLE_BOND_SKILL],
-      },
-    },
-  });
-  assert(
-    bonded.parts.some((part) => part.label === 'Your attacks'),
-    'Battle Bond returns the weapon, so its attacks must be counted',
   );
 }
 
@@ -226,33 +205,22 @@ function testSlingerSecondaryDamageBreakdown(): void {
 }
 
 function testConduitFormationSecondaryBudgets(): void {
-  const estimate = (frame: 'light' | 'balanced' | 'heavy', skill?: string) => estimatePlayerDps({
+  const estimate = estimatePlayerDps({
     attack: 100,
     onHitDamage: 10,
     attackCooldownMs: 1_000,
     archetype: 'summoner',
     passives: {},
     summoner: {
-      activeCount: frame === 'light' ? (skill ? 8 : 6) : frame === 'balanced' ? 5 : 2,
-      profileInput: {
-        selectedSubVariant: frame,
-        selectedRange: null,
-        unlockedSkills: skill ? [skill] : [],
-      },
+      activeCount: 4,
+      profileInput: { roster: [THRALL, THRALL, THRALL, THRALL] },
     },
   });
-  assert(part(estimate('light'), 'Formation flat on-hit') === 12,
-    'Splinter estimator uses one 1.20x formation on-hit budget');
-  assert(part(estimate('light', 'summoner-light-t3-b'), 'Formation flat on-hit') === 13,
-    'Kilnmaster estimator uses one 1.30x formation on-hit budget');
-  assert(part(estimate('balanced'), 'Formation flat on-hit') === 10,
-    'Consort estimator keeps the baseline formation on-hit budget');
-  assert(part(estimate('heavy'), 'Formation flat on-hit') === 10,
-    'Effigy estimator keeps the baseline formation on-hit budget');
-  const splinterDirect = 100 * SUMMONER_FRAME_TUNING.light.offenseMult
-    * SUMMONER_CORE_TUNING.formationOffenseMult;
-  assert(Math.abs(part(estimate('light'), '6 summons direct') - splinterDirect) < 0.51,
-    'Splinter secondary efficiency does not change direct formation Attack');
+  assert(part(estimate, 'Formation flat on-hit') === 10,
+    'the formation spends one on-hit budget');
+  const direct = 100 * SUMMONER_CORE_TUNING.formationOffenseMult;
+  assert(Math.abs(part(estimate, '4 summons direct') - direct) < 0.51,
+    'equal Command weights sum to one formation attack');
 }
 
 testEveryArchetypeReportsDamage();

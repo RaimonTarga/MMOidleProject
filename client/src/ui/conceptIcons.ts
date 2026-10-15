@@ -123,19 +123,9 @@ const BUFF_IDS = new Set([
   'mob-suppress',
   'mob-volcanic',
   'sunlight',
-  'summoner-battle-bond',
-  'summoner-colossus',
-  'summoner-coordinated-hunt',
-  'summoner-endless-swarm',
-  'summoner-frame-frenzy',
-  'summoner-frame-line',
-  'summoner-frame-link',
-  'summoner-grand-ritual',
-  'summoner-harrier-brood',
   'summoner-howl-banner',
-  'summoner-twin-covenant',
+  // Boss morph still borrows this tile. The specialization that drew it is gone.
   'summoner-volatile-brood',
-  'summoner-withering-chorus',
   // The evasion window's art, worn by Sidestep (see `BUFF_ICON_ALIASES`).
   'lineage-evasion',
 ]);
@@ -269,9 +259,6 @@ const BUFF_ICON_ALIASES: Record<string, string> = {
   // Splinter's frenzy is the formation cycle paying off, Effigy's pair spends its
   // bank as a linked strike, and Consort's held line is the formation standing as
   // one durable body.
-  'summoner-frame-frenzy': 'summoner-coordinated-hunt',
-  'summoner-frame-line': 'summoner-colossus',
-  'summoner-frame-link': 'summoner-battle-bond',
   // Sidestep has no art yet: its window is an evasion window, so it borrows the
   // evasion-window tile until its own icon is generated.
   'ability-sidestep': 'lineage-evasion',
@@ -415,8 +402,6 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'tundra-rimebrand-burn': 'dot-chill',
   'rimebrand-burn': 'dot-chill',
   vulnerability: 'expose-weakness',
-  'summoner-harried': 'summoner-harrier-brood',
-  'summoner-withering-chorus': 'summoner-withering-chorus',
   'enemy-barrier': 'defense-absorb',
 };
 

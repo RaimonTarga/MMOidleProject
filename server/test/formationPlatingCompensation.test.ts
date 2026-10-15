@@ -195,23 +195,6 @@ function directAttack(
     `Endless Swarm packets must still pay a plating tax, not become plating-neutral: got ${swarmTotal}`);
 }
 
-// 7. Battle Bond's Conduit-side contribution (built implicitly inside
-// runPlayerAttack from the player's own resolved SummonerProfile, not passed
-// via opts.formation) receives the same rule.
-{
-  const world = new World();
-  const player = attach(world, {
-    archetype: 'summoner',
-    selectedSubVariant: 'heavy',
-    selectedRange: 'summoner-range-far',
-    unlockedSkills: ['summoner-root', 'summoner-heavy', 'summoner-range-far', 'summoner-heavy-t3-b'],
-  });
-  const target = targetFor(world, 40, 0);
-  player.dealsDamage.attack = 100;
-  const res = directAttack(world, player, target, undefined, 'player');
-  eq(res.platingMult!, 0.5, "Battle Bond's Conduit-side formation contribution must get the same 0.5");
-}
-
 // 8. Zero-Plating targets produce unchanged damage (direct and formation).
 {
   const world = new World();

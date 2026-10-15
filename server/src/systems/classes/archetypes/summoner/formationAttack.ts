@@ -2,12 +2,10 @@ import type { SummonerSlotProfile } from '@mmo-idle/shared';
 import type { MinionEntity, MonsterEntity, PlayerEntity } from '../../../../ecs/entity';
 import type { World } from '../../../../world/World';
 import { runPlayerAttack, type PlayerAttackOutcome } from '../../../combat/engine/combat';
-import type { CombatContext, FormationAttackContribution } from '../../../combat/engine/combatPipeline';
+import { registerCombatListener, type CombatContext, type FormationAttackContribution } from '../../../combat/engine/combatPipeline';
+import { isMechanicProxy } from '../../../combat/engine/empoweredAttacks';
+import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
 import { formationTempoWeight, summonerProfileFor } from './profile';
-import {
-  commitSpecializationAttack,
-  prepareSpecializationAttack,
-} from './specs';
 
 function livingLogicalSlotIds(world: World, owner: PlayerEntity): string[] {
   if (!owner.summonsMinions) return [];
@@ -69,26 +67,11 @@ export function runFormationAttack(
   const profile = summonerProfileFor(owner);
   const slot = slotProfileFor(owner, minion);
   const cycle = prepareCycle(world, owner, slot.slotId, target.isMonster.id);
-  const specialization = owner.summonsMinions && owner.controlsSummons
-    ? prepareSpecializationAttack(
-      world,
-      owner as PlayerEntity & {
-        summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
-        controlsSummons: NonNullable<PlayerEntity['controlsSummons']>;
-      },
-      minion,
-      target,
-      now,
-      cycle,
-    )
-    : { damageMult: 1, directDamageBonusWeight: 0, openingStrike: false, consumeRitualCharge: false };
   const formation: FormationAttackContribution = {
     ownerId: owner.isPlayer.id,
     physicalEntityId: minion.isMinion.id,
     slotId: slot.slotId,
-    directDamageWeight: profile.formationOffenseMult * (
-      slot.offenseWeight * specialization.damageMult + specialization.directDamageBonusWeight
-    ),
+    directDamageWeight: profile.formationOffenseMult * slot.offenseWeight,
     onHitMagnitudeWeight:
       slot.procWeight * profile.secondaryEffectMult * profile.relicPotencyMult,
     secondaryEffectMult: profile.secondaryEffectMult,
@@ -108,35 +91,32 @@ export function runFormationAttack(
     resultMetadata,
     formation,
   });
-  // The summon's swing is drawn from its snapshot; a specialization beat (opener,
-  // coordinated strike, ritual charge, linked strike) is drawn heavier. Written on
-  // EVERY swing so a beat never latches onto the next ordinary one.
-  minion.performsAttack.lastAttackEmpowered = outcome !== 'cancelled' && outcome !== 'dodged' && (
-    specialization.openingStrike || specialization.directDamageBonusWeight > 0 ||
-    specialization.consumeRitualCharge || resultMetadata.empowered === true
-  );
+  // Written on every swing so an empowered beat never latches onto the next ordinary one.
+  minion.performsAttack.lastAttackEmpowered = outcome !== 'cancelled' && outcome !== 'dodged'
+    && resultMetadata.empowered === true;
   emitSummonObservation(owner, { kind: 'attack', id: minion.entityId, targetId: target.entityId,
     targetType: target.isMonster.monsterTypeId, targetHpFractionBefore: hpBefore / target.hasHealth.maxHp,
     primaryHpDecrease: Math.max(0, hpBefore - Math.max(0, target.hasHealth.hp)), outcome });
   if (outcome !== 'cancelled' && outcome !== 'dodged') {
     commitCycle(owner, target.isMonster.id, cycle);
-    if (owner.summonsMinions && owner.controlsSummons) {
-      commitSpecializationAttack(
-        world,
-        owner as PlayerEntity & {
-          summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
-          controlsSummons: NonNullable<PlayerEntity['controlsSummons']>;
-        },
-        minion,
-        target,
-        now,
-        resultMetadata.chaoticMiss === true
-          ? { ...specialization, consumeRitualCharge: false }
-          : specialization,
-      );
-    }
   }
   return outcome;
+}
+
+/**
+ * The Conduit's root moment. A completed formation cycle — every living summon
+ * has hit this target since the last fire — emits once. Frenzy and the Effigy
+ * slam that used to share this listener are gone with the frame loop.
+ */
+export function registerFormationCycleMoment(): void {
+  registerCombatListener('onHit', (ctx, world) => {
+    if (isMechanicProxy(ctx)) return;
+    if (ctx.attackerType !== 'player' || ctx.defenderType !== 'monster') return;
+    const formation = ctx.formation;
+    if (!formation || formation.side !== 'summon' || !formation.cycleCompleted) return;
+    if (!ctx.attacker.summonsMinions) return;
+    emitMechanicFired(world, ctx.attacker, ctx);
+  });
 }
 
 export function formationProcWeight(ctx: CombatContext): number {

@@ -86,18 +86,7 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   // -- DoT -------------------------------------------------------------------
 
   // -- Summoner --------------------------------------------------------------
-  'summoner-volatile-brood': m('Volatile brood', 'One summon at a time is armed to detonate. Between detonations the next one is being prepared.'),
-  'summoner-endless-swarm': m('Endless swarm', 'Your formation refills itself toward its target count rather than needing to be resummoned.'),
-  'summoner-harrier-brood': m('Harrier brood', 'Distinct summons stack an accusation on your target; what deepens it is the number of UNIQUE summons marking it, not the number of hits.'),
-  'summoner-coordinated-hunt': m('Coordinated hunt', 'The formation runs a shared cycle; each contribution advances it toward the payoff.'),
-  'summoner-withering-chorus': m('Withering chorus', 'Each distinct voice established on the target deepens the chorus afflicting it.'),
-  'summoner-grand-ritual': m('Grand ritual', 'The ritual grants a number of empowered summon attacks, then must be rebuilt.'),
-  'summoner-colossus': m('Colossus', 'Your formation is condensed into a single large summon. While it is down, it is reconstructing.'),
-  'summoner-battle-bond': m('Battle bond', 'Fixed contributions accumulate toward a linked strike shared between you and your summons.'),
-  'summoner-twin-covenant': m('Twin covenant', 'Two complementary twins. If one falls the survivor keeps a bounded fallback rather than the full pairing.'),
-  'summoner-frame-frenzy': m('Frenzy', 'Splinter’s frame loop. Every living body has now struck the same target, completing a formation cycle, and the swarm answers with a short burst of extra attack speed and on-hit damage. The window is shorter than one swing, so keeping the cycle turning is the whole skill.'),
-  'summoner-frame-link': m('Link', 'Effigy’s frame loop. Each body banks a charge every time it hits. When both bodies have struck the same target inside the window, the pair spends the whole bank as one linked slam that also staggers the target. Losing a body means there is no pair and nothing to spend.'),
-  'summoner-frame-line': m('Line', 'Consort’s frame loop. While every slot of your formation is standing, the line holds: each body carries a share of your plating again and extra damage reduction. One death breaks it immediately — the tile stays, counting the bodies you still have — and finishing the reconstruction restores it. The reward is an unbroken line, so reconstruction speed is what you scale.'),
+
 
   // -- Weapons ---------------------------------------------------------------
   flurry: b('Flurry', 'A weapon proc raising your attack speed while its stacks hold.'),
@@ -139,8 +128,7 @@ const TARGET_HELP: Record<string, StatusHelp> = {
   brittle: d('Brittle', 'Each Brittle stack can strip the target’s flat plating and damage reduction, so more of your hits get through.'),
   'dr-shatter': d('Shattered', 'Brittle has been stacked to its shatter threshold: the target’s damage reduction is stripped to nothing for the window. Plating still applies, but the percentage reduction is gone.'),
   vulnerability: d('Vulnerable', 'The target takes amplified damage from every source while this holds.'),
-  'summoner-harried': d('Accused', 'Your summons have marked this target. What deepens it is the number of DISTINCT summons on it, not how often they hit.'),
-  'summoner-withering-chorus': d('Chorus', 'Each distinct summon voice on the target deepens the affliction.'),
+
   'enemy-barrier': { title: 'Barrier', kind: 'buff', help: 'A temporary absorb shell is protecting this monster. Damage drains the shell before health; when a reforming clock is shown, sustained pressure is what keeps it broken.' },
   'source-barrier': { title: 'Barrier', kind: 'buff', help: 'A boss-owned absorb barrier is protecting this monster. Direct damage drains the ward before health; the pattern drops it when its defensive beat ends.' },
   'bone-tithe': b('Bone Tithe', 'Each living risen shields its master: it takes less damage per stack. Clear the adds and the tithe falls away.'),

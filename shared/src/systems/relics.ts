@@ -196,28 +196,6 @@ export interface SummonerRelicProfile {
   summonPower?: RelicValue<number>;
 }
 
-export function resolveSummonerRelicProfile(
-  respawnMs: number,
-  summonCount: number,
-  ratings: RelicRatings,
-  countCap?: number,
-): SummonerRelicProfile {
-  const c = RELIC_COEFFICIENTS.summoner;
-  return {
-    archetype: 'summoner',
-    respawnMs: {
-      before: respawnMs,
-      after: resolveRelicInterval(
-        respawnMs, ratings.frequency, c.frequency, RELIC_INTERVAL_FLOORS_MS.summoner,
-      ),
-    },
-    summonCount: {
-      before: summonCount,
-      after: resolveRelicCount(summonCount, ratings.potency, c.potency, 1, countCap),
-    },
-  };
-}
-
 export type ResolvedRelicProfile = (
   | CadenceRelicProfile
   | CooldownRelicProfile

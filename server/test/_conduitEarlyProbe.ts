@@ -4,7 +4,7 @@
 //
 // Usage: pnpm --filter @mmo-idle/server exec tsx --conditions=development test/_conduitEarlyProbe.ts
 
-import { NODE_BIOMES, SUMMONER_CORE_TUNING, SUMMONER_FRAME_TUNING } from "@mmo-idle/shared";
+import { NODE_BIOMES, SUMMONER_CORE_TUNING } from "@mmo-idle/shared";
 import { BENCH_DT_MS } from "../bench/harness";
 import { createFarmWorld } from "../bench/balance/worldFactory";
 import { setupArena, BOT_SPAWN } from "../bench/balance/arena";
@@ -34,11 +34,11 @@ interface Variant {
 const LIVE: Variant = { name: "new (inherit armor)", forcePlating: null, offenseMult: 1, hpMult: 1 };
 const OLD: Variant = { name: "old (no armor)", forcePlating: 0, offenseMult: 1, hpMult: 1 };
 
-const baseRootHp = SUMMONER_FRAME_TUNING.root.totalSummonHpPct;
+const baseRootHp = SUMMONER_CORE_TUNING.totalSummonHpPct;
 const baseOffense = SUMMONER_CORE_TUNING.formationOffenseMult;
 
 function applyVariant(v: Variant) {
-  (SUMMONER_FRAME_TUNING.root as { totalSummonHpPct: number }).totalSummonHpPct = baseRootHp * v.hpMult;
+  (SUMMONER_CORE_TUNING as { totalSummonHpPct: number }).totalSummonHpPct = baseRootHp * v.hpMult;
   (SUMMONER_CORE_TUNING as { formationOffenseMult: number }).formationOffenseMult = baseOffense * v.offenseMult;
 }
 

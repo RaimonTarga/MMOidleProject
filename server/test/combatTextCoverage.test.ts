@@ -14,7 +14,6 @@ import { applyBrambleGuard } from '../src/systems/player/abilities/abilityBrambl
 import { queueDebt, runDebtDrain } from '../src/systems/defense/mitigation/hitToDot';
 import { redirectDamageToMinion } from '../src/systems/classes/archetypes/summoner/damageSponge';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
-import { tickSummonerSpecializations } from '../src/systems/classes/archetypes/summoner/specs';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
@@ -27,7 +26,7 @@ import { createRenderState } from '../../client/src/render/state';
 
 initCombatSystems();
 const NODE = 'node-5-5';
-function setup(summoner = false, volatile = false) {
+function setup(summoner = false) {
   const world = new World();
   const slices: PersistedPlayerSlices = {
     isPlayer: { id: 'p', name: 'P' },
@@ -42,9 +41,9 @@ function setup(summoner = false, volatile = false) {
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: {
-      unlockedSkills: summoner ? ['summoner-root', ...(volatile ? ['summoner-light', 'summoner-range-far', 'summoner-light-t3-c'] : [])] : [],
+      unlockedSkills: summoner ? ['summoner-root'] : [],
       passives: {}, selectedClass: summoner ? 'summoner-root' : null,
-      selectedSubVariant: volatile ? 'light' : null, selectedRange: volatile ? 'summoner-range-far' : null,
+      selectedSubVariant: null, selectedRange: null,
       combatArchetype: summoner ? 'summoner' : null,
     },
   };
@@ -161,22 +160,13 @@ function probe(world: World, victims: Victim[], action: () => void, counts = vic
     assert.equal(packet.entries.filter(e => e.shield).length, 1);
   } finally { MONSTER_DATABASE.delete(key); }
 }
-// Additional audit finding: reconstruction payment and deliberate volatile sacrifice.
+// Reconstruction payment is owner HP loss and must show as combat text.
 {
   const { world, player } = setup(true);
   const deadId = player.summonsMinions!.minionIds[0];
   world.getMinionEntity(deadId)!.hasHealth.hp = 0;
   updateSummonerArchetype(world, 0, 1100);
   probe(world, [player], () => updateSummonerArchetype(world, 10000, 12000));
-}
-{
-  const { world, player } = setup(true, true);
-  const target = monster(world);
-  updateSummonerArchetype(world, 0, 7000);
-  const index = player.summonsMinions!.slotIds.indexOf(player.summonsMinions!.volatileMarkedSlotId!);
-  const m = world.getMinionEntity(player.summonsMinions!.minionIds[index])!;
-  m.hasAttackTarget = { targetId: target.isMonster.id };
-  probe(world, [m, target], () => tickSummonerSpecializations(world, player as never, 9000));
 }
 // Node-feature ticks: both recipients, and the existing swamp event isn't doubled.
 for (const effectId of ['combat-text-environment', 'swamp-rot']) {

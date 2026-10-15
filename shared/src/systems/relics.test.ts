@@ -5,7 +5,6 @@ import {
   resolveRelicCount,
   resolveRelicGain,
   resolveRelicInterval,
-  resolveSummonerRelicProfile,
   type RelicRatings,
 } from './relics';
 
@@ -49,12 +48,6 @@ eq(resolveRelicCount(10, 1, 1, 1, 12), 12, 'count respects cap');
 }
 
 {
-}
-
-{
-  const p = resolveSummonerRelicProfile(5000, 3, positive);
-  assert(p.respawnMs.after < 5000, 'summoner frequency shortens respawn');
-  assert(p.summonCount.after > 3, 'summoner potency raises count');
 }
 
 console.log('relics: ok');

@@ -45,8 +45,7 @@ const STATUS_META: Record<string, StatusMeta> = {
   'tundra-rimebrand-burn':  { label: 'Chill',  color: '#6fd0ff' },
   'rimebrand-burn':         { label: 'Chill',  color: '#6fd0ff' },
   vulnerability:   { label: 'Vuln',    color: '#ff5577' },
-  'summoner-harried': { label: 'Accused', color: '#e6c35c' },
-  'summoner-withering-chorus': { label: 'Chorus', color: '#9d6ad6' },
+
   'monster-howl-haste': { label: 'Howl', color: '#b18cff' },
   'monster-ape-chestbeat': { label: 'Chestbeat', color: '#c98b5b' },
   'thorn-spitter-barrage': { label: 'Barrage', color: '#89dd59' },

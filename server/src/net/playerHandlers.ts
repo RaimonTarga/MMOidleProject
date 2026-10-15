@@ -44,7 +44,7 @@ import { setAggroTarget, setAttackTarget } from "../systems/combat/ai/targeting"
 import { clearEngagement } from "../systems/combat/ai/engagement";
 import { attachComponent, detachComponent } from "../ecs/markerHelpers";
 import {
-  applySummonerCommand,
+
   applySummonerRecall,
   clearSummonerCommand,
 } from "../systems/classes/archetypes/summoner/command";
@@ -240,10 +240,8 @@ export function registerPlayerHandlers(
     if (typeof ack === "function") ack(result);
   });
 
-  socket.on("player:commandSummons", (pos) => {
-    const p = liveSelf();
-    if (!p) return;
-    applySummonerCommand(world, p, pos);
+  socket.on("player:commandSummons", () => {
+    // Focus and move are gone (CD.8). Recall is the only summon command.
   });
 
   socket.on("player:recallSummons", () => {

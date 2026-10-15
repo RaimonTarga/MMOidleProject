@@ -1,7 +1,6 @@
 import {
   getFlag,
   setFlag,
-  summonerSpecializationFor,
 } from '@mmo-idle/shared';
 import type { PlayerEntity } from '../../../ecs/entity';
 import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
@@ -13,11 +12,7 @@ const OWNS_ROOT_FLAG = 'hardControlOwnsRoot';
 const OWNS_ATTACK_LOCK_FLAG = 'hardControlOwnsAttackLock';
 
 function hasIntrinsicAttackLock(player: PlayerEntity): boolean {
-  const frame = player.usesSkills.selectedSubVariant ?? 'root';
-  const battleBond =
-    summonerSpecializationFor(frame, player.usesSkills.unlockedSkills) ===
-    'battle-bond';
-  return player.usesSkills.combatArchetype === 'summoner' && !battleBond;
+  return player.usesSkills.combatArchetype === 'summoner';
 }
 
 /**

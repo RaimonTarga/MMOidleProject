@@ -10,13 +10,13 @@ import { tickSummonReconstruction, enqueueSummonReconstruction } from '../src/sy
 import { computeMinionMaxHp, despawnMinion } from '../src/systems/classes/archetypes/summoner/spawn';
 import { summonerProfileFor } from '../src/systems/classes/archetypes/summoner/profile';
 import type { PlayerEntity } from '../src/ecs/entity';
-// The Conduit root's reconstruction interval (the class-first tree has no frames, range nodes or paths).
+// The Conduit root's reconstruction interval. Relic frequency no longer moves it (CD.8).
 function profile(frequency=0) {
   return resolveSummonerProfile({selectedSubVariant:null,selectedRange:null,unlockedSkills:[],
     relicRatings:{frequency,potency:0,buffEffect:0,debuffEffect:0}});
 }
 assert.equal(profile().reconstructionIntervalMs,3500);
-assert.equal(profile(2).reconstructionIntervalMs,2500);
+assert.equal(profile(2).reconstructionIntervalMs,3500);
 assert.equal(supportedLegacyFormation([{hp:10}]).livingBodyCounts,null);
 assert.equal(supportedLegacyFormation([]).targetIds,null);
 assert.deepEqual(supportedLegacyFormation([{minions:[]}]).livingBodyCounts,[0]);

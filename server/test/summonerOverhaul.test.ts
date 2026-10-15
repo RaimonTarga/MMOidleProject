@@ -5,20 +5,14 @@ import {
   composePlayerView,
   emptyEquipment,
   projectSummonSlots,
-  resolveSummonerProfile,
 } from '@mmo-idle/shared';
 import type { PersistedPlayerSlices } from '../src/db/playerRepo';
-import { detachComponent } from '../src/ecs/markerHelpers';
 import { World } from '../src/world/World';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
 import { consumeWeightedProc } from '../src/systems/classes/archetypes/summoner/formationAttack';
 import type { CombatContext } from '../src/systems/combat/engine/combatPipeline';
-import {
-  applySummonerCommand,
-  clearSummonerCommand,
-} from '../src/systems/classes/archetypes/summoner/command';
 import { syncSummonerFormationTarget } from '../src/systems/classes/archetypes/summoner/formationTarget';
 import { mirrorTargetStatus } from '../src/systems/combat/targetStatus';
 import { setAttackTarget } from '../src/systems/combat/ai/targeting';
@@ -61,6 +55,19 @@ function slices(
 function attachSummoner(world: World, persisted: PersistedPlayerSlices) {
   const player = world.attachPlayerEntity(persisted, persisted.isPlayer.id);
   syncArchetypeSlices(world, player);
+  // Four equal Thralls. The default roster also fills Command, which is 4 at
+  // Mastery 0; pin it so the cost and cadence checks do not follow the budget.
+  if (player.configuresClass?.config.system.kind === 'formation') {
+    player.configuresClass.config = {
+      mode: 'custom',
+      relic: [],
+      system: {
+        kind: 'formation',
+        roster: ['conduit-thrall', 'conduit-thrall', 'conduit-thrall', 'conduit-thrall'],
+        orders: { attackFirst: 'closest', tanksGuard: 'conduit', recallWhen: [], rebuildFirst: 'as-fallen' },
+      },
+    };
+  }
   return player;
 }
 
@@ -97,22 +104,6 @@ function attachSummoner(world: World, persisted: PersistedPlayerSlices) {
     triggers += consumeWeightedProc(ctx, 'test.logical-proc');
   }
   assert(triggers === 1, `four summon hits should create one proc, got ${triggers}`);
-}
-
-// Frame penalties may not make summons lag behind a fast-moving owner.
-{
-  const world = new World();
-  const player = attachSummoner(
-    world,
-    slices('heavy-speed-floor', ['summoner-root', 'summoner-heavy'], 'heavy'),
-  );
-  player.hasPosition.speed = 400;
-  updateSummonerArchetype(world, 0, 1_000);
-  for (const id of player.summonsMinions!.minionIds) {
-    const minion = world.getMinionEntity(id)!;
-    assert(minion.hasPosition.speed === player.hasPosition.speed,
-      'summon speed must not fall below its Conduit after frame multipliers');
-  }
 }
 
 // Shared FIFO reconstruction, defensive cost, and safety-floor pause/resume.
@@ -174,99 +165,32 @@ function attachSummoner(world: World, persisted: PersistedPlayerSlices) {
   assert(summoner.summonsMinions.formationTargetId === targetB!.isMonster.id,
     'split-target formations should retain the previous active display target');
 
-  // The Formation's orders replace manual focus (CD.3); this checks the legacy command, so the config goes.
-  detachComponent(world, player, 'configuresClass');
-  applySummonerCommand(world, player, targetA!.hasPosition.current);
-  syncSummonerFormationTarget(world, summoner);
-  assert(summoner.summonsMinions.formationTargetId === targetA!.isMonster.id,
-    'manual focus should immediately override the displayed formation target');
-
-  applyStatusEffect(targetA!.tracksCombat, {
+  applyStatusEffect(targetB!.tracksCombat, {
     id: 'test-formation-debuff',
     sourceId: player.isPlayer.id,
     remainingMs: 5_000,
     data: { totalMs: 5_000 },
   });
   mirrorTargetStatus(world);
-  assert(targetA!.hasStatus.targetStatus?.some((status) => status.id === 'test-formation-debuff') === true,
+  assert(targetB!.hasStatus.targetStatus?.some((status) => status.id === 'test-formation-debuff') === true,
     'formation target debuffs should be mirrored into the target-frame status list');
 
-  applySummonerCommand(world, player, { x: 700, y: 700 });
+  targetB!.hasHealth.hp = 0;
   syncSummonerFormationTarget(world, summoner);
-  assert(summoner.summonsMinions.formationTargetId === null,
-    'a formation move command should clear the displayed combat target');
-
-  clearSummonerCommand(world, player);
-  setAttackTarget(world, minions[0]!, targetA!.isMonster.id);
-  targetA!.hasHealth.hp = 0;
-  syncSummonerFormationTarget(world, summoner);
-  assert(summoner.summonsMinions.formationTargetId === targetB!.isMonster.id,
+  assert(summoner.summonsMinions.formationTargetId === targetA!.isMonster.id,
     'a dead displayed target should fall back to another summon target');
-  setAttackTarget(world, minions[1]!, null);
+  setAttackTarget(world, minions[0]!, null);
   syncSummonerFormationTarget(world, summoner);
   assert(summoner.summonsMinions.formationTargetId === null,
     'the formation target should clear when no living summon has a valid target');
 }
 
-// Grand Ritual grants finite charges only to slots alive at the trigger.
+// The Conduit does not attack. The formation does.
 {
-  const world = new World();
-  const skills = ['summoner-root', 'summoner-balanced', 'summoner-range-mid', 'summoner-balanced-t3-c'];
-  const player = attachSummoner(world, slices('ritual', skills, 'balanced', 'summoner-range-mid'));
-  updateSummonerArchetype(world, 0, 1_000);
-  const missing = world.getMinionEntity(player.summonsMinions!.minionIds[4]!)!;
-  missing.hasHealth.hp = 0;
-  updateSummonerArchetype(world, 0, 11_000);
-  const charges = player.summonsMinions!.ritualCharges!;
-  assert(charges.slice(0, 4).every((charge) => charge === 2), 'living ritual slots receive two charges');
-  assert(charges[4] === 0, 'dead ritual slot must receive no retroactive package');
-}
-
-// Volatile marking and deliberate death use the same reconstruction queue.
-{
-  const world = new World();
-  const skills = ['summoner-root', 'summoner-light', 'summoner-range-far', 'summoner-light-t3-c'];
-  const player = attachSummoner(world, slices('volatile', skills, 'light', 'summoner-range-far'));
-  updateSummonerArchetype(world, 0, 1_000);
-  const target = world.createMonster('node-clearing', 'plains-slime', { x: 650, y: 400 });
-  assert(target !== null, 'volatile test target must exist');
-  target!.hasHealth.hp = 1_000_000;
-  target!.hasHealth.maxHp = 1_000_000;
-  updateSummonerArchetype(world, 0, 7_000);
-  assert(!!player.summonsMinions!.volatileMarkedSlotId, 'volatile timer should visibly mark one slot');
-  const markedIndex = player.summonsMinions!.slotIds.indexOf(player.summonsMinions!.volatileMarkedSlotId!);
-  world.getMinionEntity(player.summonsMinions!.minionIds[markedIndex]!)!.hasAttackTarget = {
-    targetId: target!.isMonster.id,
-  };
-  updateSummonerArchetype(world, 0, 9_000);
-  assert(player.summonsMinions!.activeReconstruction !== undefined, 'detonated slot must enter shared reconstruction');
-}
-
-// Heavy transformations and the sole direct-attack exception.
-{
-  const twin = resolveSummonerProfile({
-    selectedSubVariant: 'heavy', selectedRange: 'summoner-range-close',
-    unlockedSkills: ['summoner-heavy-t3-a'],
-  });
-  assert(twin.slots[0]?.role === 'offense-twin' && twin.slots[1]?.role === 'defense-twin', 'twins need stable distinct roles');
-  assert(twin.slots[0]!.offenseWeight > twin.slots[1]!.offenseWeight, 'offense twin must carry more offense');
-  assert(twin.slots[1]!.defenseWeight > twin.slots[0]!.defenseWeight, 'defense twin must carry more defense');
-
   const world = new World();
   const ordinary = attachSummoner(world, slices('ordinary'));
   recalculatePlayerEntityStats(world, ordinary);
-  assert(ordinary.cannotAttack !== undefined, 'ordinary Conduit must not attack directly');
-
-  const bondSkills = ['summoner-root', 'summoner-heavy', 'summoner-range-mid', 'summoner-heavy-t3-b'];
-  const bonded = attachSummoner(world, slices('bonded', bondSkills, 'heavy', 'summoner-range-mid'));
-  recalculatePlayerEntityStats(world, bonded);
-  assert(bonded.cannotAttack === undefined, 'Battle Bond must restore the Conduit direct attack');
-  const bondProfile = resolveSummonerProfile({
-    selectedSubVariant: 'heavy', selectedRange: 'summoner-range-mid', unlockedSkills: bondSkills,
-  });
-  assert(bondProfile.slots.length === 1, 'Battle Bond keeps one bonded summon');
-  assert(Math.abs(bondProfile.slots[0]!.offenseWeight + bondProfile.battleBondConduitOffenseWeight - 1) < 1e-9,
-    'Battle Bond offense sides must sum to one budget');
+  assert(ordinary.cannotAttack !== undefined, 'a Conduit must not attack directly');
 }
 
 console.log('summonerOverhaul.test.ts: ok');

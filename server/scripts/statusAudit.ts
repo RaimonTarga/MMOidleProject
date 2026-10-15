@@ -346,9 +346,8 @@ export function auditStatusRegistry(root: string = AUDIT_DEFAULT_ROOT) {
     const api = node.expression.getText();
     if (api === 'openFrameWindow') for (const id of strings(node.arguments[1])) add(`frame.${id}.window`, `${runtime('server/src/systems/classes/shared/frameLoop.ts', 'frameWindowEffectId(root)')}; ${loc(node)}`, 'player');
     if (api === 'applyStrongestPlayerRider') for (const id of strings(node.arguments[2])) add(id, `server/src/systems/combat/engine/combat.ts:1210; ${loc(node)}`, 'player');
-    if (api === 'syncOwnedTargetEffect') for (const id of strings(node.arguments[2])) add(id, `server/src/systems/classes/archetypes/summoner/specs/index.ts:80; ${loc(node)}`, 'monster');
+    if (api === 'syncOwnedTargetEffect') for (const id of strings(node.arguments[2])) add(id, `${loc(node)}`, 'monster');
   });
-  add('frame.summoner.link.<ownerId>', runtime('server/src/systems/classes/archetypes/summoner/frameLoop.ts', 'id:          linkId').replace(/;$/, ''), 'monster');
   add('barrier:<sourceId>', runtime('server/src/systems/combat/engine/sourceBarriers.ts', 'sourceBarrierEffectId(sourceId)'), 'monster');
   for (const [constant, writer, descriptorLine, icon] of [
     ['ABILITY_GUARD_EFFECT_IDS', 'guardEffectIdForAbility', 23, ''],
@@ -369,8 +368,7 @@ export function auditStatusRegistry(root: string = AUDIT_DEFAULT_ROOT) {
   // Non-status projections: a live resource/component can produce a tile without
   // ever applying a TracksCombat StatusEffect under that tile's id.
   const rawAliases: Record<string, string[]> = {
-    'frame.energy.window': ['energy-frame-surge'], 'frame.summoner.window': ['summoner-frame-frenzy'],
-    'frame.summoner.line': ['summoner-frame-line'],
+    'frame.energy.window': ['energy-frame-surge'],
   };
   for (const [raw, ids] of Object.entries(rawAliases)) for (const id of ids) descriptors.get(id)?.reads.push(raw);
   const byId = new Map<string, Application[]>();

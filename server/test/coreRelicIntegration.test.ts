@@ -83,7 +83,7 @@ for (const root of ['cadence', 'cooldown', 'summoner'] as const) {
       // quotes one from cooldown.empowered-cd-ms; that number is not on the slice.
       case 'cooldown': assert(preview.cooldownMs.after > 0, relic.id); break;
       case 'summoner':
-        eq(player.summonsMinions!.targetCount, preview.summonCount.after, relic.id);
+        assert(preview.summonCount.before === preview.summonCount.after, `${relic.id}: a relic does not resize the formation`);
         eq(resolveSummonerProfile({ ...player.usesSkills }).reconstructionIntervalMs, preview.respawnMs.after, relic.id); break;
     }
   }
@@ -93,10 +93,9 @@ for (const root of ['cadence', 'cooldown', 'summoner'] as const) {
   const input = { selectedSubVariant: null, selectedRange: null, unlockedSkills: [], passives: {} };
   const before = resolveSummonerProfile(input);
   const after = resolveSummonerProfile({ ...input, relicRatings: { ...ZERO_RELIC_RATINGS, potency: 0.4 } });
-  eq(before.slots.length, 4, 'formation baseline');
-  eq(after.slots.length, 6, 'larger army');
-  eq(after.slots[0].offenseWeight, before.slots[0].offenseWeight, 'extra bodies do not dilute damage');
-  eq(after.slots[0].defenseWeight, before.slots[0].defenseWeight, 'extra bodies do not dilute health');
+  eq(before.slots.length, after.slots.length, 'relic potency does not add summons');
+  eq(before.reconstructionIntervalMs, after.reconstructionIntervalMs, 'relic potency does not change reconstruction');
+  eq(before.slots.length, 0, 'no roster means no formation');
 }
 
 for (const root of ['cadence'] as const) {

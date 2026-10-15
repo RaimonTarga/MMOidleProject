@@ -16,9 +16,6 @@ export interface ScalableMechanicEffect {
  * intentionally absent from v1.
  */
 export const SCALABLE_MECHANIC_BUFFS: Readonly<Record<string, ScalableMechanicEffect>> = {
-  // Grand Ritual's empowered-attack multiplier. 1.6 means the bonus is the
-  // 0.6 above ×1, so the field kind is 'multiplier', not 'flat'.
-  'summoner-grand-ritual': { fields: { damageMult: 'multiplier' } },
 } as const;
 
 /** Explicit opt-in registry for harmful class-mechanic effects. */
@@ -28,11 +25,6 @@ export const SCALABLE_MECHANIC_DEBUFFS: Readonly<Record<string, ScalableMechanic
   'vulnerability': { fields: { damageMultiplier: 'multiplier' } },
   'plating-shred': { fields: { platingReduction: 'fraction' } },
   'brittle': { fields: { platingPerStack: 'fraction', drPerStack: 'fraction' } },
-  // Harrier Brood's per-mark damage-taken magnitude, read from specialization
-  // tuning rather than status-effect data.
-  'summoner-harrier-brood': { fields: { damageTakenPctPerSlot: 'fraction' } },
-  // Withering Chorus's per-voice proc-damage magnitude.
-  'summoner-withering-chorus': { fields: { damagePctPerSlot: 'fraction' } },
 } as const;
 
 export function scaleMechanicEffectConfig(

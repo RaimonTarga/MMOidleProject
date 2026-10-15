@@ -133,9 +133,6 @@ function SummonConduit({ slot, index, name }: { slot: SummonSlot; index: number;
 export function SummonerMechanic({ model }: { model: SummonerMechanicModel }) {
   const formation = useFormationView();
   const help = useMechanicHelp(model);
-  const specializationClass = model.specialization
-    ? ` mechanic-summons--${model.specialization}`
-    : '';
   const alive = model.slots.filter((slot) => slot.active).length;
   const fallen = model.slots.length - alive;
   const queue = formation ? rebuildQueue(model.slots) : [];
@@ -156,11 +153,11 @@ export function SummonerMechanic({ model }: { model: SummonerMechanicModel }) {
     >
       {formation && <CommandPips used={formation.command.used} total={formation.command.total} />}
       <div
-        className={`mechanic-summons${specializationClass}`}
-        data-specialization={model.specialization ?? 'baseline'}
+        className="mechanic-summons"
+        data-specialization="baseline"
         aria-label={formation
           ? `Command ${formation.command.used} of ${formation.command.total}, ${alive} alive, ${fallen} fallen`
-          : `${model.activeCount} of ${model.slotCount} summons active${model.specialization ? `, ${model.specialization.replace(/-/g, ' ')}` : ''}`}
+          : `${model.activeCount} of ${model.slotCount} summons active`}
       >
         <span className="mechanic-summons__crest" aria-hidden="true" />
         <span className="mechanic-summons__bus" aria-hidden="true" />

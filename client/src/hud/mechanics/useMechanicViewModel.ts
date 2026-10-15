@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai';
-import { dotElementForPlayer, classConfigContextFromState, summonerSpecializationFor } from '@mmo-idle/shared';
+import { dotElementForPlayer, classConfigContextFromState } from '@mmo-idle/shared';
 import { slingerClipColor, slingerClipName } from '../../ui/slingerClipColor';
 import {
   ammoCountAtom,
@@ -115,7 +115,7 @@ export function useMechanicViewModel(): MechanicViewModel | null {
     case 'summoner':
       return {
         kind: 'summoner',
-        specialization: summonerSpecializationFor(selectedSubVariant ?? 'root', unlockedSkills),
+        specialization: null,
         activeCount,
         slotCount,
         slots: summonSlots.map((slot, index) => ({

@@ -283,11 +283,11 @@ const piece = (id: string) => CONDUIT_KIT.pieces.find((p) => p.id === id)!;
   mon.hasHealth.hp = mon.hasHealth.maxHp = 1_000_000;
 
   // Shared Plating.
-  const plain = computeMinionMitigation(player, { plating: 0 } as never).plating;
+  const plain = computeMinionMitigation(player).plating;
   player.usesSkills.passives['conduit.plating-share'] = 0.5;
-  assert.ok(computeMinionMitigation(player, { plating: 0 } as never).plating >= plain, 'Shared Plating raises the summons plating');
+  assert.ok(computeMinionMitigation(player).plating >= plain, 'Shared Plating raises the summons plating');
   player.mitigatesDamage.plating = 10;
-  assert.equal(computeMinionMitigation(player, { plating: 0 } as never).plating, 15, 'a half-again plating copy');
+  assert.equal(computeMinionMitigation(player).plating, 15, 'a half-again plating copy');
   player.usesSkills.passives['conduit.plating-share'] = 0;
 
   // Bramble thorns and the unhit clock.

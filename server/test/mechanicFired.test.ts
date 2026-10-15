@@ -32,7 +32,7 @@ import {
   registerMechanicFiredListener,
 } from '../src/systems/combat/engine/mechanicFired';
 import { completeReload } from '../src/systems/classes/archetypes/reload/reloadLifecycle';
-import { applySummonerCommand } from '../src/systems/classes/archetypes/summoner/command';
+
 import { runFormationAttack } from '../src/systems/classes/archetypes/summoner/formationAttack';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
@@ -201,15 +201,6 @@ function exchange(player: PlayerEntity, defender: ReturnType<typeof monster>, me
 {
   const player = spawn('mf-summoner', 'summoner');
   assert(player.summonsMinions !== undefined, 'the summoner slice should be attached');
-
-  // Neither flavour of command is the mechanic firing any more.
-  applySummonerCommand(world, player, { x: 900, y: 900 });
-  const clicked = monster(620);
-  applySummonerCommand(world, player, { ...clicked.hasPosition.current });
-  assert(
-    countFor('mf-summoner') === 0,
-    `a command intent must not fire the mechanic, got ${countFor('mf-summoner')}`,
-  );
 
   recalculatePlayerEntityStats(world, player);
   updateSummonerArchetype(world, 0, 1_000);

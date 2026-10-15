@@ -165,29 +165,22 @@ for (const profile of BURN_FAMILY) {
     `${profile.weaponId} must not empower stored damage again on tick`);
 }
 
-// Raw slot weights stay normalized; the resolved formation multiplier biases
-// secondary effects without multiplying either channel by body count.
-for (const test of [
-  { frame: 'light' as const, skills: [] as string[], expected: 1.2, cycles: 5, triggers: 6 },
-  { frame: 'light' as const, skills: ['summoner-light-t3-b'], expected: 1.3, cycles: 10, triggers: 13 },
-  { frame: 'balanced' as const, skills: [] as string[], expected: 1, cycles: 3, triggers: 3 },
-  { frame: 'heavy' as const, skills: [] as string[], expected: 1, cycles: 3, triggers: 3 },
-]) {
+// Four equal Thralls. Slot weights stay normalized: one cycle is one on-hit
+// budget and one proc, and the direct budget is the formation offense multiplier.
+{
   const profile = resolveSummonerProfile({
-    selectedSubVariant: test.frame,
-    selectedRange: null,
-    unlockedSkills: test.skills,
+    roster: [0, 1, 2, 3].map(() => ({
+      pieceId: 'conduit-thrall', family: 'generic' as const, command: 1,
+      mode: 'melee' as const, row: 'middle' as const, body: 'conduit-summon' as const,
+    })),
   });
   const world = new World();
-  const player = attach(world, `conduit-${test.expected}`, 'summoner');
-  // 800 is divisible by both six- and eight-body weights after the authored
-  // multipliers, so this assertion measures the budget rather than per-body
-  // integer rounding noise.
+  const player = attach(world, 'conduit-roster', 'summoner');
   player.dealsDamage.onHitDamage = 800;
   let onHitBudget = 0;
   let directBudget = 0;
   let procTriggers = 0;
-  for (let cycle = 0; cycle < test.cycles; cycle++) {
+  for (let cycle = 0; cycle < 4; cycle++) {
     for (let slotIndex = 0; slotIndex < profile.slots.length; slotIndex++) {
       const formation = formationContribution(profile, slotIndex);
       const ctx = {
@@ -202,15 +195,15 @@ for (const test of [
         onHitBudget += playerOnHitDamage(ctx);
         directBudget += formation.directDamageWeight;
       }
-      procTriggers += consumeWeightedProc(ctx, `test.proc.${test.expected}`);
+      procTriggers += consumeWeightedProc(ctx, 'test.proc.roster');
     }
   }
-  close(onHitBudget, 800 * test.expected,
-    `${test.frame} formation on-hit magnitude uses one shared secondary budget`);
+  close(onHitBudget, 800,
+    'a formation on-hit magnitude uses one shared secondary budget');
   close(directBudget, profile.formationOffenseMult,
-    `${test.frame} direct Attack budget stays independent of secondary efficiency`);
-  assert(procTriggers === test.triggers,
-    `${test.frame} deterministic fractional proc accumulator expected ${test.triggers}, got ${procTriggers}`);
+    'direct Attack budget stays the formation offense multiplier');
+  assert(procTriggers === 4,
+    `deterministic fractional proc accumulator expected 4, got ${procTriggers}`);
 }
 
 console.log('secondaryDamageConsistency.test.ts: ok');

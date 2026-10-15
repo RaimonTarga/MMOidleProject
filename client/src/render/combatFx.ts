@@ -14,7 +14,6 @@ import {
   type CombatArchetype,
   type CombatEvent,
   type DamageElement,
-  type MinionView,
   type PlayerView,
   type Vec2,
 } from "@mmo-idle/shared";
@@ -202,7 +201,7 @@ import { fxMobCastWindup } from "../fx/mobCastWindups";
 import { attackFlairOf, type AttackFlair } from "../fx/attackFlair";
 import { bespokePathFor, playAscensionRing } from "../fx/bespokePaths";
 import { fxDualBlueRound } from "../fx/bespoke/slinger";
-import { championTether, fxSummonShatter } from "../fx/conduitPaths";
+import { fxSummonShatter } from "../fx/conduitPaths";
 import { abilityCallout, playAbilityRank } from "../fx/abilityRank";
 import {
   fxCharnelMaul, fxConstrict, fxHindKick, fxOozeEngulf, fxSnap, fxSpiderFang, fxSting,
@@ -1749,7 +1748,7 @@ export function dispatchCombatEvent(
     const player = presentation?.player ?? state.view.get(ev.playerId) as PlayerView | undefined;
     const from = state.sprite.get(ev.playerId) ?? presentation?.from;
     const to = presentation?.to ?? state.sprite.get(ev.targetId);
-    if (shouldRunClientFx() && player && from && to && drawsOwnHit(player, ev)) {
+    if (shouldRunClientFx() && player && from && to && drawsOwnHit(player)) {
       const usesLocalController = ev.effects?.some(effect => effect === FLASH_CLIENT_EFFECT);
       if (!usesLocalController) {
         runFxForAttackStyle(state, ev, scene, presentation);
@@ -1812,7 +1811,7 @@ export function dispatchCombatEvent(
         player?.combatArchetype === 'dot' ? getDotPath(player) : undefined));
     }
     // Minion hits already play FX from minions.ts (lastAttackAt); skip body lunge/FX.
-    if (shouldRunClientFx() && player && drawsOwnHit(player, ev)) {
+    if (shouldRunClientFx() && player && drawsOwnHit(player)) {
       runFxForAttackStyle(state, ev, scene, presentation);
     }
     // The mirror of the player's own graze: the target rolled with the blow.
@@ -1937,15 +1936,6 @@ function runFxForAttackStyle(
       )(args);
       bespoke?.hit?.(hit);
     }
-    // Champion: the Conduit's own blow pulls on the tether to its bonded summon.
-    if ((player.unlockedSkills ?? []).includes(CHAMPION_SPEC)) {
-      for (const [id, view] of state.view) {
-        if (state.kind.get(id) !== "minion" || (view as MinionView).ownerPlayerId !== ev.playerId) continue;
-        const bonded = state.sprite.get(id);
-        if (bonded) championTether(scene, player, from, { x: bonded.x, y: bonded.y }, to, ev.empowered);
-        break;
-      }
-    }
   }
 
   if (isFlashTeleport) {
@@ -2009,14 +1999,11 @@ function runFxForAttackStyle(
 /**
  * Whether a player's hit event draws from the player's own body. A Conduit's
  * summons draw their strikes from their snapshots (minions.ts), so its hit events
- * are skipped — except a Champion's OWN blows (it fights beside its bonded
- * summon), which never came from a summon and used to draw nothing at all.
+ * are skipped.
  */
-function drawsOwnHit(player: PlayerView, ev: { fromSummon?: true }): boolean {
-  if ((player.summonsMinions ?? 0) === 0) return true;
-  return !ev.fromSummon && (player.unlockedSkills ?? []).includes(CHAMPION_SPEC);
+function drawsOwnHit(player: PlayerView): boolean {
+  return (player.summonsMinions ?? 0) === 0;
 }
-const CHAMPION_SPEC = "summoner-heavy-t3-b";
 
 /** Style-based FX for snapshot-driven attacks (other players / monsters). */
 export function spawnAttackEffect(

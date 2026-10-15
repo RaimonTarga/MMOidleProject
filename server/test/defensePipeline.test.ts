@@ -9,7 +9,7 @@ import { runMonsterAttack } from '../src/systems/combat/engine/combat';
 import { runDebtDrain } from '../src/systems/defense/mitigation/hitToDot';
 import { DEBT_POOL_KEY } from '../src/systems/defense/core/pools';
 import { applyMonsterAoe } from '../src/systems/combat/damage/aoeDamage';
-import { summonerProfileFor } from '../src/systems/classes/archetypes/summoner/profile';
+
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
 
 // Damage-pipeline order: Guard position, debt installments, splash through
@@ -75,28 +75,6 @@ function fixture(className = 'slinger') {
   applyMonsterAoe(world, monster, bot.hasPosition.current, 100, 40);
   assert.equal(bot.hasHealth.hp, 1000, 'secondary splash must respect wards');
   assert.equal(bot.holdsWards?.wards[0].amount, 60);
-}
-
-// Conduit redirection: after shields, before the owner's debt and recuperation.
-{
-  const { world, bot, hit } = fixture('conduit');
-  // The old default sponge belongs to the frame/range path (a roster formation redirects nothing, §7.10); CD.8 deletes both.
-  bot.usesSkills.selectedRange = 'summoner-range-close';
-  updateSummonerArchetype(world, 0, 1_000);
-  const minionIds = bot.summonsMinions?.minionIds.filter(Boolean) ?? [];
-  assert(minionIds.length > 0, 'Conduit fixture must field summons');
-  const pct = summonerProfileFor(bot).redirectionPct;
-  assert(pct > 0, 'Conduit fixture must redirect');
-  bot.usesSkills.passives = { 'defense.hit-to-dot-pct': 0.5 };
-  applyWard(world, bot, 20, 5000);
-  const minionHp = () => minionIds.reduce((sum, id) => sum + (world.getMinionEntity(id)?.hasHealth.hp ?? 0), 0);
-  const before = minionHp();
-  const ctx = hit(120);
-  const redirected = Math.round(100 * pct);
-  assert.equal(bot.holdsWards?.wards[0]?.amount ?? 0, 0, 'wards pay before redirection');
-  assert.equal(before - minionHp(), redirected, 'summons take their share of post-shield damage, before debt carves it');
-  assert.equal(getResource(bot.tracksCombat, DEBT_POOL_KEY), (100 - redirected) * 0.5, 'debt converts only what the summons left');
-  assert.equal(ctx.damage, (100 - redirected) * 0.5);
 }
 
 // Splash on the owner is not redirected: nearby summons already take their own splash.

@@ -105,6 +105,17 @@ function setup(
   const player = world.attachPlayerEntity(slices(id, abilityId, tier, frame), id);
   player.usesAutocombat.auto = true;
   syncArchetypeSlices(world, player);
+  if (player.configuresClass?.config.system.kind === 'formation') {
+    player.configuresClass.config = {
+      mode: 'custom',
+      relic: [],
+      system: {
+        kind: 'formation',
+        roster: ['conduit-thrall', 'conduit-thrall', 'conduit-thrall', 'conduit-thrall'],
+        orders: { attackFirst: 'closest', tanksGuard: 'conduit', recallWhen: [], rebuildFirst: 'as-fallen' },
+      },
+    };
+  }
   player.dealsDamage.attack = 100;
   updateSummonerArchetype(world, 0, 1_000);
   const minions = player.summonsMinions?.minionIds.map((entityId) => (
@@ -196,41 +207,6 @@ initCombatSystems();
   assert(reportedDamageTotal === 60, 'reported formation Technique damage should equal the real 60-damage Sweep budget');
 }
 
-// Formation frame count never creates extra Sweep budget. The T1 rider is
-// 60% of the formation's attack basis: frame offense tuning remains meaningful,
-// but each frame's proc/offense shares still sum to one.
-for (const expectation of [
-  { name: 'root', frame: null, count: 4, splash: 60 },
-  { name: 'Splinter', frame: 'light' as const, count: 6, splash: 63 },
-  { name: 'Consort', frame: 'balanced' as const, count: 5, splash: 60 },
-  { name: 'Effigy', frame: 'heavy' as const, count: 2, splash: 69 }, // offense 0.98 -> 1.15 (2026-09-28)
-]) {
-  const { world, player, minions } = setup(
-    `conduit-sweep-${expectation.name}`,
-    'sweep',
-    1,
-    expectation.frame,
-    expectation.count,
-  );
-  const primary = createMonster(world, 430);
-  const secondary = createMonster(world, 470);
-  const hpBefore = secondary.hasHealth.hp;
-
-  armAgainst(world, player.isPlayer.id, primary.isMonster.id, 1_500);
-  for (let index = 0; index < minions.length; index++) {
-    runFormationAttack(world, player, minions[index]!, primary, 1_600 + index);
-  }
-
-  assert(
-    secondary.hasHealth.hp === hpBefore - expectation.splash,
-    `${expectation.name} should pay exactly ${expectation.splash} Sweep damage to one secondary`,
-  );
-  assert(
-    player.hasFormationTechnique === undefined,
-    `${expectation.name} should consume its whole formation Technique exactly once`,
-  );
-}
-
 // The adapter is armed-Technique-generic: Binding Strike's +20% hit rider is
 // spread over the same four summon deliveries instead of being copied four times.
 // (Quick Strike carried this case until the ability pass cut it, design §22.2.)
@@ -313,7 +289,7 @@ for (const expectation of [
 
 // Every authored ability must activate when fired with its own prerequisites
 // holding, and no artificial owner attack target.
-for (const champion of [false, true]) for (const ability of ABILITY_DATABASE.values()) {
+for (const champion of [false]) for (const ability of ABILITY_DATABASE.values()) {
   const scenario = setup(`auto-roster-${champion}-${ability.id}`, ability.id, 4);
   const { world, player } = scenario;
   let minions = scenario.minions;
@@ -413,26 +389,6 @@ for (const champion of [false, true]) for (const ability of ABILITY_DATABASE.val
   }
 }
 
-// Champion must not borrow its bonded summon's reach to cast remotely.
-{
-  const { world, player } = setup('champion-owner-reach', 'slam', 3);
-  player.usesSkills.unlockedSkills = ['summoner-root', 'summoner-heavy', 'summoner-heavy-t3-b'];
-  player.usesSkills.selectedSubVariant = 'heavy';
-  syncArchetypeSlices(world, player);
-  updateSummonerArchetype(world, 0, 1_000);
-  const minion = world.getMinionEntity(player.summonsMinions!.minionIds[0]!)!;
-  const target = createMonster(world, 650);
-  minion.hasPosition.current = { x: 630, y: 400 };
-  setAttackTarget(world, minion, target.entityId);
-  fireAbilities(world, 1_100);
-  assert(!player.isCastingAbility, 'Champion must wait for its own casting reach');
-  player.hasPosition.current = { x: 630, y: 400 };
-  setAttackTarget(world, player, target.entityId);
-  fireAbilities(world, 1_200);
-  assert(!!player.isCastingAbility && !player.isCastingAbility.casterMinionId,
-    'Champion must cast from its own body once in reach');
-}
-
 // A formation Charge moves every eligible physical summon and pays one shared
 // rider on arrival. It never moves the owner or copies a full rider per body.
 {
@@ -459,7 +415,7 @@ for (const champion of [false, true]) for (const ability of ABILITY_DATABASE.val
   assert(before - target.hasHealth.hp === 220, 'Charge must total 100 base damage and one +120 shared rider');
 }
 
-for (const interruption of ['expiry', 'owner-death', 'target-death', 'rooted-summons', 'move-command'] as const) {
+for (const interruption of ['expiry', 'owner-death', 'target-death', 'rooted-summons'] as const) {
   const { world, player, minions } = setup(`charge-cancel-${interruption}`, 'charge', 2);
   const target = createMonster(world, 650);
   for (const m of minions) m.hasPosition.current = { x: 420, y: 400 };
@@ -475,7 +431,6 @@ for (const interruption of ['expiry', 'owner-death', 'target-death', 'rooted-sum
       for (const m of minions) applyStatusEffect(m.tracksCombat,
         { id: 'stunned', remainingMs: 5_000, refreshable: true, sourceId: '', data: {} });
     }
-    if (interruption === 'move-command') player.hasSummonerCommand = { kind: 'move', monsterId: null, pos: { x: 400, y: 400 } };
     updateAbilityCharges(world, interruption === 'expiry' ? 5_000 : 1_500);
   }
   assert(!player.hasFormationCharge && !player.hasFormationTechnique, `${interruption} must forfeit unpaid shares`);

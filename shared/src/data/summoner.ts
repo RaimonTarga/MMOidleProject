@@ -1,6 +1,3 @@
-import type { SubVariant } from './skillTree';
-
-export type SummonerFrame = SubVariant | 'root';
 export type SummonerRange = 'close' | 'mid' | 'far';
 export type SummonerAttackMode = 'melee' | 'reach' | 'ranged';
 export type SummonerFormationPolicy = 'guardian' | 'escort' | 'harrier';
@@ -10,29 +7,6 @@ export type SummonerSlotRole =
   | 'colossus'
   | 'offense-twin'
   | 'defense-twin';
-
-export type SummonerSpecialization =
-  | 'volatile-brood'
-  | 'endless-swarm'
-  | 'harrier-brood'
-  | 'coordinated-hunt'
-  | 'withering-chorus'
-  | 'grand-ritual'
-  | 'colossus'
-  | 'battle-bond'
-  | 'twin-covenant';
-
-export interface SummonerFrameTuning {
-  count: number;
-  offenseMult: number;
-  /** Formation-wide flat on-hit and generic proc budget multiplier. */
-  secondaryEffectMult: number;
-  totalSummonHpPct: number;
-  moveSpeedMult: number;
-  sizeMult: number;
-  reconstructionIntervalMult: number;
-  minimumReconstructionIntervalMs: number;
-}
 
 export interface SummonerRangeTuning {
   reconstructionIntervalMult: number;
@@ -96,54 +70,10 @@ export const SUMMONER_CORE_TUNING = {
   areaShareExponent: 0.5,
   leashRadius: 320,
   hardEntityCap: 9,
+  // The share of owner HP the roster inherited from the old root frame.
+  // The summon-cap bench and the conduit study scale this one number.
+  totalSummonHpPct: 0.8,
 } as const;
-
-export const SUMMONER_FRAME_TUNING: Record<SummonerFrame, SummonerFrameTuning> = {
-  root: {
-    count: 4,
-    offenseMult: 1,
-    secondaryEffectMult: 1,
-    totalSummonHpPct: 0.8,
-    moveSpeedMult: 1,
-    sizeMult: 1,
-    reconstructionIntervalMult: 1,
-    minimumReconstructionIntervalMs: 2500,
-  },
-  light: {
-    count: 6,
-    offenseMult: 1.05,
-    secondaryEffectMult: 1.2,
-    totalSummonHpPct: 0.66,
-    moveSpeedMult: 1.18,
-    sizeMult: 0.72,
-    reconstructionIntervalMult: 2000 / 3500,
-    minimumReconstructionIntervalMs: 1500,
-  },
-  balanced: {
-    count: 5,
-    offenseMult: 1,
-    secondaryEffectMult: 1,
-    totalSummonHpPct: 1,
-    moveSpeedMult: 1,
-    sizeMult: 1,
-    reconstructionIntervalMult: 2500 / 3500,
-    minimumReconstructionIntervalMs: 1500,
-  },
-  heavy: {
-    count: 2,
-    // 2026-09-28 T4 Conduit pass: 0.98 -> 1.15. With a sane package (slow weapon,
-    // Power Strike, no Orbit) Effigy paths still killed T4 bosses at ~0.72x the
-    // median non-Conduit spec; balanced/light sit at 0.8-1.0x. Summon deaths were not
-    // the cause (slots alive 97-100% of every heavy fight).
-    offenseMult: 1.15,
-    secondaryEffectMult: 1,
-    totalSummonHpPct: 1.4,
-    moveSpeedMult: 0.78,
-    sizeMult: 1.75,
-    reconstructionIntervalMult: 1.12,
-    minimumReconstructionIntervalMs: 2500,
-  },
-};
 
 export const SUMMONER_RANGE_TUNING: Record<SummonerRange, SummonerRangeTuning> = {
   close: {
@@ -225,73 +155,3 @@ export function isRangedSummonStyle(style: string): boolean {
 
 export const SUMMON_SIZE_MULT_MIN = 0.6;
 export const SUMMON_SIZE_MULT_MAX = 3.0;
-
-/** Existing persisted ids intentionally map to the new locked cast. */
-export const SUMMONER_SPECIALIZATION_BY_SKILL_ID = new Map<string, SummonerSpecialization>([
-  ['summoner-light-t3-a', 'harrier-brood'],
-  ['summoner-light-t3-b', 'endless-swarm'],
-  ['summoner-light-t3-c', 'volatile-brood'],
-  ['summoner-balanced-t3-a', 'coordinated-hunt'],
-  ['summoner-balanced-t3-b', 'withering-chorus'],
-  ['summoner-balanced-t3-c', 'grand-ritual'],
-  ['summoner-heavy-t3-a', 'twin-covenant'],
-  ['summoner-heavy-t3-b', 'battle-bond'],
-  ['summoner-heavy-t3-c', 'colossus'],
-]);
-
-export const SUMMONER_SPECIALIZATION_FRAME: Readonly<Record<SummonerSpecialization, SummonerFrame>> = {
-  'volatile-brood': 'light',
-  'endless-swarm': 'light',
-  'harrier-brood': 'light',
-  'coordinated-hunt': 'balanced',
-  'withering-chorus': 'balanced',
-  'grand-ritual': 'balanced',
-  colossus: 'heavy',
-  'battle-bond': 'heavy',
-  'twin-covenant': 'heavy',
-};
-
-/** Resolve only specializations belonging to the currently selected frame. */
-export function summonerSpecializationFor(
-  frame: SummonerFrame,
-  unlockedSkills: readonly string[],
-): SummonerSpecialization | null {
-  for (const skillId of unlockedSkills) {
-    const specialization = SUMMONER_SPECIALIZATION_BY_SKILL_ID.get(skillId);
-    if (specialization && SUMMONER_SPECIALIZATION_FRAME[specialization] === frame) {
-      return specialization;
-    }
-  }
-  return null;
-}
-
-/** Stable target-status identities used by the target frame. */
-export const SUMMONER_HARRIER_EFFECT_ID = 'summoner-harried';
-export const SUMMONER_CHORUS_EFFECT_ID = 'summoner-withering-chorus';
-
-export const SUMMONER_SPECIALIZATION_TUNING = {
-  volatileBrood: {
-    detonationIntervalMs: 8_000,
-    explosionDamageMult: 1.35,
-    naturalDeathExplosionMult: 0.45,
-    explosionRadius: 78,
-  },
-  endlessSwarm: {
-    reconstructionIntervalMult: 0.80, count: 8, secondaryEffectMult: 1.3 },
-  harrierBrood: { damageTakenPctPerSlot: 0.035, durationMs: 5_000 },
-  coordinatedHunt: {
-    openingDamageMult: 1.45,
-    cyclesRequired: 4,
-    coordinatedDamageMult: 1.65,
-  },
-  witheringChorus: { damagePctPerSlot: 0.045, durationMs: 6_000, tickMs: 1_000 },
-  grandRitual: { intervalMs: 10_000, chargesPerLivingSlot: 2, damageMult: 1.6 },
-  colossus: { reconstructionIntervalMult: 1.35, sizeMult: 1.5 },
-  battleBond: { conduitOffenseWeight: 0.45, summonOffenseWeight: 0.55, threshold: 8 },
-  twinCovenant: {
-    offenseTwinOffenseWeight: 0.75,
-    defenseTwinOffenseWeight: 0.25,
-    offenseTwinDefenseWeight: 0.3,
-    defenseTwinDefenseWeight: 0.7,
-  },
-} as const;

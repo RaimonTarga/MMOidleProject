@@ -24,9 +24,9 @@ Recorded in the bible (§4 Armor/charm row, §5) where they are design.
 
 | ID | Task | Agent | Worktree · branch | State |
 |---|---|---|---|---|
-| CD8-CLEANUP | [Delete the Conduit's old frame, range and specialization content](CD-conduit-delegates.md) | Grok | `../mmo-rw-cd8-cleanup` · `rw/cd8-cleanup` | **running** (uncommitted; merge when it reports) |
+| (none) | every delegate task is merged, CD8-CLEANUP included (`rework/class-first`, 349/349) | | | |
 
-All other delegate tasks are merged (2026-10-15 night, `2214470f`): CD6, CD7, CL5, CL6, CL7, SP5, SP6, SP7, AP5, AP6, AP7.
+All delegate tasks are merged (2026-10-15 night): CD6, CD7, CD8, CL5, CL6, CL7, SP5, SP6, SP7, AP5, AP6, AP7.
 
 ## Paste-ready prompts
 
