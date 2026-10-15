@@ -29,22 +29,6 @@ function assert(condition: boolean, message: string): void {
 }
 
 {
-  const original = {
-    id: 'dot-chill',
-    sourceId: 'player',
-    remainingMs: 4000,
-    maxStacks: 3,
-    data: { moveSlowPerStack: 0.1, attackSlowPerStack: 0.2, totalMs: 4000 },
-  };
-  const scaled = scaleMechanicEffectConfig(original, 1.25, SCALABLE_MECHANIC_DEBUFFS);
-  assert(scaled.data?.moveSlowPerStack === 0.125, 'registered fraction scales');
-  assert(scaled.data?.attackSlowPerStack === 0.25, 'second registered field scales');
-  assert(scaled.remainingMs === 4000, 'duration does not scale');
-  assert(scaled.maxStacks === 3, 'max stacks do not scale');
-  assert(scaled.data?.totalMs === 4000, 'timing data does not scale');
-}
-
-{
   const scaled = scaleMechanicEffectConfig(
     { id: 'vulnerability', sourceId: 'player', data: { damageMultiplier: 1.2 } },
     1.5,

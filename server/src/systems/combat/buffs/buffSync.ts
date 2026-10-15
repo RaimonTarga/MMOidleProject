@@ -845,18 +845,8 @@ function buffEffectText(buff: PlayerBuff): string {
       return "+damage";
     case "energy-sm-pool":
       return "stored true damage";
-    case "dot-vigor":
-      return "+attack and attack speed";
-    case "dot-conflag":
-      return "fast burn ticks";
-    case "dot-chill":
-      return "target chill stacks";
-    case "dot-frozen":
-      return "target frozen";
     case "debuff-frozen":
       return "frozen solid; movement and attacks disabled";
-    case "dot-frostbite":
-      return "+DoT damage taken";
     case "reload-snipe-ready":
       return "next shot empowered";
     case "reload-cover-fire":

@@ -33,7 +33,7 @@ import type { World } from "../../../world/World";
 import { canApplyPlayerDebuff } from "../status/debuffGuard";
 import { refusesHardControl } from "../status/playerHardControl";
 import { harmfulStatusDurationMult } from "../status/harmfulStatus";
-import { isMonsterFrozen } from "../../classes/archetypes/dot/t3/core/selectors";
+import { isMonsterFrozen } from "../../combat/status/frost";
 import { isMonsterStunned } from "../status/stun";
 import { stopEntity } from "../../world/movement";
 import { isMonsterKnockedBack } from "./knockback";

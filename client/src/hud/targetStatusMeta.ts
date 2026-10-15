@@ -9,11 +9,6 @@ export interface StatusMeta {
 
 const STATUS_META: Record<string, StatusMeta> = {
   dot:             { label: 'DoT',     color: '#7ac74f' },
-  'dot-chill':     { label: 'Chill',   color: '#6fd0ff' },
-  'dot-frozen':    { label: 'Frozen',  color: '#9fe8ff' },
-  'dot-smolder':   { label: 'Smolder', color: '#ff8a3c' },
-  'dot-conf':      { label: 'Conflag', color: '#ff5a2c' },
-  'dot-frostbite': { label: 'Frostbite', color: '#8fd8ff' },
   slow:            { label: 'Slow',    color: '#88aaff' },
   'ability-slowed': { label: 'Slowed', color: '#88aaff' },
   'ability-rooted': { label: 'Bound', color: '#aa77ee' },

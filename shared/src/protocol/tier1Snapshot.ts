@@ -64,7 +64,6 @@ export interface T1SnapshotClassResources {
   empoweredReady: boolean;
   targetDotStacks: number;
   targetDotTickPct: number;
-  targetChillStacks: number;
   isChanneling: boolean;
   channelingPct: number;
   cannonChargePct: number;

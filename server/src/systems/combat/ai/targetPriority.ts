@@ -6,8 +6,7 @@ import { navigationPadForEntity } from "../../world/movement";
 import {
   areAllBiomeRecipesUnlocked,
   approachPoint,
-  computeEternalDoomDamage,
-  computeScaledDotDamage,
+  computeLinearDotDamage,
   distanceSq,
   estimateMonsterHitDamage,
   estimatePlayerHitDamage,
@@ -786,17 +785,9 @@ function biomeValue(player: PlayerEntity): number {
 
 function projectedDotDamage(monster: MonsterEntity): number {
   const effect = getStatusEffect(monster.tracksCombat, "dot");
-  if (!effect || effect.data.t3Perm === 1) return 0;
+  if (!effect) return 0;
 
-  const tickDamage =
-    effect.data.isEternalDoom === 1
-      ? computeEternalDoomDamage(
-          effect.stacks,
-          effect.data.damagePerStack ?? 0,
-          effect.data.edFullStacks,
-          effect.data.edDiminishRate,
-        )
-      : computeScaledDotDamage(effect);
+  const tickDamage = computeLinearDotDamage(effect);
 
   if (effect.remainingMs < 0) return tickDamage;
 

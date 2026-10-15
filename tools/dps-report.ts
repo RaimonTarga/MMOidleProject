@@ -2,9 +2,6 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import {
-  computeDotClassDamagePerStack,
-  computeEternalDoomDamage,
-  computeScaledDotDamage,
   BIOME_DATABASE,
   emptyEquipment,
   estimatePlayerHitDamage,
@@ -13,7 +10,6 @@ import {
   MONSTER_DATABASE,
   recalculatePlayerStats,
   resolveUpkeepConfig,
-  resolveDotClassProfile,
   resolveEmpoweredMultiplier,
   resolveEnergyMax,
   resolveSummonerProfile,
@@ -55,9 +51,6 @@ const TUTORIAL_MONSTER_IDS = new Set(['tiny-slime']);
 const CONDUIT_CLASS_ID = 'summoner-root';
 const CADENCE_DAMAGE_MULT_DEFAULT = 2;
 const NON_SUMMONER_CLASS_IDS = ['cadence-root', 'cooldown-root', 'dot-root', 'energy-root', 'reload-root'] as const;
-const WIND_SPIRIT_FROSTBITE_PER_STACK_DEFAULT = 0.03;
-const WIND_SPIRIT_FROSTBITE_MAX_STACKS_DEFAULT = 10;
-const WIND_SPIRIT_FROSTBITE_MS_DEFAULT = 4000;
 
 function numberArg(name: string): number | null {
   const equals = ARGS.find((arg) => arg.startsWith(`${name}=`));
@@ -621,17 +614,6 @@ function chargeStateMultiplier(fillPct: number, minMult: number, maxMult: number
     : 1 + (maxMult - 1) * (fill - 0.5) * 2;
 }
 
-function averageScaledDotTick(observedStacks: number, damagePerStack: number, effectMaxStacks = observedStacks): number {
-  let total = 0;
-  for (let stacks = 1; stacks <= observedStacks; stacks++) {
-    total += computeScaledDotDamage({
-      id: 'dot', stacks, maxStacks: effectMaxStacks, remainingMs: -1, sourceId: 'report',
-      data: { damagePerStack },
-    });
-  }
-  return total / Math.max(1, observedStacks);
-}
-
 function estimateClassDamage(
   stats: PlayerStatsTarget,
   target: TargetDummy,
@@ -812,109 +794,7 @@ function estimateClassDamage(
       classMechanicPerSec += (energyAveragePerHit - baseWithOnHit) * hitRate;
     }
   } else if (archetype === 'dot') {
-    const profile = resolveDotClassProfile(p, stats.usesSkills.selectedSubVariant);
-    const dmgPerStack = computeDotClassDamagePerStack(stats.dealsDamage.attack, profile);
-    const poisonExplosion = (p['dot.poison-explosion'] ?? 0) > 0;
-    const maxStacks = poisonExplosion
-      ? Math.max(1, Math.round(p['dot.poison-explosion-max-stacks'] ?? 10))
-      : profile.maxStacks;
-    const tickSec = Math.max(0.1, profile.tickIntervalMs / 1000);
-    directPerHit = Math.max(1, Math.round(baseWithOnHit * (1 - profile.conversionPct)));
-
-    if (poisonExplosion) {
-      const rampStacks = Math.max(0, maxStacks - 1);
-      if (rampStacks > 0) dotPerSec = averageScaledDotTick(rampStacks, dmgPerStack, maxStacks) / tickSec;
-      const burstTicks = Math.max(0, p['dot.poison-explosion-burst-ticks'] ?? 10);
-      classMechanicPerSec += maxStacks * dmgPerStack * burstTicks * hitRate / maxStacks;
-      notes.push(`poison explosion ${maxStacks}-hit cycle with ${burstTicks} full-tick burst equivalents`);
-    } else if ((p['dot.eternal-doom'] ?? 0) > 0) {
-      const fullStacks = Math.max(0, Math.round(p['dot.eternal-doom-full-stacks'] ?? 8));
-      const diminishRate = Math.max(0, p['dot.eternal-doom-diminish-rate'] ?? 0.5);
-      const stackCap = Math.max(1, Math.round(p['dot.eternal-doom-max-stacks'] ?? 50));
-      const steadyStacks = Math.min(stackCap, Math.max(fullStacks, Math.round(hitRate * REPORT_HORIZON_SEC)));
-      dotPerSec = computeEternalDoomDamage(steadyStacks, dmgPerStack, fullStacks, diminishRate) / tickSec;
-      notes.push(`eternal doom estimated at ${steadyStacks}/${stackCap} stacks over the report horizon`);
-    } else {
-      dotPerSec = computeScaledDotDamage({
-        id: 'dot',
-        stacks: maxStacks,
-        maxStacks,
-        remainingMs: -1,
-        sourceId: 'report',
-        data: { damagePerStack: dmgPerStack },
-      }) / tickSec;
-    }
-
-    if ((p['dot.frenzy'] ?? 0) > 0) {
-      const durationMs = Math.max(100, Math.round(p['dot.frenzy-duration-ms'] ?? 6000));
-      const attackSpeedPct = Math.max(0, p['dot.frenzy-attack-speed-pct'] ?? 0.30);
-      const onHitPerTier = Math.max(0, p['dot.frenzy-onhit-per-tier'] ?? 10);
-      const tierMult = Math.max(1, (stats.playerTier ?? 3) - 3 + 1);
-      effectiveHitRate *= 1 + attackSpeedPct;
-      classMechanicPerSec += onHitPerTier * tierMult * effectiveHitRate;
-      notes.push(`frenzy ${Math.round(attackSpeedPct * 100)}% attack speed and ${onHitPerTier * tierMult} on-hit (${durationMs / 1000}s, high uptime)`);
-    }
-
-    if ((p['dot.fan-the-flames'] ?? 0) > 0) {
-      const stackDamageMult = Math.max(0, p['dot.fan-the-flames-stack-damage-mult'] ?? 0.5);
-      const stacksPerHit = Math.max(1, Math.round(p['dot.fan-the-flames-stacks-per-hit'] ?? 2));
-      dotPerSec *= stackDamageMult;
-      // Radiant (design §22.5) strikes the bodies ADJACENT to a max-burn target, so
-      // it adds nothing to this single-target figure.
-      notes.push(`${stacksPerHit} burn stacks/hit at ${Math.round(stackDamageMult * 100)}% value; Radiant splash not modelled (single target)`);
-    }
-
-    if ((p['dot.ignition'] ?? 0) > 0) {
-      const stackDamageMult = Math.max(0, p['dot.ignition-stack-damage-mult'] ?? 0.6);
-      dotPerSec *= stackDamageMult;
-      directPerHit = baseWithOnHit;
-      notes.push(`ignition uses ${Math.round(stackDamageMult * 100)}% burn stacks and full direct hits at max stacks`);
-    }
-
-    if ((p['dot.conflagration'] ?? 0) > 0) {
-      const ticks = Math.max(1, Math.round(p['dot.conflagration-ticks'] ?? 10));
-      const confTickSec = Math.max(0.1, (p['dot.conflagration-tick-ms'] ?? 250) / 1000);
-      const damageFactor = Math.max(0, p['dot.conflagration-damage-factor'] ?? 1);
-      const buildSec = maxStacks / effectiveHitRate;
-      const confSec = ticks * confTickSec;
-      const buildDotPerSec = averageScaledDotTick(maxStacks, dmgPerStack) / tickSec;
-      const confTotal = maxStacks * dmgPerStack * damageFactor * ticks;
-      dotPerSec = (buildDotPerSec * buildSec + confTotal) / (buildSec + confSec);
-      notes.push(`conflagration cycle: ${ticks} ticks every ${Math.round(confTickSec * 1000)}ms at ${damageFactor}x factor`);
-    }
-
-    if ((p['dot.wind-spirit'] ?? 0) > 0) {
-      const frostbitePerStack = p['dot.frostbite-dot-taken-pct'] ?? WIND_SPIRIT_FROSTBITE_PER_STACK_DEFAULT;
-      const frostbiteMaxStacks = Math.max(1, Math.round(p['dot.frostbite-max-stacks'] ?? WIND_SPIRIT_FROSTBITE_MAX_STACKS_DEFAULT));
-      const frostbiteMs = Math.max(100, Math.round(p['dot.frostbite-duration-ms'] ?? WIND_SPIRIT_FROSTBITE_MS_DEFAULT));
-      const frostbiteStacks = Math.min(frostbiteMaxStacks, Math.max(0, hitRate * frostbiteMs / 1000));
-      dotPerSec *= 1 + frostbiteStacks * frostbitePerStack;
-      directPerHit = 0;
-      notes.push(`wind spirit frostbite estimated at ${asNumber(frostbiteStacks)} steady stacks`);
-    }
-
-    if ((p['dot.rimeshatter'] ?? 0) > 0) {
-      const drReduction = Math.max(0, p['dot.rimeshatter-dr-reduction'] ?? 0.08);
-      const debuffMs = Math.max(100, p['dot.rimeshatter-duration-ms'] ?? 2000);
-      const reducedTarget = {
-        ...targetWithDebuffs,
-        damageReduction: Math.max(0, targetWithDebuffs.damageReduction - drReduction),
-      };
-      directPerHit = directHit(stats.dealsDamage.attack, stats.dealsDamage.onHitDamage, reducedTarget, platingMult);
-      notes.push(`max-stack direct bypass with ${Math.round(drReduction * 100)}% DR reduction (${debuffMs / 1000}s, high uptime)`);
-    }
-
-    if ((p['dot.freezing-cold'] ?? 0) > 0) {
-      const chillMax = Math.max(1, Math.round(p['dot.chill-max-stacks'] ?? 9));
-      const freezeSec = Math.max(0.1, (p['dot.freeze-duration-ms'] ?? 2000) / 1000);
-      const damageTakenPct = Math.max(0, p['dot.freeze-damage-taken-pct'] ?? 0.35);
-      const buildSec = chillMax / effectiveHitRate;
-      const freezeUptime = freezeSec / (buildSec + freezeSec);
-      const averageMult = 1 + damageTakenPct * freezeUptime;
-      directPerHit *= averageMult;
-      dotPerSec *= averageMult;
-      notes.push(`freeze damage bonus averaged at ${Math.round(freezeUptime * 100)}% uptime (${chillMax} hits, ${freezeSec}s freeze)`);
-    }
+    notes.push('Sigils and payoffs omitted; direct hits only');
   } else if (archetype === 'reload') {
     if ((p['reload.laser'] ?? 0) > 0) {
       const heatPerTick = p['reload.laser-heat-per-tick'] ?? 2;
@@ -1529,16 +1409,7 @@ function mechanicFrequency(stats: PlayerStatsTarget): string {
     }
     return `discharge every ${normalHits + 1} hits (${asNumber(hitRate / (normalHits + 1))}/s)`;
   }
-  if (archetype === 'dot') {
-    const profile = resolveDotClassProfile(p, stats.usesSkills.selectedSubVariant);
-    if ((p['dot.poison-explosion'] ?? 0) > 0) {
-      return `detonation every ${Math.max(1, Math.round(p['dot.poison-explosion-max-stacks'] ?? 10))} hits`;
-    }
-    if ((p['dot.freezing-cold'] ?? 0) > 0) {
-      return `freeze every ${Math.max(1, Math.round(p['dot.chill-max-stacks'] ?? 9))} chill hits for ${asNumber((p['dot.freeze-duration-ms'] ?? 2000) / 1000)}s`;
-    }
-    return `DoT cap ${profile.maxStacks} stacks, tick ${asNumber(profile.tickIntervalMs)}ms`;
-  }
+  if (archetype === 'dot') return 'sigils and payoffs are not modeled';
   if (archetype === 'reload') {
     if ((p['reload.laser'] ?? 0) > 0) return 'laser heat/cool duty cycle';
     const ammo = Math.max(1, Math.round(p['reload.max-ammo'] ?? 10));
@@ -1701,7 +1572,7 @@ function reportFormulaForSubclass(node: SkillNode, rows: ReportRow[]): string {
   const rootFormula =
     archetype === 'cadence' ? 'cycle average of normal hits plus empowered finisher over threshold' :
     archetype === 'cooldown' ? 'execution DPS = execution hit / cooldown; replacement paths override direct hit model' :
-    archetype === 'dot' ? 'DoT DPS = computeScaledDotDamage(max stacks) / tick interval; direct reduced by conversion pct' :
+    archetype === 'dot' ? 'Sigils and payoffs omitted; direct hits only' :
     archetype === 'energy' ? 'cycle average over energy charge hits plus empowered discharge' :
     archetype === 'reload' ? 'effective shots/s = ammo / (shot time + reload time); spec branches override as needed' :
     archetype === 'summoner' ? 'sum of weighted slot hits at inherited weapon APS; formation proc/on-hit budget normalized; reconstruction uptime omitted' :
@@ -2120,7 +1991,7 @@ function classMechanicFormulaRows(): Array<Array<string | number>> {
       'Apprentice',
       'DoT',
       'Each hit converts a profile percentage of attack into a stack budget. Direct hit is reduced by conversion pct except bypass specs.',
-      'Damage per stack = computeDotClassDamagePerStack(attack, resolveDotClassProfile(passives, selectedSubVariant)); tick DPS = computeScaledDotDamage(stacks) / tickInterval.',
+      'Sigils tick linearly from weapon potency; payoffs spend them. This report models direct hits only.',
       'Stacks assumed at max steady-state in the report.',
     ],
     [

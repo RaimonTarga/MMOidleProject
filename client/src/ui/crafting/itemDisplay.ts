@@ -562,10 +562,6 @@ export function resolvedRelicProfileRows(profile: ResolvedRelicProfile): RelicPr
       pair('Maximum heat', profile.heatMax);
       pair('Full cooling time', profile.coolingMs, seconds);
       break;
-    case 'dot':
-      pair('DoT tick interval', profile.tickIntervalMs, seconds);
-      pair('Maximum DoT stacks', profile.maxStacks);
-      break;
     case 'energy':
       pair(profile.gainPerHitLabel ?? 'Energy gained per hit', profile.gainPerHit);
       pair('Maximum energy', profile.maxEnergy);

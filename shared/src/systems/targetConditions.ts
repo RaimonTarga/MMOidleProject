@@ -15,13 +15,11 @@ import { FROZEN_STATUS_ID, STUN_STATUS_ID } from './statusPolicy';
 import { weaponDotProfileForEffect } from './weaponFamilies';
 
 /**
- * The Apprentice's class DoT (and Permafrost, which shares the id), Conflagration
- * and the frost chill. Restated from `server/` like `FROZEN_STATUS_ID`; the
+ * The Apprentice's sigils and the shared frost chill. Restated from `server/` like `FROZEN_STATUS_ID`; the
  * status-registry test pins that the server's DoT inventory owns exactly what
  * {@link isAfflictionStatusId} says.
  */
 export const CLASS_DOT_STATUS_ID = 'dot';
-export const CONFLAGRATION_STATUS_ID = 'dot-conf';
 export const CHILL_STATUS_ID = 'dot-chill';
 
 /**
@@ -77,14 +75,12 @@ export function isTargetHiddenStatusId(id: string): boolean {
 
 /**
  * Is this status a damage-over-time record — the Affliction moment's condition?
- * Exactly the families the server's DoT inventory owns: the class DoT (with
- * Permafrost), Conflagration and every weapon reservoir.
+ * Exactly the families the server's DoT inventory owns: sigils and every weapon reservoir.
  *
  * The server additionally asks whose DoT it is (the moment reads the player's own
  * afflictions); a client reading a target's status list sees every owner's.
  */
 export function isAfflictionStatusId(id: string): boolean {
   return id === CLASS_DOT_STATUS_ID
-    || id === CONFLAGRATION_STATUS_ID
     || weaponDotProfileForEffect(id) !== undefined;
 }

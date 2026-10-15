@@ -92,7 +92,6 @@ function gearScore(recipe: Recipe, slot: Exclude<GearSlot, 'relic'>): number {
 const RELIC_BUFF_PASSIVES = [
   'reload.hair-trigger',
   'energy.overdrive',
-  'dot.frenzy',
 ] as const satisfies readonly PassiveKey[];
 
 const RELIC_DEBUFF_PASSIVES = [
@@ -150,9 +149,6 @@ function relicProfileFactor(profile: ResolvedRelicProfile): number {
     case 'laser':
       return lowerIsBetter(profile.coolingMs.before, profile.coolingMs.after)
         * higherIsBetter(profile.heatMax.before, profile.heatMax.after);
-    case 'dot':
-      return lowerIsBetter(profile.tickIntervalMs.before, profile.tickIntervalMs.after)
-        * higherIsBetter(profile.maxStacks.before, profile.maxStacks.after);
     case 'energy':
       return higherIsBetter(profile.gainPerHit.before, profile.gainPerHit.after)
         * higherIsBetter(profile.dischargeMultiplier.before, profile.dischargeMultiplier.after);

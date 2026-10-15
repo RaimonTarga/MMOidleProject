@@ -30,7 +30,6 @@ import {
   BURN_FAMILY,
   CHILL_STATUS_ID,
   CLASS_DOT_STATUS_ID,
-  CONFLAGRATION_STATUS_ID,
   FROZEN_STATUS_ID,
   GAME_CONFIG,
   STUN_STATUS_ID,
@@ -51,9 +50,8 @@ import { mirrorTargetStatus } from '../src/systems/combat/targetStatus';
 import { playerDotsOnMonster } from '../src/systems/combat/damage/dotInventory';
 import { monsterIsHeld } from '../src/systems/combat/status/monsterControl';
 import { STUN_EFFECT } from '../src/systems/combat/status/stun';
-import {
-  CHILL_EFFECT, CONF_EFFECT_ID, DOT_EFFECT_ID, FROZEN_EFFECT,
-} from '../src/systems/classes/archetypes/dot/t3/core/constants';
+import { DOT_EFFECT_ID } from '../src/systems/classes/archetypes/dot/constants';
+import { CHILL_EFFECT, FROZEN_EFFECT } from '../src/systems/combat/status/frost';
 import { summonerFrameLinkEffectId } from '../src/systems/classes/archetypes/summoner/frameLoop';
 import { auditStatusRegistry } from '../scripts/statusAudit';
 import { statusMeta } from '../../client/src/hud/targetStatusMeta';
@@ -96,7 +94,6 @@ function assert(condition: unknown, message: string): void {
 {
   // The ids shared restates from the server, spelled the same.
   assert(CLASS_DOT_STATUS_ID === DOT_EFFECT_ID, 'the class DoT id');
-  assert(CONFLAGRATION_STATUS_ID === CONF_EFFECT_ID, 'the Conflagration id');
   assert(CHILL_STATUS_ID === CHILL_EFFECT, 'the chill id');
   assert(FROZEN_STATUS_ID === FROZEN_EFFECT, 'the frozen id');
   assert(STUN_STATUS_ID === STUN_EFFECT, 'the stun id');
@@ -141,7 +138,6 @@ function assert(condition: unknown, message: string): void {
     effect.stacks = stacks;
   };
   put(CLASS_DOT_STATUS_ID, { damagePerStack: 10, nextTickIn: 1_000, tickIntervalMs: 1_000 }, 3);
-  put(CONFLAGRATION_STATUS_ID, { damagePerTick: 10, ticksLeft: 3 });
   for (const reservoir of BURN_FAMILY) put(reservoir.effectId, { pool: 100, nextTickIn: 1_000, tickIntervalMs: 1_000 });
   put('vulnerability', { damageMultiplier: 1.2, totalMs: 4_000 });
   put(ABILITY_SLOW_EFFECT_ID, { moveSlowPct: 0.2, totalMs: 4_000 });
@@ -184,8 +180,8 @@ function assert(condition: unknown, message: string): void {
   // ══ E. THE TARGET FRAME ═══════════════════════════════════════════════════
   const target = body();
   applyStatusEffect(target.tracksCombat, {
-    id: CONFLAGRATION_STATUS_ID, instanced: false, remainingMs: 4_000, sourceId: ownerId,
-    data: { damagePerTick: 25, ticksLeft: 4 },
+    id: CLASS_DOT_STATUS_ID, instanced: false, remainingMs: 4_000, sourceId: ownerId,
+    data: { damagePerStack: 25, tickIntervalMs: 1000, nextTickIn: 1000 },
   });
   applyStatusEffect(target.tracksCombat, {
     id: summonerFrameLinkEffectId(ownerId), remainingMs: 2_000, sourceId: ownerId, data: { slotMask: 1, totalMs: 2_000 },
@@ -196,13 +192,13 @@ function assert(condition: unknown, message: string): void {
   player.hasAttackTarget = { targetId: target.isMonster.id } as typeof player.hasAttackTarget;
   mirrorTargetStatus(world);
   const mirrored = target.hasStatus.targetStatus ?? [];
-  const mirroredBurn = mirrored.find((status) => status.id === CONFLAGRATION_STATUS_ID);
+  const mirroredBurn = mirrored.find((status) => status.id === CLASS_DOT_STATUS_ID);
   assert(mirroredBurn?.owed === 100, `the burn reports what it still owes (4 × 25), got ${mirroredBurn?.owed}`);
   assert(!mirrored.some((status) => status.id.startsWith('frame.summoner.link')), 'bookkeeping never reaches the frame');
   const pinned = mirrored.find((status) => status.id === ABILITY_ROOT_EFFECT_ID);
   assert(pinned !== undefined && pinned.owed === undefined, 'a hold owes nothing');
 
-  assert(targetHomeOf(CONFLAGRATION_STATUS_ID) === 'owes' && targetHomeOf('poison-dagger-burn') === 'owes'
+  assert(targetHomeOf(CLASS_DOT_STATUS_ID) === 'owes' && targetHomeOf('poison-dagger-burn') === 'owes'
     && targetHomeOf('dot') === 'owes', 'every DoT lives in Owes');
   assert(targetHomeOf(ABILITY_SLOW_EFFECT_ID) === 'slowed'
     && targetHomeOf(CHILL_STATUS_ID) === 'slowed', 'every slow lives in Slowed');
@@ -223,6 +219,7 @@ function assert(condition: unknown, message: string): void {
   for (const id of [
     'lineage.bleed', 'lineage.hobbled', 'lineage.pinned', 'lineage.hemorrhage', 'lineage.lean-bleed',
     'lineage.poison', 'root', 'vuln', 'void-corruption',
+    'dot-chill', 'dot-frozen', 'dot-smolder', 'dot-conf', 'dot-frostbite',
   ]) {
     assert(targetStatusHelp(id) === undefined, `${id}: no help copy left`);
     assert(statusMeta(id).color === '#b0a8d0', `${id}: no badge left (it would render the fallback)`);

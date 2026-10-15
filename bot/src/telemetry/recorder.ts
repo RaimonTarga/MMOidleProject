@@ -809,7 +809,6 @@ export class Recorder {
         incomingDot: self.incomingDot,
         pendingHeal: self.pendingHeal,
         targetDotStacks: self.targetDotStacks,
-        targetChillStacks: self.targetChillStacks,
         activeEffects: self.activeEffects ? { ...self.activeEffects } : null,
         activeBuffs: (self.activeBuffs ?? []).map((buff) => ({
           id: buff.id,

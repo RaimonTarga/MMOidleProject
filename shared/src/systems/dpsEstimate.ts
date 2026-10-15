@@ -9,9 +9,8 @@ import { resolveFinalDamageMultipliers } from './finalDamage';
  * mechanic that changes that number, and for two of them the plain formula is not
  * merely imprecise, it is *wrong*:
  *
- * - a **DoT** class deliberately moves a fraction of every hit OUT of the direct
- *   damage and into stacks that tick later, so the auto-attack formula reports
- *   strictly less damage than the build actually does;
+ * - the Apprentice adds sigils and payoffs to full direct hits. This estimate
+ *   reports its direct hits and explicitly omits the state-dependent sigils and payoffs;
  * - a **Summoner** may not attack at all (`CannotAttack`), so the auto-attack
  *   formula reports a number near zero for a build whose minions are doing all
  *   of the damage.
@@ -48,7 +47,6 @@ import { resolveRelicPreview } from './relicPreview';
 import { relicRatingsFromPassives, resolveRelicMagnitudeMultiplier } from './relics';
 import { resolveLaserProfile } from './laserProfile';
 import { resolveOnHitDamage, mitigateOnHitDamage } from './onHitDamage';
-import { resolveDotClassProfile } from './dotClassProfile';
 import { resolveSummonerProfile, type SummonerProfileInput } from './summonerProfile';
 import { summonerSpecializationFor, type SummonerFrame } from '../data/summoner';
 import { estimatePlayerHitDamage } from './combatEstimates';
@@ -295,25 +293,9 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
       break;
     }
 
-    // The one archetype where the auto-attack formula is not merely imprecise:
-    // conversion moves damage OUT of the hit and into stacks, so counting only
-    // the hit under-reports the build. At full stacks the tick throughput
-    // reduces to attack x conversion x mechanic multiplier — the tick interval
-    // and stack cap cancel out of `computeDotClassDamagePerStack`.
     case 'dot': {
-      const profile = resolveDotClassProfile(input.passives, input.selectedSubVariant ?? null);
-      const conv = Math.min(1, Math.max(0, profile.conversionPct));
-      parts.push({
-        label: 'Direct hits',
-        dps: (attackDamage(input, input.attack) * (1 - conv) + onHitContribution(input, input.onHitDamage)) / cdSec,
-      });
-      parts.push({
-        label: 'Damage over time',
-        dps: input.attack * conv * profile.dotMechanicMultiplier
-          * (relic?.archetype === 'dot' ? relic.maxStacks.after / relic.maxStacks.before * profile.tickIntervalMs / relic.tickIntervalMs.after : 1)
-          * resolveRelicMagnitudeMultiplier(relicRatingsFromPassives(input.passives).debuffEffect),
-      });
-      caveats.push('Damage over time is counted at full stacks, which takes a few hits to reach.');
+      parts.push({ label: 'Direct hits', dps: hitDamage(input, input.attack, input.onHitDamage) / cdSec });
+      caveats.push('Sigils and payoffs are not included in this direct-hit estimate.');
       break;
     }
 

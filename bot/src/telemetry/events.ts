@@ -271,7 +271,6 @@ export interface ActivityDiagnosticEvent {
     incomingDot: number;
     pendingHeal: number;
     targetDotStacks: number;
-    targetChillStacks: number;
     activeEffects: Record<string, number> | null;
     activeBuffs: Array<Pick<PlayerBuff, "id" | "stacks" | "durationPct" | "remainingMs" | "speedMult">>;
   };

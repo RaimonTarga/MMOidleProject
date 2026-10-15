@@ -32,7 +32,6 @@ const self = {
   incomingDot: 3,
   pendingHeal: 4,
   targetDotStacks: 0,
-  targetChillStacks: 1,
   activeEffects: { "debuff-slow": 1 },
   activeBuffs: [],
   attackTargetId: null as string | null,

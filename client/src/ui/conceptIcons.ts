@@ -109,10 +109,8 @@ const BUFF_IDS = new Set([
   'defense-ward',
   'dot-chill',
   'dot-conflag',
-  'dot-frenzy',
   'dot-frostbite',
   'dot-frozen',
-  'dot-vigor',
   'energy-ac-charge',
   'energy-ac-discharge',
   'energy-aether',
@@ -409,10 +407,6 @@ export function statusIconSource(id: string, instanceKey?: string): AssetIconSou
 
 const TARGET_STATUS_ALIASES: Record<string, string> = {
   dot: 'debuff-poison',
-  'dot-chill': 'dot-chill',
-  'dot-frozen': 'dot-frozen',
-  'dot-smolder': 'dot-conflag',
-  'dot-conf': 'dot-conflag',
   slow: 'debuff-slow',
   'plating-shred': 'debuff-plating-shred',
   'reload-suppress-shred': 'debuff-plating-shred',

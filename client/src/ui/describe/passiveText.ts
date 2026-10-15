@@ -105,7 +105,6 @@ const PERCENT_KEYS = new Set([
   'defense.debuff-resistance',
   'defense.dot-resistance',
   'defense.evade-mitigation',
-  'dot.rimeshatter-dr-reduction',
   'reload.cannon-charge-fraction',
   'reload.cannon-damage-per-shot',
   'reload.hair-trigger-pct-per-shot',

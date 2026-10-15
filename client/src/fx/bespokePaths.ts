@@ -15,7 +15,6 @@ import { STRIKER_PATHS } from './bespoke/striker';
 import { SQUIRE_PATHS } from './bespoke/squire';
 import { SLINGER_PATHS } from './bespoke/slinger';
 import { SPIRIT_PATHS } from './bespoke/spirit';
-import { APPRENTICE_PATHS } from './bespoke/apprentice';
 
 export type { BespokeHit, BespokeKill, BespokeReload, BespokePath } from './bespoke/kit';
 
@@ -24,7 +23,6 @@ const BESPOKE_PATHS: PathTable = {
   ...SQUIRE_PATHS,
   ...SLINGER_PATHS,
   ...SPIRIT_PATHS,
-  ...APPRENTICE_PATHS,
 };
 
 export const bespokePathFor = (specId: string | undefined): BespokePath | undefined =>

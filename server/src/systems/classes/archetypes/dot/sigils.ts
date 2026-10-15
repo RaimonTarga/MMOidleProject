@@ -1,13 +1,9 @@
 /**
  * The Apprentice at runtime (bible §9.2–§9.4): the hits lay **sigils** on the enemy, which tick as
  * damage over time under the usual rules; **payoffs** spend them at moments the Payoff rules
- * name. A sigil is one stack of the existing class DoT status (`DOT_EFFECT_ID`) flagged
- * `data.sigil = 1`, so the ticker, the target frame and the moments' "full bar" read it as they
- * always did, but its ticks are linear and its damage comes from the weapon, never from the hit.
+ * name. A sigil is one stack of the class DoT status (`DOT_EFFECT_ID`); its ticks are linear
+ * and its damage comes from the weapon, never from the hit.
  * Wiring only: every number is a kit `params` placeholder or a constant below.
- *
- * The old DoT machinery (conversion, the stack curve, the frame loop, the T3 paths) is inert for a
- * character with Payoff rules; it goes in the Apprentice's cleanup task.
  */
 import {
   APPRENTICE_KIT,
@@ -33,7 +29,7 @@ import { applyStun } from '../../../combat/status/stun';
 import { applyHealToPlayer } from '../../../defense/regen/healing';
 import { activateRecoveryBoost } from '../../../defense/regen/recovery';
 import { classConfigContextOf } from '../../../player/progression/classConfig';
-import { DOT_EFFECT_ID } from './t3/core/constants';
+import { DOT_EFFECT_ID } from './constants';
 
 /** A sigil's tick damage, as a share of the weapon's attack (potency), per tick. PLACEHOLDER. */
 const SIGIL_TICK_PCT = 0.12;
@@ -65,7 +61,7 @@ interface Payoffs {
 
 const cache = new WeakMap<PlayerEntity, { tick: number; value: Payoffs | null }>();
 
-/** The Apprentice's Payoff rules, or null for a character without them (the old DoT path then applies). */
+/** The Apprentice's Payoff rules, or null for a character without them. */
 export function payoffsOf(world: World, player: PlayerEntity): Payoffs | null {
   const hit = cache.get(player);
   if (hit && hit.tick === world.tickCounter) return hit.value;
@@ -112,7 +108,7 @@ export function laySigils(world: World, player: PlayerEntity, target: MonsterEnt
     sourceId: player.isPlayer.id,
     remainingMs: lifeMs,
     refreshable: true,
-    data: { damagePerStack: sigilDamage(player), nextTickIn: tickMs, tickIntervalMs: tickMs, tickOnExpire: 1, sigil: 1 },
+    data: { damagePerStack: sigilDamage(player), nextTickIn: tickMs, tickIntervalMs: tickMs, tickOnExpire: 1 },
   });
   // Re-applying adds one stack at a time; add the rest, honouring the cap.
   for (let i = 1; i < count; i++) {
@@ -123,13 +119,12 @@ export function laySigils(world: World, player: PlayerEntity, target: MonsterEnt
   effect.data['damagePerStack'] = sigilDamage(player);
   effect.data['tickIntervalMs'] = tickMs;
   effect.remainingMs = lifeMs;
-  effect.data['sigil'] = 1;
   attachMarker(world, target, 'hasDot');
 }
 
 function sigilsOn(player: PlayerEntity, monster: MonsterEntity): number {
   const effect = getStatusEffect(monster.tracksCombat, DOT_EFFECT_ID);
-  return effect && effect.sourceId === player.isPlayer.id && effect.data['sigil'] === 1 ? effect.stacks : 0;
+  return effect && effect.sourceId === player.isPlayer.id ? effect.stacks : 0;
 }
 
 function spend(monster: MonsterEntity): number {

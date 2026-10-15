@@ -1,11 +1,10 @@
 import { relicEffectPreview, type RelicEffectNote } from './relicEffectPreview';
 import type { PassiveMap } from '../passives';
 import type { SubVariant } from '../data/skillTree';
-import { resolveDotClassProfile, resolveDotStackCap } from './dotClassProfile';
 import { resolveSummonerProfile } from './summonerProfile';
 import { resolveEnergyMaxBeforeRelic } from './energyMax';
 import { resolveLaserRelicProfile } from './laserProfile';
-import { ZERO_RELIC_RATINGS, resolveCadenceRelicProfile, resolveCooldownRelicProfile, resolveReloadRelicProfile, resolveDotRelicDeliveryProfile, resolveEnergyRelicProfile, type RelicRatings, type ResolvedRelicProfile } from './relics';
+import { ZERO_RELIC_RATINGS, resolveCadenceRelicProfile, resolveCooldownRelicProfile, resolveReloadRelicProfile, resolveEnergyRelicProfile, type RelicRatings, type ResolvedRelicProfile } from './relics';
 
 /** Character-specific preview authority used by inventory and Forge. */
 function resolvePrimaryRelicPreview(
@@ -40,10 +39,6 @@ function resolvePrimaryRelicPreview(
       const momentum = (passives['reload.momentum'] ?? 0) > 0 ? Math.max(passives['reload.momentum-reload-reduction-floor'] ?? 0.3, 1 - (options.momentumStacks ?? 0) * (passives['reload.momentum-reload-reduction'] ?? 0.1)) : 1;
       const ms = Math.max(100, Math.round(base * (passives['reload.reload-time-mult'] ?? 1) * momentum));
       return resolveReloadRelicProfile(ms, ammo, ratings);
-    }
-    case 'dot': {
-      const profile = resolveDotClassProfile(passives, options.subVariant);
-      return resolveDotRelicDeliveryProfile(profile.tickIntervalMs, resolveDotStackCap(passives, profile.maxStacks), ratings);
     }
     case 'energy': {
       const flash = (passives['energy.flash'] ?? 0) > 0;

@@ -32,13 +32,7 @@ import { setRooted } from "../../world/rooted";
 import { markSliceDirty } from "../../../ecs/dirtyHelpers";
 import { isMonsterStunned } from "./stun";
 import { monsterIgnoresControl } from "./controlImmunity";
-import { CHILL_EFFECT, FROZEN_EFFECT } from "../../classes/archetypes/dot/t3/core/constants";
-import {
-  CHILL_ATK_MULT,
-  CHILL_SPEED_MULT,
-  FREEZE_ATK_MULT,
-  FREEZE_SPEED_MULT,
-} from "../../classes/archetypes/dot/t3/paths/_constants";
+import { CHILL_EFFECT, FROZEN_EFFECT, CHILL_ATK_MULT, CHILL_SPEED_MULT, FREEZE_ATK_MULT, FREEZE_SPEED_MULT } from "./frost";
 
 const OWNS_ROOT_FLAG = "abilityOwnsRoot";
 

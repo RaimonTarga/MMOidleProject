@@ -119,10 +119,10 @@ function makePlayerSlices(id: string, archetype: SweepArchetype): PersistedPlaye
       itemUpgrades: {},
     },
     usesSkills: {
-      unlockedSkills: [],
+      unlockedSkills: archetype === "dot" ? ["dot-root"] : [],
       passives: {},
-      selectedClass: null,
-      selectedSubVariant: "balanced",
+      selectedClass: archetype === "dot" ? "dot-root" : null,
+      selectedSubVariant: null,
       selectedRange: null,
       combatArchetype: archetype,
     },

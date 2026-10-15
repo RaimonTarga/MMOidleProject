@@ -42,7 +42,7 @@ import { resolveCastPayload } from "../src/systems/player/abilities/abilityEffec
 import { monsterAttackCooldown } from "../src/systems/combat/engine/monsterMechanics";
 import { updateMonsters } from "../src/systems/combat/ai/ai";
 import { attachMarker } from "../src/ecs/markerHelpers";
-import { CHILL_EFFECT } from "../src/systems/classes/archetypes/dot/t3/core/constants";
+import { CHILL_EFFECT } from "../src/systems/combat/status/frost";
 import { World } from "../src/world/World";
 
 function assert(condition: unknown, message: string): void {

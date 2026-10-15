@@ -186,7 +186,6 @@ export const targetDotStacksAtom = atom<number>(0);
 export const targetDotTickPctAtom = atom<number>(0);
 /** Monotonic receipt counter for confirmed ticks from this player's current target. */
 export const targetDotTickSerialAtom = atom<number>(0);
-export const targetChillStacksAtom = atom<number>(0);
 
 export function notifyTargetDotTick(): void {
   if (typeof document !== 'undefined' && document.visibilityState === 'hidden') return;
@@ -692,7 +691,6 @@ function resetPlayerAtoms(): void {
   store.set(targetDotStacksAtom, 0);
   store.set(targetDotTickPctAtom, 0);
   store.set(targetDotTickSerialAtom, 0);
-  store.set(targetChillStacksAtom, 0);
   store.set(isChannelingAtom, false);
   store.set(channelingPctAtom, 0);
   store.set(skillPointsAtom, 0);
@@ -805,7 +803,6 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(laserOverheatedAtom, player.laserOverheated);
   setIfChanged(targetDotStacksAtom, player.targetDotStacks);
   setIfChanged(targetDotTickPctAtom, player.targetDotTickPct);
-  setIfChanged(targetChillStacksAtom, player.targetChillStacks);
   setIfChanged(summonActiveCountAtom, player.summonActiveCount);
   setIfChanged(summonSlotCountAtom, player.summonsMinions);
   setIfChanged(summonRespawnMaxMsAtom, player.summonRespawnMaxMs);

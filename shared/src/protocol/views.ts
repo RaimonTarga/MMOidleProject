@@ -141,7 +141,6 @@ export interface PlayerView {
   targetDotStacks: number;
   /** Server-authored progress toward the current target's next primary DoT tick. */
   targetDotTickPct: number;
-  targetChillStacks: number;
   isChanneling: boolean;
   channelingPct: number;
   /** Cannoneer: 0 when idle, else 0→100 as the mid-reload cannon charge fills. */
@@ -400,7 +399,6 @@ export function composePlayerView(entity: NetworkedEntity): PlayerView | null {
     empoweredReady: entity.hasEmpoweredAttack !== undefined,
     targetDotStacks: entity.appliesDots?.targetDotStacks ?? 0,
     targetDotTickPct: entity.appliesDots?.targetDotTickPct ?? 0,
-    targetChillStacks: entity.chillsTarget?.targetChillStacks ?? 0,
     isChanneling: entity.isChanneling !== undefined,
     channelingPct: entity.isChanneling?.pct ?? 0,
     cannonChargePct: (() => {

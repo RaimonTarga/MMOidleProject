@@ -20,12 +20,6 @@ export const BUFF_IDS = [
   // Phantasm's overcharge bank.
   'energy-frame-surge',
   'energy-frame-overcharge',
-  'dot-vigor',
-  'dot-conflag',
-  'dot-chill',
-  'dot-frozen',
-  'dot-frenzy',
-  'dot-frostbite',
   'reload-snipe-ready',
   'reload-cover-fire',
   'reload-momentum',
@@ -52,10 +46,7 @@ export const BUFF_IDS = [
   'debuff-sundered',
   'debuff-plating-shred',
   'debuff-antiheal',
-  // Tundra's Deep Freeze on YOU. Deliberately separate from `dot-frozen`, which is
-  // the DoT archetype reporting that its TARGET is frozen: the two are the same
-  // mechanic seen from opposite sides, and one tile cannot describe both without
-  // telling one of the two players the wrong thing about who is locked.
+  // Tundra's Deep Freeze on the player.
   'debuff-frozen',
   'defense-ward',             // temporary absorb pools
   'defense-absorb',
@@ -125,10 +116,6 @@ export type BuffCategory =
   | 'cadence'
   | 'cooldown'
   | 'energy'
-  | 'dot-poison'
-  | 'dot-fire'
-  | 'dot-frost'
-  | 'dot-frozen'
   | 'weapon'
   | 'neutral'
   | 'summoner';

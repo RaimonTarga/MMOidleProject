@@ -49,7 +49,7 @@ export interface StatusPolicy {
 /**
  * Frozen and Stun live in `server/`, so their ids are restated here rather than
  * imported — `shared/` may not depend on the server. These MUST stay in step with
- * `FROZEN_EFFECT` (dot/t3/core/constants.ts) and `STUN_EFFECT` (combat/status/stun.ts);
+ * `FROZEN_EFFECT` (combat/status/frost.ts) and `STUN_EFFECT` (combat/status/stun.ts);
  * `statusPolicy.test.ts` asserts they do, so a rename cannot drift them apart.
  */
 export const FROZEN_STATUS_ID = 'dot-frozen';

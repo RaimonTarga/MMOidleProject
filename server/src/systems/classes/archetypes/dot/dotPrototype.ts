@@ -1,16 +1,11 @@
 import { drainStorm } from '../energy/spirit';
-import { hasPayoffs, laySigils, payoffsOf } from './sigils';
+import { laySigils, payoffsOf } from './sigils';
 import { incomingFinalDamage } from '../../../combat/damage/finalDamage';
-import { GAME_CONFIG, resolveDotStackCap } from '@mmo-idle/shared';
+import { GAME_CONFIG } from '@mmo-idle/shared';
 import {
   MONSTER_DATABASE,
-  computeDotClassDamagePerStack,
   computeLinearDotDamage,
-  computeScaledDotDamage,
   isMonsterDotStatusEffectId,
-  resolveDotClassProfile,
-  relicRatingsFromPassives,
-  resolveDotRelicDeliveryProfile,
 } from "@mmo-idle/shared";
 import { registerCombatListener } from "../../../combat/engine/combatPipeline";
 import {
@@ -18,24 +13,15 @@ import {
   monsterDotStacksForHit,
 } from "../../../combat/engine/monsterMechanics";
 import {
-  applyStatusEffect,
   getStatusEffects,
   removeStatusEffect,
 } from "@mmo-idle/shared";
 import { grantMonsterRewards } from "../../../player/progression/rewards";
-import { initDotFrameLoop } from "./frameLoop";
-import {
-  initDotT3,
-  computeEternalDoomDamage,
-} from "./t3";
-import { radiateBurnTick } from "./t3/ticks/radiant";
 import { classDotTickDamage } from "./tickDamage";
 import type { DeathCause } from "@mmo-idle/shared";
 import type { MonsterEntity, PlayerEntity } from "../../../../ecs/entity";
 import type { World } from "../../../../world/World";
-import { playerDebuffConfig } from '../../shared/applyPlayerDebuff';
 import {
-  attachMarker,
   detachComponent,
   detachMarkerIfNoEffect,
 } from "../../../../ecs/markerHelpers";
@@ -51,8 +37,6 @@ import {
   monsterDotElement,
 } from "../../../combat/damage/dotTickEvent";
 import { emitPlayerMonsterOnKill } from "../../../combat/damage/killHooks";
-import { emitMechanicFired } from "../../../combat/engine/mechanicFired";
-import { isMechanicProxy } from "../../../combat/engine/empoweredAttacks";
 import { buildKillerFromSourceId } from "../../../world/deathCause";
 import {
   buildSimpleBreakdown,
@@ -68,112 +52,13 @@ import {
 import { isInvulnerableMonster, isInvulnerablePlayer } from "../../../combat/invulnerability";
 import { drainWards } from "../../../defense/barrier/wards";
 import { drainBarrier, stampBarrierDamage } from "../../../defense/barrier/barrier";
-import { DOT_EFFECT_ID } from "./t3/core/constants";
+import { DOT_EFFECT_ID } from "./constants";
 
-interface ClassDotStackApplication {
-  conversionPct: number;
-  durationMs: number;
-  maxStacks: number;
-  tickIntervalMs: number;
-  damagePerStack: number;
-}
-
-/** Resolve the live Apprentice root profile, relic delivery, and debuff scaling. */
-function resolveClassDotStackApplication(
-  attacker: PlayerEntity,
-): ClassDotStackApplication {
-  const profile = resolveDotClassProfile(
-    attacker.usesSkills.passives,
-    attacker.usesSkills.selectedSubVariant,
-  );
-  const delivery = resolveDotRelicDeliveryProfile(
-    profile.tickIntervalMs,
-    resolveDotStackCap(attacker.usesSkills.passives, profile.maxStacks),
-    relicRatingsFromPassives(attacker.usesSkills.passives),
-  );
-  // Class DoT stack value is generated from base attack, not final hit damage.
-  // Relic delivery changes happen after the reference calculation, matching the
-  // normal Apprentice hit pipeline.
-  const rawDamagePerStack = computeDotClassDamagePerStack(
-    attacker.dealsDamage.attack,
-    profile,
-  );
-  const damagePerStack = playerDebuffConfig(attacker, {
-    id: DOT_EFFECT_ID,
-    sourceId: attacker.isPlayer.id,
-    data: { damagePerStack: rawDamagePerStack },
-  }, { origin: 'mechanic' }).data?.damagePerStack ?? rawDamagePerStack;
-  return {
-    conversionPct: profile.conversionPct,
-    durationMs: profile.durationMs,
-    maxStacks: delivery.maxStacks.after,
-    tickIntervalMs: delivery.tickIntervalMs.after,
-    damagePerStack,
-  };
-}
-
-/**
- * Apply exactly one authoritative Apprentice root DoT stack. Sweep uses this
- * seam for secondary targets, so it cannot drift into a parallel/fake DoT.
- */
-export function applyClassDotStack(
-  world: World,
-  attacker: PlayerEntity,
-  defender: MonsterEntity,
-  application = resolveClassDotStackApplication(attacker),
-  /**
-   * The exchange this stack rode in on, when there was one. Only used as the
-   * `mechanic-fired` latch below — the stack itself never reads it.
-   */
-  ctx?: Parameters<typeof emitMechanicFired>[2],
-): void {
-  // A character with Payoff rules lays a sigil instead (`sigils.ts`).
+/** Sweep's secondary targets use the same sigils as the Apprentice's ordinary hits. */
+export function applyClassDotStack(world: World, attacker: PlayerEntity, defender: MonsterEntity): void {
   const payoffs = payoffsOf(world, attacker);
-  if (payoffs) {
-    laySigils(world, attacker, defender, 1, payoffs.cap);
-    return;
-  }
-  const effect = applyStatusEffect(defender.tracksCombat, {
-    id: DOT_EFFECT_ID,
-    maxStacks: application.maxStacks,
-    instanced: false,
-    sourceId: attacker.isPlayer.id,
-    remainingMs: application.durationMs,
-    refreshable: true,
-    data: {
-      damagePerStack: application.damagePerStack,
-      nextTickIn: application.tickIntervalMs,
-      tickIntervalMs: application.tickIntervalMs,
-      tickOnExpire: 1,
-    },
-  });
-
-  // Refresh dynamic values on every application so live buffs take effect now.
-  effect.data.damagePerStack = application.damagePerStack;
-  effect.data.tickIntervalMs = application.tickIntervalMs;
-  effect.data.tickOnExpire = 1;
-  attachMarker(world, defender, "hasDot");
-
-  // `mechanic-fired` (progression rework 1c): a full stack is the DoT root's
-  // moment. ONCE PER TARGET PER FILL — the latch lives on the effect's own data,
-  // so it is per target by construction and disappears with the effect when the
-  // stack drops off, which is exactly when a refill should be able to fire again.
-  // Every further hit into a capped stack is the same fill, not a new one.
-  // A `mechanic-proxy` exchange (design §24.2) never announces the moment, so it
-  // must not spend the fill latch either: the next real hit announces it.
-  if (ctx && isMechanicProxy(ctx)) return;
-  if (application.maxStacks > 0 && effect.stacks >= application.maxStacks) {
-    if (effect.data.maxStackFired !== 1) {
-      effect.data.maxStackFired = 1;
-      emitMechanicFired(world, attacker, ctx);
-    }
-  } else if (effect.data.maxStackFired === 1) {
-    effect.data.maxStackFired = 0;
-  }
+  if (payoffs) laySigils(world, attacker, defender, 1, payoffs.cap);
 }
-
-// Re-export the pure tick formula from shared so existing importers don't change paths.
-export { computeScaledDotDamage };
 
 // ── Tick-driven DoT ───────────────────────────────────────────────────────────
 
@@ -191,39 +76,20 @@ export function updateDotArchetype(world: World, dt: number, now = Date.now()): 
     sourceId: string;
     damage: number;
   }> = [];
-  // Ids already queued to die this pass. Radiant (Pyromancer) can kill a body
-  // that has not ticked yet, or reach for one that already died to its own tick:
-  // either way it must be credited, rewarded and removed exactly once.
-  const dying = new Set<string>();
-  const queueKill = (monsterId: string, sourceId: string, damage: number): void => {
-    dying.add(monsterId);
-    monstersToKill.push({ monsterId, sourceId, damage });
-  };
-  const isDying = (monsterId: string): boolean => dying.has(monsterId);
-
   for (const entity of world.dottedMonsters) {
     const monsterId = entity.isMonster.id;
     const state = entity.tracksCombat;
-    if (dying.has(monsterId)) continue;
     if (isInvulnerableMonster(entity)) continue;
     const effect = getStatusEffects(state, DOT_EFFECT_ID)[0];
     if (!effect) {
       detachMarkerIfNoEffect(world, entity, "hasDot", state, DOT_EFFECT_ID);
       continue;
     }
-    if (effect.data.t3Perm) continue; // Permafrost ticking managed by updateDotT3
 
     effect.data.nextTickIn -= dt;
     if (effect.data.nextTickIn > 0) continue;
 
-    const rawTick = effect.data.isEternalDoom
-      ? computeEternalDoomDamage(
-          effect.stacks,
-          effect.data.damagePerStack,
-          effect.data.edFullStacks,
-          effect.data.edDiminishRate,
-        )
-      : computeScaledDotDamage(effect);
+    const rawTick = computeLinearDotDamage(effect);
     const damage = classDotTickDamage(world, entity, effect.sourceId, rawTick);
     const source = actorFromSourceId(world, effect.sourceId);
     recordMonsterDamagedByPlayer(
@@ -242,13 +108,8 @@ export function updateDotArchetype(world: World, dt: number, now = Date.now()): 
       sourceId: effect.sourceId,
     });
 
-    // Pyromancer's Radiant: a tick at max burn also strikes the adjacent bodies.
-    // Read before the expiry branch below, so the last tick of a full burn radiates too.
-    radiateBurnTick(world, entity, effect, rawTick, isDying, (victim, dealt) =>
-      queueKill(victim.isMonster.id, effect.sourceId, dealt));
-
     if (entity.hasHealth.hp <= 0) {
-      queueKill(monsterId, effect.sourceId, damage);
+      monstersToKill.push({ monsterId, sourceId: effect.sourceId, damage });
     } else if (effect.remainingMs <= 0) {
       removeStatusEffect(state, DOT_EFFECT_ID);
       detachMarkerIfNoEffect(world, entity, "hasDot", state, DOT_EFFECT_ID);
@@ -433,44 +294,8 @@ export function updateDotArchetype(world: World, dt: number, now = Date.now()): 
 
 // ── Combat listeners ──────────────────────────────────────────────────────────
 
-/**
- * Register onHit listeners for the DoT archetype.
- * Called once at server startup.
- *
- * initDotT3() is called first so T3 handlers register before this base handler.
- * The T3 handler applies the conversion damage reduction (dotConvApplied flag);
- * the base handler applies it only when the T3 handler didn't run.
- */
+/** Register the monster-to-player DoT listener once at server startup. */
 export function initDotArchetype(): void {
-  initDotT3();
-
-  // ── Player → Monster: base stack application ─────────────────────────────
-  // Fires only when no T3 mechanic has claimed the hit (dotHandled not set).
-  registerCombatListener("onHit", (ctx, world) => {
-    if (ctx.attackerType !== "player") return;
-    if (ctx.defenderType !== "monster") return;
-    if (ctx.metadata["dotHandled"]) return;
-    if (evadeBlocksDebuffs(ctx)) return; // dodged hit applies no DoT stacks
-
-    // Query by component presence, not by combatArchetype string.
-    const attacker = ctx.attacker;
-    if (!attacker?.appliesDots) return;
-    // A character with Payoff rules lays sigils instead (`sigils.ts`): no conversion, no curve.
-    if (hasPayoffs(attacker)) return;
-
-    const application = resolveClassDotStackApplication(attacker);
-
-    // Apply conversion reduction only if the T3 handler hasn't already done so.
-    if (!ctx.metadata["dotConvApplied"]) {
-      ctx.damage = Math.max(
-        1,
-        Math.round(ctx.damage * (1 - application.conversionPct)),
-      );
-    }
-
-    applyClassDotStack(world, attacker, ctx.defender, application, ctx);
-  });
-
   // ── Monster → Player: DoT stack application ───────────────────────────────
   // Monsters with a dotEffect in MonsterDefinition apply stacks on every hit.
   registerCombatListener("onHit", (ctx, world) => {
@@ -497,11 +322,6 @@ export function initDotArchetype(): void {
         typeof ctx.metadata["abilityName"] === "string" ? ctx.metadata["abilityName"] : undefined);
     }
   });
-
-  // The frame loops (progression rework Phase 3) register LAST, so the opener
-  // tops up a bar the root has already applied this hit's stack to, and the chill
-  // mirrors the stack count as it stands after the hit.
-  initDotFrameLoop();
 }
 
 function detachMarkerIfNoMonsterDot(

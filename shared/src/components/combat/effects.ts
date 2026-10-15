@@ -7,8 +7,7 @@ import type { DeathKiller } from '../../protocol/death';
  * directly — client-visible state (e.g. DoT stack count) is mirrored to
  * player/monster networked component views in each system's update function.
  *
- * Exported from `shared/` so pure damage formulas (computeScaledDotDamage,
- * computeEternalDoomDamage) can take StatusEffect as input without forcing
+ * Exported from `shared/` so pure damage formulas (computeLinearDotDamage) can take StatusEffect as input without forcing
  * shared to depend on server-only TracksCombat machinery.
  */
 export interface StatusEffect {

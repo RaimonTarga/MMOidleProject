@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai';
-import { dotElementForPlayer, resolveDotClassProfile, resolveDotStackCap, resolveDotRelicDeliveryProfile, relicRatingsFromPassives, summonerSpecializationFor } from '@mmo-idle/shared';
+import { dotElementForPlayer, classConfigContextFromState, summonerSpecializationFor } from '@mmo-idle/shared';
 import {
   ammoCountAtom,
   ammoMaxAtom,
@@ -26,15 +26,12 @@ import {
   summonHealthAtom,
   summonSlotCountAtom,
   summonSlotsAtom,
-  targetChillStacksAtom,
   targetDotStacksAtom,
   targetDotTickPctAtom,
   targetDotTickSerialAtom,
   unlockedSkillsAtom,
 } from '../atoms';
 import type { MechanicViewModel } from './types';
-
-const CHILL_MAX_STACKS = 9;
 
 function clampPct(value: number): number {
   return Math.max(0, Math.min(100, value));
@@ -74,7 +71,6 @@ export function useMechanicViewModel(): MechanicViewModel | null {
   const dotStacks = useAtomValue(targetDotStacksAtom);
   const dotTickPct = useAtomValue(targetDotTickPctAtom);
   const dotTickSerial = useAtomValue(targetDotTickSerialAtom);
-  const chillStacks = useAtomValue(targetChillStacksAtom);
 
   switch (combatArchetype) {
     case 'cadence':
@@ -137,30 +133,19 @@ export function useMechanicViewModel(): MechanicViewModel | null {
       };
 
     case 'dot': {
-      const profile = resolveDotClassProfile(passives, selectedSubVariant);
       const element = dotElementForPlayer(passives, selectedSubVariant);
-      const maxStacks = resolveDotRelicDeliveryProfile(profile.tickIntervalMs, resolveDotStackCap(passives, profile.maxStacks), relicRatingsFromPassives(passives)).maxStacks.after;
-      const showsChill = element === 'frost' && (passives['dot.freezing-cold'] ?? 0) > 0;
+      const maxStacks = (playerView ? classConfigContextFromState(playerView)?.budget ?? 0 : 0)
+        + Math.round(passives['apprentice.cap-extra'] ?? 0);
       return {
         kind: 'dot',
         element,
-        stackLabel: element === 'fire'
-          ? 'Burn'
-          : element === 'frost'
-            ? 'Frost'
-            : element === 'doom'
-              ? 'Doom'
-              : 'Poison',
+        stackLabel: 'Sigils',
         stacks: Math.max(0, dotStacks),
         maxStacks,
         stackPct: clampPct(maxStacks > 0 ? (dotStacks / maxStacks) * 100 : 0),
         tickPct: clampPct(dotTickPct),
         tickSerial: dotTickSerial,
         hasTarget: targetId !== null,
-        chillStacks: Math.max(0, chillStacks),
-        chillMax: CHILL_MAX_STACKS,
-        showsChill,
-        frozen: showsChill && chillStacks >= CHILL_MAX_STACKS,
       };
     }
 

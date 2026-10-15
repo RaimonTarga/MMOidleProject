@@ -19,7 +19,7 @@ import { setAggroTarget, setAttackTarget } from './targeting';
 import { hasIndependentRoot, setRooted } from '../../world/rooted';
 import { isMonsterStunned } from '../status/stun';
 import { staggerBoss } from './bossPatterns';
-import { isMonsterFrozen } from '../../classes/archetypes/dot/t3/core/selectors';
+import { isMonsterFrozen } from '../../combat/status/frost';
 import { chargedCastEndsAt } from '../engine/monsterMechanics';
 import { bindBossAdd } from './bossAdds';
 

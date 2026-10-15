@@ -35,7 +35,7 @@ import { setAggroTarget } from '../src/systems/combat/ai/targeting';
 import { applyPlatingShredStacks } from '../src/systems/combat/status/platingShred';
 import { runMonsterAttack, updateCombat } from '../src/systems/combat/engine/combat';
 import { PLAYER_HARD_CONTROL_EFFECTS } from '../src/systems/combat/status/playerHardControl';
-import { FROZEN_EFFECT } from '../src/systems/classes/archetypes/dot/t3/core/constants';
+import { FROZEN_EFFECT } from '../src/systems/combat/status/frost';
 import { STUN_EFFECT } from '../src/systems/combat/status/stun';
 import { World } from '../src/world/World';
 import type { MonsterEntity, PlayerEntity } from '../src/ecs/entity';

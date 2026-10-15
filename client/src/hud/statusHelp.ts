@@ -99,12 +99,6 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'energy-frame-overcharge': m('Overcharge', 'Phantasm’s frame loop. The pool keeps taking energy above its cap before the discharge arms, and each hit’s worth banked here adds to the discharge’s damage. The discharge spends the whole bank and staggers what it hits.'),
 
   // -- DoT -------------------------------------------------------------------
-  'dot-vigor': m('Vigor', 'Your own damage and attack speed rise while your poison is working on the target.'),
-  'dot-conflag': m('Conflagration', 'The target’s burn is running at an accelerated rate.'),
-  'dot-chill': m('Chill', 'Your frost is slowing the target’s movement and stretching its attack cooldown.'),
-  'dot-frozen': m('Frozen', 'The target is frozen solid and takes increased damage from everything.'),
-  'dot-frenzy': m('Frenzy', 'A window of raised attack speed and added on-hit damage.'),
-  'dot-frostbite': m('Frostbite', 'The target takes amplified damage from your damage-over-time specifically.'),
 
   // -- Reload ----------------------------------------------------------------
   'reload-snipe-ready': m('Snipe', 'Your next shot lands for a multiplier against a target still at full health.'),
@@ -149,10 +143,6 @@ const STATUS_HELP: Record<string, StatusHelp> = {
 // enemy-facing side of a mechanic that also has a player-side entry above.
 const TARGET_HELP: Record<string, StatusHelp> = {
   dot: d('Damage over time', 'Your damage-over-time is working on this target. It bypasses plating entirely and only half the target’s damage reduction applies, so it is your answer to heavily armoured enemies.'),
-  'dot-chill': d('Chill', 'Your frost is slowing this target’s movement and stretching the gap between its attacks.'),
-  'dot-frozen': d('Frozen', 'The target is frozen and takes increased damage from every source while it lasts.'),
-  'dot-smolder': d('Smolder', 'A slow burn on the target, ticking past its plating.'),
-  'dot-conf': d('Conflagration', 'The target’s burn has caught properly and is running at an accelerated rate.'),
   slow: d('Slow', 'The target’s movement speed is cut, so it closes on you and repositions more slowly.'),
   'ability-slowed': d('Slowed', 'An ability has crippled the target’s stride: movement is reduced, but its attack cadence is unchanged. It can still attack and cast; this is soft control, not a root or stun.'),
   'ability-rooted': d('Bound', 'Binding Strike has pinned the target in place. It can still attack anything already in reach, but cannot reposition until the bind ends.'),

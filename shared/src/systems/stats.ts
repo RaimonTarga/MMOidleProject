@@ -18,7 +18,6 @@ import { mergePassives, makePulseAccumulator, finalizePulse } from '../passives'
 import { relicRatingsFromPassives, resolveCadenceRelicProfile } from './relics';
 import { summonerSpecializationFor } from '../data/summoner';
 import { SLINGER_DIRECT_ATTACK_EFFECTIVENESS } from './classSecondaryDamage';
-import { dotClassProfileForSubVariant } from './dotClassProfile';
 import { weaponDotProfileForWeapon } from './weaponFamilies';
 
 /**

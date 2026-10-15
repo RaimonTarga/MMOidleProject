@@ -5,7 +5,7 @@ import { drainBarrier, stampBarrierDamage } from '../defense/barrier/barrier';
 import {
   AMBIENT_ACCEL_PCT_KEY,
   applyStatusEffect,
-  computeScaledDotDamage,
+  computeLinearDotDamage,
   GAME_CONFIG,
   getStatusEffect,
   MONSTER_DATABASE,
@@ -702,7 +702,7 @@ function tickEntityNodeFeatureDamage(
       const player = entity as PlayerEntity;
       if (isInvulnerablePlayer(player)) continue;
       if (effect.data.nextTickIn <= 0) {
-        const base = computeScaledDotDamage(effect);
+        const base = computeLinearDotDamage(effect);
         const dotResist = Math.min(
           0.9,
           player.usesSkills.passives['defense.dot-resistance'] ?? 0,
@@ -757,7 +757,7 @@ function tickEntityNodeFeatureDamage(
     } else {
       const monster = entity as MonsterEntity;
       if (effect.data.nextTickIn <= 0) {
-        const base = computeScaledDotDamage(effect);
+        const base = computeLinearDotDamage(effect);
         const damage = Math.max(
           1,
           Math.round(base * (1 - monster.mitigatesDamage.damageReduction)),

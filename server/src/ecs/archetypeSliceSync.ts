@@ -6,7 +6,6 @@ import type { World } from '../world/World';
 import type { PlayerEntity, ServerEntity } from './entity';
 import {
   initAppliesDots,
-  initChillsTarget,
   initSummonsMinions,
   initUsesCadence,
   initUsesCooldown,
@@ -60,14 +59,6 @@ export function syncArchetypeSlices(world: World, entity: PlayerEntity): void {
     archetype === 'dot',
     'appliesDots',
     () => initAppliesDots(),
-  );
-
-  syncArchetypeSlice(
-    world,
-    entity,
-    archetype === 'dot' && (passives['dot.freezing-cold'] ?? 0) > 0,
-    'chillsTarget',
-    () => initChillsTarget(),
   );
 
   syncArchetypeSlice(

@@ -1,7 +1,6 @@
 import {
   resolveCadenceRelicProfile,
   resolveCooldownRelicProfile,
-  resolveDotRelicDeliveryProfile,
   resolveEnergyRelicProfile,
   resolveReloadRelicProfile,
   resolveRelicBonusMultiplier,
@@ -55,14 +54,6 @@ eq(resolveRelicCount(10, 1, 1, 1, 12), 12, 'count respects cap');
   const p = resolveReloadRelicProfile(1600, 10, positive);
   assert(p.reloadMs.after < 1600, 'reload frequency shortens reload');
   eq(p.ammoMax.after, 14, 'reload potency increases magazine');
-}
-
-{
-  const p = resolveDotRelicDeliveryProfile(1500, 6, positive);
-  assert(p.tickIntervalMs.after < 1500, 'DoT frequency shortens delivery interval');
-  assert(p.maxStacks.after > 6, 'DoT potency raises stack ceiling');
-  eq(p.damagePerStackReference.tickIntervalMs, 1500, 'DoT damage reference keeps pre-relic interval');
-  eq(p.damagePerStackReference.maxStacks, 6, 'DoT damage reference keeps pre-relic cap');
 }
 
 {

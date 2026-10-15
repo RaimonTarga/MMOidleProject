@@ -23,7 +23,7 @@ import {
 import type { ControlsMonster } from "@mmo-idle/shared";
 import { NODE_REGISTRY } from "../../../world/nodeRegistry";
 import { isMonsterStunned } from "../status/stun";
-import { isMonsterFrozen } from "../../classes/archetypes/dot/t3/core/selectors";
+import { isMonsterFrozen } from "../../combat/status/frost";
 import {
   activeMonsterAbilityId,
   chargedCastEndsAt,

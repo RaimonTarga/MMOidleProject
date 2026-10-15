@@ -1,7 +1,6 @@
 import type {
   AppliesDots,
   CannotAttack,
-  ChillsTarget,
   ControlsMonster,
   InPack,
   DealsDamage,
@@ -14,12 +13,10 @@ import type {
   HasDetonation,
   HasHemorrhage,
   HasDot,
-  HasConflagration,
   HasAbilityRoot,
   HasAbilitySlow,
   HasChill,
   HasFrozen,
-  HasSmolder,
   HasAggroTarget,
   HeldByTaunt,
   HasEntropy,
@@ -269,7 +266,6 @@ export interface ServerEntity {
   usesCadence?: UsesCadence;
   usesEnergy?: UsesEnergy;
   appliesDots?: AppliesDots;
-  chillsTarget?: ChillsTarget;
   usesCooldown?: UsesCooldown;
   usesReload?: UsesReload;
   isChanneling?: IsChanneling;
@@ -308,12 +304,10 @@ export interface ServerEntity {
   hasDetonation?: HasDetonation;
   hasHemorrhage?: HasHemorrhage;
   hasDot?: HasDot;
-  hasConflagration?: HasConflagration;
   hasChill?: HasChill;
   hasFrozen?: HasFrozen;
   hasAbilitySlow?: HasAbilitySlow;
   hasAbilityRoot?: HasAbilityRoot;
-  hasSmolder?: HasSmolder;
   hasEntropy?: HasEntropy;
   hasWeaponDot?: HasWeaponDot;
   scriptsBoss?: ScriptsBoss;

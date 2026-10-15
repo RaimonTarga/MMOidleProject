@@ -54,7 +54,6 @@ export type RelicArchetype =
   | 'cadence'
   | 'cooldown'
   | 'reload'
-  | 'dot'
   | 'energy'
   | 'summoner';
 
@@ -70,7 +69,6 @@ export const RELIC_COEFFICIENTS: Readonly<Record<RelicArchetype, RelicCoefficien
   cadence:  { frequency: 1, potency: 1 },
   cooldown: { frequency: 1, potency: 1 },
   reload:   { frequency: 1, potency: 1 },
-  dot:      { frequency: 1, potency: 1 },
   energy:   { frequency: 1, potency: 1 },
   summoner: { frequency: 1, potency: 1 },
 };
@@ -78,7 +76,6 @@ export const RELIC_COEFFICIENTS: Readonly<Record<RelicArchetype, RelicCoefficien
 export const RELIC_INTERVAL_FLOORS_MS = {
   cooldown: 100,
   reload: 100,
-  dot: 100,
   summoner: 500,
 } as const;
 
@@ -219,35 +216,6 @@ export function resolveReloadRelicProfile(
   };
 }
 
-export interface DotRelicProfile {
-  archetype: 'dot';
-  tickIntervalMs: RelicValue<number>;
-  maxStacks: RelicValue<number>;
-  damagePerStackReference: { tickIntervalMs: number; maxStacks: number };
-}
-
-export function resolveDotRelicDeliveryProfile(
-  tickIntervalMs: number,
-  maxStacks: number,
-  ratings: RelicRatings,
-): DotRelicProfile {
-  const c = RELIC_COEFFICIENTS.dot;
-  return {
-    archetype: 'dot',
-    tickIntervalMs: {
-      before: tickIntervalMs,
-      after: resolveRelicInterval(
-        tickIntervalMs, ratings.frequency, c.frequency, RELIC_INTERVAL_FLOORS_MS.dot,
-      ),
-    },
-    maxStacks: {
-      before: maxStacks,
-      after: resolveRelicCount(maxStacks, ratings.potency, c.potency, 1),
-    },
-    damagePerStackReference: { tickIntervalMs, maxStacks },
-  };
-}
-
 export interface EnergyRelicProfile {
   archetype: 'energy';
   gainPerHit: RelicValue<number>;
@@ -315,6 +283,5 @@ export type ResolvedRelicProfile = (
   | CadenceRelicProfile
   | CooldownRelicProfile
   | ReloadRelicProfile
-  | DotRelicProfile
   | EnergyRelicProfile
   | SummonerRelicProfile) & { secondaryEffects?: import('./relicEffectPreview').RelicEffectPreview[]; secondaryNotes?: import('./relicEffectPreview').RelicEffectNote[] };

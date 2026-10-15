@@ -48,7 +48,6 @@ export * from './systems/playerAmplifiers';
 export * from './systems/playerMoveSpeed';
 export * from './systems/ambientRamp';
 export * from './systems/dotElements';
-export * from './systems/dotClassProfile';
 export * from './systems/monsterDotFlavor';
 export * from './systems/bestiary';
 export * from './systems/bestiaryMechanics';

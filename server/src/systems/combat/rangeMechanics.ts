@@ -49,7 +49,6 @@ import {
   getStatusEffect,
   hitboxGap,
   posHitboxFromEntity,
-  resolveDotClassProfile,
   setFlag,
   type PassiveMap,
 } from '@mmo-idle/shared';
@@ -65,9 +64,6 @@ import { applySharedDebuffMaxWins } from './status/sharedDebuffRecord';
 import { applyStun } from './status/stun';
 import { monsterIgnoresControl } from './status/controlImmunity';
 import { evadeBlocksDebuffs } from '../defense/mitigation/evasion';
-import { playerAoeTargets } from './damage/aoeDamage';
-import { applyClassDotStack } from '../classes/archetypes/dot/dotPrototype';
-import { DOT_EFFECT_ID } from '../classes/archetypes/dot/t3/core/constants';
 
 /**
  * `tracksCombat` flag on the MONSTER: Phantom-Blade's opener has been spent on
@@ -77,15 +73,6 @@ import { DOT_EFFECT_ID } from '../classes/archetypes/dot/t3/core/constants';
  * the same shape `weapon.first-strike-mult` already uses for its own opener.
  */
 const OPENER_SPENT_FLAG = 'rangeFarOpenerSpent';
-
-/**
- * `data` marker on the class DoT record: Harbinger's stack-cap bonus is already
- * folded into this effect's `maxStacks`. `applyStatusEffect` never rewrites
- * `maxStacks` on a refresh and never clears `data`, so one bump per record is
- * exactly one bump per fill — and the marker disappears with the effect, which is
- * when a fresh record should get its own bump.
- */
-const STACK_CAP_BUMPED = 'rangeFarCapBumped';
 
 /** Reused crimson opener burst — the opening strike is visibly an opening strike. */
 const OPENER_CLIENT_EFFECT = 'first-strike';
@@ -213,86 +200,6 @@ function applyAtBayStagger(
   applyStun(target.tracksCombat, ms, player.isPlayer.id);
 }
 
-/**
- * Warlock: a class stack landed on a target at bay also lands on its nearest
- * neighbour.
- *
- * Gated on the target actually CARRYING this player's class DoT, so the spread
- * follows a stack rather than merely a hit — whether the root handler or a T3
- * path applied it, they all write the one `dot` record. Routed through
- * `applyClassDotStack`, the same seam Sweep's secondary targets use, so the
- * spread can never drift into a parallel DoT of its own.
- *
- * Suppressed outright by Harbinger (brief §2: "+1 max stack on a single target,
- * stacks last longer, **no spread**"). The two are mutually exclusive range picks,
- * so this only matters if something ever grants both — and then Far wins, because
- * single-target is the whole of what Far bought.
- */
-function spreadClassDot(
-  world: World,
-  player: PlayerEntity,
-  target: MonsterEntity,
-  passives: PassiveMap,
-): void {
-  if ((passives['dot.range-far-stack-cap-bonus'] ?? 0) > 0) return;
-  const stacks = Math.round(passives['dot.range-mid-spread-stacks'] ?? 0);
-  const radius = passives['dot.range-mid-spread-radius'] ?? 0;
-  if (stacks <= 0 || radius <= 0) return;
-
-  const carried = getStatusEffect(target.tracksCombat, DOT_EFFECT_ID);
-  if (!carried || carried.sourceId !== player.isPlayer.id) return;
-
-  const origin = target.hasPosition.current;
-  let nearest: MonsterEntity | undefined;
-  let nearestSq = Infinity;
-  for (const monster of playerAoeTargets(world, player, origin, radius, target.isMonster.id)) {
-    if (monster.hasHealth.hp <= 0) continue;
-    const dx = monster.hasPosition.current.x - origin.x;
-    const dy = monster.hasPosition.current.y - origin.y;
-    const distSq = dx * dx + dy * dy;
-    if (distSq < nearestSq) {
-      nearestSq = distSq;
-      nearest = monster;
-    }
-  }
-  if (!nearest) return;
-  for (let i = 0; i < stacks; i++) applyClassDotStack(world, player, nearest);
-}
-
-/**
- * Harbinger: the class DoT holds one more stack and each application lasts longer
- * on the body it is on.
- *
- * The DELIVERY cap, not the damage reference: `computeDotClassDamagePerStack`
- * still divides by the frame's own max stacks (the same split
- * `resolveDotStackCap` documents), so the extra stack is extra damage rather than
- * a thinner one — which is what "a single target, harder" has to mean.
- *
- * Both writes are IDEMPOTENT. The cap is bumped once per record, latched in the
- * effect's own `data`. The duration is set to an absolute `base × (1 + pct)`
- * floor rather than multiplied in place, because a refresh resets `remainingMs`
- * to the base and a hit that did not refresh would otherwise ratchet the window
- * upward forever.
- */
-function deepenClassDot(player: PlayerEntity, target: MonsterEntity, passives: PassiveMap): void {
-  const capBonus = Math.round(passives['dot.range-far-stack-cap-bonus'] ?? 0);
-  const durationPct = passives['dot.range-far-duration-pct'] ?? 0;
-  if (capBonus <= 0 && durationPct <= 0) return;
-
-  const effect = getStatusEffect(target.tracksCombat, DOT_EFFECT_ID);
-  if (!effect || effect.sourceId !== player.isPlayer.id) return;
-
-  if (capBonus > 0 && effect.maxStacks > 0 && effect.data[STACK_CAP_BUMPED] !== 1) {
-    effect.maxStacks += capBonus;
-    effect.data[STACK_CAP_BUMPED] = 1;
-  }
-  if (durationPct > 0 && effect.remainingMs > 0) {
-    const profile = resolveDotClassProfile(passives, player.usesSkills.selectedSubVariant);
-    const extended = Math.round(profile.durationMs * (1 + durationPct));
-    effect.remainingMs = Math.max(effect.remainingMs, extended);
-  }
-}
-
 /** Phantom-Blade: the first hit on a fresh body, from the outer band of reach. */
 function applyOpeningStrike(
   ctx: CombatContext,
@@ -357,9 +264,7 @@ function applyLongShot(
  *
  * Position in the chain is load-bearing in two directions:
  *  - AFTER `initAllMechanics()`, so `empoweredAttack` is already set by the
- *    archetype that consumed its charge (Phalanx, Shade, Sentinel all gate on it)
- *    and the class DoT stack this hit applied is already on the target (Warlock
- *    and Harbinger both read that record);
+ *    archetype that consumed its charge (Phalanx, Shade, Sentinel all gate on it);
  *  - BEFORE `initDefenseSystems()`, so the two damage payoffs land ahead of
  *    evasion, the damage cap and shields, like every other outgoing multiplier.
  */
@@ -380,10 +285,8 @@ export function initRangeMechanics(): void {
     if (isAtBay(player, target)) {
       applyAtBaySlow(world, player, target, passives);
       applyAtBayStagger(ctx, player, target, passives);
-      spreadClassDot(world, player, target, passives);
     }
 
-    deepenClassDot(player, target, passives);
     applyOpeningStrike(ctx, player, target, passives);
     applyReachVulnerability(ctx, player, target, passives);
     applyLongShot(ctx, player, target, passives);
@@ -401,11 +304,8 @@ function hasRangeMechanic(passives: PassiveMap): boolean {
     (passives['cooldown.range-mid-at-bay-slow-pct'] ?? 0) > 0 ||
     (passives['reload.range-mid-at-bay-slow-pct'] ?? 0) > 0 ||
     (passives['energy.range-mid-discharge-stagger-ms'] ?? 0) > 0 ||
-    (passives['dot.range-mid-spread-stacks'] ?? 0) > 0 ||
     (passives['cadence.range-far-opener-pct'] ?? 0) > 0 ||
     (passives['cooldown.range-far-vuln-pct'] ?? 0) > 0 ||
-    (passives['dot.range-far-stack-cap-bonus'] ?? 0) > 0 ||
-    (passives['dot.range-far-duration-pct'] ?? 0) > 0 ||
     (passives['reload.range-far-damage-pct'] ?? 0) > 0
   );
 }
