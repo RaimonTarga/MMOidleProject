@@ -9,6 +9,7 @@ import {
   disciplineIdAtom,
   playerIdAtom,
   playerTierAtom,
+  specializationIdAtom,
 } from '../../hud/atoms';
 import { classScreenSeenFor, subscribeClassScreenSeen } from './seen';
 
@@ -34,6 +35,7 @@ export function useClassScreen(): ClassScreenState {
   const biomeLevel = useAtomValue(biomeLevelAtom);
   const bossesCleared = useAtomValue(bossesClearedAtom);
   const disciplineId = useAtomValue(disciplineIdAtom);
+  const specializationId = useAtomValue(specializationIdAtom);
   const playerTier = useAtomValue(playerTierAtom);
   const seen = useClassScreenSeen(playerId);
 
@@ -43,6 +45,7 @@ export function useClassScreen(): ClassScreenState {
     biomeLevel,
     bossesCleared,
     disciplineId,
+    specializationId,
     playerTier,
   }, seen), [
     combatArchetype,
@@ -50,6 +53,7 @@ export function useClassScreen(): ClassScreenState {
     biomeLevel,
     bossesCleared,
     disciplineId,
+    specializationId,
     playerTier,
     seen,
   ]);

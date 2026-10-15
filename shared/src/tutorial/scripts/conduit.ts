@@ -14,6 +14,10 @@
  * T2 zone in turn. Every zone is three beats (farm to the lesson, farm to the cap, the
  * boss), and the line for a lesson or a Soul rank comes up in the beat after the thing
  * that earns it, as in Tier 1. The first Jungle and Desert Souls arrive with their bosses.
+ *
+ * Tier 3 (T3-W2, bible §7.6, §7.16) follows the Tier 2 stretch: the specialization pick, then the
+ * five returning zones (Mountain, Cave, Swamp, Jungle, Desert) and the two new ones (Tundra,
+ * Volcanic), three beats each, the same way.
  */
 import { LESSON_ZONE_LEVEL } from '../../classKits/kitHelpers';
 import { absoluteZoneLevel } from '../../classKits/registry';
@@ -157,6 +161,7 @@ function t2Farm(
   waiting: string,
   biome: string,
   level: number,
+  tier = 2,
 ): TutorialBeat {
   return {
     id,
@@ -166,7 +171,7 @@ function t2Farm(
     progress: [{ type: 'biomeLevel', biomeGroup: biome, level }],
     steps: [{
       type: 'farm',
-      at: { kind: 'biome', biomeGroup: biome, tier: 2 },
+      at: { kind: 'biome', biomeGroup: biome, tier },
       until: { type: 'biomeLevelAtLeast', biomeGroup: biome, level },
     }],
   };
@@ -207,6 +212,83 @@ export function buildConduitT2Beats(): TutorialBeat[] {
   return beats;
 }
 
+/** In the order the guide walks them: Tier 3's order in the bible (§7.16), the two new zones last. */
+const T3_ZONES: readonly T2Zone[] = [
+  {
+    biome: 'mountain', zone: 'Mountain',
+    lesson: 'Warhorn is bound. It costs two Command, and its call makes every summon around it attack faster for a few seconds.',
+    soul: 'The Mountain boss fell. Your Stoneplate Soul is rank 3, so the shield it gives is stronger still.',
+  },
+  {
+    biome: 'cave', zone: 'Cave',
+    lesson: 'Burrower is bound. It tunnels under its target and erupts, reaching the casters and gunners at the back.',
+    soul: 'The Cave boss fell. Your Dreadbore Soul reached its last rank.',
+  },
+  {
+    biome: 'swamp', zone: 'Swamp',
+    lesson: 'Sporecaller is bound. Its spores make the enemies around its target deal less damage.',
+    soul: 'The Swamp boss fell. Your Mire Behemoth Soul reached its last rank.',
+  },
+  {
+    biome: 'jungle', zone: 'Jungle',
+    lesson: 'Prowler is bound. It strikes from hiding every few seconds and pounces on enemies that flee.',
+    soul: 'The Jungle boss fell. Your Dread-Gorger Soul is rank 2, so the chase is stronger.',
+  },
+  {
+    biome: 'desert', zone: 'Desert',
+    lesson: 'Carapace Guard is bound. It raises a shield toward the strongest ranged attacker and blocks shots at the summons behind it.',
+    soul: 'The Desert boss fell. Your Dune-Stalker Soul is rank 2, so the mark grows faster.',
+  },
+  {
+    biome: 'tundra', zone: 'Tundra',
+    lesson: 'Frostcaller is bound. Enemies around it attack and move slower. Tundra bosses accept no control, so do not count on it there.',
+    soul: 'The Tundra boss fell. The Rime-Mammoth Soul is yours: enemies near it are chilled.',
+  },
+  {
+    biome: 'volcanic', zone: 'Volcanic',
+    lesson: 'Cinderling is bound. It burns everything around it, and burns hotter the longer the fight lasts.',
+    soul: 'The Volcanic boss fell. The Magma Salamander Soul is yours: your summons hit harder as a fight goes on.',
+  },
+];
+
+const T3_SPECIALIZATION_SAY =
+  'Tier 3 is open. Pick a specialization in the Passive Tree: your discipline offers three, and your Formation shows what it changes. The Tundra and Volcanic are new.';
+
+/** The Tier 3 stretch after the Tier 2 one: the specialization pick, then every T3 zone (bible §7.6, §7.16). */
+export function buildConduitT3Beats(): TutorialBeat[] {
+  const beats: TutorialBeat[] = [];
+  let arrival = T3_SPECIALIZATION_SAY;
+  for (const entry of T3_ZONES) {
+    const chapter = `Tier 3: ${entry.zone}`;
+    const lessonLevel = absoluteZoneLevel({ kind: 'zone', biome: entry.biome, tier: 3, level: LESSON_ZONE_LEVEL });
+    const cap = biomeLevelCap(3, entry.biome);
+    beats.push(
+      t2Farm(`t3:${entry.biome}`, chapter, arrival, `Fighting in the ${entry.zone}.`, entry.biome, lessonLevel, 3),
+      t2Farm(`t3:${entry.biome}-lesson`, chapter, entry.lesson, `Fighting through the ${entry.zone}.`, entry.biome, cap, 3),
+      {
+        id: `t3:${entry.biome}-boss`,
+        chapter,
+        say: `The ${entry.zone} boss is open again. Clear the guards and wake it: its Soul gets stronger, or joins you.`,
+        waiting: `Fighting for the ${entry.zone} Soul.`,
+        steps: [{ type: 'attemptBoss', biomeGroup: entry.biome, tier: 3 }],
+      },
+    );
+    arrival = entry.soul;
+  }
+  const last = T3_ZONES[T3_ZONES.length - 1];
+  beats.push({
+    id: 't3:done',
+    chapter: 'Tier 3',
+    say: `${arrival} That is every Tier 3 summon and Soul. Keep going forward.`,
+    steps: [{
+      type: 'farm',
+      at: { kind: 'biome', biomeGroup: last.biome, tier: 3 },
+      until: { type: 'bossCleared', biomeGroup: last.biome, tier: 3 },
+    }],
+  });
+  return beats;
+}
+
 /** Beats that follow the opening for a Conduit. */
 export function buildConduitBeats(): TutorialBeat[] {
   const seal = buildSealRouteBeats();
@@ -232,5 +314,6 @@ export function buildConduitBeats(): TutorialBeat[] {
     { ...sealBeat(seal, 'boss:mountain'), say: MARKSMAN_SAY },
     sealBeat(seal, 'farewell'),
     ...buildConduitT2Beats(),
+    ...buildConduitT3Beats(),
   ];
 }

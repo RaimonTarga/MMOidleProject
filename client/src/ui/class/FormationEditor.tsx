@@ -211,6 +211,12 @@ export function FormationEditor({ view }: { view: ClassScreenView }) {
           {` ${formation.discipline.text}`}
         </p>
       )}
+      {formation.specialization && (
+        <p className="formation-editor__discipline">
+          <span className="class-panel__name">{formation.specialization.name}</span>
+          {` ${formation.specialization.text}`}
+        </p>
+      )}
       <div
         className="formation-editor__pips"
         role="img"
@@ -294,26 +300,28 @@ export function FormationEditor({ view }: { view: ClassScreenView }) {
         </button>
       </div>
 
-      <h4 className="class-panel__subheading">Soul</h4>
-      <article className={`class-panel__card${formation.soul.trophyId ? '' : ' formation-editor__soul--empty'}`}>
-        {formation.soul.trophyId && (
-          <GameIcon
-            source={trophyIconSource(formation.soul.trophyId)}
-            size={36}
-            fallback={formation.soul.name.charAt(0)}
-            decorative
-          />
-        )}
-        <div>
-          <div className="class-panel__card-title">
-            <span className="class-panel__name">{formation.soul.name}</span>
-            {formation.soul.maxRank > 1 && (
-              <span className="class-panel__family">{`Rank ${formation.soul.rank} of ${formation.soul.maxRank}`}</span>
-            )}
+      <h4 className="class-panel__subheading">{formation.souls.length > 1 ? 'Souls' : 'Soul'}</h4>
+      {formation.souls.map((soul, slot) => (
+        <article key={slot} className={`class-panel__card${soul.trophyId ? '' : ' formation-editor__soul--empty'}`}>
+          {soul.trophyId && (
+            <GameIcon
+              source={trophyIconSource(soul.trophyId)}
+              size={36}
+              fallback={soul.name.charAt(0)}
+              decorative
+            />
+          )}
+          <div>
+            <div className="class-panel__card-title">
+              <span className="class-panel__name">{soul.name}</span>
+              {soul.maxRank > 1 && (
+                <span className="class-panel__family">{`Rank ${soul.rank} of ${soul.maxRank}`}</span>
+              )}
+            </div>
+            <p className="class-panel__line">{soul.text}</p>
           </div>
-          <p className="class-panel__line">{formation.soul.text}</p>
-        </div>
-      </article>
+        </article>
+      ))}
 
       {formation.problems.length > 0 && (
         <ul className="formation-editor__problems" role="alert">

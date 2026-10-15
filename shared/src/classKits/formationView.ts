@@ -26,6 +26,14 @@ export interface FormationPieceView {
   text: string;
 }
 
+export interface FormationSoulView {
+  trophyId: string | null;
+  name: string;
+  text: string;
+  rank: number;
+  maxRank: number;
+}
+
 export interface FormationOrderChoice<T extends string> {
   value: T;
   options: { id: T; label: string }[];
@@ -47,8 +55,12 @@ export interface FormationView {
   };
   /** The picked discipline and its rule in words, or null before the pick (T2). */
   discipline: { id: string; name: string; text: string } | null;
-  /** The Soul in the relic slot: a free extra body, or none yet. `rank` is the trophy's rank, `maxRank` the highest it reaches. */
-  soul: { trophyId: string | null; name: string; text: string; rank: number; maxRank: number };
+  /** The picked specialization and its rule in words, or null before the pick (T3). */
+  specialization: { id: string; name: string; text: string } | null;
+  /** The Soul in the first relic slot: a free extra body, or none yet. `rank` is the trophy's rank, `maxRank` the highest it reaches. */
+  soul: FormationSoulView;
+  /** Every relic slot, in order: one, or two with Two Souls (the first entry is `soul`). */
+  souls: FormationSoulView[];
   problems: string[];
 }
 
@@ -79,10 +91,10 @@ function conditionText(condition: ConditionRef): string {
   return condition.not ? `not when ${text}` : `when ${text}`;
 }
 
-function pieceView(piece: ConduitPiece, disciplineId: string | null, firstOfType: boolean): FormationPieceView {
+function pieceView(piece: ConduitPiece, disciplineId: string | null, firstOfType: boolean, specializationId: string | null): FormationPieceView {
   return {
     pieceId: piece.id, name: piece.name, family: piece.family, row: piece.row, mode: piece.mode,
-    command: disciplineCommandCost(piece.command, disciplineId, firstOfType), baseCommand: piece.command, text: piece.text,
+    command: disciplineCommandCost(piece.command, disciplineId, firstOfType, specializationId), baseCommand: piece.command, text: piece.text,
   };
 }
 
@@ -95,15 +107,24 @@ export function composeFormationView(input: ClassScreenInput): FormationView | n
 
   const seen = new Set<string>();
   const roster = system.roster.map((id) => PIECES.get(id)).filter((piece): piece is ConduitPiece => !!piece).map((piece) => {
-    const view = pieceView(piece, ctx.disciplineId, !seen.has(piece.id));
+    const view = pieceView(piece, ctx.disciplineId, !seen.has(piece.id), ctx.specializationId);
     seen.add(piece.id);
     return view;
   });
   // A bound summon is priced as if it were added next.
   const available = CONDUIT_KIT.pieces.filter((piece) => ctx.pieceRanks.has(piece.id))
-    .map((piece) => pieceView(piece, ctx.disciplineId, !seen.has(piece.id)));
+    .map((piece) => pieceView(piece, ctx.disciplineId, !seen.has(piece.id), ctx.specializationId));
   const picked = CONDUIT_KIT.disciplines.find((entry) => entry.id === ctx.disciplineId);
-  const soul = config.relic[0] ? SOULS.get(config.relic[0]) : undefined;
+  const pickedSpec = CONDUIT_KIT.specializations.find((entry) => entry.id === ctx.specializationId);
+  const soulView = (slot: number): FormationSoulView => {
+    const trophy = config.relic[slot] ? SOULS.get(config.relic[slot]!) : undefined;
+    return trophy
+      ? { trophyId: trophy.id, name: trophy.name, text: trophy.text, rank: ctx.trophyRanks.get(trophy.id) ?? 1, maxRank: 1 + trophy.ranks.length }
+      : slot === 0
+        ? { trophyId: null, name: 'No Soul yet', text: 'Beat a boss and a Soul joins your formation for free.', rank: 0, maxRank: 0 }
+        : { trophyId: null, name: 'No second Soul yet', text: 'Beat a boss of another lineage and a second Soul can join the first.', rank: 0, maxRank: 0 };
+  };
+  const souls = Array.from({ length: Math.max(1, ctx.relicSlots) }, (_, slot) => soulView(slot));
   const check = checkClassConfig(config, ctx);
   return {
     command: { used: rosterCommand(system.roster, ctx.disciplineId, ctx.specializationId), total: ctx.budget },
@@ -116,9 +137,9 @@ export function composeFormationView(input: ClassScreenInput): FormationView | n
       recallWhen: system.orders.recallWhen.map(conditionText),
     },
     discipline: picked ? { id: picked.id, name: picked.name, text: picked.text } : null,
-    soul: soul
-      ? { trophyId: soul.id, name: soul.name, text: soul.text, rank: ctx.trophyRanks.get(soul.id) ?? 1, maxRank: 1 + soul.ranks.length }
-      : { trophyId: null, name: 'No Soul yet', text: 'Beat a boss and a Soul joins your formation for free.', rank: 0, maxRank: 0 },
+    specialization: pickedSpec ? { id: pickedSpec.id, name: pickedSpec.name, text: pickedSpec.text } : null,
+    soul: souls[0]!,
+    souls,
     problems: check.ok ? [] : check.reasons,
   };
 }
