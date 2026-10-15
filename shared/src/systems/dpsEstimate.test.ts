@@ -29,7 +29,7 @@ const ARCHETYPES = ['cadence', 'cooldown', 'reload', 'dot', 'energy', 'summoner'
 /** Enough passives for each archetype's mechanic to actually engage. */
 const PASSIVES: Record<string, PassiveMap> = {
   cadence: { 'cadence.empowered-threshold': 5, 'cadence.empowered-mult': 3 },
-  cooldown: { 'cooldown.empowered-cd-ms': 8_000, 'cooldown.empowered-mult': 5 },
+  cooldown: { 'cooldown.empowered-mult': 5 },
   reload: { 'reload.max-ammo': 6, 'reload.reload-time-ms': 2_000, 'reload.empowered-mult': 2 },
   dot: { 'dot.conversion-pct': 0.6 },
   energy: { 'energy.per-hit': 14, 'energy.empowered-mult': 2 },
@@ -91,13 +91,24 @@ function testMechanicBeatsPlainAutoAttack(): void {
   // than the same character with no mechanic at all. This is the assertion that
   // fails if an archetype branch stops accounting for its own mechanic.
   const plain = estimatePlayerDps(BASE).total;
-  for (const archetype of ['cadence', 'cooldown', 'energy'] as const) {
+  for (const archetype of ['cadence', 'energy'] as const) {
     const withMechanic = estimatePlayerDps(inputFor(archetype)).total;
     assert(
       withMechanic > plain,
       `${archetype}: ${withMechanic} should beat plain auto-attack ${plain}`,
     );
   }
+  // The slam fills on Resolve. Counting it here would invent a clock.
+  const cooldown = estimatePlayerDps(inputFor('cooldown'));
+  assert(
+    cooldown.caveats.some((line) => line.includes('slam')),
+    'the cooldown estimate should say the slam is not included',
+  );
+  assert(
+    !cooldown.parts.some((part) => /execution/i.test(part.label)),
+    'the cooldown estimate must not invent an execution clock',
+  );
+  assert(cooldown.total === plain, 'cooldown DPS is the regular attacks until Resolve is modeled');
 }
 
 function testDotCountsConvertedDamage(): void {

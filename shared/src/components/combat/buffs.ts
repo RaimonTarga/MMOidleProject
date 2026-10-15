@@ -3,16 +3,6 @@
  * Keep in sync with server/src/systems/buffSync.ts ALL_BUFFS.
  */
 export const BUFF_IDS = [
-  'cooldown-overdrive',
-  'cooldown-eternal-charge',
-  'cooldown-temporal-ext',
-  'cooldown-battery',
-  'cooldown-reverb',
-  'cooldown-alignment',
-  'cooldown-rupture',
-  'cooldown-patience',
-  'cooldown-vengeance',
-  'cooldown-channel',
   'energy-overcharge',
   'energy-overdrive',
   'energy-channel',
@@ -122,13 +112,9 @@ export const BUFF_IDS = [
   'mob-rush',     // Tundra — continuous-move ramp
   'mob-volcanic', // Volcanic — passive speed (active while not suppressed)
   'mob-suppress', // Volcanic — speed suppressed after a direct hit
-  // Frame loops (progression rework Phase 3). TWO ids for all six roots, not two
-  // per root: a player wears exactly one frame, so the clock and the counter are
-  // the same two tiles whatever root is under them, and each root's descriptor
-  // labels and colours its own (see `classes/shared/frameLoop.ts`).
-  'frame-window',   // Light/Balanced — the timed window the mechanic opened
-  'frame-charge',   // Heavy/Balanced — the bank, counting toward its cap
-  // The Striker's Order (class-first build plan CS.1).
+  // The Striker's Order (class-first build plan CS.1). The shared frame-window
+  // and frame-charge tiles went with the Squire's frame loop (CQ7); the other
+  // roots wear their own frame buff ids.
   'striker-focus',  // the opener's haste, until the finisher
   'squire-guard',   // the Squire's brace, until the telegraphed blow lands
 ] as const;

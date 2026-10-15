@@ -80,7 +80,9 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy', 'summoner'
     assert(preview, 'preview exists');
     switch (preview.archetype) {
       case 'cadence': eq(player.usesCadence!.threshold, preview.threshold.after, relic.id); break;
-      case 'cooldown': eq(player.usesCooldown!.executionCooldownMs, preview.cooldownMs.after, relic.id); break;
+      // The runtime no longer stores an execution clock (CQ7). The preview still
+      // quotes one from cooldown.empowered-cd-ms; that number is not on the slice.
+      case 'cooldown': assert(preview.cooldownMs.after > 0, relic.id); break;
       case 'reload': eq(player.usesReload!.ammoMax, preview.ammoMax.after, relic.id); break;
       case 'dot': {
         const dot = getStatusEffect(target.tracksCombat, 'dot');
@@ -123,11 +125,20 @@ for (const potency of [-0.25, 0.4]) {
   for (let tick = 0; tick < Math.ceil(profile.coolingMs / 100); tick++) updateReloadT3Ticks(world, 100, 10000 + tick * 100);
   assert(!player.usesReload!.laserOverheated, 'full cooling ends overheat');
 }
-for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy'] as const) {
+for (const root of ['cadence', 'reload', 'dot', 'energy'] as const) {
   const { player } = fixture(root);
   const input = { attack: 100, onHitDamage: 20, attackCooldownMs: 1000, archetype: root, passives: player.usesSkills.passives, selectedSubVariant: null, playerTier: 4 };
   const before = estimatePlayerDps(input).total;
   assert(estimatePlayerDps({ ...input, passives: { ...input.passives, 'relic.mechanic-frequency': 0.35 } }).total > before, `${root}: DPS reflects frequency`);
+}
+{
+  // The slam fills on Resolve, so a shorter preview clock must not invent DPS.
+  const { player } = fixture('cooldown');
+  const input = { attack: 100, onHitDamage: 20, attackCooldownMs: 1000, archetype: 'cooldown' as const, passives: player.usesSkills.passives, selectedSubVariant: null, playerTier: 4 };
+  const before = estimatePlayerDps(input);
+  const after = estimatePlayerDps({ ...input, passives: { ...input.passives, 'relic.mechanic-frequency': 0.35 } });
+  eq(after.total, before.total, 'cooldown DPS does not follow the deleted clock');
+  assert(before.caveats.some(line => line.includes('slam')), 'the estimate says the slam is omitted');
 }
 {
   const p = { 'cadence.empowered-threshold': 4 };

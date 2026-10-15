@@ -96,7 +96,6 @@ import { initParticleTextures, initEffectFrames } from "../../fx/particles";
 import { initProceduralGroundTextures } from "../../render/proceduralGround";
 import { queueNodeArt, runLoadBatch, streamNodeArea } from "./nodeArtStreaming";
 import { updateLaserBeam } from "../../fx/laser";
-import { updateHolyBeam } from "../../fx/holyBeam";
 import { updateCannonCharge } from "../../fx/cannonFx";
 import { updatePlayerAuras } from "../../fx/aura";
 import { updateIdentityAccents } from "../../fx/identityAccent";
@@ -592,7 +591,6 @@ export function updateGameScene(scene: GameScene, delta: number): void {
     updateAttackAnticipation(scene);
     updateMovementEffects(scene.state, scene);
     updateLaserBeam(scene.state, scene);
-    updateHolyBeam(scene.state, scene);
     updateCannonCharge(scene.state, scene);
     updatePlayerAuras(scene.state, scene);
     updateFrameChargeGlows(scene.state, scene, dt);

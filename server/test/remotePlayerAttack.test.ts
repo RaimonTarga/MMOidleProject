@@ -55,12 +55,9 @@ exports.dispatchCombatEvent(state, hit, scene, { player, from: { x: 100, y: 100 
 assert(calls.includes('fxSweep'));
 
 state.sprite.set('mob', { x: 140, y: 100 } as never);
-for (const effects of [['flash-teleport'], ['channel-beam']]) {
-  calls.length = 0;
-  exports.dispatchCombatEvent(state, { ...hit, effects }, scene);
-  assert(!calls.includes('activateHolyBeam'), 'remote channel cannot activate own beam');
-  assert(!calls.includes('snapPlayerToServerTarget'), 'remote teleport cannot run local prediction');
-}
+calls.length = 0;
+exports.dispatchCombatEvent(state, { ...hit, effects: ['flash-teleport'] }, scene);
+assert(!calls.includes('snapPlayerToServerTarget'), 'remote teleport cannot run local prediction');
 state.view.set('friend', { ...player, combatArchetype: 'reload', passives: { 'reload.laser': 1 } } as never);
 calls.length = 0;
 exports.dispatchCombatEvent(state, hit, scene);

@@ -97,16 +97,6 @@ const BUFF_IDS = new Set([
   'boss-regen',
   // The old Rampage tile's art, worn by boss enrage and frenzy (see `BOSS_EFFECT_ALIASES`).
   'cadence-rampage',
-  'cooldown-alignment',
-  'cooldown-battery',
-  'cooldown-channel',
-  'cooldown-eternal-charge',
-  'cooldown-overdrive',
-  'cooldown-patience',
-  'cooldown-reverb',
-  'cooldown-rupture',
-  'cooldown-temporal-ext',
-  'cooldown-vengeance',
   'defense-absorb',
   'defense-recovery',
   'defense-debt',
@@ -170,11 +160,6 @@ const BUFF_IDS = new Set([
   'summoner-withering-chorus',
   // The evasion window's art, worn by Sidestep (see `BUFF_ICON_ALIASES`).
   'lineage-evasion',
-  // Frame loops (progression rework Phase 3). Two tiles for all six roots: the
-  // window the mechanic opened, and the bank counting toward its cap. Art is
-  // authored through the normal pipeline.
-  'frame-window',
-  'frame-charge',
 ]);
 
 const DEBUFF_IDS = new Set([

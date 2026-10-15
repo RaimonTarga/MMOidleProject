@@ -4,7 +4,10 @@
  * the Squire's own execution slam underneath, so an execution still reads as one.
  * Devout Priest's execution is its holy channel (combatFx); its hits carry a halo.
  */
-import { COOLDOWN_REVERB_ECHO_FX, type PlayerView } from '@mmo-idle/shared';
+import type { PlayerView } from '@mmo-idle/shared';
+
+/** The old Reverb echo tag. Nothing emits it since CQ7; the path table stays (bible §8.14). */
+const COOLDOWN_REVERB_ECHO_FX = 'reverb-echo';
 import { DEPTH } from '../../render/depth';
 import { burstFx } from '../particles';
 import { drawCracks, ring } from '../bossKit';
@@ -41,7 +44,8 @@ const batteryCells = (p: PlayerView): number => Math.min(8, buffStacks(p, 'coold
  * always 1: the echo is a clock, not a bank).
  */
 function reverbEchoDue(p: PlayerView): number | undefined {
-  const tile = (p.activeBuffs ?? []).find((b) => b.id === 'cooldown-reverb');
+  // The tile id left the BuffId union with the T3 paths (CQ7). The pose stays.
+  const tile = (p.activeBuffs ?? []).find((b) => (b.id as string) === 'cooldown-reverb');
   if (!tile) return undefined;
   return Math.max(0, Math.min(1, (tile.durationPct ?? 0) / 100));
 }

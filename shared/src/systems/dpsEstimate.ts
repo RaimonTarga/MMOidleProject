@@ -205,16 +205,12 @@ export function estimatePlayerDps(input: DpsEstimateInput): DpsEstimate {
       break;
     }
 
-    // Regular attacks continue while the execution is on cooldown, so the two
-    // are genuinely additive rather than a cycle average.
+    // Regular attacks only. The slam arms on a full Resolve bar (class-first
+    // CQ.1); its fill depends on the responses, so it is not a clock and is not
+    // folded in. The 7s execution estimate went with the timer (CQ7).
     case 'cooldown': {
-      const executionCdMs = relic?.archetype === 'cooldown' ? relic.cooldownMs.after : 7000;
-      const mult = empowered?.effective ?? 1;
       parts.push({ label: 'Regular attacks', dps: auto });
-      parts.push({
-        label: `Execution (every ${round1(executionCdMs / 1000)}s)`,
-        dps: attackDamage(input, input.attack * Math.max(0, mult - 1)) / (Math.ceil(executionCdMs / input.attackCooldownMs) * cdSec),
-      });
+      caveats.push('The slam (Resolve) is not included — its fill rate depends on the responses.');
       break;
     }
 

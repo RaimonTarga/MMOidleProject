@@ -1,157 +1,41 @@
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
-import { setEmpoweredAttack, isEmpoweredAttack, isMechanicProxy, registerEmpoweredMultiplier } from '../../../combat/engine/empoweredAttacks';
+import { isMechanicProxy, registerEmpoweredMultiplier } from '../../../combat/engine/empoweredAttacks';
 import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
-import { initCooldownFrameLoop } from './frameLoop';
-import { initCooldownT3 } from './t3';
-import { isReverbEcho } from './t3/pipeline/reverbEcho';
-import { registerDestroyerHold } from './t3/pipeline/destroyer';
-import type { World } from '../../../../world/World';
-import { initSquire, squireRulesOf } from './squire';
-import { relicRatingsFromPassives, resolveCooldownRelicProfile } from '@mmo-idle/shared';
+import { initSquire } from './squire';
 
-// ── Fallback constants (balanced-frame values, used when no frame is unlocked) ─
-
-export const EXECUTION_COOLDOWN_MS = 7_000;  // ms between execution windows
-export const EXECUTION_MULTIPLIER  = 2.0;    // damage multiplier on execution strike (the Squire's slam)
+/** Damage multiplier on the slam (the empowered swing). The kit's number rules on top. */
+export const EXECUTION_MULTIPLIER = 2.0;
 
 /**
- * The live recharge length — the Squire's cycle. Exported because the frame loop
- * clamps its window against the same number (design §10: a window shorter than
- * one cycle) and floors its refund against it; a second copy of this resolution
- * would drift the moment a relic touched the cooldown.
- */
-export function resolveExecutionCooldownMs(entity: { usesSkills: { passives: import('@mmo-idle/shared').PassiveMap } }): number {
-  const passives = entity.usesSkills.passives;
-  const base = Math.max(100, Math.round(passives['cooldown.empowered-cd-ms'] ?? EXECUTION_COOLDOWN_MS));
-  return resolveCooldownRelicProfile(
-    base,
-    passives['cooldown.empowered-mult'] ?? EXECUTION_MULTIPLIER,
-    relicRatingsFromPassives(passives),
-  ).cooldownMs.after;
-}
-
-// ── Tick-driven readiness check ───────────────────────────────────────────────
-
-/**
- * Run once per world tick, AFTER updateCombatState so any cooldown bookkeeping
- * elsewhere has already settled. The execution timer itself now lives on the
- * CooldownComponent and is decremented in-place here.
- *
- * For every cooldown-archetype player:
- *   1. First call: start the preparation cycle using the frame's cd duration.
- *   2. Decrement executionCooldownMs each tick.
- *   3. When the cycle expires and no empowered attack is pending: arm it.
- *
- * The cooldown is restarted inside the onHit handler (below) after each
- * execution strike, not by this function.
- */
-export function updateCooldownArchetype(world: World, dt: number): void {
-  for (const entity of world.cooldownPlayers) {
-    const cd     = entity.usesCooldown;
-    // A Squire with Response rules runs on Resolve (`squire.ts`), not the timer.
-    if (squireRulesOf(world, entity)) continue;
-
-    // First encounter (or after respawn):
-    // start the preparation cycle. Read cd duration from passives.
-    if (!cd.initialized) {
-      const cdMs = resolveExecutionCooldownMs(entity);
-      cd.executionCooldownMs = cdMs;
-      cd.initialized         = true;
-      cd.executionCooldownPct = 0;
-      continue;
-    }
-
-    // Decrement the timer.
-    if (cd.executionCooldownMs > 0) {
-      cd.executionCooldownMs = Math.max(0, cd.executionCooldownMs - dt);
-    }
-
-    // Cycle expired and no empowered attack pending → arm execution.
-    if (cd.executionCooldownMs <= 0 && !isEmpoweredAttack(entity)) {
-      setEmpoweredAttack(world, entity);
-    }
-
-    // Mirror to the entity slice so projection can expose preparation progress.
-    const cdMs = resolveExecutionCooldownMs(entity);
-    cd.executionCooldownPct = isEmpoweredAttack(entity)
-      ? 100
-      : Math.round((1 - cd.executionCooldownMs / cdMs) * 100);
-  }
-}
-
-// ── Combat listener ───────────────────────────────────────────────────────────
-
-/**
- * Register listeners for the cooldown execution mechanic.
+ * Register listeners for the Squire's slam.
  * Call once at server startup, before the World is created.
  *
- * Behavior:
- *   onHit (empoweredMultiplier) → applies cooldown.empowered-mult× damage and
- *                                  sets ctx.metadata['empoweredAttack'] = true.
- *   onHit (restart handler)    → when empoweredAttack fired, restarts the
- *                                  preparation cycle (reads cd from passives).
- *
- * Empowered attack rule: the execution strike itself does NOT reduce the cooldown
- * of the next execution. The timer restarts after the hit lands, never before.
+ * The empowered multiplier sizes the slam. The listener after it announces
+ * `mechanic-fired` when that slam lands. Resolve, the responses and when the
+ * slam arms live in `squire.ts` (class-first CQ.1). The 7s execution clock,
+ * the frame loop and the T3 paths are gone (CQ7).
  */
 export function initCooldownArchetype(): void {
-  // The Destroyer's hold (design §22.5) goes in front of the multiplier: whether
-  // a hit carries the primed execution is decided on the hit itself, after the
-  // dodge roll and before anything can spend the charge.
-  registerDestroyerHold();
-
-  // Register the empowered multiplier FIRST. Its onHit handler is what sets
-  // ctx.metadata['empoweredAttack'], and every T3 onHit handler (overdrive,
-  // alignment, battery, …) gates on that flag — so the multiplier must run before
-  // them, or they bail every time (handlers fire in registration order). T3's
-  // beforeAttack suppression still fires first regardless, because beforeAttack
-  // precedes onHit as a pipeline stage independent of registration order.
+  // Register the empowered multiplier before the Squire's onHit hooks so the slam
+  // reads ctx.metadata['empoweredAttack'] on the same hit.
   registerEmpoweredMultiplier(EXECUTION_MULTIPLIER, {
-    attackerType:      'player',
-    attackerSlice:     'usesCooldown',
-    passiveKey:        'cooldown.empowered-mult',
+    attackerType:  'player',
+    attackerSlice: 'usesCooldown',
+    passiveKey:    'cooldown.empowered-mult',
   });
 
-  // The Squire (class-first build plan CQ.1): Resolve, the Guard's catch, the slam. After
-  // the empowered multiplier, so the slam reads the multiplied hit.
-  initSquire();
-
-  initCooldownT3();
-
-  // After the execution fires, restart the preparation cycle.
+  // `mechanic-fired`: this reads "the slam's empowered flag was just spent".
+  // Registered immediately after the multiplier, before the Squire's hooks, so
+  // anything that reads the moment sees the same hit. A mechanic-proxy counts
+  // as the slam and never announces it (rule 3).
   registerCombatListener('onHit', (ctx, world) => {
     if (ctx.attackerType !== 'player') return;
     if (!ctx.metadata['empoweredAttack']) return;
-    // A `mechanic-proxy` hit counts as the execution for what reads it, but it
-    // never restarts the cycle or announces `mechanic-fired` (rule 3).
     if (isMechanicProxy(ctx)) return;
-
-    // Query by component presence, not by combatArchetype string.
-    const entity = ctx.attacker;
-    if (!entity?.usesCooldown) return;
-
-    // Reverb's echo (design §22.5) is the execution landing AGAIN, not the root
-    // spending its charge: it announces the mechanic — once, through the exchange
-    // latch, from this one emitter — but the recharge it lands halfway through
-    // runs on untouched.
-    if (isReverbEcho(ctx)) {
-      emitMechanicFired(world, entity, ctx);
-      return;
-    }
-
-    const cd     = entity.usesCooldown;
-
-    const cdMs = resolveExecutionCooldownMs(entity);
-    cd.executionCooldownMs = cdMs;
-
-    // `mechanic-fired` (progression rework 1c): this handler already IS "the
-    // execution's empowered flag was consumed" — it is why the cycle restarts —
-    // so the seam rides it rather than duplicating the gate in a second listener.
-    emitMechanicFired(world, entity, ctx);
+    if (!ctx.attacker.usesCooldown) return;
+    emitMechanicFired(world, ctx.attacker, ctx);
   });
 
-  // The frame loop (progression rework Phase 3) registers LAST: the Warrior window
-  // has to open on the recharge the handler above just reset, and the Bulwark bank
-  // folds into the multiplier the empowered handler resolved.
-  initCooldownFrameLoop();
+  // Resolve, the Guard's catch, the slam. After the empowered multiplier.
+  initSquire();
 }

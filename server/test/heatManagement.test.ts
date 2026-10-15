@@ -121,7 +121,6 @@ import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
 import { driveMinion } from '../src/systems/classes/archetypes/summoner/ai';
 import { updateReloadT3Ticks } from '../src/systems/classes/archetypes/reload/t3/ticks/laser';
-import { updateChanneledBeam } from '../src/systems/classes/archetypes/cooldown/t3/ticks/heavy/channeledBeam';
 async function main(){
 const mode:EquippedRule={conditionId:'always',actionId:'wait-it-out',waitOutMode:'heat-managed'};
 const node='node-t4-volcanic-01';
@@ -200,9 +199,6 @@ for(const nodeId of ['node-t4-tundra-01','node-t3-volcanic-dungeon']){
  const fresh=world.createMonster(node,'plains-slime',{x:410,y:400})!;const hp=fresh.hasHealth.hp;
  player.usesSkills.combatArchetype='reload';syncArchetypeSlices(world,player);player.usesSkills.passives['reload.laser']=1;player.performsAttack.attackRange=500;
  updateReloadT3Ticks(world,100,1100);strict.equal(fresh.hasHealth.hp,hp);strict.equal(player.hasAttackTarget,undefined,'laser must not acquire fresh target');
- player.usesSkills.combatArchetype='cooldown';syncArchetypeSlices(world,player);
- world.ecs.addComponent(player,'isChanneling',{targetId:'removed-target',remainingMs:5000,nextTickMs:100,pct:0} as any);
- updateChanneledBeam(world,100,1200);strict.equal(player.isChanneling,undefined,'beam must not acquire fresh target');strict.equal(fresh.hasHealth.hp,hp);
 }
 // Phase receipts must preserve a hold decision when a threat arrives later.
 {

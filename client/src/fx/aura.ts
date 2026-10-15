@@ -56,17 +56,6 @@ interface BuffAuraDef {
 }
 
 const BUFF_AURA_BY_ID: Record<string, BuffAuraDef> = {
-  // Assassin — a 2.5s attack-speed burst. Pure state: on or off.
-  'cooldown-overdrive': {
-    kind: 'timed', color: 0xff6622, tint: 0xffb08a,
-    minIntensity: 1.2, maxIntensity: 1.2,
-  },
-  // Stalwart — the Patience ramp filling over ~7s. Progression, and the only one
-  // of these whose chip this pass had to add.
-  'cooldown-patience': {
-    kind: 'timed', color: 0xc8d8f0, tint: 0xe4eefb,
-    minIntensity: 0.6, maxIntensity: 1.4,
-  },
   // Invoker — 3 consecutive-discharge stacks.
   'energy-critical-mass': {
     kind: 'stacks', fullAt: 3, color: 0xff5577, tint: 0xffaabb,
