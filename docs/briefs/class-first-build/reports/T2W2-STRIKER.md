@@ -1,5 +1,5 @@
 # T2W2-STRIKER report
-**Agent:** Claude (Sonnet 5.5)   **Branch:** rw/t2w2-striker   **Last commit:** see `git log` (code commit "feat(striker): tier 2 HUD, guide and bot route", then this report)
+**Agent:** Claude (Sonnet 5.5)   **Branch:** rw/t2w2-striker   **Last commit:** e30029ea (code commit; the report follows)
 
 ## Done
 **1. T2 state visible (client)**
