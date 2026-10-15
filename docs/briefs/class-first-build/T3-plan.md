@@ -48,3 +48,24 @@ leave it out of `CONTROLLED_ROUTE_IDS` until it has run live). Worktree
 - Network a HUD field the minimal way: add it to the existing slice, `mutateSlice`, one test.
 - Keep edits to shared files (`passives.ts`, `mechanicLabels.ts`, tutorial index, routes index)
   to your own block; the conductor resolves merge conflicts keeping both sides.
+
+## Wave 2 addenda (conductor, after Task 1 merged)
+
+- The T3 moments now exist: `chill-threshold`, `fire-attack`, `drag-or-push` (`server/test/momentsT3.test.ts`).
+  Squire (Anchor, Frostward, Backdraft), Apprentice (Melt, Ice Veil, Ashguard) and Spirit
+  (Tailwind, Foehn) read local stand-ins today: **switch each to the real moment**
+  (`momentActive` / `recordMoment` consumers) and delete the stand-in, keeping the tests green.
+- The class context now carries `specializationId` (Colossus +1 Command, Two Souls two relic slots).
+  The Conduit's Formation view and editor must show both.
+- Status ids owed a client entry (tile / label / help / badge / icon lookup; run
+  `pnpm test -- statusRegistry`): Slinger `slinger-burn`, `slinger-deathmark`, `slinger-entrenched`,
+  `slinger-fan-the-hammer`; Squire `squire-frostward`, `squire-rampage`; Conduit `conduit-horn`,
+  `conduit-burn-bright`, `conduit-spore`, `conduit-hibernate`, `conduit-hunt`; Striker: split
+  Overheat out of `striker-focus` into its own id only if the audit allows; others: check the test.
+- Visible state owed (from the T3 reports): Striker held slashes / Frenzy arming (server-only
+  today: network them); the Squire's Resolve dial past budget (Deep Winter / Bastion); Spirit
+  specialization rules in the Thresholds editor; Slinger specialization marks and the Rime ground
+  (draw it); Apprentice specialization card.
+- The specialization pick: players choose through the Passive Tree panel
+  (`client/src/ui/SkillTreePanel.tsx`, `player:unlockSkill`). Check it lists the class's real
+  specializations under the picked discipline and fix it if not (your class only).
