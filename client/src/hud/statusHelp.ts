@@ -80,16 +80,6 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'defense-engagement-dr': b('Dawnward', 'Damage reduction for a few seconds (longer at higher tiers) after your first attack or an incoming attack. Attacking a new target does not refresh it. Rearms after 4 quiet seconds.'),
   'defense-reactive-plating': b('Reactive plating', 'Each direct hit adds plating up to a cap and refreshes a short hold window. Heavy hits do not crack it. Once the hold lapses, the stacks fade one at a time.'),
 
-  // -- Cadence ---------------------------------------------------------------
-  'cadence-accelerando': m('Accelerando', 'Consecutive attacks shorten your attack cooldown, stack by stack. Breaking rhythm gives it back.'),
-  'cadence-echo': m('Echo', 'After your finisher, your next few regular attacks deal bonus damage.'),
-  'cadence-resonance': m('Resonance', 'Resonance banks into your finisher: every stack raises what the finisher pays out when it lands.'),
-  'cadence-verdict': m('Verdict', 'Each finisher banks execution power across targets. When a target survives a finisher within the stored amount, the Verdict executes it and spends the pool.'),
-  'cadence-aftershock': m('Aftershock', 'After your finisher, your next few regular attacks deal their on-hit damage twice.'),
-  'cadence-metronome': m('Metronome', 'Each buildup attack adds flat damage to later attacks and the finisher; the stored bonus resets when the finisher lands.'),
-  'cadence-rampage': m('Rampage', 'Each finisher grants a Rampage stack: finishers hit harder, attacks come faster, regular attacks weaken, and the combo threshold falls to a floor. At the cap, the next finisher overloads and resets Rampage; stacks also decay slowly out of combat.'),
-  'cadence-crescendo': m('Crescendo', 'Time spent in one continuous fight raises finisher damage. It resets when you leave combat.'),
-
   // -- Cooldown --------------------------------------------------------------
   'cooldown-patience': m('Patience', 'The longer you let your execution cooldown run its natural course, the more it pays out: attack and execution damage both climb toward a cap as the cooldown fills. Triggering your execution early cuts the ramp short.'),
   'cooldown-overdrive': m('Overdrive', 'A burst window: your attack speed is raised sharply while it lasts.'),

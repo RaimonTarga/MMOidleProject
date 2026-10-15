@@ -14,7 +14,6 @@ import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { equipItem } from '../src/systems/player/economy/inventory';
 import { runPlayerAttack } from '../src/systems/combat/engine/combat';
 import { updateReloadT3Ticks } from '../src/systems/classes/archetypes/reload/t3/ticks/laser';
-import { recomputeRampageStats } from '../src/systems/classes/archetypes/cadence/t3/core/rampage';
 
 initCombatSystems();
 let serial = 0;
@@ -76,14 +75,6 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy', 'summoner'
 }
 console.log('MATRIX', JSON.stringify(matrix));
 
-{
-  const { player } = fixture('cadence');
-  player.usesSkills.passives['cadence.empowered-threshold'] = 5;
-  player.usesSkills.passives['relic.mechanic-frequency'] = -0.3;
-  player.usesCadence!.rampageStacks = 2;
-  recomputeRampageStats(player);
-  console.log('RAMPAGE', JSON.stringify({ actual: player.usesCadence!.threshold, relicAfterRamp: Math.max(2, Math.round((5 - 2) / (1 - 0.3 * 2))) }));
-}
 for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy'] as const) {
   const { player } = fixture(root);
   const input = { attack: 100, onHitDamage: 20, attackCooldownMs: 1000, archetype: root, passives: player.usesSkills.passives, selectedSubVariant: 'balanced' as const, playerTier: 4 };

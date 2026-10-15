@@ -373,7 +373,7 @@ export function auditStatusRegistry(root: string = AUDIT_DEFAULT_ROOT) {
   // Non-status projections: a live resource/component can produce a tile without
   // ever applying a TracksCombat StatusEffect under that tile's id.
   const rawAliases: Record<string, string[]> = {
-    'frame.cadence.window': ['frame-window'], 'frame.cooldown.window': ['frame-window'],
+    'frame.cooldown.window': ['frame-window'],
     'frame.energy.window': ['energy-frame-surge'], 'frame.summoner.window': ['summoner-frame-frenzy'],
     'frame.summoner.line': ['summoner-frame-line'],
   };

@@ -13,7 +13,6 @@ import { initCombatSystems } from '../src/systems/combatBootstrap';
 import { equipItem } from '../src/systems/player/economy/inventory';
 import { runPlayerAttack } from '../src/systems/combat/engine/combat';
 import { updateReloadT3Ticks } from '../src/systems/classes/archetypes/reload/t3/ticks/laser';
-import { recomputeRampageStats } from '../src/systems/classes/archetypes/cadence/t3/core/rampage';
 
 import { formatResolvedRelicProfile } from '../../client/src/ui/crafting/itemDisplay';
 
@@ -66,14 +65,6 @@ const attack = (world: World, player: ReturnType<typeof fixture>['player'], targ
 // Intentional discrete breakpoints; no hidden doubled frequency coefficient.
 for (const [frequency, expected] of [[0.1, 4], [0.2, 3], [0.35, 3], [1, 2], [-0.2, 5], [-0.3, 6]]) {
   eq(resolveCadenceRelicProfile(4, 2, { ...ZERO_RELIC_RATINGS, frequency }).threshold.after, expected, 'four-hit breakpoint');
-}
-{
-  const { player } = fixture('cadence');
-  player.usesSkills.passives['cadence.empowered-threshold'] = 5;
-  player.usesSkills.passives['relic.mechanic-frequency'] = -0.3;
-  player.usesCadence!.rampageStacks = 2;
-  recomputeRampageStats(player);
-  eq(player.usesCadence!.threshold, 4, 'relic transforms the ramped threshold');
 }
 
 // All authored relics reach the runtime, rather than only testing the pure resolver.
@@ -168,9 +159,9 @@ for (const root of ['cadence', 'cooldown', 'reload', 'dot', 'energy'] as const) 
 // reads exactly like a Frequency/Potency line otherwise.
 {
   const buffOnly = { ...ZERO_RELIC_RATINGS, buffEffect: 0.25 };
-  const echo = formatResolvedRelicProfile(resolveRelicPreview('cadence', { 'cadence.momentum-echo': 1 }, buffOnly));
-  assert(echo.includes('Buff effect · Echo bonus damage: 50% → 62.5%'), 'buff effect is attributed with real values');
-  assert(!echo.some(line => line.startsWith('Debuff effect')), 'a buff-only relic claims no debuff');
+  const overdrive = formatResolvedRelicProfile(resolveRelicPreview('cooldown', { 'cooldown.overdrive': 1, 'cooldown.overdrive-attack-speed-pct': 0.5 }, buffOnly));
+  assert(overdrive.includes('Buff effect · Overdrive attack-speed bonus: 50% → 62.5%'), 'buff effect is attributed with real values');
+  assert(!overdrive.some(line => line.startsWith('Debuff effect')), 'a buff-only relic claims no debuff');
 
   const debuffOnly = { ...ZERO_RELIC_RATINGS, debuffEffect: 0.25 };
   const chill = formatResolvedRelicProfile(resolveRelicPreview('dot', { 'dot.freezing-cold': 1 }, debuffOnly));

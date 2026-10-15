@@ -1,4 +1,3 @@
-import { crescendoMultiplier } from '../server/src/systems/classes/archetypes/cadence/t3/core/crescendo';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
@@ -622,19 +621,6 @@ function chargeStateMultiplier(fillPct: number, minMult: number, maxMult: number
     : 1 + (maxMult - 1) * (fill - 0.5) * 2;
 }
 
-/**
- * Average Juggernaut crescendo finisher bonus over a sustained combat window,
- * using the server crescendoMultiplier (ramp, linear tail, log knee past +100%).
- * Sampled at second midpoints over the horizon (combat assumed continuous;
- * resets out of combat).
- */
-function averageCrescendoBonus(passives: PassiveMap, horizonSec: number): number {
-  const steps = Math.max(1, Math.round(horizonSec));
-  let sum = 0;
-  for (let s = 0; s < steps; s++) sum += crescendoMultiplier((s + 0.5) * 1000, passives);
-  return sum / steps;
-}
-
 function averageScaledDotTick(observedStacks: number, damagePerStack: number, effectMaxStacks = observedStacks): number {
   let total = 0;
   for (let stacks = 1; stacks <= observedStacks; stacks++) {
@@ -671,104 +657,17 @@ function estimateClassDamage(
   let formationOnHitPerSec = 0;
 
   if (archetype === 'cadence') {
-    if ((p['cadence.rampage'] ?? 0) > 0) {
-      // Berserker: simulate one full rampage cycle. Each finisher adds a stack
-      // (shorter combo, faster attacks, weaker regulars, stronger finisher) until
-      // the cap, where the next finisher OVERLOADS (stacks → 0, no rampage mult)
-      // and the cycle restarts. Stacks update on the finisher and govern the NEXT
-      // buildup's threshold/cooldown/penalty, matching the live recompute order.
-      // We sum damage and time across the cycle for an in-combat average DPS.
-      const mult = empowered?.effective ?? p['cadence.empowered-mult'] ?? CADENCE_DAMAGE_MULT_DEFAULT;
-      const maxStacks = Math.max(1, Math.round(p['cadence.rampage-max-stacks'] ?? 10));
-      const thresholdFloor = Math.max(1, Math.round(p['cadence.rampage-threshold-floor'] ?? 2));
-      const apsPerStackMs = Math.max(0, p['cadence.rampage-aps-per-stack-ms'] ?? 30);
-      const atkPenPerStack = Math.max(0, p['cadence.rampage-atk-pen-per-stack'] ?? 0.08);
-      const multPerStack = Math.max(0, p['cadence.rampage-mult-per-stack'] ?? 0.15);
-      const baseThreshold = Math.max(thresholdFloor, Math.round((p['cadence.empowered-threshold'] ?? 5) + (p['cadence.threshold-mod'] ?? 0)));
-      const baseCooldownMs = Math.max(200, stats.performsAttack.attackCooldown);
-      const baseFinisher = directNoOnHit(stats.dealsDamage.attack * mult, targetWithDebuffs, platingMult) + stats.dealsDamage.onHitDamage;
-
-      let cycleDamage = 0;
-      let cycleTimeMs = 0;
-      for (let k = 1; k <= maxStacks + 1; k++) {
-        const buildupStacks = k - 1; // stacks in effect during this finisher's buildup
-        const threshold = Math.max(thresholdFloor, baseThreshold - buildupStacks);
-        const cooldownMs = Math.max(200, baseCooldownMs - buildupStacks * apsPerStackMs);
-        const penalty = Math.min(0.9, buildupStacks * atkPenPerStack);
-        const normalHits = Math.max(0, threshold - 1);
-        const normalDmg = baseWithOnHit * (1 - penalty);
-        const finisherStacks = k <= maxStacks ? k : 0; // overload finisher gets no mult
-        const finisherDmg = baseFinisher * (1 + finisherStacks * multPerStack);
-        cycleDamage += normalHits * normalDmg + finisherDmg;
-        cycleTimeMs += threshold * cooldownMs;
-      }
-      const rampageDps = cycleDamage / Math.max(0.001, cycleTimeMs / 1000);
-      directPerHit = baseWithOnHit;
-      classMechanicPerSec += rampageDps - baseWithOnHit * hitRate;
-      notes.push(`berserker rampage cycle simulated (1→${maxStacks} stacks then overload), +${Math.round(multPerStack * 100)}% finisher/stack`);
-    } else {
-      const threshold = Math.max(2, Math.round((p['cadence.empowered-threshold'] ?? 5) + (p['cadence.threshold-mod'] ?? 0)));
-      const mult = empowered?.effective ?? p['cadence.empowered-mult'] ?? CADENCE_DAMAGE_MULT_DEFAULT;
-      const triggerCount = Math.max(1, Math.round(p['cadence.trigger-count'] ?? 1));
-      const extraTriggerMult = Math.max(0, p['cadence.extra-trigger-damage-mult'] ?? 1);
-      const normalHits = threshold - 1;
-      let normal = baseWithOnHit;
-      let finisher = directNoOnHit(stats.dealsDamage.attack * mult, targetWithDebuffs, platingMult) + stats.dealsDamage.onHitDamage;
-
-      if ((p['cadence.metronome'] ?? 0) > 0) {
-        // Per-tier flat scales as max(1, playerTier - unlock(4) + 1), matching live.
-        const flat = (p['cadence.metronome-flat'] ?? 12) * Math.max(1, (stats.playerTier ?? 4) - 4 + 1);
-        classMechanicPerSec += ((normalHits * (normalHits - 1)) / 2 + normalHits) * flat / threshold * hitRate;
-        notes.push('metronome flat cycle estimate');
-      }
-      if ((p['cadence.momentum-buildup'] ?? 0) > 0) {
-        finisher *= 1 + normalHits * (p['cadence.momentum-buildup'] ?? 0);
-        const echoHits = Math.round(p['cadence.momentum-echo'] ?? 0);
-        const echoBonus = p['cadence.momentum-echo-bonus'] ?? 0.5;
-        classMechanicPerSec += Math.min(echoHits, normalHits) * normal * echoBonus / threshold * hitRate;
-        notes.push('wavecrest resonance/echo steady estimate');
-      }
-      if ((p['cadence.crescendo'] ?? 0) > 0) {
-        const avgCrescendo = averageCrescendoBonus(p, REPORT_HORIZON_SEC);
-        finisher *= 1 + avgCrescendo;
-        notes.push(`juggernaut crescendo averaged +${Math.round(avgCrescendo * 100)}% finisher over ${REPORT_HORIZON_SEC}s`);
-      }
-      if ((p['cadence.hemorrhage'] ?? 0) > 0) {
-        const hemoMult = p['cadence.hemorrhage-mult'] ?? 1.5;
-        dotPerSec += (finisher * hemoMult / threshold) * hitRate;
-        finisher = 0;
-        notes.push('hemorrhage converts finishers to bleed');
-      }
-      if ((p['cadence.debuff-vuln-pct'] ?? 0) > 0) {
-        const vuln = (p['cadence.debuff-vuln-pct'] ?? 0) / 100;
-        normal *= 1 + vuln;
-        finisher *= 1 + vuln;
-        notes.push('cursed finale vulnerability treated as steady-state');
-      }
-      const finisherTotal = finisher * (1 + (triggerCount - 1) * extraTriggerMult);
-      if (triggerCount > 1) {
-        notes.push(`${triggerCount - 1} extra finisher hit(s) at ${Math.round(extraTriggerMult * 100)}% damage`);
-      }
-      if ((p['cadence.aftershock'] ?? 0) > 0) {
-        // Shockblade: the next N regular attacks after a finisher fire on-hit twice
-        // (the flat on-hit scaling is already folded into onHitDamage by recalc).
-        const aftershockAttacks = Math.max(1, Math.round(p['cadence.aftershock-attacks'] ?? 3));
-        const armed = Math.min(aftershockAttacks, normalHits);
-        classMechanicPerSec += armed * stats.dealsDamage.onHitDamage * hitRate / threshold;
-        notes.push(`shockblade: ${armed} post-finisher attack(s) fire on-hit twice`);
-      }
-      if ((p['cadence.detonation'] ?? 0) > 0) {
-        // Justicar: each finisher banks bankPct of its damage into an execute pool
-        // that is eventually spent. Optimistic upper bound — ignores the overshoot
-        // wasted when the pool resets on an execute that needed less than banked.
-        const bankPct = Math.max(0, p['cadence.verdict-bank-pct'] ?? 0.30);
-        classMechanicPerSec += bankPct * finisherTotal * hitRate / threshold;
-        notes.push(`justicar verdict: +${Math.round(bankPct * 100)}% finisher banked as execute (optimistic)`);
-      }
-      const cadenceAveragePerHit = (normalHits * normal + finisherTotal) / threshold;
-      classMechanicPerSec += (cadenceAveragePerHit - baseWithOnHit) * hitRate;
-      directPerHit = baseWithOnHit;
-    }
+    // The plain combo: threshold - 1 regular hits, then the finisher. The T3 path
+    // estimates (Berserker, Maestro, Wavecrest, Juggernaut, Hemomancer, Scrapper,
+    // Swiftblade, Shockblade, Justicar) went with the paths (class-first CS7); the
+    // Order's techniques and trophies are not modeled here.
+    const threshold = Math.max(2, Math.round((p['cadence.empowered-threshold'] ?? 5) + (p['cadence.threshold-mod'] ?? 0)));
+    const mult = empowered?.effective ?? p['cadence.empowered-mult'] ?? CADENCE_DAMAGE_MULT_DEFAULT;
+    const normalHits = threshold - 1;
+    const finisher = directNoOnHit(stats.dealsDamage.attack * mult, targetWithDebuffs, platingMult) + stats.dealsDamage.onHitDamage;
+    const cadenceAveragePerHit = (normalHits * baseWithOnHit + finisher) / threshold;
+    classMechanicPerSec += (cadenceAveragePerHit - baseWithOnHit) * hitRate;
+    directPerHit = baseWithOnHit;
   } else if (archetype === 'cooldown') {
     const cdSec = Math.max(0.1, (p['cooldown.empowered-cd-ms'] ?? 7000) / 1000);
     const execRate = 1 / cdSec;

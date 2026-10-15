@@ -8,10 +8,7 @@ import {
   ESSENCE_COLORS,
   GAME_CONFIG,
   isRangedPlayerView,
-  CADENCE_CURSED_FINALE_FX,
   COOLDOWN_REVERB_ECHO_FX,
-  CADENCE_OVERLOAD_FX,
-  CADENCE_VERDICT_EXECUTE_FX,
   COOLDOWN_SUNDER_FX,
   DOT_FROZEN_FX,
   DOT_RIMESHATTER_FX,
@@ -41,9 +38,6 @@ import { fxLightningDagger } from "../fx/lightningDagger";
 import { fxBleedOpen } from "../fx/bleedOpen";
 import { fxEquinoxArc } from "../fx/equinoxArc";
 import {
-  fxVerdictExecute,
-  fxRampageOverload,
-  fxCursedFinale,
   fxSunderShatter,
   fxRimeshatter,
   fxFrozenShatter,
@@ -98,7 +92,6 @@ import { fxFrost } from "../fx/frost";
 import { fxFire } from "../fx/fire";
 import { fxVoid } from "../fx/voidFx";
 import { fxFirstStrike } from "../fx/firstStrike";
-import { fxAftershock } from "../fx/aftershock";
 import { fxBearClaws } from "../fx/bearClaws";
 // MONSTER/BOSS animation pass — see docs/briefs/monster-boss-animation-audit-2026-09-12.md.
 import { fxBoneStrike } from "../fx/boneStrike";
@@ -362,7 +355,6 @@ type AttackFxFn = (args: AttackFxArgs) => void;
 
 const FLASH_CLIENT_EFFECT = "flash-teleport";
 const FIRST_STRIKE_CLIENT_EFFECT = "first-strike";
-const AFTERSHOCK_CLIENT_EFFECT = "aftershock";
 const SWIFTBLADE_CLIENT_EFFECT = "swiftblade";
 const CHANNEL_BEAM_CLIENT_EFFECT = "channel-beam";
 const HOLY_FLASH_CLIENT_EFFECT = "holy-flash";
@@ -603,9 +595,6 @@ const TRIGGER_FX_BY_EFFECT: Record<
   string,
   (scene: GameScene, at: Vec2, args: AttackFxArgs) => void
 > = {
-  [CADENCE_VERDICT_EXECUTE_FX]: (scene, at) => fxVerdictExecute(scene, at.x, at.y),
-  [CADENCE_OVERLOAD_FX]: (scene, at) => fxRampageOverload(scene, at.x, at.y),
-  [CADENCE_CURSED_FINALE_FX]: (scene, at) => fxCursedFinale(scene, at.x, at.y),
   [COOLDOWN_SUNDER_FX]: (scene, at) => fxSunderShatter(scene, at.x, at.y),
   [DOT_RIMESHATTER_FX]: (scene, at) => fxRimeshatter(scene, at.x, at.y),
   [DOT_FROZEN_FX]: (scene, at) => fxFrozenShatter(scene, at.x, at.y),
@@ -2035,10 +2024,6 @@ function runFxForAttackStyle(
     }
     if (effectId === FIRST_STRIKE_CLIENT_EFFECT) {
       fxFirstStrike(scene, to.x, to.y);
-      continue;
-    }
-    if (effectId === AFTERSHOCK_CLIENT_EFFECT) {
-      fxAftershock(scene, to.x, to.y);
       continue;
     }
     if (effectId === "poison-explosion") {
