@@ -1,5 +1,7 @@
 # Combat animation (mobs and players) — current state
 
+> Class-first rework (2026-10-15): lineage payload FX and ability-node-row FX removed; see the bible.
+
 **Last audited:** 2026-09-28 (branch `feat/premium-mob-animations`, incl. Conduit paths).
 **Owning source:** `client/src/fx/` (animation modules), `client/src/render/combatFx.ts`
 (event dispatch), `client/src/render/monsters.ts`, `server/src/systems/combat/ai/ai.ts`
@@ -7,8 +9,7 @@ and `server/src/systems/combat/engine/monsterStateMirror.ts` (presentation state
 server publishes).
 **Tests:** `server/test/monsterStyleCoverage.test.ts`, `chargeOnAggroVisual.test.ts`,
 `monsterStateMirror.test.ts`, `plainsHawkDiveBomb.test.ts`, `attackProgression.test.ts`,
-`conduitPathFx.test.ts`, `lineagePayloadFx.test.ts`, `lineagePayloadEvents.test.ts`,
-`abilityFlavorFx.test.ts`, `combatReadout.test.ts` and `combatText.test.ts` (the readouts,
+`conduitPathFx.test.ts`, `combatReadout.test.ts` and `combatText.test.ts` (the readouts,
 2026-10-06).
 
 This page covers the premium animation pass that took the boss-lineage grammar to
@@ -158,89 +159,11 @@ own). Skill callouts and cast bars show the numeral from II. Every ability needs
 `ABILITY_COLOR` row (enforced by `attackProgression.test.ts`). Rank I is the
 ability's existing look; abilities have no stage-0 thinning.
 
-## Lineage payloads (T1 lean and verb, course-correction W2-C, 2026-10-03)
+## Lineage payloads and ability-node flavor
 
-Design §24.1–§24.2 rule 4: every T1 payload is perceptible with the sound off, as a
-change in what bodies do. The server pushes one `card-fx` per application with the
-PAYLOAD's key; `fx/lineagePayloadFx.ts` draws the ten keys, `fx/lineagePayloadModel.ts`
-(pure) says what each is and when it plays, and the lasting looks are four aura rows
-in `fx/auraDefs.ts` fed by `fx/lineagePayloadStates.ts`.
-
-| Payload (key) | What the bodies do |
-| --- | --- |
-| lands twice (`tempo.ghost-strike`) | the body winds back as the moment lands and wind gathers at the blade; 190 ms later the echo's own hit is presented as a SECOND swing (the class swing, a body lunge, afterimages, a crossing crescent in the lane colour) |
-| lunge (`engagement.lunge`) | the body dashes at the target with afterimages and a push-off kick; the multiplied hit is presented at contact (110 ms) with a starburst, a hit-stop and the target recoiling; the body holds, then slides home |
-| mechanic flash (`empowered.mechanic-flash`) | the hit itself draws as the root's own empowered hit; beside the player the CLASS's mechanic glyph fills and flashes (combo pips, cooldown dial, a round chambering, a bolt, a dose at full stacks, a rune); weapon flare, brace pose |
-| crash (`empowered.crash`) | the same glyph, bigger, and the ground cracks under the target: dust ring, debris, the target buckles; medium shake |
-| heavy drip (`affliction.heavy-drip`) | venom thrown off the body and falling, a splat, a flinch; then heavy drops and a growing stain while the bleed runs |
-| double dose (`affliction.double-dose`) | the affliction is drawn in, then bursts: its pips split in two, heavier venom, a stronger flinch; then the heavier drip |
-| shackle (`control.shackle`) | two chain halves fly in and lock round the feet (clank, sparks, a jolt); a chain ring on pegs holds for the root's clock, strains in its last 400 ms, then breaks |
-| knockdown (`control.knockdown`) | a blow; the body is knocked up, then tipped and pressed flat to the ground and held there (against other pose writers) for the stun's clock; it gets up with a hop and dust |
-| heal and load (`kill-chain.heal-load`) | a pulse up the player's body (rings, rising motes, a straighten); the load leaves the weapon and lands with the hit; between the kill that arms it and that hit the weapon glows (`lineage-loaded`) |
-| refund (`technique.refund-flash`) | the refunded Technique's ability-bar tile flashes in the lane colour with a backward sweep while its cooldown jumps; a sigil turns backward under the player |
-
-Server truth, not client guesses: a payload's own hit carries `lineage-hit:<fx>`
-(`shared/src/protocol/clientEffects.ts`) so the client presents it as the payload's
-swing; `card-fx` carries the APPLIED `durationMs` (root, stun after resistance, bleed
-ticks) and the refunded `abilityIds`; `lineage-load` marks when a loaded carry is
-armed and spent; a refund samples the new cooldown to the HUD. A lasting look ends on
-its clock, or early when the view shows the server's state gone (the mirrored root or
-bleed, `hardControlled`), and is forgotten with its body (a shackle on a dying body
-breaks where it was). Card-fx play on the combat playback clock with the hit they rode;
-the refund, HUD first, stays immediate. Every payload takes the player's
-`AttackFlair` through `payloadFlair`: full size on a fresh character, a little more
-with stage and ascension, capped below a T3 specialization. The floating payoff WORD
-belongs to the rhythm readout (W2-B).
-
-## Ability flavor: amplifiers and keystones (ability pass W2-D, design §22.7)
-
-An ability's identity deepens with its node rows. Names and icons are the HUD's
-(`abilityDisplayName`, shared `abilityIconLayers`, client `ui/abilityIcons.ts`); the
-animation half is here.
-
-- **Packet row**: the lane's existing fx (`ABILITY_NODE_FX`), unchanged.
-- **Amplifier row**: the node's `card-fx` carries its `axis`, and `axisFx`
-  (`fx/abilityKeystoneModel.ts`) scales or extends the same lane fx: of Weight
-  (`magnitude`) draws it bigger, of Many (`targets`) a second echo a beat later, of
-  the Lingering (`duration`) a fading trail of two smaller repeats, of Haste (`cast`)
-  a quick double-tap. A T1 payload key grows instead of repeating (its poses would
-  replay).
-- **Keystone row**: every keystone `card-fx` carries the verb's id (`keystone`) and
-  draws from `pos`, the verb's delivery body (a Conduit's summon). `fx/abilityKeystoneFx.ts`
-  holds ONE bespoke animation per verb, keyed by id; a verb without one is a keyed
-  stub that draws its lane fx as before. A verb with a server wind-up pushes a
-  `windupMs` beat first (Aftershock), its payoff its own card-fx later. Keystones
-  carry no `cardId`, so they never float a word (design §26.4).
-
-| Verb | Wind-up | Payoff | Lasting mark |
-| --- | --- | --- | --- |
-| Whirlwind | the body coils, air drawn in | the body turns through its spin (width through zero, mirrored), two wind blades round it, a cleave ring on every server tick; a stun or freeze breaks it (blades scatter) | — |
-| Aftershock | the spot cracks, seams glowing hotter as a ring closes on it over the server's delay | rock and dust thrown up through the cracks, a flat shockwave, medium weight on your screen | the cracked ground cools to dark, then fades |
-| Breakthrough | the Charge's own rush | a contact starburst from the delivering body's side, a cone of force through the target, the knockdown payload held for the stagger's clock | a dazed halo of stars for that clock (`dazedHalo`, reusable by every stagger verb) |
-| Outbreak | the infected corpse swells | it bursts; a glob of what it carried is lobbed onto its nearest neighbour, which flinches | a bubbling miasma pool where it died |
-| Dragnet | a weighted net thrown from the delivering body, readable in flight | it spreads over each adjacent body, the shackle locks for the root's clock (less the flight), strands tie the bodies of one cast together | the shackle's held look until the root ends or breaks |
-| Chain Reaction | Detonate's own wind-up and the kill | the corpse goes off once; a crackling fuse leaps to each afflicted body down the batch and lands in a ring (each body's own `dot-detonate` draws its explosion) | a scorched star where the chain began |
-| Pierce | a glint at the muzzle, a hair-thin sight line | a rail of light through and past the last body, every body on the line punctured in turn | the smoke of its wake along the line |
-| Relay | the daze over the body whose stun ran out gathers into a spark | the spark arcs to the next body and lands as a stagger flash; the body jolts | the dazed halo for the stun as applied, ending with the server's mirrored hold |
-| Fork | static gathers on the struck body | a forked bolt (main arc, a branch that fizzles) flickers across; the body it reaches jolts | static crackling on it a moment |
-| Harvest | a pale scythe drawn back over each next low body, link after link | it reaps across in a slash, the body buckles; each link a little larger | a wisp rising from what was reaped |
-| Vanish | Disengage's own leap | smoke and an outline of your body left where you stood (the Avoid face's blur); the real body slips away in afterimages | the outline flickers and thins over 1.7 s |
-| Shared Breath | the owner draws breath, a pulse ring off the body | the Sustain pulse runs body to body down the formation and party, a ring and rising crosses on each | each body breathes with the shared mend while it runs |
-| Immunity | what was stripped is wrenched out of the body | a hexagonal shell seals facet by facet and flashes shut | the shell holds, shimmering, for the lock's clock |
-| Overflow | the heal rises up the body like a level to the brim | it spills over and sets into a round ward bubble with a chime | the bubble holds for the ward's window, its highlight turning |
-| Riposte | the blow caught on the Brace, plating chips thrown off | a counter crescent, the stagger flash on the attacker, the knockdown for the stagger's clock | the dazed halo |
-| Backlash | the hold bursts into shards as the body heaves up | a shockwave rolls out; each adjacent body, a beat apart, takes the stagger flash and the knockdown | the dazed halo on each |
-| Entangle | thorns bristle round you at the blow | a vine lashes along the hit and coils round the attacker's legs with a burst of thorns | the coil at its feet for the slow's clock, tightening as it ends |
-| Unyielding | the body plants into its stance, dust at its feet | plates fly in and lock on with a heavy ring | the locked plates ring the feet, glinting in turn, dropping away at the end |
-| Flow | the body slips the blow, leaning away from the attacker | a fading after-trail of the body and a spark streak; the window's ring at the feet flares bright and its clock is full again (the first dodge draws it in) | the ring holds for the server's window, two streams running round it, dimming as it runs down; the hit that lands snaps it (`durationMs: 0`): a white flash, shards flung out, the body jolted |
-
-Shared keys are told apart by the verb id: Breakthrough, Riposte and Backlash all
-push `control.knockdown`; Immunity and Overflow `barrier-tempo.ward-shell`; Shared
-Breath `kill-chain.recovery-pulse` (also Second Wind's Kill-chain packet fx, which
-stays the lane's pulse). Every first verb is animated (design §22.12 made Flow
-Sidestep's first verb; Afterimage, now its second, is a silhouette), so
-`KEYSTONE_STUBS` is empty; the test refuses a live verb left as a stub. Flow's icon
-glyph is `stances/fleeting-stance` (silhouette `flow`).
+Lineage payload FX and ability-node-row / keystone FX were removed with the item
+trees and ability node rows (D1). `fx/lineagePayloadFx.ts` and the keystone model
+are gone. Ability rank presentation in `fx/abilityRank.ts` remains.
 
 ## Readouts (numbers, bars, frames — combat readout run, 2026-10-06)
 
@@ -276,15 +199,6 @@ The designer's calls of 2026-10-10 are in the report's addendum.
   one each), class tables registered, dispatch hooks present, ability colours.
 - `monsterStateMirror`, `chargeOnAggroVisual`, `plainsHawkDiveBomb` — the mirrored
   flags and the landing event, through the real tick.
-- `lineagePayloadFx` — every payload a packet's halves can push has a client effect,
-  routed before the lane-primitive switch; hit presentation delays; server durations;
-  the lasting-state lifecycle; the loaded-carry guard; mid-weight flair.
-  `lineagePayloadEvents` — the hit tags, applied durations, refund sample and
-  `lineage-load` beats, through the real listeners.
-- `abilityFlavorFx` — a keystone's card-fx names its verb (Whirlwind's spin;
-  Aftershock's wind-up beat and eruption), a node payoff carries its amplifier's
-  axis, every first verb is animated or a stub exactly once, the animation table
-  and the model agree, every offered axis changes the draw.
 
 ## Open / deferred
 

@@ -65,16 +65,11 @@ because it is detailed.
 
 | System | Current-state record |
 | --- | --- |
-| Lineage trees (the weapon tree live; armor/charm/boots parked), the T1 lean and verb, keystones, ability nodes, the weapon page and the rhythm readout | [lineages-current-state.md](lineages-current-state.md) |
 | Charms | [charms-current-state.md](charms-current-state.md) |
-| Cores | [cores-current-state.md](cores-current-state.md) |
 | Global Mastery | [global-mastery-current-state.md](global-mastery-current-state.md) |
-| Relics | [relics-current-state.md](relics-current-state.md) |
-| Rites | [rites-current-state.md](rites-current-state.md) |
 | Runes | [rune-system-current-state.md](rune-system-current-state.md) |
 | Runic attunement | [runic-attunement-current-state.md](runic-attunement-current-state.md) |
 | Seals and tier advancement | [seals-current-state.md](seals-current-state.md) |
-| Stances | [stances-current-state.md](stances-current-state.md) |
 | T1 item rework | [t1-item-rework-current-state.md](t1-item-rework-current-state.md) |
 | Tier balance | [tier-balance-current-state.md](tier-balance-current-state.md) |
 
@@ -97,8 +92,6 @@ because it is detailed.
 | Balance lab | [balance-lab-current-state.md](balance-lab-current-state.md) |
 | Bot experience experiments | [bot-experience-command-center.md](bot-experience-command-center.md) |
 | Frozen bot runner | [bot-experiment-runner-current-state.md](bot-experiment-runner-current-state.md) |
-| Bot capability audit | [bot-harness-capability-audit.md](bot-harness-capability-audit.md) |
-| Tier-2 bot infrastructure | [t2-bot-testing-infrastructure.md](t2-bot-testing-infrastructure.md) |
 | Gameplay telemetry | [gameplay-telemetry-current-state.md](gameplay-telemetry-current-state.md) |
 | Telemetry MCP | [telemetry-mcp-setup.md](telemetry-mcp-setup.md) |
 
@@ -109,17 +102,14 @@ read the linked current-state page before using it to describe shipped
 behavior.
 
 - [Future plans](future-plans.md) — backlog and deliberately deferred ideas.
-- [Progression rework plan](progression-rework-plan.md) — now a short status index:
-  **Phases 0–5 all shipped** (at least their first slice) as of run 3, 2026-10-01. Live
-  state is [lineages-current-state.md](lineages-current-state.md) (all twenty lineages,
-  rows, keystones, cross, re-homed forms, ability nodes),
-  [variants-current-state.md](variants-current-state.md) (families/blends through T4),
-  [frames-current-state.md](frames-current-state.md) (frame loops, range mechanics), and
-  [recovery-current-state.md](recovery-current-state.md) (flat recovery, pool-raise
-  pointer). The full phase-by-phase build log is archived at
-  [archive/progression-rework-plan.md](archive/progression-rework-plan.md). Design
-  authority is
-  [`design_docs/progression-rework-design.md`](../design_docs/progression-rework-design.md).
+- [Progression rework plan](progression-rework-plan.md) — short status index. The
+  lineage trees, shards, and ability node rows it recorded as shipped were removed
+  by the class-first rework (D1); the history is
+  [archive/lineages-current-state.md](archive/lineages-current-state.md). Families
+  and blends remain in [variants-current-state.md](variants-current-state.md).
+  Frame loops remain in [frames-current-state.md](frames-current-state.md). Recovery
+  remains in [recovery-current-state.md](recovery-current-state.md). The phase log is
+  [archive/progression-rework-plan.md](archive/progression-rework-plan.md).
 - [Ability pass run brief](briefs/ability-pass-run-2026-10-02.md) — IMPLEMENTED and merged to develop 2026-10-09 after the designer's calls (design §22.12; live state in [abilities-current-state.md](abilities-current-state.md) "The ability pass"); brief revised 2026-10-06 for design §26: the run that implements design §22 (roster 22 → 19, ability keystone + cross rows, five T3 path re-homes) off develop; baseline on the §26 tutorial kit, T1 lab DPS held within ±5%, the T3/T4 stacking change measured in wave 0; Opus conductor in ../mmo-lin-w2c on `feat/ability-pass`.
 - [Ability pass report](briefs/ability-pass-report-2026-10-09.md) — the run's outcome (waves 0–3: parity failed on one Slam number) and its addenda (wave 4, design §22.12: Slam rank I solved on two numbers, 1.2× on 600 ms, 30/30 kit cells inside ±5%; Flow; rate guards; boss gates; path fixes; and the second round, §22.13: Slam a 600 ms cast at every rank, the Pyromancer fixed, Cleanse, the Vanish clock, the environment gates); 402/402; merged to develop.
 - [Release v0.6 record](briefs/release-v0.6-2026-09-28.md) — what shipped in v0.6, merged branches, save policy, bandwidth changes, validation and the deploy check.
@@ -157,24 +147,17 @@ behavior.
 - [T1 boss pass report](briefs/t1-boss-pass-report-2026-10-02.md) — COMPLETE 2026-10-02: three T1 boss rows moved (Behemoth attack, Greatbear HP+attack, Toadeater HP) so every class beats every T1 boss on the guide's kit; second seal stays Mountain. Two findings outlive the numbers: a solo T1 boss fight was deterministic (24 of 30 cells), and the Behemoth/Broodmother are a 10x melee/ranged split rather than a difficulty.
 - [Boss redesign implementation plan](boss-encounter-redesign-implementation-plan-2026-09-04.md)
   — IN PROGRESS: the remaining Phase 8 cleanup/tuning handoff after the shipped phases.
-- [Core rework design/balance handoff](core-rework-design-balance-handoff.md) —
-  approved direction for a future Core pass; implementation is not implied.
 - [Map variety design](map-variety-plan.md) — living region design authority;
   retained until its region-layout/mask rules have a complete current-state successor.
   Family blends are in [variants-current-state.md](variants-current-state.md).
 - [Terrain variance plan](terrain-variance-plan.md) — own status remains IN PROGRESS.
 - [UI redesign plan](ui-redesign-plan.md) — approved for incremental implementation;
   presentation work and review history, not a fully shipped plan.
-- [Stance future design notes](stances-future-design-notes.md) — unimplemented
-  design ideas only.
 - [Named progression checkpoints](named-progression-checkpoints.md) —
   command-center acceptance procedure and implementation record.
 - [System rework roadmap](system-rework-roadmap.md) and [system rework
   status](system-rework-status.md) — current follow-up queue and implementation
   scoreboard after the authored T1–T4 construction pass.
-- [Rite authoring guide](rites-authoring-guide.md) and [stance authoring
-  guide](stances-authoring-guide.md) — authoring contracts for new content.
-
 ## Reference and authoring pages
 
 - [Map regions atlas](map-variety-regions-atlas.md) — human-readable map view;
@@ -204,11 +187,7 @@ The flat files in design_docs/ are the design and architecture source set:
 - [player-power-curve.md](../design_docs/player-power-curve.md)
 - [boss-design.md](../design_docs/boss-design.md)
 - [boss-lineage-redesign.md](../design_docs/boss-lineage-redesign.md) — 2026-09-27 boss contract (fight length and phases per tier) and per-lineage T1–T4 redesign; **first pass implemented 2026-09-27**, numbers pass pending; supersedes boss-design.md's fight-length target
-- [relics-design.md](../design_docs/relics-design.md)
 - [ability cast and tier progression](../design_docs/ABILITY_CAST_AND_TIER_PROGRESSION_T1_T4.md)
-- [core design philosophy](../design_docs/CORE_DESIGN_PHILOSOPHY.md)
-- [core cast review](../design_docs/CORE_CAST_REVIEW_DRAFT.md)
-- [core T4 cast](../design_docs/CORE_T4_CAST.md)
 - [T1 item design philosophy](../design_docs/T1_ITEM_DESIGN_PHILOSOPHY.md)
 - [T1 item numerical baseline](../design_docs/T1_ITEM_NUMERICAL_BASELINE.md)
 - [T5–T8 endgame suggestions](../design_docs/t5-t8-endgame-suggestions.md)
@@ -223,6 +202,15 @@ Use the current-state table above and the source when they conflict.
 - [Docs fold report](briefs/docs-fold-report-2026-10-05.md) — tutorial fold, verbatim
   progression amendments, conditional duplicate proof and retained-plan inventory.
 - [Status registry audit (2026-10-05)](briefs/status-registry-audit-2026-10-05.md) — raw player/monster ids, HUD projections, presentation gaps, slow/root clocks, and the rerunnable source extractor.
+- Removed by the class-first rework (2026-10-15). Design authority is
+  [class-first-bible.md](../design_docs/class-first-bible.md). Kept for history:
+  - [Lineage trees, shards, and ability node rows](archive/lineages-current-state.md) — removed (D1).
+  - [Cores](archive/cores-current-state.md) and the [core rework handoff](archive/core-rework-design-balance-handoff.md) — the core slot was removed (D2).
+  - [Stances](archive/stances-current-state.md), the [stance authoring guide](archive/stances-authoring-guide.md), and [stance future notes](archive/stances-future-design-notes.md) — removed (D2).
+  - [Rites](archive/rites-current-state.md) and the [rite authoring guide](archive/rites-authoring-guide.md) — removed (D2).
+  - [Relic items](archive/relics-current-state.md) — removed (F5). The relic slot remains and holds the class boss trophy.
+  - [Core design philosophy](../design_docs/archive/CORE_DESIGN_PHILOSOPHY.md), [core cast review](../design_docs/archive/CORE_CAST_REVIEW_DRAFT.md), [core T4 cast](../design_docs/archive/CORE_T4_CAST.md), and [relics design](../design_docs/archive/relics-design.md) — superseded by the bible (§4).
+  - [Tier-2 bot infrastructure](archive/t2-bot-testing-infrastructure.md) and the [bot capability audit](archive/bot-harness-capability-audit.md) — class and campaign routes were removed (D5). The living runner docs stay in the operations table.
 - [Archive guide](archive/README.md) explains how completed plans and
   handoffs are moved without losing provenance.
 - [Briefs and evidence](briefs/README.md) explains the active/history split for

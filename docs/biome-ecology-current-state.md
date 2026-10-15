@@ -1,5 +1,7 @@
 # Biome Identity / Combat Ecology — Current State (latest pass audited 2026-09-21)
 
+> Class-first rework (2026-10-15): the catalyst wallet and combat stances removed; see the bible.
+
 **Companion to:** `docs/archive/biome-ecology-plan.md` (the Step 12 program plan) and
 `docs/archive/biome-ecology-pass2-plan.md` (the completed Pass 2 program).
 **Roadmap step:** 12. **Status:** ✅ Step 12 primitives shipped; Pass 2 complete (all six
@@ -237,8 +239,9 @@ player's own kills**.
   firing a banked timer on re-engage. No corpse in `corpseRange` means no raise.
 - **`isRaised { raiserId }`** — server-only marker (not in any networked allowlist). Its
   presence is the reward gate: `grantMonsterRewards` returns null for a risen mob, which zeroes
-  essence, biome XP, catalyst progress, quest credit, party share and dungeon credit in one
-  place because every kill path funnels through it. It also keys the raiser's `maxAlive` cap
+  essence, biome XP, quest credit, party share and dungeon credit in one
+  place because every kill path funnels through it. There is no catalyst wallet to zero.
+  It also keys the raiser's `maxAlive` cap
   and the crumble sweep.
 - **Client tell without new protocol** — the risen copy is renamed `Risen <Name>` on the
   already-networked `isMonster` slice, and the raise emits a `raise-dead` ecology pulse
@@ -377,8 +380,8 @@ multipliers on the player, the mirror of `getAntiHealMult`:
   Vengeance scale off it and shouldn't be paid twice for a debuff).
 - The former global +100% taken / +50% dealt caps were removed. Status contributions
   sum without a global ceiling; individual effects retain their authored stack limits.
-  Heat alone authors a logarithmic stack curve. Stances remain separate multiplicative
-  layers, and equipment's per-hit damage-cap mechanic is unchanged.
+  Heat alone authors a logarithmic stack curve. Combat stances were removed
+  (class-first rework). Equipment's per-hit damage-cap mechanic is unchanged.
 
 **`MonsterDefinition.appliesVulnerability`** — `{ damageTakenPct, maxStacks, durationMs }`.
 Stacks the cleansable `sundered` status on every landed hit, applied next to

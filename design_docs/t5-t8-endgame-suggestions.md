@@ -16,8 +16,11 @@ repetition by intent. Three replacement engines, in order of importance:
 1. **Recombination** — the vocabulary is fixed; the *combinations* aren't.
    Mixed-shape packs, layered enemy defenses, dual-mechanic biomes, gauntlet
    compositions. The bible already plans this (later biomes carry 2–3 mechanics).
-2. **Build maturity** — the player systems finally at full expression: relic
-   depth, rune vocabulary completion, +3 fork choices, cross-biome capstones.
+2. **Build maturity** — the player systems finally at full expression. The relic-depth
+   and +3-fork ideas in §3 assumed crafted relic items and the +N upgrade ladder.
+   Both were removed (class-first rework). The relic slot remains and holds the class
+   boss trophy (bible §4). This file does not design T5 trophies or a replacement ladder.
+   Rune vocabulary completion and cross-biome capstones are the other ideas below.
 3. **Grind quality** — the systems that make hour 200 feel good: boss routes,
    away-game design, world events, party play. These carry four tiers; they're
    worth front-loading (most are specced in the dungeon and rune docs).
@@ -103,15 +106,19 @@ Notes:
 
 ## 3. Build maturity systems (what the grind is *for*)
 
-- **Relics deepen, not widen:** keep the one slot; T5+ adds higher relic tiers of
-  the same nine archetypes (bigger trade-offs, e.g. Brutality at −0.4/+0.6), plus
-  the boss-unlocked recipe lines (dungeon doc §4). The "fewer but enormous" build
-  space is the endgame itemization story.
+- **Relics deepen, not widen:** this suggestion assumed crafted relic items of nine
+  archetypes. Those items were removed. The one relic slot remains and holds the
+  class boss trophy (bible §4). The trade-offs below are not a trophy spec. The
+  recorded idea was: T5+ adds higher relic tiers of the same nine archetypes
+  (bigger trade-offs, e.g. Brutality at −0.4/+0.6), plus the boss-unlocked recipe
+  lines (dungeon doc §4).
 - **Rune completion:** vocabulary finishes growing ~T6 (~20 conditions / ~25
   actions vs 16 BP at T8) — endgame rune play is *optimization*, lighting a third
   of the board well. Hidden/flaw fragments are the back half's collectibles.
-- **+3 forks** (suggestions doc §2.2): at T5–T8 tiers last long enough that the
-  +3 choice is lived with — the fork matters more here than at T1–T4 pace.
+- **+3 forks** (suggestions doc §2.2): this assumed the +N upgrade ladder.
+  `getMaxUpgrade` now returns 0 for every item, so there is no live +3 fork.
+  The recorded idea was that T5–T8 tiers last long enough for the +3 choice to
+  matter more than it did at T1–T4 pace.
 - **Crosses widen:** the 75/25 hybrid system plus retiring biomes means late-tier
   recipes are where cross-biome identity peaks; T7–T8 capstones can run 60/20/20.
 
@@ -150,9 +157,9 @@ Notes:
   "Bigger numbers, same feel" is *correct* — texture variety (packs, layered
   defenses, compositions) is what changes, per §2.
 - Watch the two compounding seams flagged in the audit at every tier: heal
-  throughput soft cap (~3–4% maxHP/s) and ramp-stacking (ramp specs × buff relics
-  × long-fight items), since T5–T8 content is *longer fights by design* — the
-  exact axis those all scale on.
+  throughput soft cap (~3–4% maxHP/s) and ramp-stacking (ramp specs × long-fight
+  items). The old "buff relics" term assumed crafted relic items, which were
+  removed. T5–T8 content is *longer fights by design* — the axis those scale on.
 
 ---
 

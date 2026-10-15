@@ -1,5 +1,7 @@
 # Gameplay telemetry
 
+> Class-first rework (2026-10-15): lineage-tree events, stance and rite decisions, and the catalyst wallet removed; see the bible.
+
 **Audited:** 2026-09-27. Server-owned balance evidence for deployed human play.
 Source: `server/src/analytics/gameplayRecorder.ts`, `gameplayWriter.ts`,
 `server/src/logdb/gameplayRepo.ts`, and `admin/src/tabs/GameplayTab.tsx`.
@@ -30,35 +32,15 @@ The optional development human-playtest filesystem recorder is unchanged. Bot/be
 
 - Session start/end; disconnect and shutdown have separate reasons.
 - Time alive and combat time, sampled at one second and flushed in 30-second summaries, or at transitions/build boundaries/death/disconnect. A sample gap contributes at most two seconds; process stalls are not assumed to be playtime. Dead time is excluded. This measures connected simulation exposure, including idle/autocombat, not human attention.
-- Accepted skill, equipment, upgrade, craft/evolution, rune, ability, stance, rite, targeting, automation and navigation decisions. Rejected changes are excluded. Each record includes before/after build and relevant owned/unlocked option pools; skill eligibility uses the real unlock validator. Recipe pools describe unlocks, not guaranteed affordability. A decision after death/retreat is labeled until the next boss attempt.
-- Essence/catalyst wallet gains and spends, observed at sampling and immediately around decisions. Totals are wallet deltas, not a full economic transaction ledger.
+- Accepted decisions whose build projection changes, plus craft, craft-ability, upgrade, and navigation even when the projection does not. The calls are skill, reset-class, runes, equip, unequip, craft, craft-ability, abilities, upgrade, auto, auto-traverse, targeting, and navigation. Rejected changes are excluded. Stance, rite, and evolution are not decision actions. Each record includes before/after build and relevant owned/unlocked option pools; skill eligibility uses the real unlock validator. Recipe pools describe unlocks, not guaranteed affordability. A decision after death/retreat is labeled until the next boss attempt.
+- Resource wallet gains and spends, observed at sampling and immediately around decisions. Totals are wallet deltas, not a full economic transaction ledger. The catalyst wallet this used to describe is gone.
 - Boss encounter start/end with starting class/frame/range/skills/gear/upgrades/loadout, tier, level, biome levels, effective stats, same-node live party size, boss type, HP fraction, duration, outgoing boss damage and incoming damage during the attempt. Start is observed target acquisition or direct player/owned-minion damage involving a boss. Party members receive outcomes only when they participated, not merely because they saw the log.
 - Death context captured **before** cleanup: build, node, position, cause, authored ability, killer type, status IDs/stacks, and up to 32 recent incoming damage records from the preceding ten seconds. Damage sources already despawned can be unknown; the authoritative killing cause still carries its source snapshot.
 - Biome/tier milestones with elapsed session time.
-- Lineage-tree actions (progression rework Phase 1): `lineage.card-unlocked`,
-  `lineage.card-swapped` and `lineage.gate-paid`, recorded in the four economy
-  handlers (`server/src/systems/player/economy/lineages.ts`) as their own
-  `lineage` payload kind. Each row carries the lineage, the lane, the row, the
-  card, the card a swap displaced, the form a gate bought, the essence/shard/
-  capstone actually paid, how many cards the tree holds afterwards, and the
-  session-elapsed time. The first purchase of a session is flagged, which is
-  where `lineage.first-card-ms` in the daily table comes from, so
-  time-to-first-card survives aggregation. Only a REPLACEMENT counts as a swap:
-  buying into an empty row activates the card server-side and is one purchase,
-  not a purchase plus a swap. A refused action records nothing.
 
-  These are a separate payload kind rather than `decision` rows on purpose. A
-  `decision` is dropped unless the projected build changed, and `GameplayBuild`
-  projects no lineage state at all, so before this a payoff card — which moves no
-  projected stat — recorded nothing anywhere. Lane and row are stored as plain
-  strings so a renamed packet cannot make an old row un-typable.
-
-**Known implementation gap:** the current recorder wallet projection still
-enumerates `BIOME_DATABASE` keys for catalyst fields, while the live catalyst
-wallet is keyed by node-modifier families. Until `gameplayRecorder.ts` is
-updated to use `NODE_MODIFIER_FAMILIES`, telemetry catalyst wallet deltas are
-incomplete and must not be used as economy evidence. Essence, build, combat,
-and progression event fields retain the scope described above.
+Payload kinds are session-start, session-end, exposure, decision, encounter-start,
+encounter-end, death, progression, and resource. There is no lineage payload kind.
+The handlers in `server/src/systems/player/economy/lineages.ts` are gone.
 
 ## Interpretation
 
@@ -78,6 +60,6 @@ Detailed events expire after 90 days; identity-free daily totals expire after 36
 
 ## Verification
 
-`lineageTelemetry.test.ts` exercises the three lineage events through the real economy handlers on a bare `World`: costs paid against the wallet delta, the first-card flag, swap-versus-purchase, a refused action recording nothing, the privacy projection, and the daily aggregation. `gameplayTelemetry.test.ts` exercises actual socket decision handlers, world-log fanout, death cleanup, boss outcomes, pseudonymous reconnects, privacy projection, test exclusion, retry/backoff/overflow, and production admin-token validation without a database.
+`gameplayTelemetry.test.ts` exercises actual socket decision handlers, world-log fanout, death cleanup, boss outcomes, pseudonymous reconnects, privacy projection, test exclusion, retry/backoff/overflow, and production admin-token validation without a database. `lineageTelemetry.test.ts` is gone with the lineage events.
 
 `gameplayPersistence.test.ts` is optional: set `TEST_GAMEPLAY_DATABASE_URL` to an **empty disposable database named `codex_telemetry_test_*`**. It checks both migrations, stable random identity, persisted test exclusion, transactional rollback, duplicate protection, cohort queries and retention. It skips without that explicit URL so ordinary CI remains database-independent.

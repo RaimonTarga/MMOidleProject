@@ -1,16 +1,16 @@
 # Guided Tier-1 Tutorial — Current State
 
-**Audited:** 2026-10-06 against the checked-in tutorial scripts, director and panel (the
-legibility run, design §26.1).
-**Status:** shipped in v0.6.2; the course-correction (2026-10-03), verbs-that-fire
-(2026-10-04, design §24.9) and legibility (2026-10-06, design §26.1) updates are
-implemented. The guide teaches the Effect lean and its ranks, the weapon's own verb and the
-gate on the weapon each class fights with — no pair to choose. The original plan is
-preserved at [archive/guided-tutorial-plan.md](archive/guided-tutorial-plan.md).
+> Class-first rework (2026-10-15): the weapon-page, shard, and rune lessons removed; see the bible.
 
-The validation records below retain their original revisions, dates, results and
-canonical/non-canonical limits. Earlier kits and findings are history; the latest
-legibility record (route v1.5.0) describes the current route.
+**Status:** the guide is the class-agnostic opening plus the seal route
+(`shared/src/tutorial/scripts/sealRoute.ts`). No class has its own beats yet
+(`TUTORIAL_CLASS_BEATS` is empty). The route does not craft, and it does not teach
+a weapon page, a shard, or a rune. The original plan is preserved at
+[archive/guided-tutorial-plan.md](archive/guided-tutorial-plan.md).
+
+The validation records and the per-class lesson tables below retain their original
+dates and results. They describe the pre-rework route. They are not the route that
+runs.
 
 ## What it is
 
@@ -21,20 +21,19 @@ a mechanic works — and a **Next** button. On Next the guide performs the beat'
 actions through the ordinary UI intents while a gold ring moves across the buttons
 it presses. The player only ever clicks Next.
 
-It starts in the Clearing (tier-0 quest), takes the character through **every T1
-zone to Global Mastery 30**, then kills the **Plains and Mountain bosses**. The
-second seal promotes the player to Tier 2, after which one last optional chapter
-teaches the weapon lineage's **gate** (see "The weapon-page lessons" below); then the guide
-says goodbye ("keep going forward"), points at the Passive Tree for the frame
-choice, and disappears.
+It starts with the opening (`scripts/opening.ts`), then the seal route. The seals
+are Plains, then Mountain (`TUTORIAL_SEALS`). The route farms the Plains to
+`biomeLevelCap`, fights the Plains boss, walks Forest, Swamp, and Cave the same
+way, fights the Mountain boss, and says goodbye once the player tier is at least 2.
+There is no crafting step on that route.
 
 ## Locked decisions (2026-09-29)
 
 | Question | Decision |
 |---|---|
-| Classes | All six T1 roots, so six scripts. The player picks their class; the guide follows that class's script. |
-| Bosses | Plains + Mountain (Mountain with the bot-tested setup: Slam + Second Wind, Mountain plate — Slam in Expose Weakness's place since the ability pass, design §22.2), only after all five zones are maxed (GM 30). Was Plains + Forest until the evening of 2026-09-29; see Findings. |
-| Route shape | Slow and safe, not fastest: every zone visited and maxed, full HP before bosses, survival Runes. |
+| Classes | The opening, then the same seal route for every class until a class builder lands. The player still picks a class. |
+| Bosses | Plains, then Mountain. The other three T1 zones are walked between those seals. |
+| Route shape | Fight each seal zone to its tier cap, then the boss. Forest, Swamp, and Cave are walked the same way between the seals. |
 | Pacing | Always wait for **Next**. Long farm beats show live progress; Next appears when the beat is done. No auto-continue. |
 | Who can use it | Any character at player tier 0–1. Opt in or out at any time. Gone from tier 2 on (after the farewell). |
 | Mid-T1 opt-in | **Takes over, with a warning**: the offer card says the guide will swap gear, abilities and Runes to its plan. Items are only swapped, never destroyed. |
@@ -64,44 +63,41 @@ state through the shared `PlayerView` — the same view the client composes. So:
 1. A **tutorial script** is an ordered list of **beats**. Each beat has an id, a
    chapter, the line, optional progress bars, and steps in the bot's own route
    vocabulary (`shared/src/tutorial/types.ts` mirrors `bot/src/route/types.ts`).
-2. `bot/src/routes/tutorialRoutes.ts` flattens each class script into an ordinary
-   route, `tutorial-<class>-t1`, filling in the class and a patient boss-retry
-   budget. **The bot is the tutorial's regression test**, and `harness.test.ts`
-   already validates every registered route (content exists, used after acquired,
-   Rune budgets).
+2. The class routes `tutorial-<class>-t1` are gone with the other bot class routes
+   (D5). The script that runs is `tutorialScriptFor` in `scripts/index.ts`: the
+   opening, then the seal route, because no class builder is registered.
+   `shared/src/tutorial/tutorial.test.ts` is the regression check.
 3. The client **director** performs the same steps, evaluating the same conditions
    against the local player's `PlayerView`.
 
-The adapter replaced the original Phase 2 proposal to move the bot's route vocabulary
-into `shared/`: it gives the tutorial a single source of truth without that migration.
-The current shared tutorial conditions include class selection, crafted Rune recipes,
-mastery, materials, seals and lineage ownership/worn-form gates. Upgrade conditions and
-steps are retired with the `+N` ladder.
+Conditions the evaluator still has are tier, class, biome level, Global Mastery,
+essence, recipe unlock, craft affordance, item, equipment, known ability, and boss
+clear, plus `allOf` / `anyOf` / `not`. Lineage ownership, worn-form gates, and
+crafted rune recipes are not conditions. Upgrade steps were already retired with
+the `+N` ladder.
 
 ### Where things live
 
 ```text
 shared/src/tutorial/
-  types.ts           beats, steps, conditions (bot-shaped), progress refs
+  types.ts           beats, steps, conditions, progress refs
   conditions.ts      evaluator over PlayerView; progress rows
-  resolve.ts         resume-from-state, supersession, wiredRunes, abilityLoadoutFor
-  nodes.ts           which node a farm/boss step happens at (bot's pick rules)
+  resolve.ts         resume-from-state, supersession, wiredRunes
+  nodes.ts           which node a farm/boss step happens at
   anchors.ts         every data-tutorial-anchor id
-  concepts.ts        the first-hour checklist: ideas, what shows each, levels per beat
-  scripts/opening.ts class-agnostic opening (quest, class pick, Clearing set)
-  scripts/plans.ts   per-class gear plans (ported from bot/src/routes/t1GearPlans.ts)
-                     and the lean + verb each class buys (`weaponCards`)
-  scripts/runes.ts   the guide's Rune loadout per stage
-  scripts/classScript.ts  plan → beats, with the lines
-  tutorial.test.ts   data validity + a simulated playthrough of all six classes
+  concepts.ts        concept ids the beats may name
+  scripts/opening.ts class-agnostic opening
+  scripts/plans.ts   T1 biome order and the two seal biomes
+  scripts/sealRoute.ts  the beats that follow the opening
+  scripts/index.ts   opening plus seal route (no per-class builder yet)
+  scripts/farewell.ts   the goodbye lines
+  tutorial.test.ts   opening plus seal route for every class root
 client/src/tutorial/
   director.ts        performs one beat: open panel, point, hudBus call, wait for the delta
   TutorialPanel.tsx  offer / beat card / death / farewell, mounted in RightSidebar
   TutorialHighlight.tsx  the ring (portal, follows the element every frame)
   atoms.ts           highlight target + focus requests for panels with local selection
-bot/src/routes/tutorialRoutes.ts   scripts → routes
 client/src/hud/MenuButtons.tsx     RightSidebar mounts the panel on desktop
-shared/src/tutorial/scripts/farewell.ts   farewell and frame pointer
 ```
 
 ## Director behavior
@@ -128,27 +124,20 @@ point, for the altar).
 
 | Step | What the player sees |
 |---|---|
-| farm | travel to the zone if needed (nearest uncleared node, or the current one), ring on Auto Combat, then a progress card until done |
+| farm | travel to the zone if needed, ring on Auto Combat, then a progress card until done |
 | chooseClass | Passive Tree opens, class cards ringed; the player picks |
-| craft / craftRune | Crafting → the right category → the recipe → Craft/Learn |
+| craft | Crafting → the recipe → Craft |
 | equip | Inventory → the item → Equip |
-| learnAbility / setAbilities | craft the recipe, then Abilities → Attune; Runes are re-wired (below) |
+| learnAbility / setAbilities | the ability, then Abilities → Attune |
 | configureRunes | Runes board; the guide sets its plan |
-| unlockCard / setActive | Inventory → the equipped weapon → its weapon page → the card (buy, then make active; the server only activates a purchase into an empty row) |
-| unlockForm / wearForm | the weapon page → the gate's door (pay, then wear) |
-| attemptBoss | rest to full HP, travel, clear the guard with auto-combat, walk to the altar, ring on the altar button, wake the boss, fight |
+| attemptBoss | travel, clear the guard, wake the boss, fight |
 
-**Lessons.** A beat may carry a `lesson` (shared `TutorialBeat.lesson`), played after its
-steps: the ring rests on the card the beat bought while the panel reads what the card now
-says (5 s), then the page closes and the ring rests on that card's ring on the rhythm
-readout by the HP bar (5 s). Nothing is pressed or sent; the bot ignores it. Because the
-purchase already moved the panel to the next beat, the panel shows a finished beat's
-`working` message until the lesson ends.
+The seal route uses `farm` and `attemptBoss` only. `craftRune`, `unlockCard`,
+`unlockForm`, and `wearForm` are not step kinds.
 
-**Ability wiring.** Abilities have no built-in trigger (`shared/src/abilityWiring.ts`).
-Every loadout the guide sends is `wiredRunes(rules, abilities)`: stale `use-ability`
-rules dropped, each attuned ability's reference rule added. Ability changes go in the
-bot's safe order: unwire (frees RP) → change abilities → wire.
+**Ability wiring.** `wiredRunes` drops `use-ability` rules whose target is no longer
+attuned and adds a reference rule for an attuned ability nothing wires yet. There is
+no Runic Point budget to free.
 
 **Boss fights** follow what the bot learned: clear the guard *before* waking the
 boss (the altar turns every standing guardian on you at once).
@@ -161,6 +150,11 @@ not server-confirmed success. Stop asks for confirmation; a character switch or 
 unmount aborts the running director.
 
 ## Scripts
+
+The lists under this heading, including the weapon-page lessons, are the
+pre-rework per-class route. They are not generated, and they are not what
+`tutorialScriptFor` returns. The route that runs is the opening plus
+`buildSealRouteBeats()`.
 
 Generated per class from `scripts/plans.ts`, which ports the bot's controlled T1
 configs (Striker/Squire durable melee, Slinger, Spirit/Conduit, Apprentice), with:
@@ -210,7 +204,7 @@ configs (Striker/Squire durable melee, Slinger, Spirit/Conduit, Apprentice), wit
 
 **Since design §26.1 (legibility run) the T1 band asks no pair choice.** Its lean row is
 Attack, Speed and Effect with three ranks each, and its verb is the weapon's own
-(`docs/lineages-current-state.md` §3a). The guide teaches it once: the **Effect** lean
+([archive/lineages-current-state.md](archive/lineages-current-state.md) §3a). The guide taught it once: the **Effect** lean
 (the weapon's own move made stronger; Attack and Speed are plain stats and are not taught)
 at rank I, the weapon's **one verb**, then Effect's **ranks II and III**, each rank a
 `card:<lean>:rank-N` beat that presses Rank up (`lineageRankUp` anchor) and buys ONE rank
@@ -495,6 +489,9 @@ scope. The farewell, including its frame pointer, still needs the real-client pa
 in the validation records; the bot never plays panel-only copy.
 
 ## Validation record
+
+These records are the pre-rework weapon-page route. They are not a description
+of the seal route that runs now.
 
 All 2026-09-29, dev stack, 25x rewards (pipeline evidence, not balance evidence).
 

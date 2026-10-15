@@ -5,6 +5,8 @@
 **Scope:** desktop React HUD, rails, overlays, and modal presentation around the
 Phaser game viewport. Mobile is regression-only until the final adaptation phase.
 
+> Class-first rework (2026-10-15): this plan's stance tabs, rite tabs, catalyst panel, rune-recipe forge, and gear evolve/reconstruct surfaces were removed (D1, D2). The live Build panel is Abilities and Runes. The live Make rail order is weapon, armor, recovery, mobility, relic, technique (`KIND_ORDER` in `client/src/ui/crafting/makeEntries.ts`). The notes below record the 2026-07 redesign, including surfaces that no longer exist. A "shard" in the icon pass is a crystal silhouette, not the removed shard currency.
+
 This document is the cross-agent implementation guide for the MMO Idle desktop
 UI redesign. It records the architecture audit, sequencing, review gates, model
 budget recommendations, and handoff requirements so later agents do not need to

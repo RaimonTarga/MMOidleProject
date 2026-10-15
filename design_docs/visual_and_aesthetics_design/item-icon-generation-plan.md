@@ -3,8 +3,10 @@
 **Status: COMPLETE for weapons + armor + charms + boots as of 2026-08-02.** 121 bespoke
 icons generated, accepted, packed and wired — weapons 32/32, armor 30/30, charms 31/31,
 boots 28/28. Total spend **$2.45**. The only crafted items still on borrowed hand-drawn
-frames are the **5 cores**, deliberately deferred to their own pass (they are still being
-designed), plus relics. Follows the locked `item-identity-audit.md` (Phase 1, shipped).
+frames were the 5 cores and the crafted relics. The class-first rework removed those
+items, so the exclusion stands because they are gone, not because they are still being
+designed. The relic slot holds the class boss trophy, and this plan does not specify a
+trophy icon. Follows the locked `item-identity-audit.md` (Phase 1, shipped).
 
 Decisions taken: **naming option B** (identity-matching frame names, one icon per item);
 ship size **32×32**; same flat bold pixel-art language as the ability/monster work;
@@ -203,8 +205,9 @@ the predecessor's *accepted* art on disk, so chains span batches.
   batch, generate each line's root first, then walk that line upward via img2img (respecting
   the tier dependency). Slot-family batches (rather than the per-biome monster methodology)
   keep one object-language template per batch; biome palette varies inside it.
-- **Relics/ultimates last** — relic identity is still unlocked (bible §14) and the abyss
-  ultimate is WIP; icon them only once their concepts settle.
+- **Relics/ultimates last** — crafted relic items were removed (class-first rework).
+  The relic slot holds the class boss trophy. This plan does not icon trophies. The
+  abyss ultimate stays out of this phase.
 
 Measured scale (from the weapon pass): **~$0.007 per generation**. 126 calls covered all 32
 weapons including re-rolls — **$0.88 total**. Money is not the constraint; review bandwidth
@@ -374,8 +377,9 @@ wiring. What the campaign measured, as opposed to what it assumed:
 2. **Icon ship size:** 32×32, matching the existing item frames and the ability icons.
 3. **Style direction:** same flat bold pixel-art language as the ability/monster work.
 4. **Batch order:** slot-family rollout.
-5. **Scope of this phase:** weapons + armor + charms + boots. **Cores are excluded — they
-   are still being designed and get their own pass later.** Relics likewise deferred.
+5. **Scope of this phase:** weapons + armor + charms + boots. Cores and crafted relic
+   items are excluded because the class-first rework removed them, not because they
+   are still being designed.
 6. **Review cadence** (2026-08-02): half-slot waves, ~15 items / ~45 candidates per gallery
    sitting; 7 gates total including the pilot.
 7. **Pilot gate** (2026-08-02): a 9-icon cross-slot pilot precedes bulk generation.

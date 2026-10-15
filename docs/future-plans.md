@@ -9,18 +9,20 @@ Status: current as of 2026-09-30.
 
 ---
 
-## Progression rework — PROMOTED (2026-09-30)
+## Progression rework — the trees were removed (2026-10-15)
 
-Item lineage trees, biome variants with family materials, frame loops, and the removal
-of catalysts, node modifiers, and the +1..+5 ladder. Promoted straight to
-[`docs/progression-rework-plan.md`](progression-rework-plan.md) with design authority in
-[`design_docs/progression-rework-design.md`](../design_docs/progression-rework-design.md).
-The player defense proposal below is folded into that program's Phase 0 (coarse
-HP/recovery pass) and Phase 4 (defensive lanes); it is not a separate track any more.
+Item lineage trees, shards, and ability node rows were removed by the class-first
+rework. The history is [`archive/lineages-current-state.md`](archive/lineages-current-state.md)
+and [`progression-rework-plan.md`](progression-rework-plan.md). Families, blends, and
+frame loops remain. The class-first bible is the design authority for what replaced
+the trees.
 
 ---
 
-## Ability nodes keyed to packets (2026-10-01, parked)
+## Ability nodes keyed to packets (2026-10-01, parked) — removed with the trees
+
+This parked idea is the ability node-row design the class-first rework removed
+(D1). It is not a plan to build. The notes below are the old shape.
 
 Designer's note: abilities are numerically strong but generic and lowkey; the strongest are
 Second Wind, Brace, Endure. Idea: an ability tree that specialises each ability toward the
@@ -45,7 +47,7 @@ the progression rework.
 
 ## Player defense redesign — proposal (2026-09-25)
 
-**Proposed, not approved or implemented.** The [deep defense proposal](../reports/player-defense-study-2026-09-25/REDESIGN-PROPOSAL.md) reviews all 30 armors, all 12 cores, class bonuses, mitigation ordering and biome threat profiles. Preserve recognizable armor families and give them useful cross-biome applications; narrow plating, bring Jungle evade strength forward, make Desert an opening-protection candidate, and constrain Tundra/Volcano stacking. Remove negative-HP ranged core costs in the candidate and establish ordinary forced-contact survival before tuning monster damage. Numerical seeds need staged validation; no gameplay changes or new bot campaign were performed. See the linked inventory and initial study for source and historical-evidence boundaries.
+**Proposed, not approved or implemented.** The [deep defense proposal](../reports/player-defense-study-2026-09-25/REDESIGN-PROPOSAL.md) reviews all 30 armors, all 12 cores (the core slot was later removed), class bonuses, mitigation ordering and biome threat profiles. Preserve recognizable armor families and give them useful cross-biome applications; narrow plating, bring Jungle evade strength forward, make Desert an opening-protection candidate, and constrain Tundra/Volcano stacking. Remove negative-HP ranged core costs in the candidate and establish ordinary forced-contact survival before tuning monster damage. Numerical seeds need staged validation; no gameplay changes or new bot campaign were performed. See the linked inventory and initial study for source and historical-evidence boundaries.
 
 ---
 
@@ -144,10 +146,12 @@ primitive design + art direction are not.
 
 ## 3. Relics
 
-**IMPLEMENTED (2026-08-04):** the settled philosophy and evolution direction
-remain in `design_docs/relics-design.md`; shipped behavior and the eight-item base cast
-live in `docs/relics-current-state.md`. The completed build plan is archived at
-`docs/archive/relics-implementation-plan.md`.
+**Removed (class-first rework).** Crafted relic items are gone. The relic slot
+remains and holds the class boss trophy (class-first bible §4). The old philosophy
+is [`design_docs/archive/relics-design.md`](../design_docs/archive/relics-design.md).
+The old behavior writeup is
+[`archive/relics-current-state.md`](archive/relics-current-state.md). The build plan
+stays at `docs/archive/relics-implementation-plan.md`.
 
 ---
 

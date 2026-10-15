@@ -1,5 +1,7 @@
 # Map, Crafting, Upgrade, Inventory and Passive Tree panels
 
+> Class-first rework (2026-10-15): the core slot, stance and rite crafting, crafted rune recipes, and evolve/reconstruct removed; see the bible.
+
 Audited 2026-09-28. Implemented, not yet released or committed; in-game review pending. Client
 presentation only: no server, protocol, balance or save changes. The sections
 below record the design decisions; "Implementation notes" records calls made
@@ -41,23 +43,24 @@ Owners: `client/src/ui/map/MapPanel.tsx`, `NodeInfo.tsx`, `constants.ts`, `clien
 
 Owners: `client/src/ui/crafting/MakeTab.tsx`, `makeEntries.ts`, `useMakeEntries.ts`, `client/src/ui/crafting.css`, `panelFilters.ts`.
 
-- Replace the toolbar (search, toggles, sort, kind/biome/tier chips) with a
-  **left rail of categories**: Weapon, Armor, Recovery, Boots, Core, Relic,
-  divider, Technique, Stance, Rite, Rune. Flat list, no group headers.
+- The left rail of categories is `KIND_ORDER`: Weapon, Armor, Recovery, Boots,
+  Relic, Technique. There is no Core, Stance, Rite, or Rune category. The Relic
+  label remains. Crafted relic items are gone; the relic slot holds the class
+  boss trophy, which `class:setConfig` sets.
 - Each rail item shows counts: `N ready · N new`.
 - **A category appears only when its first recipe unlocks** (the biome level at
   which it becomes craftable), and arrives with a NEW badge. Derived from recipe
   unlock state already on the client — not from `resolveSystemVisibility`, whose
-  "knows one" gates are circular for crafting. Current data gives: Weapon T1 Lv1;
-  Armor, Technique, Rune T1 Lv2; Recovery Lv3; Boots Lv4; Core T2; Stance T2;
-  Rite T3; Relic T4.
+  "knows one" gates are circular for crafting. The old Core, Stance, Rite, and
+  Rune unlock levels went with those categories.
 - List per category, sectioned **New → Ready to craft → Need materials**; short
   rows say what is missing (`need 20 green`). Owned/learned recipes stay removed.
 - **"Show N locked"** link at the bottom of each category; locked rows show the
   biome + level that unlocks them.
-- **Detail pane shows full detail**: stats, mechanic effects, relic/core
-  profile, technique/stance/rite/rune lines for this character, description,
-  evolution preview, cost vs wallet, one action button with the blocking reason.
+- **Detail pane shows full detail**: stats, mechanic effects, a relic-slot
+  profile when the recipe's slot is `relic`, weapon effect lines, description,
+  cost vs wallet, one action button with the blocking reason. There is no
+  evolution preview.
 - Keep the wallet strip. The two success beats (stamp / T3+ ceremony) are out of
   scope for this pass.
 
@@ -90,8 +93,8 @@ and click behaviour changed. Mockup: https://claude.ai/artifact/Y3TEibLwYU8q7A2h
 - Known finding: the DPS estimate models `weapon.dead-swing-interval` only for
   laser builds, so the sheet reports Chaotic Axe's dead swing as not in the
   estimate for other classes (and their DPS is overstated).
-- **Backpack:** sorted highest tier first, then name. Filters are slot (all six,
-  including Core and Relic) and tier only; the biome filter is gone. A chip exists
+- **Backpack:** sorted highest tier first, then name. Filters are slot (weapon,
+  armor, recovery, mobility, relic) and tier only; the biome filter is gone. A chip exists
   only while you carry a matching item, and a row only when it has 2+ choices.
 - The pin note and Equip / Replace / Unequip button sit in a sticky footer at the
   bottom of the stats column, so long effect lists (relics) scroll behind it.
@@ -143,11 +146,8 @@ Upgrading is expected to change substantially soon; spend minimal effort.
   unlock predicates as the entries but ignores ownership, so a crafted-out
   category stays. A category shows NEW while every unlocked recipe in it is
   still unseen (derived from the existing `craft` newness, no new storage).
-- **Readiness:** evolutions count as ready only if `checkEvolve` or
-  `checkReconstruct` passes; the list sections are New / Ready to craft /
-  Not ready yet / Locked. Rows say what is missing (`-20` per material, or
-  `needs Flash Rapier +3`). Rows that were new stay in New until the panel
-  closes, so hovering does not move them.
+- **Readiness:** there is no evolve or reconstruct check. A row is ready when
+  the recipe is unlocked and the wallet covers it. Rows say what is missing.
 - **Mobile:** the rail becomes a horizontal strip above the list.
 - **Upgrade:** `BrowserPane` gained optional `groupOf` (section headings) and
   `listFooter`; Upgrade uses it with Equipped / In your bag sections. The

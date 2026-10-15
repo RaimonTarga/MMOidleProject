@@ -6,7 +6,7 @@ This document describes the intended player-facing shape of MMO Idle without dup
 
 ## Elevator pitch
 
-MMO Idle is a server-authoritative, browser-based idle RPG. Players build a class, travel through a sparse authored world, fight monsters automatically, collect equipment and progression resources, and advance through increasingly specialized biome and dungeon content. The long-term loop combines passive/automated combat with deliberate build choices: equipment, Runes, class skills, stances, rites, mastery, and tier-gated evolution.
+MMO Idle is a server-authoritative, browser-based idle RPG. Players build a class, travel through a sparse authored world, fight monsters automatically, collect equipment and progression resources, and advance through increasingly specialized biome and dungeon content. The long-term loop combines passive/automated combat with deliberate build choices: equipment, Runes, class skills, and mastery. Stances, rites, and tier-gated gear evolution were removed.
 
 ## World structure
 
@@ -21,24 +21,24 @@ The world is intentionally not described here as a rectangular grid. Its current
 
 1. Start in the Clearing and establish the character’s initial class and loadout.
 2. Travel to an authored world node or dungeon.
-3. Let server-authoritative auto combat resolve encounters while choosing targets, abilities, stance behavior, and movement priorities.
-4. Receive combat rewards: equipment, essence, biome experience, and—where the node supports it—catalyst progress.
-5. Improve the build through the Forge, equipment upgrades, Runes, class progression, Global Mastery, and authored evolution recipes.
+3. Let server-authoritative auto combat resolve encounters while choosing targets, abilities, and movement priorities.
+4. Receive combat rewards: equipment, essence, and biome experience.
+5. Improve the build through the Forge, Runes, class progression, and Global Mastery.
 6. Push toward bosses, seals, and later region tiers while adapting the build to each biome’s enemies and hazards.
 
-The current resource and reward contracts are summarized in [`docs/aspects-catalysts-current-state.md`](../docs/aspects-catalysts-current-state.md), [`docs/global-mastery-current-state.md`](../docs/global-mastery-current-state.md), and [`docs/gear-evolution-current-state.md`](../docs/gear-evolution-current-state.md).
+The current resource and reward contracts are summarized in [`docs/global-mastery-current-state.md`](../docs/global-mastery-current-state.md). Gear evolution is archived at [`docs/archive/gear-evolution-current-state.md`](../docs/archive/gear-evolution-current-state.md).
 
 ## Classes and build identity
 
 The current class system is organized around class-specific root mechanics, shared frame/range choices, and authored specialization skills. The active skill families include cadence, cooldown, reload, energy, damage-over-time, and the summoner/Conduit family. The exact roster, prerequisites, and runtime behavior live in the shared skill data and class systems; the Conduit-specific living summary is [`docs/conduit-current-state.md`](../docs/conduit-current-state.md), while the broader implementation contract is tracked by the source-linked entries in [`docs/README.md`](../docs/README.md).
 
-Abilities, Runes, stances, and rites add further build decisions. Their documentation is descriptive and source-linked rather than a second authoritative data table.
+Abilities and Runes add further build decisions. Stances and rites were removed. Their documentation is descriptive and source-linked rather than a second authoritative data table.
 
 ## Equipment and progression
 
-Characters use six equipment slots: weapon, armor, recovery, mobility, core, and relic. Ordinary equipment supports authored upgrade steps; cores and relics follow their own evolution rules. Equipment costs and Global Mastery gates are defined by the shared item-upgrade and recipe data.
+Characters use five equipment slots: weapon, armor, recovery, mobility, and relic. The relic slot holds the class boss trophy. There is no core slot. `getMaxUpgrade` returns 0, so the ordinary upgrade ladder is retired.
 
-Global Mastery is derived from biome progression rather than being an independent spendable XP bar. It gates Rune capacity and ordinary equipment upgrades, while authored recipes gate the larger evolution milestones. See [`docs/global-mastery-current-state.md`](../docs/global-mastery-current-state.md), [`docs/cores-current-state.md`](../docs/cores-current-state.md), and [`docs/relics-current-state.md`](../docs/relics-current-state.md).
+Global Mastery is derived from biome progression rather than being an independent spendable XP bar. It does not size a rune budget. See [`docs/global-mastery-current-state.md`](../docs/global-mastery-current-state.md). The old core and relic-item pages are archived.
 
 ## Combat and defenses
 

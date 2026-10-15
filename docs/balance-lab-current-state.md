@@ -1,5 +1,7 @@
 # Balance Lab — Current State
 
+> Class-first rework (2026-10-15): the catalyst wallet removed; see the bible.
+
 Status: read-only MVP implemented 2026-08-12.
 
 The Balance Lab is the trusted local Admin surface for seeing authored balance data as
@@ -65,8 +67,8 @@ truth, edit locked content, or apply generated values without a reviewable diff.
 
 ## Next slices
 
-1. Integrate persisted farm-bench results: kills, deaths, essence, catalyst and biome XP
-   per simulated hour.
+1. Integrate persisted farm-bench results: kills, deaths, essence and biome XP
+   per simulated hour. The catalyst wallet this slice used to name was removed.
 2. Add reference-build comparison and dominance views using layered sweeps.
 3. Add a reversible experiment overlay at the existing authored-data seam, with
    original/experimental deltas and export-to-source-patch support.

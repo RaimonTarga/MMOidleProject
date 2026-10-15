@@ -248,6 +248,7 @@ Player server-to-client highlights:
   `character:selectResult`
 - `crafting:result`, `inventory:upgradeResult`
 - `player:died`, `player:ascended`
+- `class:configResult`
 - `world:events`, `world:bossFelled`
 - `session:kicked`
 
@@ -257,7 +258,7 @@ Player client-to-server highlights:
   `player:setAutoTraverse`, `player:setAutocombatConfig`, `player:commandSummons`
 - Sync/session: `player:requestSync`, `player:setActive`, `player:ackDeath`
 - Progression/economy: `player:unlockSkill`, `player:resetClass`, `rune:setLoadout`,
-  `inventory:equipItem`, `inventory:unequip`, `inventory:upgradeItem`,
+  `class:setConfig`, `inventory:equipItem`, `inventory:unequip`, `inventory:upgradeItem`,
   `crafting:craftRecipe`
 - Social/flavor: `party:join`, `party:leave`, `player:emote`
 - Dev-only debug events are guarded server-side and ignored in production.
