@@ -1,5 +1,5 @@
 # T2-APPRENTICE report
-**Agent:** Claude (Sonnet 5.5)   **Branch:** rw/t2-apprentice   **Last commit:** see `git log -1` (filled below)
+**Agent:** Claude (Sonnet 5.5)   **Branch:** rw/t2-apprentice   **Last commit:** a786d988 (report committed with it)
 ## Done
 Status of every T2 item (bible §9.5, §9.8, §9.16). Before this task only the six T1 payoffs ran; every row below was `missing` except the data.
 
