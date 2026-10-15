@@ -80,10 +80,11 @@ for (const entry of pieces) {
   assert(entry.sidegradeOf === undefined, `${entry.id} is not a sidegrade`);
   assert((entry.ranks ?? []).length === 0, `${entry.id} has no ranks`);
   // The T1 types carry their runtime numbers since CD.2, the T2 types since T2-CONDUIT (the Jungle and Desert
-  // supports, Bloomtender and Executioner, among them); later pieces stay empty until their tier's track.
+  // supports, Bloomtender and Executioner, among them), the T3 types since T3-CONDUIT; later pieces stay empty until their tier's track.
   const hasRuntime = [
     'conduit-plains-tank', 'conduit-forest-bruiser', 'conduit-swamp-spitter', 'conduit-mountain-marksman', 'conduit-cave-heavy',
     'conduit-ironhorn', 'conduit-barkward', 'conduit-rockhurler', 'conduit-bog-leech', 'conduit-bonecrusher', 'conduit-bloomtender', 'conduit-executioner',
+    'conduit-warhorn', 'conduit-burrower', 'conduit-sporecaller', 'conduit-prowler', 'conduit-carapace-guard', 'conduit-frostcaller', 'conduit-cinderling',
   ].includes(entry.id);
   assert(hasRuntime ? Object.values(entry.params).every(Number.isFinite) : Object.keys(entry.params).length === 0, `${entry.id} params: empty until its runtime, finite numbers after`);
 }

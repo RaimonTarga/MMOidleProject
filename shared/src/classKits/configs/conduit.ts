@@ -35,13 +35,13 @@ export const DEFAULT_FORMATION_ORDERS: FormationOrders = {
 };
 
 /** A roster's Command under the discipline (§7.5); with none, the plain sum of the pieces' costs. */
-export function rosterCommand(roster: readonly string[], disciplineId: string | null = null): number {
+export function rosterCommand(roster: readonly string[], disciplineId: string | null = null, specializationId: string | null = null): number {
   let total = 0;
   const seen = new Set<string>();
   for (const id of roster) {
     const piece = CONDUIT_KIT.pieces.find((candidate) => candidate.id === id);
     if (!piece) continue;
-    total += disciplineCommandCost(piece.command, disciplineId, !seen.has(id));
+    total += disciplineCommandCost(piece.command, disciplineId, !seen.has(id), specializationId);
     seen.add(id);
   }
   return total;

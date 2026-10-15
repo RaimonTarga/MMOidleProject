@@ -26,12 +26,18 @@ export const CONDUIT_DISCIPLINE_TUNING = {
  * never below 1. Elite: every summon costs 1 more. `firstOfType` is whether no earlier body of the
  * same type is in the roster.
  */
-export function disciplineCommandCost(base: number, disciplineId: string | null | undefined, firstOfType: boolean): number {
+export function disciplineCommandCost(
+  base: number,
+  disciplineId: string | null | undefined,
+  firstOfType: boolean,
+  specializationId?: string | null,
+): number {
   if (base <= 0) return base;
   switch (disciplineId) {
     case 'conduit-swarm': return base === 1 ? 0.5 : base;
     case 'conduit-pack': return firstOfType ? Math.max(1, base - 1) : base;
-    case 'conduit-elite': return base + 1;
+    // Colossus (§7.6, T3): summons cost another +1 Command on top of Elite's.
+    case 'conduit-elite': return base + (specializationId === 'conduit-colossus' ? 2 : 1);
     default: return base;
   }
 }

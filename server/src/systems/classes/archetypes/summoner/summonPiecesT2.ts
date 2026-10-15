@@ -37,6 +37,7 @@ import { disciplineOf } from './disciplines';
 import { runFormationAttack } from './formationAttack';
 import { markStackBonus } from './souls';
 import { PIECES, swing } from './summonPieces';
+import { HIBERNATE_EFFECT_ID, specializationOf } from './t3Shared';
 
 /** The Executioner's mark on an enemy; `typeMask` has one bit per kind of summon that has hit it (Dune-Stalker's stacks). */
 export const MARK_EFFECT_ID = 'conduit-mark';
@@ -59,14 +60,14 @@ export function pieceOfSlot(slotId: string): ConduitPiece | undefined {
 }
 
 /** Elite (§7.5) deepens a support's job and a splash dealer's reach; the bible leaves the extras' granularity open. */
-function jobMult(owner: PlayerEntity, piece: ConduitPiece): number {
+export function jobMult(owner: PlayerEntity, piece: ConduitPiece): number {
   const elite = disciplineOf(owner) === 'conduit-elite';
   return elite && (piece.family === 'support' || (piece.params.splashRadius ?? 0) > 0)
     ? CONDUIT_DISCIPLINE_TUNING.eliteSupportMult
     : 1;
 }
 
-function livingMinions(world: World, owner: PlayerEntity): MinionEntity[] {
+export function livingMinions(world: World, owner: PlayerEntity): MinionEntity[] {
   const out: MinionEntity[] = [];
   for (const id of owner.summonsMinions?.minionIds ?? []) {
     const minion = id ? world.getMinionEntity(id) : undefined;
@@ -76,7 +77,7 @@ function livingMinions(world: World, owner: PlayerEntity): MinionEntity[] {
 }
 
 /** The most hurt ally by share of its HP, the owner included; undefined when everyone is whole. */
-function mostHurtAlly(world: World, owner: PlayerEntity): { minion?: MinionEntity; fraction: number } | undefined {
+export function mostHurtAlly(world: World, owner: PlayerEntity): { minion?: MinionEntity; fraction: number } | undefined {
   let best: { minion?: MinionEntity; fraction: number } | undefined;
   const ownerFraction = owner.hasHealth.hp / owner.hasHealth.maxHp;
   if (ownerFraction < 1) best = { fraction: ownerFraction };
@@ -87,11 +88,22 @@ function mostHurtAlly(world: World, owner: PlayerEntity): { minion?: MinionEntit
   return best;
 }
 
-/** Bloomtender's heal, shared with Bloomlink (a support's heal also heals the Conduit). */
-function supportHeal(world: World, owner: PlayerEntity, piece: ConduitPiece): void {
+/**
+ * Choir (T3, §7.6): a support's ability echoes, weaker, through every other support type. The T3
+ * listeners register here (the T2 file cannot import them without a cycle); `source` is the
+ * support body whose ability just fired and `target` the enemy it fired at, when it has one.
+ */
+let echoHook: ((world: World, owner: PlayerEntity, source: MinionEntity, target: MonsterEntity | undefined) => void) | null = null;
+export function setSupportEchoHook(hook: typeof echoHook): void { echoHook = hook; }
+export function echoSupportAbility(world: World, owner: PlayerEntity, source: MinionEntity, target: MonsterEntity | undefined): void {
+  echoHook?.(world, owner, source, target);
+}
+
+/** Bloomtender's heal, shared with Bloomlink (a support's heal also heals the Conduit). `strength` scales an echoed heal. */
+export function supportHeal(world: World, owner: PlayerEntity, piece: ConduitPiece, strength = 1): void {
   const hurt = mostHurtAlly(world, owner);
   if (!hurt) return;
-  const share = (piece.params.healPct ?? 0) * jobMult(owner, piece);
+  const share = (piece.params.healPct ?? 0) * jobMult(owner, piece) * strength;
   if (hurt.minion) {
     const amount = hurt.minion.hasHealth.maxHp * share;
     applyHealToMinion(hurt.minion, owner.isPlayer.id, amount, world);
@@ -169,7 +181,7 @@ export function registerSummonPiecesT2(): void {
     // Rockhurler: the boulder hits a small area around the target. Elite widens it.
     const radius = piece.params.splashRadius ?? 0;
     // Elite (§7.5): every other damage dealer's and tank's extra is area damage; supports deepen their job.
-    const eliteSplash = disciplineOf(owner) === 'conduit-elite' && piece.family !== 'support' && radius <= 0;
+    const eliteSplash = disciplineOf(owner) === 'conduit-elite' && specializationOf(owner) !== 'conduit-colossus' && piece.family !== 'support' && radius <= 0;
     const splashRadius = radius > 0 ? radius * jobMult(owner, piece) : eliteSplash ? CONDUIT_DISCIPLINE_TUNING.eliteSplashRadius : 0;
     const splashShare = radius > 0 ? (piece.params.splashShare ?? 0) : eliteSplash ? CONDUIT_DISCIPLINE_TUNING.eliteSplashShare : 0;
     if (splashRadius > 0 && splashShare > 0 && ctx.damage > 0) {
@@ -185,7 +197,10 @@ export function registerSummonPiecesT2(): void {
     }
 
     // Bloomtender: heals whichever ally is most hurt, the Conduit included.
-    if ((piece.params.healPct ?? 0) > 0) supportHeal(world, owner, piece);
+    if ((piece.params.healPct ?? 0) > 0) {
+      supportHeal(world, owner, piece);
+      echoSupportAbility(world, owner, hit.minion, target);
+    }
   });
 }
 
@@ -206,6 +221,22 @@ function controlOn(cs: TracksCombat): string[] {
   return ids;
 }
 
+/** Coat the most hurt summon that has no bark yet. `strength` scales an echoed coat (Choir). */
+export function coatBark(world: World, owner: PlayerEntity, source: MinionEntity, piece: ConduitPiece, strength = 1): void {
+  let coat: MinionEntity | undefined;
+  let worst = Infinity;
+  for (const candidate of livingMinions(world, owner)) {
+    if (getStatusEffect(candidate.tracksCombat, BARK_EFFECT_ID)) continue;
+    const fraction = candidate.hasHealth.hp / candidate.hasHealth.maxHp;
+    if (fraction < worst) { worst = fraction; coat = candidate; }
+  }
+  if (!coat) return;
+  applyStatusEffect(coat.tracksCombat, {
+    id: BARK_EFFECT_ID, maxStacks: 1, remainingMs: BARK_MS, refreshable: true, sourceId: source.isMinion.id,
+    data: { absorbPct: Math.min(0.9, (piece.params.barkAbsorbPct ?? 0) * jobMult(owner, piece) * strength), totalMs: BARK_MS },
+  });
+}
+
 function updateBark(world: World, owner: PlayerEntity, now: number): void {
   const minions = livingMinions(world, owner);
   for (const minion of minions) {
@@ -213,24 +244,15 @@ function updateBark(world: World, owner: PlayerEntity, now: number): void {
     if (!piece || (piece.params.barkEveryMs ?? 0) <= 0) continue;
     if (now < getResource(minion.tracksCombat, BARK_NEXT_AT)) continue;
     setResource(minion.tracksCombat, BARK_NEXT_AT, now + piece.params.barkEveryMs!);
-    // Coat the most hurt summon that has no bark yet.
-    let coat: MinionEntity | undefined;
-    let worst = Infinity;
-    for (const candidate of minions) {
-      if (getStatusEffect(candidate.tracksCombat, BARK_EFFECT_ID)) continue;
-      const fraction = candidate.hasHealth.hp / candidate.hasHealth.maxHp;
-      if (fraction < worst) { worst = fraction; coat = candidate; }
-    }
-    if (!coat) continue;
-    applyStatusEffect(coat.tracksCombat, {
-      id: BARK_EFFECT_ID, maxStacks: 1, remainingMs: BARK_MS, refreshable: true, sourceId: minion.isMinion.id,
-      data: { absorbPct: Math.min(0.9, (piece.params.barkAbsorbPct ?? 0) * jobMult(owner, piece)), totalMs: BARK_MS },
-    });
+    coatBark(world, owner, minion, piece);
+    echoSupportAbility(world, owner, minion, undefined);
   }
   // A bark absorbs the next stun or control: it takes the control off and is spent.
   for (const minion of minions) {
     const cs = minion.tracksCombat;
     if (!getStatusEffect(cs, BARK_EFFECT_ID)) continue;
+    // A hibernating summon is held by its own ice; the bark must not undo it.
+    if (getStatusEffect(cs, HIBERNATE_EFFECT_ID)) continue;
     const control = controlOn(cs);
     if (control.length === 0) continue;
     for (const id of control) removeStatusEffect(cs, id);

@@ -30,6 +30,7 @@ import { registerFormationCycleMoment } from './formationAttack';
 import { pruneFormationTechnique } from './formationTechnique';
 import { registerSummonPieces } from './summonPieces';
 import { registerSummonPiecesT2, updateConduitT2 } from './summonPiecesT2';
+import { registerSummonPiecesT3, updateConduitT3 } from './summonPiecesT3';
 import { syncFormationRecall } from './formationOrders';
 import { onSoulSummonDeath, updateSoul } from './souls';
 import { rebuildCostMult } from './disciplines';
@@ -229,6 +230,7 @@ function spawnFreshSlots(world: World, owner: SummonerPlayerEntity): void {
 export function initSummonerArchetype(): void {
   registerSummonPieces();
   registerSummonPiecesT2();
+  registerSummonPiecesT3();
   registerFormationCycleMoment();
 }
 
@@ -257,5 +259,6 @@ export function updateSummonerArchetype(world: World, dt: number, now: number): 
     syncSummonerFormationTarget(world, summoner);
     updateSoul(world, summoner, dt, now);
     updateConduitT2(world, summoner, now);
+    updateConduitT3(world, summoner, dt, now);
   }
 }
