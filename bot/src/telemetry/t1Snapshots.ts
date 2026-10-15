@@ -98,7 +98,6 @@ export function buildT1CharacterSnapshot(
       summonsMinions: self.summonsMinions,
     },
     classResources: {
-      cadenceSpeedStacks: self.cadenceSpeedStacks,
       cadenceCount: self.cadenceCount,
       cadenceThreshold: self.cadenceThreshold,
       cadenceEmpoweredArmed: self.cadenceEmpoweredArmed,

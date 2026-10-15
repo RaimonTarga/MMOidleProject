@@ -15,7 +15,6 @@ import {
   autoAtom,
   cadenceCountAtom,
   cadenceEmpoweredArmedAtom,
-  cadenceSpeedStacksAtom,
   cadenceThresholdAtom,
   combatArchetypeAtom,
   hpAtom,
@@ -53,7 +52,6 @@ interface DebugPlayer {
   cadenceEmpoweredArmed: boolean;
   selectedSubVariant: string | null;
   selectedRange: string | null;
-  cadenceSpeedStacks: number;
   passives: Record<string, number | undefined>;
   lastAttackAt: number;
   combatArchetype: string | null;
@@ -92,10 +90,6 @@ function buildCadenceSection(p: DebugPlayer): DebugSection {
     row('until fin', armed ? 'NEXT HIT' : `${until} hit${until === 1 ? '' : 's'}`),
     row('timeline',  timeline),
   ];
-
-  if (p.cadenceSpeedStacks > 0 || 'cadence.speed-stack' in p.passives) {
-    entries.push(row('speed stk', p.cadenceSpeedStacks));
-  }
 
   const cadencePassives = Object.entries(p.passives).filter(([k]) => k.startsWith('cadence.'));
   if (cadencePassives.length > 0) {
@@ -252,7 +246,6 @@ function DebugPanelContent() {
   const cadenceEmpoweredArmed = useAtomValue(cadenceEmpoweredArmedAtom);
   const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
   const selectedRange = useAtomValue(selectedRangeAtom);
-  const cadenceSpeedStacks = useAtomValue(cadenceSpeedStacksAtom);
   const passives = useAtomValue(passivesAtom);
   const lastAttackAt = useAtomValue(lastAttackAtAtom);
   const combatArchetype = useAtomValue(combatArchetypeAtom);
@@ -268,7 +261,6 @@ function DebugPanelContent() {
     cadenceEmpoweredArmed,
     selectedSubVariant,
     selectedRange,
-    cadenceSpeedStacks,
     passives,
     lastAttackAt,
     combatArchetype,

@@ -12,13 +12,13 @@ function resolvePrimaryRelicPreview(
   archetype: string | null | undefined,
   passives: PassiveMap,
   ratings: RelicRatings,
-  options: { subVariant?: SubVariant | null; playerTier?: number; unlockedSkills?: readonly string[]; selectedRange?: string | null; rampageStacks?: number; momentumStacks?: number } = {},
+  options: { subVariant?: SubVariant | null; playerTier?: number; unlockedSkills?: readonly string[]; selectedRange?: string | null; momentumStacks?: number } = {},
 ): ResolvedRelicProfile | null {
   switch (archetype) {
     case 'cadence': {
       const threshold = Math.max(2, Math.round(
         (passives['cadence.empowered-threshold'] ?? 5)
-          + (passives['cadence.threshold-mod'] ?? 0) - (options.rampageStacks ?? 0),
+          + (passives['cadence.threshold-mod'] ?? 0),
       ));
       const mult = (passives['cadence.empowered-mult'] ?? 2)
         + (passives['cadence.damage-mult-add'] ?? 0)
@@ -79,7 +79,7 @@ export function resolveRelicPreview(
   archetype: string | null | undefined,
   passives: PassiveMap,
   ratings: RelicRatings,
-  options: { subVariant?: SubVariant | null; playerTier?: number; unlockedSkills?: readonly string[]; selectedRange?: string | null; rampageStacks?: number; momentumStacks?: number } = {},
+  options: { subVariant?: SubVariant | null; playerTier?: number; unlockedSkills?: readonly string[]; selectedRange?: string | null; momentumStacks?: number } = {},
 ): ResolvedRelicProfile | null {
   const profile = resolvePrimaryRelicPreview(archetype, passives, ratings, options);
   const secondaryEffects = relicEffectPreview(archetype, passives, ratings, {

@@ -46,7 +46,6 @@ export interface T1SnapshotDerivedStats {
 
 /** Current class-specific meters, retained for deterministic inspection/replay. */
 export interface T1SnapshotClassResources {
-  cadenceSpeedStacks: number;
   cadenceCount: number;
   cadenceThreshold: number;
   cadenceEmpoweredArmed: boolean;

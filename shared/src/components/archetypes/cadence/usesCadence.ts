@@ -1,30 +1,9 @@
 /** Merged cadence archetype slice — wire fields + runtime bookkeeping. */
 export interface UsesCadence {
+  /** The beat counter: the index of the next beat of the combo. */
   count: number;
+  /** The combo length, the finisher included (the Order sets it). */
   threshold: number;
-  speedStacks: number;
-  charge: number;
-  echo: number;
-  // ── T4 spec runtime state ──────────────────────────────────────────────────
-  /** Aftershock: remaining regular attacks that fire their on-hit damage twice. */
-  aftershockCharges: number;
-  /** Metronome: flat damage accumulated this cycle, applied to subsequent attacks. */
-  metronomeBonus: number;
-  /** Metronome: number of buildup attacks accumulated this cycle (buff badge). */
-  metronomeStacks: number;
-  /** Resonance (Wavecrest): buildup attacks this cycle that amplify the finisher. */
-  resonanceStacks: number;
-  /** Rampage: stacks accrued from finishers (threshold-down / APS-up / mult-up). */
-  rampageStacks: number;
-  /** Rampage: ms accumulator for out-of-combat stack decay. */
-  rampageDecayMs: number;
-  /** Rampage: ms currently subtracted from attack cooldown (for exact undo). */
-  rampageCdReduction: number;
-  /** Crescendo (Juggernaut): elapsed in-combat ms; drives the finisher ramp
-   *  multiplier and resets to 0 instantly out of combat. */
-  crescendoTimerMs: number;
-  /** Verdict: character-side banked execution power (persists across targets). */
-  verdictStored: number;
   // ── The Order (class-first build plan CS.1) ────────────────────────────────
   /** The spark trophy riding this combo (armed by the last finisher), or null. */
   sparkTrophyId: string | null;
@@ -34,21 +13,9 @@ export interface UsesCadence {
 
 export function initUsesCadence(args: { threshold: number }): UsesCadence {
   return {
-    count:       0,
-    threshold:   args.threshold,
-    speedStacks: 0,
-    charge:      0,
-    echo:        0,
-    aftershockCharges: 0,
-    metronomeBonus:    0,
-    metronomeStacks:   0,
-    resonanceStacks:   0,
-    rampageStacks:     0,
-    rampageDecayMs:    0,
-    rampageCdReduction: 0,
-    crescendoTimerMs:  0,
-    verdictStored:     0,
-    sparkTrophyId:     null,
-    coiled:            false,
+    count:         0,
+    threshold:     args.threshold,
+    sparkTrophyId: null,
+    coiled:        false,
   };
 }
