@@ -50,14 +50,14 @@ assert(swarmView.available.find((p) => p.pieceId === 'conduit-thrall')!.command 
 assert(swarmView.available.find((p) => p.pieceId === 'conduit-thrall')!.baseCommand === 1, 'and the base cost stays readable');
 assert(swarmView.soul.rank === 2, 'a second Plains boss clear ranks the Soul up');
 
-// T3: the specialization shows, Colossus prices summons another +1 and the room is 1 bigger, Two Souls has two slots.
+// T3: the specialization shows, Colossus prices summons another +1, Two Souls has two slots.
 const t3 = { ...t2, playerTier: 3, bossesCleared: ['plains:1', 'forest:1'], disciplineId: 'conduit-elite' };
 const elite = composeFormationView({ ...t3, classConfig: defaultClassConfig(classConfigContextFromState(t3)!) })!;
 assert(elite.specialization === null && elite.souls.length === 1, 'before the pick: no specialization, one Soul slot');
 const colossusInput = { ...t3, specializationId: 'conduit-colossus' };
 const colossus = composeFormationView({ ...colossusInput, classConfig: defaultClassConfig(classConfigContextFromState(colossusInput)!) })!;
 assert(colossus.specialization?.id === 'conduit-colossus', 'the picked specialization is named');
-assert(colossus.command.total === elite.command.total + 1, 'Colossus: +1 Command in the room');
+assert(colossus.command.total === elite.command.total, 'Colossus: the room is the same (the +1 is in each summon's price)');
 assert(colossus.available.find((p) => p.pieceId === 'conduit-thrall')!.command === elite.available.find((p) => p.pieceId === 'conduit-thrall')!.command + 1, 'Colossus: every summon costs another +1 on its card');
 const twoInput = { ...t3, specializationId: 'conduit-two-souls' };
 const two = composeFormationView({ ...twoInput, classConfig: defaultClassConfig(classConfigContextFromState(twoInput)!) })!;
