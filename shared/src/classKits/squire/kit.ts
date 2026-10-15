@@ -56,7 +56,7 @@ export function squireTrophy(entry: Omit<SquireTrophy, 'classId' | 'params'> & {
 }
 
 function discipline(
-  entry: Omit<DisciplineDef, 'classId' | 'params'> & { id: SquireDisciplineId },
+  entry: Omit<DisciplineDef, 'classId' | 'params'> & { id: SquireDisciplineId; params?: KitParams },
 ): DisciplineDef {
   return { classId: 'cooldown', params: {}, ...entry };
 }
@@ -142,6 +142,8 @@ const PIECES: readonly SquirePiece[] = [
     sidegradeOf: 'squire-guard',
     answers: 'charging-at-me',
     text: 'When an enemy charges at you, you brace for it: the charge stops dead and the charger staggers.',
+    // PLACEHOLDERS (T2-RT): a guard costs 1 pip and a landed answer refunds about double (§8.8).
+    params: { cost: 1, refund: 2, staggerMs: 800, lockoutMs: 2500 },
   }),
   response({
     id: 'squire-unshaken',
@@ -150,6 +152,7 @@ const PIECES: readonly SquirePiece[] = [
     answers: 'control-on-me',
     // The bible names only the trigger; the effect is the dive log's (Break Free's successor).
     text: 'When a stun, root or knockdown lands on you, you spend Resolve to break free.',
+    params: { cost: 1, refund: 2 },
   }),
   response({
     id: 'squire-splitting-blow',
@@ -157,7 +160,8 @@ const PIECES: readonly SquirePiece[] = [
     family: 'counter',
     answers: 'target-shielded',
     text: 'When your target raises a shield or barrier, you strike a blow that hits barriers twice as hard.',
-    ranks: [{ rank: 2, text: 'The blow breaks Ice Armor in one hit.' }],
+    params: { cost: 1, refund: 2, barrierMult: 2, breakBarrier: 0, lockoutMs: 3000 },
+    ranks: [{ rank: 2, text: 'The blow breaks Ice Armor in one hit.', params: { breakBarrier: 1 } }],
   }),
   response({
     id: 'squire-earthstamp',
@@ -165,7 +169,8 @@ const PIECES: readonly SquirePiece[] = [
     family: 'hold',
     answers: 'burrow-at-me',
     text: 'When an enemy burrows or dashes unseen toward you, you stamp the ground: it surfaces at your feet, staggered.',
-    ranks: [{ rank: 2, text: 'The stamp also knocks down everything around it.' }],
+    params: { cost: 1, refund: 2, staggerMs: 1000, knockdownRadius: 0, knockdownMs: 900, lockoutMs: 3000 },
+    ranks: [{ rank: 2, text: 'The stamp also knocks down everything around it.', params: { knockdownRadius: 140 } }],
   }),
   response({
     id: 'squire-watchful',
@@ -173,7 +178,9 @@ const PIECES: readonly SquirePiece[] = [
     family: 'guard',
     answers: 'ambush',
     text: "An ambusher's first hit on you is caught on your shield, at no cost, and fills your Resolve.",
-    ranks: [{ rank: 2, text: 'The caught ambusher is staggered.' }],
+    // No cost (§8.16): the catch refunds its fill. cut is the share of the hit it stops.
+    params: { cost: 0, refund: 1, cut: 0.7, staggerMs: 0 },
+    ranks: [{ rank: 2, text: 'The caught ambusher is staggered.', params: { staggerMs: 1000 } }],
   }),
   response({
     id: 'squire-challenge',
@@ -181,7 +188,8 @@ const PIECES: readonly SquirePiece[] = [
     family: 'hold',
     answers: 'ranged-attacker',
     text: 'When an enemy hits you from range, kites you or attacks an ally, you pull it onto you.',
-    ranks: [{ rank: 2, text: "A pulled enemy can't move away for a moment." }],
+    params: { cost: 1, refund: 2, maxPulled: 3, range: 700, lockoutMs: 3000, rootMs: 0 },
+    ranks: [{ rank: 2, text: "A pulled enemy can't move away for a moment.", params: { rootMs: 1200 } }],
   }),
   // ── T3 (§8.16) ──
   response({
@@ -243,6 +251,8 @@ const PIECES: readonly SquirePiece[] = [
     family: 'counter',
     answers: 'telegraph-at-me',
     text: 'When a telegraphed melee blow is aimed at you, you negate it and counter at once. It costs more than Guard and fails against ground telegraphs and ranged shots.',
+    // Parry and Intercept cost 2 pips (§8.8). cut 1: the blow is negated.
+    params: { cost: 2, refund: 3, cut: 1, counterPct: 1, maxWindowMs: 4000 },
   }),
   response({
     id: 'squire-intercept',
@@ -250,6 +260,8 @@ const PIECES: readonly SquirePiece[] = [
     family: 'hold',
     answers: 'ally-threatened',
     text: 'When an ally stands under a telegraph or runs low on HP, you step in front of them and take the blow.',
+    // STAND-IN: the threats on the ally turn on you, and you brace (cut) for windowMs.
+    params: { cost: 2, refund: 3, cut: 0.6, windowMs: 3000, radius: 700, lockoutMs: 4000 },
   }),
   response({
     id: 'squire-unbowed',
@@ -257,6 +269,8 @@ const PIECES: readonly SquirePiece[] = [
     family: 'guard',
     answers: 'big-hit',
     text: 'When an untelegraphed blow takes a big share of your HP, you spend Resolve to take it on your armor, where your plating counts double.',
+    // hpShare is the blow's share of max HP (§8.5: a quarter); plating counts platingMult times.
+    params: { cost: 1, refund: 2, hpShare: 0.25, platingMult: 2 },
   }),
   // ── Every Squire's one emergency answer (§8.3, §8.10) ──
   response({
@@ -265,6 +279,8 @@ const PIECES: readonly SquirePiece[] = [
     family: 'emergency',
     answers: 'hp-low',
     text: 'When your HP runs low, you spend your whole Resolve bar to heal.',
+    // PLACEHOLDER: heals this share of max HP per pip spent; below minPips it does nothing.
+    params: { cost: 0, healPctPerPip: 0.1, minPips: 1, lockoutMs: 30000 },
   }),
 ];
 
@@ -319,8 +335,9 @@ const TROPHIES: readonly SquireTrophy[] = [
     name: 'Muster',
     kind: 'resolve',
     text: 'Every enemy that joins the fight against you fills a chunk of your Resolve, whether it hits you or not.',
-    params: { fillPerEnemy: 0.5 },
-    ranks: [{ rank: 2, bossTier: 2, text: 'A whole wave rallying to the fight fills twice as much.' }],
+    // A wave is waveMin or more enemies joining at once.
+    params: { fillPerEnemy: 0.5, waveMult: 1, waveMin: 3 },
+    ranks: [{ rank: 2, bossTier: 2, text: 'A whole wave rallying to the fight fills twice as much.', params: { waveMult: 2 } }],
   }),
   squireTrophy({
     id: 'squire-relic-forest',
@@ -330,7 +347,7 @@ const TROPHIES: readonly SquireTrophy[] = [
     text: 'Your slam fires at a third of a full bar, at a third the size; each slam fired soon after the last is a bit bigger.',
     // Each slam within `chainMs` of the last adds `chainPct` to the next, up to `chainMax`.
     params: { barShare: 0.34, sizePct: 0.34, chainPct: 0.15, chainMs: 6000, chainMax: 1 },
-    ranks: [{ rank: 2, bossTier: 2, text: 'The chain of slams grows faster.' }],
+    ranks: [{ rank: 2, bossTier: 2, text: 'The chain of slams grows faster.', params: { chainPct: 0.3, chainMax: 2 } }],
   }),
   squireTrophy({
     id: 'squire-relic-swamp',
@@ -338,9 +355,10 @@ const TROPHIES: readonly SquireTrophy[] = [
     name: 'Rot-Eater',
     kind: 'resolve',
     text: 'Poison and bleed on you fill your Resolve as if they were hits.',
-    params: { dotFillMult: 1 },
+    // debuffFill: pips for each debuff that lands on you (rank 2).
+    params: { dotFillMult: 1, debuffFill: 0 },
     ranks: [
-      { rank: 2, bossTier: 2, text: 'Every debuff that lands on you also fills your Resolve.' },
+      { rank: 2, bossTier: 2, text: 'Every debuff that lands on you also fills your Resolve.', params: { debuffFill: 0.5 } },
       { rank: 3, bossTier: 3, text: 'Rot-Eater grows stronger.' },
     ],
   }),
@@ -350,9 +368,9 @@ const TROPHIES: readonly SquireTrophy[] = [
     name: 'Faultline',
     kind: 'slam',
     text: 'Your slam runs as a shockwave down a line through the target and everything behind it, reaching enemies at range.',
-    params: { length: 320, width: 70 },
+    params: { length: 320, width: 70, barrierMult: 1 },
     ranks: [
-      { rank: 2, bossTier: 2, text: 'The shockwave hits barriers twice as hard.' },
+      { rank: 2, bossTier: 2, text: 'The shockwave hits barriers twice as hard.', params: { barrierMult: 2 } },
       { rank: 3, bossTier: 3, text: 'The line runs longer.' },
       { rank: 4, bossTier: 4, text: 'Aftershocks follow along the line.' },
     ],
@@ -365,7 +383,7 @@ const TROPHIES: readonly SquireTrophy[] = [
     text: 'Each slam strips plating from everything it hits, more with every slam.',
     params: { platingPerSlam: 2, maxStacks: 5, durationMs: 8000 },
     ranks: [
-      { rank: 2, bossTier: 2, text: 'Your slams can strip more plating in all.' },
+      { rank: 2, bossTier: 2, text: 'Your slams can strip more plating in all.', params: { maxStacks: 8 } },
       { rank: 3, bossTier: 3, text: 'Corrode grows stronger.' },
     ],
   }),
@@ -375,9 +393,10 @@ const TROPHIES: readonly SquireTrophy[] = [
     name: 'Strangler Vine',
     kind: 'slam',
     text: 'Before your slam lands, it pulls every enemy in a wide ring to you, fleeing ones included.',
+    params: { ringRadius: 260 },
     ranks: [
-      { rank: 2, bossTier: 3, text: 'The ring is wider.' },
-      { rank: 3, bossTier: 4, text: 'Strangler Vine grows stronger.' },
+      { rank: 2, bossTier: 3, text: 'The ring is wider.', params: { ringRadius: 360 } },
+      { rank: 3, bossTier: 4, text: 'Strangler Vine grows stronger.', params: { ringRadius: 440 } },
     ],
   }),
   squireTrophy({
@@ -386,9 +405,11 @@ const TROPHIES: readonly SquireTrophy[] = [
     name: "Executioner's Oath",
     kind: 'resolve',
     text: 'Your slam can fire early on an enemy below a third of its HP, with whatever Resolve you have.',
+    // hpShare: the target's HP share below which the slam may fire early; minPips the least Resolve it needs.
+    params: { hpShare: 0.33, minPips: 0.5 },
     ranks: [
-      { rank: 2, bossTier: 3, text: 'It works on enemies with more HP left.' },
-      { rank: 3, bossTier: 4, text: "Executioner's Oath grows stronger." },
+      { rank: 2, bossTier: 3, text: 'It works on enemies with more HP left.', params: { hpShare: 0.45 } },
+      { rank: 3, bossTier: 4, text: "Executioner's Oath grows stronger.", params: { hpShare: 0.55 } },
     ],
   }),
   squireTrophy({
@@ -433,6 +454,9 @@ const DISCIPLINES: readonly DisciplineDef[] = [
     fantasy: 'I read every blow and answer it.',
     text: 'Landed answers fill your Resolve much more, plain hits less. Every landed answer is followed by a quick strike at the attacker, paid from Resolve, so you slam less often.',
     pieceId: 'squire-parry',
+    // PLACEHOLDERS (§8.5): answers fill answerFillMult times, plain hits hitFillMult; each landed
+    // answer is followed by a counter that costs counterCost pips and hits for counterPct of a swing.
+    params: { answerFillMult: 1.5, hitFillMult: 0.6, counterCost: 0.5, counterPct: 0.4 },
   }),
   discipline({
     id: 'squire-bulwark',
@@ -440,6 +464,9 @@ const DISCIPLINES: readonly DisciplineDef[] = [
     fantasy: 'Everything comes to me, and nothing gets past.',
     text: 'Every enemy on you fills more Resolve, by its hits and just by being there. Your slams hold: everything they hit turns on you, and the circle grows with the enemies on you.',
     pieceId: 'squire-intercept',
+    // PLACEHOLDERS: hits fill hitFillMult times and each enemy's trickle trickleMult times; the slam
+    // turns what it hits onto you and its circle grows slamRadiusPerEnemy per enemy on you, up to slamRadiusMax.
+    params: { hitFillMult: 1.25, trickleMult: 2, slamRadiusPerEnemy: 0.1, slamRadiusMax: 0.6 },
   }),
   discipline({
     id: 'squire-juggernaut',
@@ -447,6 +474,9 @@ const DISCIPLINES: readonly DisciplineDef[] = [
     fantasy: 'My armor is my weapon.',
     text: 'Your armor and max HP fill Resolve steadily, hit or not, and hits fill less. You spend it on one huge slam, the biggest hit you have.',
     pieceId: 'squire-unbowed',
+    // PLACEHOLDERS: steady fill (pips/s) from a base plus your plating and max HP, hit or not; hits fill
+    // hitFillMult times; the slam is slamMult times its size.
+    params: { hitFillMult: 0.5, steadyBasePips: 0.04, steadyPerPlating: 0.002, steadyPerMaxHp: 0.00001, slamMult: 1.8 },
   }),
 ];
 
