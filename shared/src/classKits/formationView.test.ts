@@ -63,4 +63,9 @@ const twoInput = { ...t3, specializationId: 'conduit-two-souls' };
 const two = composeFormationView({ ...twoInput, classConfig: defaultClassConfig(classConfigContextFromState(twoInput)!) })!;
 assert(two.souls.length === 2 && two.souls.every((soul) => soul.trophyId !== null) && two.souls[0] === two.soul, 'Two Souls: both relic slots show a Soul');
 
+// T4: the picked leaf shows by name and rule.
+assert(elite.leaf === null, 'before the pick: no leaf');
+const leafView = composeFormationView({ ...twoInput, unlockedSkills: ['conduit-last-stand'], classConfig: defaultClassConfig(classConfigContextFromState(twoInput)!) })!;
+assert(leafView.leaf?.id === 'conduit-last-stand' && leafView.leaf.name === 'Last Stand', 'the picked leaf is named');
+
 console.log('formationView.test.ts: ok');

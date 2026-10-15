@@ -311,6 +311,10 @@ const CONDUIT_TAIL = [
   ...['mountain', 'cave', 'swamp', 'jungle', 'desert', 'tundra', 'volcanic']
     .flatMap((biome) => [`t3:${biome}`, `t3:${biome}-lesson`, `t3:${biome}-boss`]),
   't3:done',
+  // Tier 4: the leaf pick, then three beats per zone (T4-W2).
+  ...['mountain', 'tundra', 'jungle', 'desert', 'volcanic', 'graveyard', 'trench']
+    .flatMap((biome) => [`t4:${biome}`, `t4:${biome}-lesson`, `t4:${biome}-boss`]),
+  't4:done',
 ];
 
 function assertConduitTail(script: TutorialScript): void {
@@ -401,6 +405,30 @@ function assertConduitTail(script: TutorialScript): void {
     assert(gate(lesson) < gate(cap), `t3:${biome}: the lesson comes before the cap`);
     const bossStep = boss?.steps[0];
     assert(bossStep?.type === 'attemptBoss' && bossStep.tier === 3 && bossStep.biomeGroup === biome, `t3:${biome}-boss fights the Tier 3 boss`);
+  }
+  // Tier 4: the leaf pick, each T4 lesson, each Soul.
+  assert(say('t4:mountain').includes('leaf') && say('t4:mountain').includes('Passive Tree'), 'the first Tier 4 beat sends the player to pick a leaf');
+  for (const [id, name] of [
+    ['t4:mountain-lesson', 'Avalanche'], ['t4:tundra-lesson', 'Icewarden'], ['t4:jungle-lesson', 'Dartcaller'],
+    ['t4:desert-lesson', 'Mirage'], ['t4:volcanic-lesson', 'Obsidian Tortoise'], ['t4:graveyard-lesson', 'Gravecaller'],
+    ['t4:trench-lesson', 'Abyssal Warden'],
+  ] as const) assert(say(id).includes(name), `${id} names ${name}`);
+  for (const [id, soul] of [
+    ['t4:tundra', 'Stoneplate'], ['t4:jungle', 'Rime-Mammoth'], ['t4:desert', 'Dread-Gorger'], ['t4:volcanic', 'Dune-Stalker'],
+    ['t4:graveyard', 'Magma Salamander'], ['t4:trench', 'Charnel-Crown'], ['t4:done', 'Elder Serpent'],
+  ] as const) assert(say(id).includes(soul), `${id} announces the ${soul} Soul`);
+  for (const biome of ['mountain', 'tundra', 'jungle', 'desert', 'volcanic', 'graveyard', 'trench']) {
+    const lesson = tail.find((beat) => beat.id === `t4:${biome}`);
+    const cap = tail.find((beat) => beat.id === `t4:${biome}-lesson`);
+    const boss = tail.find((beat) => beat.id === `t4:${biome}-boss`);
+    const gate = (beat: TutorialBeat | undefined) => {
+      const step = beat?.steps[0];
+      return step?.type === 'farm' && step.until.type === 'biomeLevelAtLeast' && step.at.kind === 'biome' && step.at.tier === 4 ? step.until.level : -1;
+    };
+    assert(gate(lesson) > 0 && gate(cap) === biomeLevelCap(4, biome), `t4:${biome} farms Tier 4 to the lesson, then to the cap`);
+    assert(gate(lesson) < gate(cap), `t4:${biome}: the lesson comes before the cap`);
+    const bossStep = boss?.steps[0];
+    assert(bossStep?.type === 'attemptBoss' && bossStep.tier === 4 && bossStep.biomeGroup === biome, `t4:${biome}-boss fights the Tier 4 boss`);
   }
   if (!mountain) throw new Error('the Mountain farm is missing');
   assert(farmGate(mountain, 'mountain') === 2, 'the Mountain farm ends at the Ridge Marksman lesson');

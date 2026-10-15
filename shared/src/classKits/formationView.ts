@@ -57,6 +57,8 @@ export interface FormationView {
   discipline: { id: string; name: string; text: string } | null;
   /** The picked specialization and its rule in words, or null before the pick (T3). */
   specialization: { id: string; name: string; text: string } | null;
+  /** The picked T4 leaf and its rule in words, or null before the pick. */
+  leaf: { id: string; name: string; text: string } | null;
   /** The Soul in the first relic slot: a free extra body, or none yet. `rank` is the trophy's rank, `maxRank` the highest it reaches. */
   soul: FormationSoulView;
   /** Every relic slot, in order: one, or two with Two Souls (the first entry is `soul`). */
@@ -116,6 +118,7 @@ export function composeFormationView(input: ClassScreenInput): FormationView | n
     .map((piece) => pieceView(piece, ctx.disciplineId, !seen.has(piece.id), ctx.specializationId));
   const picked = CONDUIT_KIT.disciplines.find((entry) => entry.id === ctx.disciplineId);
   const pickedSpec = CONDUIT_KIT.specializations.find((entry) => entry.id === ctx.specializationId);
+  const pickedLeaf = CONDUIT_KIT.leaves.find((entry) => input.unlockedSkills?.includes(entry.id));
   const soulView = (slot: number): FormationSoulView => {
     const trophy = config.relic[slot] ? SOULS.get(config.relic[slot]!) : undefined;
     return trophy
@@ -138,6 +141,7 @@ export function composeFormationView(input: ClassScreenInput): FormationView | n
     },
     discipline: picked ? { id: picked.id, name: picked.name, text: picked.text } : null,
     specialization: pickedSpec ? { id: pickedSpec.id, name: pickedSpec.name, text: pickedSpec.text } : null,
+    leaf: pickedLeaf ? { id: pickedLeaf.id, name: pickedLeaf.name, text: pickedLeaf.text } : null,
     soul: souls[0]!,
     souls,
     problems: check.ok ? [] : check.reasons,

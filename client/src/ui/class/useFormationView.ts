@@ -10,6 +10,7 @@ import {
   passivesAtom,
   playerTierAtom,
   specializationIdAtom,
+  unlockedSkillsAtom,
 } from '../../hud/atoms';
 
 /**
@@ -23,6 +24,7 @@ export function useFormationView(override?: ClassConfig | null): FormationView |
   const bossesCleared = useAtomValue(bossesClearedAtom);
   const disciplineId = useAtomValue(disciplineIdAtom);
   const specializationId = useAtomValue(specializationIdAtom);
+  const unlockedSkills = useAtomValue(unlockedSkillsAtom);
   const playerTier = useAtomValue(playerTierAtom);
   const passives = useAtomValue(passivesAtom);
   // The weapon adds or removes Command, as the server's context reads it.
@@ -38,5 +40,6 @@ export function useFormationView(override?: ClassConfig | null): FormationView |
     specializationId,
     playerTier,
     budgetBonus,
-  }), [combatArchetype, classConfig, biomeLevel, bossesCleared, disciplineId, specializationId, playerTier, budgetBonus]);
+    unlockedSkills,
+  }), [combatArchetype, classConfig, biomeLevel, bossesCleared, disciplineId, specializationId, playerTier, budgetBonus, unlockedSkills]);
 }

@@ -409,6 +409,12 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'conduit-hibernate': 'dot-frozen',
   'conduit-spore': 'debuff-swamp-rot',
   'conduit-hunt': 'debuff-sun-mark',
+  // Tier 4 stand-ins, same rule.
+  'conduit-ice-shell': 'defense-absorb',
+  'conduit-withdraw': 'obsidian-shell',
+  'conduit-last-stand': 'squire-guard',
+  'conduit-fall-back': 'break-free',
+  'conduit-seal': 'cleanse',
   'slinger-venom': 'debuff-poison',
   'slinger-rot': 'debuff-poison',
   // Stand-ins until the designer's icons: burn wears the DoT icon, the mark the shatter window.

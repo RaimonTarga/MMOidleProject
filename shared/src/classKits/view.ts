@@ -84,6 +84,8 @@ export interface ClassScreenView {
 export interface ClassScreenInput extends ClassStateInput {
   classConfig: ClassConfig | null;
   playerTier: number;
+  /** The skill nodes taken (the Conduit's T4 leaf reads from here). */
+  unlockedSkills?: readonly string[];
 }
 
 export function biomeDisplayName(biome: string): string {
