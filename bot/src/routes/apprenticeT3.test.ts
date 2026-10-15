@@ -121,7 +121,8 @@ assert(milestoneIds.every((id) => KEBAB.test(id)));
 for (const { biomeGroup } of APPRENTICE_T3_ZONES) assert(milestoneIds.includes(`${biomeGroup}-t3-boss`));
 
 // The T3 guide, after the T2 stretch: the pick line on the first zone, then lesson and boss per zone.
-const guide = { ...script, beats: script.beats.slice(script.beats.findIndex((beat) => beat.id === "apprentice-t3-mountain")) };
+const t4Start = script.beats.findIndex((beat) => beat.id === "apprentice-t4-mountain");
+const guide = { ...script, beats: script.beats.slice(script.beats.findIndex((beat) => beat.id === "apprentice-t3-mountain"), t4Start < 0 ? undefined : t4Start) };
 assert.match(guide.beats[0].say ?? "", /specialization/i);
 for (const beat of guide.beats) {
   for (const line of [beat.say, beat.waiting]) {

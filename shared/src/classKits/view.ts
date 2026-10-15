@@ -84,6 +84,8 @@ export interface ClassScreenView {
 export interface ClassScreenInput extends ClassStateInput {
   classConfig: ClassConfig | null;
   playerTier: number;
+  /** The T4 leaf picked (an unlocked kit leaf id), when the class shows it. */
+  leafId?: string | null;
 }
 
 export function biomeDisplayName(biome: string): string {

@@ -6,7 +6,8 @@
  * After the tier-2 promotion the guide goes on through the T2 table (§9.16): the school pick,
  * then each T2 zone as a farm to its lesson, the lesson line (the farm goes on to the zone's
  * cap) and the boss line, which names the trophy the kill ranks up. The T3 stretch (§9.16) repeats
- * that shape for the seven T3 zones, opening with the specialization pick.
+ * that shape for the seven T3 zones, opening with the specialization pick. The T4 stretch does the same for the seven T4
+ * zones (the Wasteland and the Trench new), opening with the leaf pick.
  */
 import { APPRENTICE_KIT } from '../../classKits/apprentice/kit';
 import { LESSON_ZONE_LEVEL } from '../../classKits/kitHelpers';
@@ -193,6 +194,69 @@ const T3_ZONES: readonly TierZone[] = [
   },
 ];
 
+/**
+ * The T4 stretch in the bible's table order (§9.16). The Wasteland is the `graveyard` biome. Rank-ups
+ * the bible gives without a twist read as "stronger"; the gear jobs are not taught here.
+ */
+const T4_ZONES: readonly TierZone[] = [
+  {
+    biome: 'mountain',
+    name: 'Mountain',
+    chapter: 'The Mountain, Tier 4',
+    intro: 'Tier 4: pick a leaf in the Passive Tree, under your school. It answers what reaches you. Fight up the Mountain.',
+    lesson: { pieceId: 'apprentice-seize', rank: 3, say: 'Seize is stronger: it also cancels the target\'s ground telegraphs.' },
+    boss: 'The Mountain boss ranks up Petrify: a longer hold again. Clear the guards, then the altar.',
+  },
+  {
+    biome: 'tundra',
+    name: 'Tundra',
+    chapter: 'The Tundra, Tier 4',
+    intro: 'The Tundra again, with shields that harden. Fight through it.',
+    lesson: { pieceId: 'apprentice-frostcrack', rank: 1, say: 'Frostcrack is learned: a Seize on a shielded or shelled enemy cracks the shell open. Place it on "the target raises a shield".' },
+    boss: 'The Tundra boss ranks up Frostheart: a longer brittle after every Seize. Clear the guards, then the altar.',
+  },
+  {
+    biome: 'jungle',
+    name: 'Jungle',
+    chapter: 'The Jungle, Tier 4',
+    intro: 'The Jungle again, with hiders and runners. Fight through it.',
+    lesson: { pieceId: 'apprentice-spread', rank: 2, say: 'Spread is stronger: it also reaches enemies that hide or flee nearby.' },
+    boss: 'The Jungle boss ranks up Scent: sigils on a runner tick faster still. Clear the guards, then the altar.',
+  },
+  {
+    biome: 'desert',
+    name: 'Desert',
+    chapter: 'The Desert, Tier 4',
+    intro: 'The Desert again, with harsher debuffs. Fight through it.',
+    lesson: { pieceId: 'apprentice-recoil', rank: 2, say: 'Recoil is stronger: its caster also suffers the effect it put on you.' },
+    boss: 'The Desert boss ranks up Dune Wind: the leap reaches two more enemies. Clear the guards, then the altar.',
+  },
+  {
+    biome: 'volcanic',
+    name: 'Volcanic',
+    chapter: 'The Volcanic, Tier 4',
+    intro: 'The Volcanic again, hotter. Fight through it.',
+    lesson: { pieceId: 'apprentice-cinderfall', rank: 2, say: 'Cinderfall is stronger: each step of the Heat widens the blast.' },
+    boss: 'The Volcanic boss ranks up Magma Core: a stronger tick through the shell. Clear the guards, then the altar.',
+  },
+  {
+    biome: 'graveyard',
+    name: 'Wasteland',
+    chapter: 'The Wasteland',
+    intro: 'The Wasteland is new: the dead rise again. Fight through it.',
+    lesson: { pieceId: 'apprentice-pyre', rank: 1, say: 'Pyre is learned: a fallen enemy carrying your sigils burns and cannot rise. Place it on "an enemy rises".' },
+    boss: 'The Wasteland boss gives Dirge: a Detonate also sets off your sigils on every risen enemy. Clear the guards, then the altar.',
+  },
+  {
+    biome: 'trench',
+    name: 'Trench',
+    chapter: 'The Trench',
+    intro: 'The Trench is new: hunters, kiters and anchors out of reach. Fight through it.',
+    lesson: { pieceId: 'apprentice-transference', rank: 1, say: 'Transference is learned: spend the target\'s sigils to move a debuff off you onto it. Place it beside Detonate.' },
+    boss: 'The Trench boss gives Pressure Fuse: a Detonate on a target out of reach waits, then goes off doubled. Clear the guards, then the altar.',
+  },
+];
+
 /** The zone's biome level at which its lesson arrives, as the kit counts it. */
 function lessonLevel(zone: TierZone): number {
   const lesson = APPRENTICE_KIT.lessons.find((entry) => entry.pieceId === zone.lesson.pieceId && entry.rank === zone.lesson.rank);
@@ -283,6 +347,6 @@ export function buildApprenticeBeats(): TutorialBeat[] {
     }
     return splitAtLesson(beat);
   });
-  // The farewell waits on tier 2; the T2 and T3 stretches follow it, and the panel's goodbye comes last.
-  return [...t1, ...buildTierBeats(2, T2_ZONES), ...buildTierBeats(3, T3_ZONES)];
+  // The farewell waits on tier 2; the T2, T3 and T4 stretches follow it, and the panel's goodbye comes last.
+  return [...t1, ...buildTierBeats(2, T2_ZONES), ...buildTierBeats(3, T3_ZONES), ...buildTierBeats(4, T4_ZONES)];
 }

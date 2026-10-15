@@ -68,4 +68,12 @@ assert(t3View.specialization?.id === 'apprentice-carrier' && t3View.specializati
 assert(composePayoffsView({ ...t3, specializationId: 'apprentice-afterburn', classConfig: defaultClassConfig(classConfigContextFromState(t3)!) })!.specialization === null, 'a specialization of another school is not shown');
 assert(t2View.specialization === null, 'no pick, no specialization');
 
+// T4: the leaf shows under the school it belongs to; a leaf of another school is not shown.
+const t4: ClassScreenInput = { ...t3, playerTier: 4, leafId: 'apprentice-thick-air' };
+const t4Config = defaultClassConfig(classConfigContextFromState(t4)!);
+const t4View = composePayoffsView({ ...t4, classConfig: t4Config })!;
+assert(t4View.leaf?.id === 'apprentice-thick-air' && t4View.leaf.column === 'charger' && t4View.leaf.text.length > 0, 'the leaf shows its rule');
+assert(composePayoffsView({ ...t4, leafId: 'apprentice-tinderbox', classConfig: t4Config })!.leaf === null, 'a leaf of another school is not shown');
+assert(t3View.leaf === null, 'no pick, no leaf');
+
 console.log('payoffsView.test.ts: ok');

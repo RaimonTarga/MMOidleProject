@@ -63,6 +63,17 @@ export function PayoffsEditor({ view }: { view: ClassScreenView }) {
           </div>
         </article>
       )}
+      {payoffs.leaf && (
+        <article className={`class-panel__card payoffs-editor__discipline payoffs-editor__specialization payoffs-editor__family--${school ?? 'poison'}`}>
+          <div>
+            <div className="class-panel__card-title">
+              <span className="class-panel__name">{payoffs.leaf.name}</span>
+              <span className="payoffs-editor__family">{`leaf: ${payoffs.leaf.column}`}</span>
+            </div>
+            <p className="class-panel__line">{payoffs.leaf.text}</p>
+          </div>
+        </article>
+      )}
       <div className="payoffs-editor__board">
         <figure className="payoffs-editor__enemy">
           <SigilRing cap={payoffs.sigils.cap} stacks={payoffs.sigils.cap} enemy school={school} />
