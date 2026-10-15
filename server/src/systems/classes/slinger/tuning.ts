@@ -107,3 +107,39 @@ export const HEAT_STACKS_MAX = 15;
 export const CROSSFIRE_KEYS: readonly string[] = [
   'nickPct', 'pelletPct', 'slowPerRound', 'tickShare', 'shovePx', 'shredPerRound', 'movePerChill', 'attackPerChill', 'burnShare', 'fleeSlowPct',
 ];
+
+// ── Tier 4 (T4-SLINGER; bible §10.7, §10.16): every number is a PLACEHOLDER ─────────────────
+
+export const LIGHT_HANDS = 'slinger-light-hands';
+export const SLIP_AWAY = 'slinger-slip-away';
+export const QUICK_SWAP = 'slinger-quick-swap';
+export const BUNKER = 'slinger-bunker';
+export const STAKES = 'slinger-stakes';
+export const FRESH_POWDER = 'slinger-fresh-powder';
+export const COOL_RELOAD = 'slinger-cool-reload';
+export const STEADY_NERVE = 'slinger-steady-nerve';
+export const IMPROVISE = 'slinger-improvise';
+
+/** Light Hands: while reloading, the first hit in this window (ms) deals this share. */
+export const LIGHT_HANDS_EVERY_MS = 4_000;
+export const LIGHT_HANDS_MULT = 0.5;
+/** Slip Away: the speed layer while an enemy is in melee with you. */
+export const SLIP_AWAY_MULT = 1.25;
+/** Bunker: damage taken while reloading. */
+export const BUNKER_MULT = 0.75;
+/** Stakes: an enemy this close (px) and charging is stopped dead and held (ms); once per enemy per window (ms). */
+export const STAKES_PX = 90;
+export const STAKES_HOLD_MS = 800;
+export const STAKES_EVERY_MS = 6_000;
+/** Cool Reload: a telegraphed hit aimed at you while reloading deals this share. */
+export const COOL_RELOAD_MULT = 0.5;
+/** Steady Nerve: how long each refresh of the stun guard lasts (ms). */
+export const STEADY_NERVE_MS = 400;
+/** Improvise: the called shot hits this much harder when the loaded clip did nothing to its target. */
+export const IMPROVISE_MULT = 1 + 1 / 3;
+/** A monster this resistant to damage over time counts as immune to poison (Improvise). */
+export const DOT_IMMUNE_AT = 0.9;
+
+/** Shell ids that read as obsidian (Thermite's double). */
+export const OBSIDIAN_WARD_IDS: readonly string[] = ['magma-obsidian-shell'];
+export const OBSIDIAN_MONSTERS: readonly string[] = ['obsidian-tortoise', 'magma-salamander'];

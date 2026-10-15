@@ -132,7 +132,7 @@ const PIECES: readonly SlingerPiece[] = [
     family: 'utility',
     color: '#b8c4ff',
     text: 'Each round hits barriers and shields twice as hard.',
-    ranks: [{ rank: 2, text: 'A barrier breaks after a few rounds.' }],
+    ranks: [{ rank: 2, text: 'A barrier breaks after a few rounds.', params: { breakAfterRounds: 3 } }],
   }),
   clip({
     id: 'slinger-tracer',
@@ -143,7 +143,7 @@ const PIECES: readonly SlingerPiece[] = [
     text: "Each round tags its target, so it can't hide, vanish, or break away from you. Ambushers in cover are revealed.",
     ranks: [
       { rank: 2, text: 'A traced target also moves slower while it flees.', params: { fleeSlowPct: 0.3 } },
-      { rank: 3, text: 'Rounds hit a traced target harder while it flees or hides.' },
+      { rank: 3, text: 'Rounds hit a traced target harder while it flees or hides.', params: { fleeHitPct: 0.4 } },
     ],
   }),
   clip({
@@ -153,7 +153,7 @@ const PIECES: readonly SlingerPiece[] = [
     family: 'damage',
     color: '#ff9f6b',
     text: 'Each round hits harder when the target is below half health.',
-    ranks: [{ rank: 2, text: 'The bonus doubles when the target is below a third of its health.' }],
+    ranks: [{ rank: 2, text: 'The bonus doubles when the target is below a third of its health.', params: { lowHp: 0.33, lowMult: 2 } }],
   }),
   // ── T3 ──
   clip({
@@ -183,12 +183,12 @@ const PIECES: readonly SlingerPiece[] = [
   }),
   clip({
     id: 'slinger-frost',
-    params: { damagePct: 0.9, chillPerRound: 1, maxChill: 5, chillMs: 4000, movePerChill: 0.06, attackPerChill: 0.05 },
+    params: { damagePct: 0.9, chillPerRound: 1, iceArmorMult: 1, maxChill: 5, chillMs: 4000, movePerChill: 0.06, attackPerChill: 0.05 },
     name: 'Frost',
     family: 'control',
     color: '#8fe6ff',
     text: 'Each round chills the target, so it attacks and moves slower. The chill stops growing, and it never freezes.',
-    ranks: [{ rank: 2, text: 'The chill builds twice as fast, and Ice Armor takes twice as much of it.' }],
+    ranks: [{ rank: 2, text: 'The chill builds twice as fast, and Ice Armor takes twice as much of it.', params: { chillPerRound: 2, iceArmorMult: 2 } }],
   }),
   clip({
     id: 'slinger-incendiary',
@@ -201,6 +201,7 @@ const PIECES: readonly SlingerPiece[] = [
   // ── T4 ──
   clip({
     id: 'slinger-thermite',
+    params: { damagePct: 0.9, burnShare: 0.15, maxBurn: 5, burnMs: 4000, tickMs: 1000, shellDrain: 2, shellMult: 2 },
     name: 'Thermite',
     family: 'damage',
     color: '#ff3d6e',
@@ -209,6 +210,7 @@ const PIECES: readonly SlingerPiece[] = [
   }),
   clip({
     id: 'slinger-hallowed',
+    params: { damagePct: 0.9, risenMult: 2, weakenPct: 0.3 },
     name: 'Hallowed',
     family: 'damage',
     color: '#fff1b8',
@@ -216,6 +218,7 @@ const PIECES: readonly SlingerPiece[] = [
   }),
   clip({
     id: 'slinger-exploit',
+    params: { damagePct: 0.9, perDebuff: 0.15, maxDebuffs: 6 },
     name: 'Exploit',
     family: 'damage',
     color: '#b06cff',
@@ -260,8 +263,8 @@ const LESSONS: readonly LessonDef[] = [
 /**
  * One trophy round per boss lineage (§10.4, §10.9, §10.16).
  *
- * Named in §10.16 without a twist, so left out: Hunter's Round III, Bounty Round III, Rime Round II,
- * Cinder Round II. The T3 ranks carry placeholder numbers where the bible names only "stronger".
+ * Named in §10.16 without a twist: Hunter's Round III, Bounty Round III, Rime Round II, Cinder Round II.
+ * Those ranks (and the T3 ones) carry placeholder numbers where the bible names only "stronger".
  */
 const TROPHIES: readonly SlingerTrophy[] = [
   slingerTrophy({
@@ -300,7 +303,7 @@ const TROPHIES: readonly SlingerTrophy[] = [
     ranks: [
       { rank: 2, bossTier: 2, text: 'The blast is wider, and it also cracks plating.', params: { radius: 150, crackFraction: 0.3, crackMs: 6000 } },
       { rank: 3, bossTier: 3, text: 'It knocks down.', params: { knockdownMs: 1200 } },
-      { rank: 4, bossTier: 4, text: 'The blast leaves aftershocks.' },
+      { rank: 4, bossTier: 4, text: 'The blast leaves aftershocks.', params: { aftershocks: 2, aftershockPct: 0.35, aftershockMs: 700 } },
     ],
   }),
   slingerTrophy({
@@ -322,7 +325,7 @@ const TROPHIES: readonly SlingerTrophy[] = [
     text: "Your last round follows its target, can't miss a fleeing enemy, and hits harder the farther it flies.",
     ranks: [
       { rank: 2, bossTier: 3, text: "Hunter's Round grows stronger.", params: { farPctPer100px: 0.3 } },
-      { rank: 3, bossTier: 4, text: "Hunter's Round grows stronger." },
+      { rank: 3, bossTier: 4, text: "Hunter's Round grows stronger.", params: { farPctPer100px: 0.4 } },
     ],
   }),
   slingerTrophy({
@@ -333,7 +336,7 @@ const TROPHIES: readonly SlingerTrophy[] = [
     text: 'Your last round finishes a target below a threshold of its health.',
     ranks: [
       { rank: 2, bossTier: 3, text: 'The threshold is higher.', params: { threshold: 0.25 } },
-      { rank: 3, bossTier: 4, text: 'Bounty Round grows stronger.' },
+      { rank: 3, bossTier: 4, text: 'Bounty Round grows stronger.', params: { threshold: 0.35 } },
     ],
   }),
   slingerTrophy({
@@ -343,7 +346,7 @@ const TROPHIES: readonly SlingerTrophy[] = [
     name: 'Rime Round',
     text: 'Your last round leaves frozen ground that slows enemies standing on it.',
     ranks: [
-      { rank: 2, bossTier: 4, text: 'Rime Round grows stronger.' },
+      { rank: 2, bossTier: 4, text: 'Rime Round grows stronger.', params: { radius: 150, slowPct: 0.55, groundMs: 8000 } },
     ],
   }),
   slingerTrophy({
@@ -353,11 +356,12 @@ const TROPHIES: readonly SlingerTrophy[] = [
     name: 'Cinder Round',
     text: 'Your last round sets everything around the target burning.',
     ranks: [
-      { rank: 2, bossTier: 4, text: 'Cinder Round grows stronger.' },
+      { rank: 2, bossTier: 4, text: 'Cinder Round grows stronger.', params: { radius: 180, burnShare: 0.25, stacks: 3 } },
     ],
   }),
   slingerTrophy({
     id: 'slinger-relic-graveyard',
+    params: { perEnemy: 0.1, maxEnemies: 10 },
     lineage: 'graveyard',
     name: 'Toll Round',
     text: 'Your last round hits harder for every enemy in the fight.',
@@ -365,6 +369,7 @@ const TROPHIES: readonly SlingerTrophy[] = [
   }),
   slingerTrophy({
     id: 'slinger-relic-trench',
+    params: { harpoonMs: 4000 },
     lineage: 'trench',
     name: 'Harpoon Round',
     text: "Your last round harpoons the target. For a few seconds it can't dive, burrow, or flee.",

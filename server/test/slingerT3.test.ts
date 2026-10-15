@@ -41,9 +41,9 @@ import { World } from '../src/world/World';
 
 initCombatSystems();
 const NODE = 'node-5-5';
-/** Every biome at the end of tier 3 (the Jungle, Desert, Tundra and Volcanic start later, so their level is lower). */
+/** Every biome at the end of tier 3 (the Jungle and Desert start a tier later, the Tundra and Volcanic two, so their level is lower; at 12 the Tundra would already own its tier 4 rank). */
 const T3_BIOMES = {
-  plains: 18, forest: 18, swamp: 18, mountain: 18, cave: 18, jungle: 12, desert: 12, tundra: 12, volcanic: 12,
+  plains: 18, forest: 18, swamp: 18, mountain: 18, cave: 18, jungle: 12, desert: 12, tundra: 6, volcanic: 6,
 };
 const base = MONSTER_DATABASE.get('bone-crawler')!;
 MONSTER_DATABASE.set('test-slinger-dummy', { ...base, id: 'test-slinger-dummy', evasion: 0 });

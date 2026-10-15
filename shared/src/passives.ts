@@ -172,6 +172,13 @@ export const DEFENSE_KEYS = [
   'slinger.thaw',  // Thaw: Recovery share multiplied while you are chilled or slowed
   'slinger.asbestos',  // Asbestos Coat: the Heat's extra damage does not apply to you while you reload
   'slinger.heatsink',  // Heatsink: Recovery rises by this share per step of Heat while no enemy is near you
+  // Slinger T4 gear (class-first build plan T4-SLINGER)
+  'slinger.splash-pct',  // Reaper's Repeater: each round splashes this share of its damage to the enemies around the target
+  'slinger.pressure-pct',  // Pressure Rifle: rounds hit this much harder at the target's full HP, less as it falls
+  'slinger.hallowed-ground',  // Hallowed Ground: risen enemies deal this share of their damage to you while you reload
+  'slinger.vigil',  // Vigil: Recovery rises by this share per enemy in the fight while none is near you
+  'slinger.pressure-suit',  // Pressure Suit: no debuff lands on you while you reload
+  'slinger.ballast',  // Ballast: Recovery rises by this share per different debuff on you
   'spirit.area-extra',  // Forked Rod: area spends reach this many more enemies
   'spirit.cost-mult',  // Weapon: spends cost this much (1 = normal)
   'spirit.damage-mult',  // Weapon: spends hit this much (1 = normal)

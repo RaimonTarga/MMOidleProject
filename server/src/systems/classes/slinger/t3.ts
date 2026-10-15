@@ -77,6 +77,12 @@ export function tetherHit(player: PlayerEntity, target: MonsterEntity, rounds: n
   if (inRow >= rounds) setResource(cs, tetherUntilKey(pid), now + holdMs);
 }
 
+/** Hold a target as Tether would, for `holdMs` (Harpoon Round). */
+export function tetherFor(player: PlayerEntity, target: MonsterEntity, holdMs: number, now: number): void {
+  const key = tetherUntilKey(player.isPlayer.id);
+  setResource(target.tracksCombat, key, Math.max(getResource(target.tracksCombat, key), now + holdMs));
+}
+
 export function isTethered(player: PlayerEntity, monster: MonsterEntity, now: number): boolean {
   return getResource(monster.tracksCombat, tetherUntilKey(player.isPlayer.id)) > now;
 }
