@@ -182,6 +182,7 @@ for (const beat of route) {
 assert(Object.keys(TUTORIAL_CLASS_BEATS).join(',') === 'cadence-root,cooldown-root,summoner-root', 'the Striker, Squire and Conduit builders are registered');
 assert(Object.keys(TUTORIAL_CLASS_BEATS).join(',') === 'cadence-root,cooldown-root,reload-root',
   'the Striker, Squire and Slinger builders are registered');
+assert(Object.keys(TUTORIAL_CLASS_BEATS).join(',') === 'cadence-root,cooldown-root,energy-root', 'the Striker, Squire and Spirit builders are registered');
 assert(CLASS_ROOTS.length === 6, `six class roots, found ${CLASS_ROOTS.map((node) => node.id).join(',')}`);
 
 function sameRoute(script: TutorialScript): void {
@@ -291,6 +292,7 @@ function assertConduitTail(script: TutorialScript): void {
 function assertSlingerTail(script: TutorialScript): void {
   assert(script.beats.length === TUTORIAL_OPENING.beats.length + SLINGER_TAIL.length,
     `${script.id}: opening plus the Slinger tail`);
+function assertSpiritTail(script: TutorialScript): void {
   script.beats.slice(0, TUTORIAL_OPENING.beats.length).forEach((beat, i) => {
     assert(beat === TUTORIAL_OPENING.beats[i], `${script.id}: opening beat ${beat.id} was replaced`);
   });
@@ -360,6 +362,37 @@ function assertSlingerTail(script: TutorialScript): void {
   const mountain = tail.find((beat) => beat.id === 'slinger:mountain');
   if (!mountain) throw new Error('the Mountain farm is missing');
   assert(farmGate(mountain, 'mountain') === 2, 'the Mountain farm ends at Stopping\'s lesson');
+  assert(tail.map((beat) => beat.id).join(',') === [
+    'open:plains', 'spirit:chain-lightning', 'boss:plains',
+    'zone:forest', 'spirit:thunderclap', 'zone:swamp', 'spirit:downpour',
+    'zone:cave', 'spirit:thunderbolt', 'spirit:mountain', 'boss:mountain', 'farewell',
+  ].join(','), 'the Spirit keeps the seal route order and inserts its lessons');
+  const say = (id: string) => tail.find((beat) => beat.id === id)?.say ?? '';
+  for (const text of ['plain rod', 'Storm 4', 'fills itself', 'Bolt band', '30% floor', 'gathers to full', 'breaks down to the floor', 'before HP']) {
+    assert(say('open:plains').includes(text), `the Spirit intro teaches ${text}`);
+  }
+  assert(say('boss:plains').includes('base kit'), 'the first boss is faced with the base kit');
+  assert(say('zone:forest').includes('Crosswind'), 'the first boss gives Crosswind');
+  assert(say('boss:mountain').includes('Eye of the Storm'), 'Eye is taught before the Mountain seal');
+  for (const [approach, lesson, biome, name] of [
+    ['open:plains', 'spirit:chain-lightning', 'plains', 'Chain Lightning'],
+    ['zone:forest', 'spirit:thunderclap', 'forest', 'Thunderclap'],
+    ['zone:swamp', 'spirit:downpour', 'swamp', 'Downpour'],
+    ['zone:cave', 'spirit:thunderbolt', 'cave', 'Thunderbolt'],
+  ] as const) {
+    const before = tail.find((beat) => beat.id === approach)!;
+    const after = tail.find((beat) => beat.id === lesson)!;
+    assert(farmGate(before, biome) === 2, `${approach} stops at the lesson`);
+    assert(farmGate(after, biome) === biomeLevelCap(1, biome), `${lesson} continues to the tier cap`);
+    assert(after.say.includes(name), `${lesson} names the piece`);
+  }
+  assert(farmGate(tail.find((beat) => beat.id === 'spirit:mountain')!, 'mountain') === 2,
+    'Mountain stops at Eye of the Storm');
+  assert(tail[tail.length - 1].say === TUTORIAL_FAREWELL[0], 'the Spirit keeps the farewell');
+  for (const beat of tail) {
+    assert(beat.say.length < SAY_LIMIT && (beat.waiting?.length ?? 0) < SAY_LIMIT,
+      `${beat.id}: Spirit lines stay under 170 characters`);
+  }
 }
 
 for (const root of CLASS_ROOTS) {
@@ -370,6 +403,8 @@ for (const root of CLASS_ROOTS) {
   if (root.id === 'cadence-root') assertStrikerTail(script);
   else if (root.id === 'summoner-root') assertConduitTail(script);
   else if (root.id === 'reload-root') assertSlingerTail(script);
+  if (root.id === 'energy-root') assertSpiritTail(script);
+  else if (root.id === 'cadence-root') assertStrikerTail(script);
   else if (TUTORIAL_CLASS_BEATS[root.id]) {
     script.beats.slice(0, TUTORIAL_OPENING.beats.length).forEach((beat, i) => {
       assert(beat === TUTORIAL_OPENING.beats[i], `${script.id}: opening beat ${beat.id} was replaced`);
@@ -494,6 +529,50 @@ for (const script of SCRIPTS) {
     bossesCleared: [...cleared, bossClearKey('mountain', 1)],
   }));
   assert(finished === script.beats.length, 'both seals at tier 2 finish the script, farewell included');
+}
+
+// ── Spirit resume: each lesson appears at its unlock, before both seals ──────
+{
+  const script = tutorialScriptFor('energy-root');
+  const levels: Record<string, number> = { clearing: biomeLevelCap(1, 'clearing') };
+  const cleared: string[] = [];
+  const openingDone = {
+    playerTier: 1,
+    selectedClass: 'energy-root',
+    equipment: {
+      ...emptyEquipment(),
+      weapon: 'primordial-club', armor: 'clearing-vest-t1',
+      recovery: 'clearing-charm-t1', mobility: 'clearing-boots-t1',
+    },
+  };
+  const at = (id: string, playerTier = 1) => {
+    const index = resolveBeatIndex(script, view({ ...openingDone, playerTier, biomeLevel: levels, bossesCleared: cleared }));
+    assert(index === beatIndex(script, id), `Spirit expected ${id}, got ${script.beats[index]?.id ?? 'done'}`);
+  };
+  at('open:plains');
+  levels.plains = 2;
+  at('spirit:chain-lightning');
+  levels.plains = biomeLevelCap(1, 'plains');
+  at('boss:plains');
+  cleared.push(bossClearKey('plains', 1));
+  for (const [biome, lesson] of [
+    ['forest', 'spirit:thunderclap'], ['swamp', 'spirit:downpour'], ['cave', 'spirit:thunderbolt'],
+  ] as const) {
+    at(`zone:${biome}`);
+    levels[biome] = 2;
+    at(lesson);
+    levels[biome] = biomeLevelCap(1, biome);
+  }
+  at('spirit:mountain');
+  levels.mountain = 2;
+  at('boss:mountain');
+  cleared.push(bossClearKey('mountain', 1));
+  at('farewell');
+  // A held seal must not replay the Mountain approach, even on a takeover
+  // whose boss was cleared without first farming the lesson.
+  levels.mountain = 0;
+  const finished = resolveBeatIndex(script, view({ ...openingDone, playerTier: 2, biomeLevel: levels, bossesCleared: cleared }));
+  assert(finished === script.beats.length, 'both seals at tier 2 finish the Spirit script');
 }
 
 // ── The first-hour checklist ─────────────────────────────────────────────────
