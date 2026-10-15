@@ -336,6 +336,9 @@ const CLASS_PIECE_STATUS_ICONS: Record<string, string> = {
   // Frostward and Rampage wear the Guard icon until the designer swaps in their own.
   'squire-frostward': 'squire-guard',
   'squire-rampage': 'squire-guard',
+  // Stand-ins until the designer's art: the Slinger's two buffs wear the Guard icon.
+  'slinger-fan-the-hammer': 'squire-guard',
+  'slinger-entrenched': 'squire-guard',
 };
 
 export function statusIconSource(id: string, instanceKey?: string): AssetIconSource | null {
@@ -408,6 +411,9 @@ const TARGET_STATUS_ALIASES: Record<string, string> = {
   'conduit-hunt': 'debuff-sun-mark',
   'slinger-venom': 'debuff-poison',
   'slinger-rot': 'debuff-poison',
+  // Stand-ins until the designer's icons: burn wears the DoT icon, the mark the shatter window.
+  'slinger-burn': 'debuff-dot',
+  'slinger-deathmark': 'shatter-vulnerable',
   brittle: 'dot-frostbite',
   // The Apprentice's T2 statuses wear stand-in art; the designer swaps it later.
   'apprentice-held': 'debuff-root',

@@ -62,6 +62,8 @@ const STATUS_HELP: Record<string, StatusHelp> = {
   'squire-parry': b('Parrying', 'You set yourself against the telegraphed melee blow aimed at you: it is negated and you counter at once. Ground telegraphs and ranged shots are not parried and fall to your Guard instead.'),
   'squire-frostward': b('Frostward', 'You held the Tundra Chill below the freeze: it cannot climb past the hold while this lasts. Hearth heals you each second it stands.'),
   'squire-rampage': b('Rampage', 'Your slam set you swinging faster: attack speed is raised for a short burst, and each new slam starts it again.'),
+  'slinger-fan-the-hammer': b('Fanning', 'You are fanning the hammer: the first rounds after a reload fire far faster. It ends after six rounds, on the last round, or when a reload starts.'),
+  'slinger-entrenched': b('Entrenched', 'You have stood your ground: fire rate and the next shell grow the longer you stand still, up to a cap. Moving resets it.'),
   'striker-focus': b('Focus', 'Your opener focused you: every beat of this combo swings faster, until its finisher.'),
   'striker-overheated': b('Overheat', 'Your opener overheated you: every beat of this combo swings much faster, but you take more damage, until its finisher.'),
   // -- Abilities -------------------------------------------------------------
@@ -118,6 +120,7 @@ const TARGET_HELP: Record<string, StatusHelp> = {
   // The Apprentice's T2 payoffs (bible §9.8, §9.16) and Frost's freeze.
   'apprentice-held': d('Held', 'Petrify has this Seized target held: it takes more damage from your hits while the hold lasts.'),
   'apprentice-withered': d('Withered', 'Wither has sapped the target: it deals less damage until this ends.'),
+  'dot-chill': d('Chill', 'Chilled rounds slow this enemy’s movement and attacks, more with every stack up to a cap. Chill alone never freezes it.'),
   'dot-frozen': d('Frozen', 'The target is frozen solid and cannot move or attack. A Detonate on it shatters the ice for a heavy hit that chills its neighbours.'),
   'ability-slowed': d('Slowed', 'An ability has crippled the target’s stride: movement is reduced, but its attack cadence is unchanged. It can still attack and cast; this is soft control, not a root or stun.'),
   'ability-rooted': d('Bound', 'Binding Strike has pinned the target in place. It can still attack anything already in reach, but cannot reposition until the bind ends.'),
@@ -130,6 +133,8 @@ const TARGET_HELP: Record<string, StatusHelp> = {
   'plating-shred': d('Shred', 'Plating stripped from the target. Every hit landed on it — yours and your party’s — has that much less flat damage removed.'),
   'cadence-hemorrhage': d('Bleed', 'The target is bleeding: damage over time applied by your rhythm, past its plating.'),
   'slinger-venom': d('Venom', 'Venom rounds poisoned this enemy: it takes damage over time, and every round adds ticks.'),
+  'slinger-burn': d('Burn', 'Incendiary rounds set this enemy alight: it takes damage over time past its plating, and every round adds a stack, up to five.'),
+  'slinger-deathmark': d('Deathmark', 'Your rounds marked this enemy. When you reload, the shell bursts on every marked enemy, not only the last one hit.'),
   'slinger-rot': d('Rot', 'The last round’s wound is rotting: it deals part of the shot again over a few seconds.'),
   'conduit-poison': d('Poison', 'Your summons’ hits have poisoned this enemy: it takes damage over time, and every hit adds ticks.'),
   'conduit-mark': d('Marked', 'An Executioner has marked this enemy. Once it is badly hurt, the Executioner’s shots hit much harder, and every kind of summon that hits it adds to the damage it takes.'),

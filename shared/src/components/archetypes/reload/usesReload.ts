@@ -13,6 +13,10 @@ export interface UsesReload {
   twinClipId?: string;
   /** Siege only: the damage banked in the shell, rounded. Absent for every other Slinger. */
   shellBank?: number;
+  /** Rime Round's frozen ground, while it lasts: centre and radius in node pixels. Absent otherwise. */
+  rimeX?: number;
+  rimeY?: number;
+  rimeRadius?: number;
 }
 
 export function initUsesReload(args: { ammoMax: number }): UsesReload {

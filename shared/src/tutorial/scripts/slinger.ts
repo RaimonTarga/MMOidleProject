@@ -13,6 +13,10 @@
  * approach (farm to the lesson level), the lesson (farm to the tier cap) and
  * the boss, whose line says which trophy round it ranks up or gives. The
  * lesson levels are read off the kit, never written in.
+ *
+ * Then the T3 stretch (T3-W2, bible §10.6 and §10.16): the specialization pick, then
+ * the seven T3 zones in the bible's table order (Mountain, Cave, Swamp, Jungle, Desert, and the new
+ * Tundra and Volcanic), each as the same three beats at tier 3.
  */
 import { biomeLevelCap } from '../../config/gameConfig';
 import { LESSON_ZONE_LEVEL } from '../../classKits/kitHelpers';
@@ -172,28 +176,29 @@ const T2_ZONES: readonly T2Zone[] = [
   },
 ];
 
-/** The biome level a zone's tier-2 lesson lands at, read off the kit. */
-function t2LessonLevel(biome: string): number {
+/** The biome level a zone's lesson at `tier` lands at, read off the kit. */
+function lessonLevelAt(biome: string, tier: number): number {
   for (const lesson of SLINGER_KIT.lessons) {
     const source = lesson.source;
-    if (source.kind === 'zone' && source.biome === biome && source.tier === 2) return absoluteZoneLevel(source);
+    if (source.kind === 'zone' && source.biome === biome && source.tier === tier) return absoluteZoneLevel(source);
   }
-  throw new Error(`slinger tutorial: no tier-2 lesson in ${biome}`);
+  throw new Error(`slinger tutorial: no tier-${tier} lesson in ${biome}`);
 }
 
-function t2Beats(): TutorialBeat[] {
+/** The zones of a stretch as three beats each: approach, lesson, boss. `tier` is the stretch's tier. */
+function zoneBeats(zones: readonly T2Zone[], tier: number): TutorialBeat[] {
   const beats: TutorialBeat[] = [];
-  for (const zone of T2_ZONES) {
-    const at: TutorialNodeRef = { kind: 'biome', biomeGroup: zone.biome, tier: 2 };
-    const lessonLevel = t2LessonLevel(zone.biome);
-    const cap = biomeLevelCap(2, zone.biome);
+  for (const zone of zones) {
+    const at: TutorialNodeRef = { kind: 'biome', biomeGroup: zone.biome, tier };
+    const lessonLevel = lessonLevelAt(zone.biome, tier);
+    const cap = biomeLevelCap(tier, zone.biome);
     const farmTo = (level: number): TutorialBeat['steps'] => [{
       type: 'farm',
       at,
       until: { type: 'biomeLevelAtLeast', biomeGroup: zone.biome, level },
     }];
     beats.push({
-      id: `t2:${zone.biome}`,
+      id: `t${tier}:${zone.biome}`,
       chapter: zone.chapter,
       say: zone.say,
       waiting: `Fighting through the ${zone.biome}.`,
@@ -209,15 +214,74 @@ function t2Beats(): TutorialBeat[] {
       steps: farmTo(cap),
     });
     beats.push({
-      id: `boss:${zone.biome}:2`,
+      id: `boss:${zone.biome}:${tier}`,
       chapter: zone.chapter,
       say: zone.bossSay,
       waiting: `Fighting for the ${zone.biome} boss.`,
-      steps: [{ type: 'attemptBoss', biomeGroup: zone.biome, tier: 2 }],
+      steps: [{ type: 'attemptBoss', biomeGroup: zone.biome, tier }],
     });
   }
   return beats;
 }
+
+const T3_ZONES: readonly T2Zone[] = [
+  {
+    biome: 'mountain',
+    chapter: 'Tier 3: The Mountain',
+    say: 'Tier 3. Spend your skill point in the Passive Tree on a specialization under your discipline: three each for Gunslinger, Siege and Trickshot. Then the Mountain.',
+    lesson: 'stopping-ii',
+    lessonSay: 'Stopping ranks up: a charger your round stops is also staggered.',
+    bossSay: 'The Mountain boss is open again. Beat it and Quake Round ranks up: it knocks down.',
+  },
+  {
+    biome: 'cave',
+    chapter: 'Tier 3: The Cave',
+    say: 'The Cave now sends a chase through its tunnels. Fight through it.',
+    lesson: 'seeker',
+    lessonSay: 'Seeker is a new clip: its rounds find a target that has burrowed or gone out of sight, for less damage.',
+    bossSay: 'The Cave boss is open again. Beat it and Splinter Round ranks up for the last time: the splinters split once more.',
+  },
+  {
+    biome: 'swamp',
+    chapter: 'Tier 3: The Swamp',
+    say: 'The Swamp now has spores, detonating pools and a drag. Fight through it.',
+    lesson: 'acid',
+    lessonSay: 'Acid is a sidegrade of Venom: instead of poison, each round eats a little plating, up to a cap.',
+    bossSay: 'The Swamp boss is open again. Beat it and Rot Round ranks up for the last time.',
+  },
+  {
+    biome: 'jungle',
+    chapter: 'Tier 3: The Jungle',
+    say: 'The Jungle pursues and flees harder now. Fight through it.',
+    lesson: 'tracer-ii',
+    lessonSay: 'Tracer ranks up: a traced target also moves slower while it flees.',
+    bossSay: "The Jungle boss is open again. Beat it and Hunter's Round ranks up.",
+  },
+  {
+    biome: 'desert',
+    chapter: 'Tier 3: The Desert',
+    say: 'The Desert has postures and a dash to escape. Fight through it.',
+    lesson: 'tether',
+    lessonSay: 'Tether is a new clip: a target hit by several rounds in a row cannot dash away for a moment.',
+    bossSay: 'The Desert boss is open again. Beat it and Bounty Round ranks up: a higher threshold.',
+  },
+  {
+    biome: 'tundra',
+    chapter: 'Tier 3: The Tundra',
+    say: 'The Tundra is new: the Chill builds, and its bosses accept no control. Fight through it.',
+    lesson: 'frost',
+    lessonSay: 'Frost is a new clip: each round chills the target, up to a cap. It slows and never freezes.',
+    bossSay: 'The Tundra boss is open. Beat it and take Rime Round: the last round leaves frozen ground that slows enemies on it.',
+  },
+  {
+    biome: 'volcanic',
+    chapter: 'Tier 3: The Volcanic',
+    say: 'The Volcanic is new: Heat, vents and burning gunners. Fight through it.',
+    lesson: 'incendiary',
+    lessonSay: 'Incendiary is a new clip: each round sets the target burning, up to a cap.',
+    bossSay: 'The Volcanic boss is open. Beat it and take Cinder Round: the last round sets everything around the target burning.',
+  },
+];
 
 /** Beats that follow the opening for a Slinger. */
 export function buildSlingerBeats(): TutorialBeat[] {
@@ -243,6 +307,7 @@ export function buildSlingerBeats(): TutorialBeat[] {
     mountainApproach(),
     { ...sealBeat(seal, 'boss:mountain'), say: STOPPING_SAY },
     sealBeat(seal, 'farewell'),
-    ...t2Beats(),
+    ...zoneBeats(T2_ZONES, 2),
+    ...zoneBeats(T3_ZONES, 3),
   ];
 }

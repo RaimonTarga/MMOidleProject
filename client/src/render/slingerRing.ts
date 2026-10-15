@@ -10,6 +10,9 @@ const ARC = 0xe6a43c;
 const FALLBACK = 0x9aa3ad;
 
 const rings = new Map<string, Phaser.GameObjects.Graphics>();
+/** Rime Round's frozen ground, one patch per Slinger, drawn on the ground under the sprites. */
+const grounds = new Map<string, Phaser.GameObjects.Graphics>();
+const RIME_FILL = 0x9fd8ff;
 
 function showRing(player: PlayerView): boolean {
   return !player.isDead
@@ -23,15 +26,40 @@ export function syncSlingerRing(player: PlayerView, scene: GameScene): void {
     destroySlingerRing(player.id);
     return;
   }
+  drawRime(player.id, player, scene);
   if (rings.has(player.id)) return;
   rings.set(player.id, scene.add.graphics());
 }
 
 export function destroySlingerRing(id: string): void {
+  const ground = grounds.get(id);
+  if (ground) {
+    ground.destroy();
+    grounds.delete(id);
+  }
   const graphics = rings.get(id);
   if (!graphics) return;
   graphics.destroy();
   rings.delete(id);
+}
+
+/** The frozen patch: a pale disc with a rim, kept until the server drops it. */
+function drawRime(id: string, player: PlayerView, scene: GameScene): void {
+  const rime = player.reloadRime;
+  const existing = grounds.get(id);
+  if (!rime) {
+    if (existing) existing.setVisible(false);
+    return;
+  }
+  const graphics = existing ?? scene.add.graphics();
+  if (!existing) grounds.set(id, graphics);
+  graphics.setVisible(true);
+  graphics.setDepth(DEPTH.BG_DECOR);
+  graphics.clear();
+  graphics.fillStyle(RIME_FILL, 0.22);
+  graphics.fillCircle(rime.x, rime.y, rime.radius);
+  graphics.lineStyle(2, RIME_FILL, 0.7);
+  graphics.strokeCircle(rime.x, rime.y, rime.radius);
 }
 
 /** The world ammo ring: clip colour, the last round gold, the next clip beside it, the reload arc. */

@@ -415,6 +415,12 @@ const SLINGER_TAIL = [
       const [biome, lesson] = pair.split(':');
       return [`t2:${biome}`, `slinger:${lesson}`, `boss:${biome}:2`];
     }),
+  // The T3 stretch: the specialization pick rides the first approach.
+  ...['mountain:stopping-ii', 'cave:seeker', 'swamp:acid', 'jungle:tracer-ii', 'desert:tether', 'tundra:frost', 'volcanic:incendiary']
+    .flatMap((pair) => {
+      const [biome, lesson] = pair.split(':');
+      return [`t3:${biome}`, `slinger:${lesson}`, `boss:${biome}:3`];
+    }),
 ];
 
 function assertSlingerTail(script: TutorialScript): void {

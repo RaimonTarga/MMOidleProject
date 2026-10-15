@@ -25,7 +25,7 @@ export function applyBurn(
   const prior = getStatusEffect(cs, SLINGER_BURN_ID);
   let effect = prior;
   for (let i = 0; i < Math.max(1, addStacks); i++) {
-    effect = applyStatusEffect(cs, {
+    effect = applyStatusEffect(target.tracksCombat, {
       id: SLINGER_BURN_ID,
       maxStacks,
       remainingMs: durationMs,

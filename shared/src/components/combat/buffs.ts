@@ -74,6 +74,8 @@ export const BUFF_IDS = [
   'squire-parry',   // the Avenger's Parry brace: the blow is negated and countered
   'squire-frostward', // the Chill held below the freeze for a few seconds (T3)
   'squire-rampage', // the Juggernaut's burst of faster swings after a slam (T3)
+  'slinger-fan-the-hammer', // the Gunslinger's Fan the Hammer: fast rounds after a reload
+  'slinger-entrenched',     // the Siege's Entrenched: standing still ramps fire rate and shell
 ] as const;
 
 export type BuffId = typeof BUFF_IDS[number];

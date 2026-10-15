@@ -4,6 +4,7 @@ import {
   updateReloadArchetype,
 } from './reloadPrototype';
 import { registerSlinger, updateSlinger } from './slinger';
+import { SLINGER_BUFFS } from './slingerBuffs';
 
 const reloadModule = defineMechanic({
   id: 'reload',
@@ -16,7 +17,7 @@ const reloadModule = defineMechanic({
     updateReloadArchetype(world, dt);
     for (const entity of world.reloadPlayers) updateSlinger(world, entity, dt, now);
   },
-  buffs: [],
+  buffs: [...SLINGER_BUFFS],
 });
 
 export default reloadModule;

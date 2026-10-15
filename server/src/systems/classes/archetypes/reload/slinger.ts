@@ -66,6 +66,7 @@ import {
   layRime,
   resetDeadeye,
   revealSeekable,
+  rimeGround,
   rimeTick,
   startFan,
   takeDeadeyeHeld,
@@ -396,7 +397,7 @@ export function updateSlinger(world: World, player: PlayerEntity, dt: number, no
   if ((passives['slinger.warm-hands'] ?? 0) > 0) holdChill(player, reload.reloadingMs > 0);
   if (getResource(cs, SLINGER_RECOVERY_X) !== factor) setResource(cs, SLINGER_RECOVERY_X, factor);
 
-  syncDisciplineHud(world, player, discipline);
+  syncDisciplineHud(world, player, discipline, now);
 }
 
 /** The Chill on the player, or any slow (Thaw). */
@@ -424,17 +425,21 @@ function sweepChillMarkers(world: World): void {
 }
 
 /**
- * The two discipline facts the HUD cannot derive: Gunslinger's second gun and Siege's shell bank.
- * Present on the networked slice only for that discipline, written only when they change.
+ * The discipline facts the HUD cannot derive: Gunslinger's second gun, Siege's shell bank and Rime
+ * Round's frozen ground. Present on the networked slice only while they apply, written only when they change.
  */
-function syncDisciplineHud(world: World, player: PlayerEntity, discipline: string | null): void {
+function syncDisciplineHud(world: World, player: PlayerEntity, discipline: string | null, now: number): void {
   const reload = player.usesReload!;
   const twin = discipline === GUNSLINGER ? getString(player.tracksCombat, TWIN_CLIP) || reload.clipId : undefined;
   const shell = discipline === SIEGE ? Math.round(shellBank(player)) : undefined;
-  if (reload.twinClipId === twin && reload.shellBank === shell) return;
+  const rime = rimeGround(player, now);
+  if (reload.twinClipId === twin && reload.shellBank === shell
+    && reload.rimeX === rime?.x && reload.rimeY === rime?.y && reload.rimeRadius === rime?.radius) return;
   mutateSlice(world, player, 'usesReload', (slice) => {
     if (twin === undefined) delete slice.twinClipId; else slice.twinClipId = twin;
     if (shell === undefined) delete slice.shellBank; else slice.shellBank = shell;
+    if (rime) { slice.rimeX = rime.x; slice.rimeY = rime.y; slice.rimeRadius = rime.radius; }
+    else { delete slice.rimeX; delete slice.rimeY; delete slice.rimeRadius; }
   });
 }
 

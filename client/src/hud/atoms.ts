@@ -112,6 +112,8 @@ export const selectedRangeAtom = atom<string | null>(null);
 export const disciplineIdAtom = atom<string | null>(null);
 /** The T3 pick, a specialization node id (class-first). */
 export const specializationIdAtom = atom<string | null>(null);
+/** The T3 pick for the Slinger's Loadout card (a specialization node id). */
+export const slingerSpecializationIdAtom = atom<string | null>(null);
 /** The class system setup (class-first). Null before a class is picked. */
 export const classConfigAtom = atom<ClassConfig | null>(null);
 export const currentSkillTierAtom = atom<number>(0);
@@ -638,6 +640,7 @@ function resetPlayerAtoms(): void {
   store.set(selectedRangeAtom, null);
   store.set(disciplineIdAtom, null);
   store.set(specializationIdAtom, null);
+  store.set(slingerSpecializationIdAtom, null);
   store.set(classConfigAtom, null);
   store.set(currentSkillTierAtom, 0);
   store.set(playerTierAtom, 0);
@@ -747,6 +750,7 @@ export function syncPlayerAtoms(player: PlayerView | null): void {
   setIfChanged(selectedRangeAtom, player.selectedRange);
   setIfChanged(disciplineIdAtom, player.disciplineId);
   setIfChanged(specializationIdAtom, player.specializationId ?? null);
+  setIfChanged(slingerSpecializationIdAtom, player.specializationId);
   setClassConfigFromPlayer(player.classConfig);
   setIfChanged(currentSkillTierAtom, player.currentSkillTier);
   setIfChanged(playerTierAtom, player.playerTier);
