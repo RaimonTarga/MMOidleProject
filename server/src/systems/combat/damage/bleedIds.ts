@@ -1,10 +1,10 @@
 /**
  * Every effect id the bleed tick driver owns.
  *
- * One driver, a list of ids: `updateHemorrhages` ticks every id here and the
- * `hasHemorrhage` marker means "carries some bleed". The cadence root's
- * Hemorrhage is the only bleed left since the lineage bleed went with the
- * lineage trees (class-first rework D1).
+ * One driver, a list of ids: `updateHemorrhages` (`bleedTicks.ts`) ticks every id
+ * here and the `hasHemorrhage` marker means "carries some bleed". The Striker's
+ * Order writes both (Rend, Festering Cut); the lineage bleed went with the lineage
+ * trees (class-first rework D1), the Hemomancer path's with the cadence T3 paths (CS7).
  *
  * A leaf module so the tick driver and the marker invariants can both import it
  * without a cycle.

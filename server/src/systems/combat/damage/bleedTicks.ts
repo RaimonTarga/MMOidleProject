@@ -1,24 +1,30 @@
-import { outgoingFinalDamage } from '../../../../../combat/damage/finalDamage';
-import { mitigatePlayerTickOnMonster } from '../../../../../combat/damage/monsterTickMitigation';
+/**
+ * The bleed tick driver: ticks every player bleed record on a monster (`BLEED_EFFECT_IDS`,
+ * today the Striker's Rend and Festering Cut's rot) and resolves the kills it causes.
+ * Run each tick by the cadence module. It lived under the old cadence T3 paths
+ * (`t3/ticks/hemorrhage.ts`) until they were deleted (class-first build plan CS7).
+ */
+import { outgoingFinalDamage } from './finalDamage';
+import { mitigatePlayerTickOnMonster } from './monsterTickMitigation';
 import { getStatusEffects, pruneStatusEffects } from '@mmo-idle/shared';
-import type { World } from '../../../../../../world/World';
-import { detachMarker } from '../../../../../../ecs/markerHelpers';
-import { grantMonsterRewards } from '../../../../../player/progression/rewards';
+import type { World } from '../../../world/World';
+import { detachMarker } from '../../../ecs/markerHelpers';
+import { grantMonsterRewards } from '../../player/progression/rewards';
 import {
   buildSimpleBreakdown,
   recordMonsterDamagedByPlayer,
   recordPlayerKillMonster,
-} from '../../../../../../world/worldLogCombat';
-import { actorFromSourceId } from '../../../../../../world/worldLogActors';
-import { isInvulnerableMonster } from '../../../../../combat/invulnerability';
-import { pushDotTickEvent } from '../../../../../combat/damage/dotTickEvent';
-import { emitPlayerMonsterOnKill } from '../../../../../combat/damage/killHooks';
-import { applyMonsterDamageTakenDebuffs } from '../../../../shared/debuffs';
+} from '../../../world/worldLogCombat';
+import { actorFromSourceId } from '../../../world/worldLogActors';
+import { isInvulnerableMonster } from '../invulnerability';
+import { pushDotTickEvent } from './dotTickEvent';
+import { emitPlayerMonsterOnKill } from './killHooks';
+import { applyMonsterDamageTakenDebuffs } from '../../classes/shared/debuffs';
 import {
   BLEED_EFFECT_IDS,
   hasAnyBleed,
   type BleedMode,
-} from '../../../../../combat/damage/bleedIds';
+} from './bleedIds';
 
 export function updateHemorrhages(world: World, dt: number): void {
   const toKill: Array<{ monsterId: string; sourceId: string; damage: number }> = [];
