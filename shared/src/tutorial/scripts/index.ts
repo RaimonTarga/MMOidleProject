@@ -7,6 +7,7 @@ import { buildSlingerBeats } from './slinger';
 import { buildSpiritBeats } from './spirit';
 import { buildSquireBeats } from './squire';
 import { buildStrikerBeats } from './striker';
+import { buildApprenticeBeats } from './apprentice';
 
 export { TUTORIAL_FAREWELL } from './farewell';
 export { TUTORIAL_OPENING } from './opening';
@@ -28,6 +29,7 @@ export const TUTORIAL_CLASS_BEATS: Partial<Record<string, () => TutorialBeat[]>>
   'summoner-root': buildConduitBeats,
   'reload-root': buildSlingerBeats,
   'energy-root': buildSpiritBeats,
+  'dot-root': buildApprenticeBeats,
 };
 
 /**

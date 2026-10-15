@@ -183,6 +183,7 @@ assert(Object.keys(TUTORIAL_CLASS_BEATS).join(',') === 'cadence-root,cooldown-ro
 assert(Object.keys(TUTORIAL_CLASS_BEATS).join(',') === 'cadence-root,cooldown-root,reload-root',
   'the Striker, Squire and Slinger builders are registered');
 assert(Object.keys(TUTORIAL_CLASS_BEATS).join(',') === 'cadence-root,cooldown-root,energy-root', 'the Striker, Squire and Spirit builders are registered');
+assert(Object.keys(TUTORIAL_CLASS_BEATS).join(',') === 'cadence-root,cooldown-root,dot-root', 'the Striker, Squire and Apprentice builders are registered');
 assert(CLASS_ROOTS.length === 6, `six class roots, found ${CLASS_ROOTS.map((node) => node.id).join(',')}`);
 
 function sameRoute(script: TutorialScript): void {
