@@ -57,7 +57,7 @@ assert(elite.specialization === null && elite.souls.length === 1, 'before the pi
 const colossusInput = { ...t3, specializationId: 'conduit-colossus' };
 const colossus = composeFormationView({ ...colossusInput, classConfig: defaultClassConfig(classConfigContextFromState(colossusInput)!) })!;
 assert(colossus.specialization?.id === 'conduit-colossus', 'the picked specialization is named');
-assert(colossus.command.total === elite.command.total, 'Colossus: the room is the same (the +1 is in each summon's price)');
+assert(colossus.command.total === elite.command.total, 'Colossus: the room is the same (the +1 is in each summon price)');
 assert(colossus.available.find((p) => p.pieceId === 'conduit-thrall')!.command === elite.available.find((p) => p.pieceId === 'conduit-thrall')!.command + 1, 'Colossus: every summon costs another +1 on its card');
 const twoInput = { ...t3, specializationId: 'conduit-two-souls' };
 const two = composeFormationView({ ...twoInput, classConfig: defaultClassConfig(classConfigContextFromState(twoInput)!) })!;
