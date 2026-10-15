@@ -1,11 +1,30 @@
-import { useLayoutEffect, useRef, useState, type CSSProperties } from 'react';
+import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { OrderStrip } from '../OrderStrip';
+import { useOrderView } from '../../ui/class/useOrderView';
 import { MechanicFrame } from './MechanicFrame';
 import { useMechanicHelp } from './mechanicHelp';
 import type { CadenceMechanicModel } from './types';
 
 type CadenceImpact = 'strike' | 'armed' | 'finisher' | null;
 
+function orderHelp(count: number, armed: boolean, beats: number): ReactNode {
+  const next = armed
+    ? 'The finisher is next.'
+    : `Beat ${Math.min(beats, count + 1)} of ${beats} is next.`;
+  return (
+    <>
+      <div>
+        Landed beats dim, the next beat is highlighted, and beats still to come
+        stay as they are. Grey is a plain swing, the class colour a technique,
+        gold a mastered one. The last cell is the finisher.
+      </div>
+      <div style={{ marginTop: 6 }}>{next}</div>
+    </>
+  );
+}
+
 export function CadenceMechanic({ model }: { model: CadenceMechanicModel }) {
+  const order = useOrderView();
   const help = useMechanicHelp(model);
   const previous = useRef({ count: model.count, armed: model.armed });
   const [impact, setImpact] = useState<CadenceImpact>(null);
@@ -15,6 +34,7 @@ export function CadenceMechanic({ model }: { model: CadenceMechanicModel }) {
   useLayoutEffect(() => {
     const before = previous.current;
     previous.current = { count: model.count, armed: model.armed };
+    if (order) return;
     if (document.visibilityState === 'hidden' || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setImpact(null);
       return;
@@ -42,7 +62,20 @@ export function CadenceMechanic({ model }: { model: CadenceMechanicModel }) {
       setStruckIndex(-1);
     }, duration);
     return () => window.clearTimeout(timeout);
-  }, [model.armed, model.count, setupHits]);
+  }, [model.armed, model.count, order, setupHits]);
+
+  if (order) {
+    return (
+      <MechanicFrame
+        kind="cadence"
+        help={orderHelp(model.count, model.armed, order.beats.length)}
+        title="Order"
+        state={model.armed ? 'empowered' : undefined}
+      >
+        <OrderStrip order={order} count={model.count} armed={model.armed} />
+      </MechanicFrame>
+    );
+  }
 
   return (
     <MechanicFrame

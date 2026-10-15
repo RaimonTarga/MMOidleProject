@@ -8,6 +8,7 @@ import {
   ESSENCE_COLORS,
   GAME_CONFIG,
   isRangedPlayerView,
+  findTrophy,
   DOT_FROZEN_FX,
   DOT_RIMESHATTER_FX,
   type CombatArchetype,
@@ -875,6 +876,33 @@ function spritePos(state: RenderState, id: string): { x: number; y: number } | n
 }
 
 /**
+ * A Striker's trophy finisher, named over the player the way a cast names itself.
+ * The landing hit is the empowered `player-hit`. No trophy means the plain
+ * finisher, which does not call out, and neither does an ordinary beat.
+ */
+function announceTrophyFinisher(
+  state: RenderState,
+  scene: GameScene,
+  playerId: string,
+  player: PlayerView | undefined,
+): void {
+  const view = player ?? (state.view.get(playerId) as PlayerView | undefined);
+  if (!view || view.combatArchetype !== "cadence") return;
+  const config = view.classConfig;
+  if (config?.system.kind !== "order") return;
+  const trophyId = config.relic[0];
+  if (!trophyId || !findTrophy(trophyId)) return;
+  if (!state.sprite.has(playerId)) return;
+  spawnSkillCallout(
+    state,
+    scene,
+    playerId,
+    abilityCallout(scene, playerId, trophyId),
+    TECHNIQUE_CALLOUT_COLOR,
+  );
+}
+
+/**
  * A partial evade is a real dodge that happened to be worth half the blow rather
  * than all of it. Without a label of its own it was only a faintly tinted damage
  * number — which is why evasion looked like it never fired. Deliberately quieter
@@ -1687,6 +1715,10 @@ export function dispatchCombatEvent(
       notifyAbilityFired(consumed);
     }
     state.techniqueArmed.delete(ev.playerId);
+  }
+
+  if (ev.kind === "player-hit" && ev.empowered && !ev.fromSummon && shouldRunClientFx()) {
+    announceTrophyFinisher(state, scene, ev.playerId, presentation?.player);
   }
 
   const isOwnPlayerEvent = ev.playerId === scene.myId;

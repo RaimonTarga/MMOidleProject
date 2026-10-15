@@ -1,0 +1,68 @@
+.order-strip {
+  --order-plain: var(--hud-text-muted);
+  --order-technique: var(--hud-mechanic-cadence);
+  --order-mastered: #f1d689;
+  --order-glow: rgba(201, 163, 78, 0.4);
+  display: flex;
+  width: 100%;
+  align-items: flex-end;
+  gap: 4px;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.order-strip__cell {
+  --order-ink: var(--order-plain);
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  height: 32px;
+  box-sizing: border-box;
+  background: #15130f;
+  border: 1px solid var(--order-ink);
+  color: var(--order-ink);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.72);
+}
+
+.order-strip__cell[data-tone="technique"] { --order-ink: var(--order-technique); }
+.order-strip__cell[data-tone="mastered"] { --order-ink: var(--order-mastered); }
+
+.order-strip__cell[data-phase="landed"] { opacity: 0.4; }
+
+.order-strip__cell[data-phase="next"] {
+  opacity: 1;
+  box-shadow: inset 0 -3px 0 var(--order-ink), 0 0 6px var(--order-glow);
+}
+
+.order-strip__cell--finisher {
+  height: 40px;
+}
+
+.order-strip__mark {
+  display: block;
+  width: 12px;
+  height: 3px;
+  background: currentColor;
+}
+
+.order-strip__mark--finisher {
+  width: 14px;
+  height: 5px;
+}
+
+/* The mobile mechanic row is 24px tall. The strip is one flat row inside it. */
+.order-strip--compact {
+  gap: 2px;
+  height: 20px;
+}
+
+.order-strip--compact .order-strip__cell,
+.order-strip--compact .order-strip__cell--finisher {
+  height: 20px;
+}
+
+.mhud-mech .order-strip--compact {
+  margin: 0;
+}
