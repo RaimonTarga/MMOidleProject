@@ -49,7 +49,7 @@ function discipline(entry: Omit<DisciplineDef, 'classId' | 'params'> & { params?
   return { classId: 'dot', params: {}, ...entry };
 }
 
-function specialization(entry: Omit<SpecializationDef, 'classId' | 'params'>): SpecializationDef {
+function specialization(entry: Omit<SpecializationDef, 'classId' | 'params'> & { params?: SpecializationDef['params'] }): SpecializationDef {
   return { classId: 'dot', params: {}, ...entry };
 }
 
@@ -96,7 +96,7 @@ const PIECES: readonly ApprenticePiece[] = [
   }),
   payoff({
     id: 'apprentice-seize',
-    params: { holdBase: 500, holdPerSigil: 150, cooldownMs: 5000 },
+    params: { holdBase: 500, holdPerSigil: 150, cooldownMs: 5000, catchWindowMs: 4000 },
     name: 'Seize',
     family: 'frost',
     text: "Spends the target's sigils to hold it for a moment, breaking its wind-up.",
@@ -154,7 +154,7 @@ const PIECES: readonly ApprenticePiece[] = [
   }),
   payoff({
     id: 'apprentice-seep',
-    params: { tickMult: 2 },
+    params: { tickMult: 2, burstRadius: 200 },
     name: 'Seep',
     family: 'poison',
     moment: 'target-out-of-reach',
@@ -163,7 +163,7 @@ const PIECES: readonly ApprenticePiece[] = [
   }),
   payoff({
     id: 'apprentice-snag',
-    params: { rootMs: 1500, cooldownMs: 6000 },
+    params: { rootMs: 1500, cooldownMs: 6000, holdRadius: 160 },
     name: 'Snag',
     family: 'frost',
     moment: 'target-flees',
@@ -180,8 +180,10 @@ const PIECES: readonly ApprenticePiece[] = [
     ranks: [{ rank: 2, text: 'The caster also suffers its own mark or slow.' }],
   }),
   // ── T3 (§9.16) ──
+  // T3 numbers are PLACEHOLDERS (the bible names the shapes, not the values).
   payoff({
     id: 'apprentice-spore-burst',
+    params: { radius: 180, share: 0.5, cooldownMs: 6000 },
     name: 'Spore Burst',
     family: 'poison',
     sidegradeOf: 'apprentice-spread',
@@ -189,12 +191,14 @@ const PIECES: readonly ApprenticePiece[] = [
   }),
   payoff({
     id: 'apprentice-signal-fire',
+    params: { payoffPct: 0.8 },
     name: 'Signal Fire',
     family: 'fire',
     text: 'When you detonate your target, your sigils on the enemy furthest from you go off too.',
   }),
   payoff({
     id: 'apprentice-melt',
+    params: { cooldownMs: 4000 },
     name: 'Melt',
     family: 'fire',
     moment: 'chill-threshold',
@@ -202,6 +206,7 @@ const PIECES: readonly ApprenticePiece[] = [
   }),
   payoff({
     id: 'apprentice-cinderfall',
+    params: { payoffPct: 0.8, radius: 180, share: 0.5, cooldownMs: 1500 },
     name: 'Cinderfall',
     family: 'fire',
     sidegradeOf: 'apprentice-detonate',
@@ -302,7 +307,8 @@ const TROPHIES: readonly ApprenticeTrophy[] = [
     text: 'Your Siphon also drains every enemy near the target.',
     ranks: [
       { rank: 2, bossTier: 2, text: 'It drains from twice as far.', params: { radius: 320 } },
-      { rank: 3, bossTier: 3, text: 'Glut grows stronger.' },
+      // PLACEHOLDER: the bible names the rank without its twist ("Glut III, the last rank").
+      { rank: 3, bossTier: 3, text: 'Glut grows stronger.', params: { radius: 480 } },
     ],
   }),
   apprenticeTrophy({
@@ -314,7 +320,8 @@ const TROPHIES: readonly ApprenticeTrophy[] = [
     text: 'Your Seize holds longer, and the held enemy takes more damage.',
     ranks: [
       { rank: 2, bossTier: 2, text: 'The held enemy also takes more damage from your sigils as they tick.', params: { tickDamageTakenPct: 0.2 } },
-      { rank: 3, bossTier: 3, text: 'Petrify grows stronger.' },
+      // PLACEHOLDER (no twist in the bible): it holds longer still.
+      { rank: 3, bossTier: 3, text: 'Petrify grows stronger.', params: { holdMult: 2 } },
       { rank: 4, bossTier: 4, text: 'Petrify grows stronger.' },
     ],
   }),
@@ -327,7 +334,8 @@ const TROPHIES: readonly ApprenticeTrophy[] = [
     text: 'An enemy carrying three or more of your sigils grows another one every few seconds.',
     ranks: [
       { rank: 2, bossTier: 2, text: 'They grow faster.', params: { everyMs: 1500 } },
-      { rank: 3, bossTier: 3, text: 'Brood Sigils grows stronger.' },
+      // PLACEHOLDER (no twist in the bible, "the last rank"): they grow faster again.
+      { rank: 3, bossTier: 3, text: 'Brood Sigils grows stronger.', params: { everyMs: 1000 } },
     ],
   }),
   apprenticeTrophy({
@@ -338,7 +346,8 @@ const TROPHIES: readonly ApprenticeTrophy[] = [
     kind: 'sigil',
     text: 'Your sigils on an enemy that flees or kites never fall off while it runs, and they tick faster.',
     ranks: [
-      { rank: 2, bossTier: 3, text: 'Scent grows stronger.' },
+      // PLACEHOLDER (no twist in the bible): they tick faster again.
+      { rank: 2, bossTier: 3, text: 'Scent grows stronger.', params: { tickMult: 2 } },
       { rank: 3, bossTier: 4, text: 'Scent grows stronger.' },
     ],
   }),
@@ -349,25 +358,29 @@ const TROPHIES: readonly ApprenticeTrophy[] = [
     kind: 'payoff',
     text: 'Your Spread or chain can leap any distance to an enemy carrying your sigils.',
     ranks: [
-      { rank: 2, bossTier: 3, text: 'Dune Wind grows stronger.' },
+      // PLACEHOLDER (no twist in the bible): a Spread passes to one more enemy.
+      { rank: 2, bossTier: 3, text: 'Dune Wind grows stronger.', params: { extraNeighbours: 1 } },
       { rank: 3, bossTier: 4, text: 'Dune Wind grows stronger.' },
     ],
   }),
   apprenticeTrophy({
     id: 'apprentice-relic-tundra',
+    // PLACEHOLDERS: the brittle window after a Seize ends.
+    params: { brittleMs: 3000, brittlePct: 0.3 },
     lineage: 'tundra',
     name: 'Frostheart',
     kind: 'payoff',
     text: 'Every Seize also leaves its target brittle for a few seconds after.',
-    ranks: [{ rank: 2, bossTier: 4, text: 'Frostheart grows stronger.' }],
+    ranks: [{ rank: 2, bossTier: 4, text: 'Frostheart grows stronger.', params: { brittleMs: 5000 } }],
   }),
   apprenticeTrophy({
     id: 'apprentice-relic-volcanic',
+    params: { shellTickMult: 1 },
     lineage: 'volcanic',
     name: 'Magma Core',
     kind: 'sigil',
     text: 'Your sigils on a shelled enemy keep ticking at full strength through the shell.',
-    ranks: [{ rank: 2, bossTier: 4, text: 'Magma Core grows stronger.' }],
+    ranks: [{ rank: 2, bossTier: 4, text: 'Magma Core grows stronger.', params: { shellTickMult: 1.25 } }],
   }),
   apprenticeTrophy({
     id: 'apprentice-relic-graveyard',
@@ -421,21 +434,25 @@ const DISCIPLINES: readonly DisciplineDef[] = [
 
 /** The T3 pick (§9.6): each bends its discipline's signature or the chain's delivery. */
 const SPECIALIZATIONS: readonly SpecializationDef[] = [
+  // The `params` are PLACEHOLDERS (the bible names the shapes and a few figures: ~5 s, 2 s, ~6 s, ~8 s, 3 shards).
   // Poison: the plague
   specialization({
     id: 'apprentice-carrier',
+    params: { radius: 140, everyMs: 1000 },
     disciplineId: POISON,
     name: 'Carrier',
     text: 'The plague also walks from you: every enemy near you keeps catching your sigils.',
   }),
   specialization({
     id: 'apprentice-ripening',
+    params: { ripeMs: 5000, ripeMult: 2 },
     disciplineId: POISON,
     name: 'Ripening',
     text: 'Your sigils darken as they age, and an old one ticks double. The walking plague passes on its ripest sigil.',
   }),
   specialization({
     id: 'apprentice-wasting',
+    params: {},
     disciplineId: POISON,
     name: 'Wasting',
     text: "Wither's weakening stays on any enemy carrying a full bar of your sigils, so plagued packs and bosses hit softer.",
@@ -443,18 +460,21 @@ const SPECIALIZATIONS: readonly SpecializationDef[] = [
   // Fire: the blast
   specialization({
     id: 'apprentice-afterburn',
+    params: { keepShare: 0.5 },
     disciplineId: FIRE,
     name: 'Afterburn',
     text: 'A detonation leaves half its sigils burning on the target, so the next blast comes sooner.',
   }),
   specialization({
     id: 'apprentice-long-fuse',
+    params: { fuseMs: 2000 },
     disciplineId: FIRE,
     name: 'Long Fuse',
     text: 'Every detonation waits a moment and grows with every sigil you lay meanwhile; the chain carries the extra.',
   }),
   specialization({
     id: 'apprentice-hair-trigger',
+    params: {},
     disciplineId: FIRE,
     name: 'Hair Trigger',
     text: 'Your chain sets off any enemy carrying your sigils, not only those it fills; each goes off for what it carries.',
@@ -462,18 +482,21 @@ const SPECIALIZATIONS: readonly SpecializationDef[] = [
   // Frost: the freeze
   specialization({
     id: 'apprentice-ice-tomb',
+    params: { tombMs: 6000 },
     disciplineId: FROST,
     name: 'Ice Tomb',
     text: 'A frozen target stays frozen, and a brittle boss stays brittle, until you shatter it, up to a limit.',
   }),
   specialization({
     id: 'apprentice-creeping-frost',
+    params: { everyMs: 8000 },
     disciplineId: FROST,
     name: 'Creeping Frost',
     text: 'A target you fill with sigils freezes on its own, though not again for a while. That frees the winds-up moment for another payoff.',
   }),
   specialization({
     id: 'apprentice-shardstorm',
+    params: { shards: 3, shardSigils: 1, radius: 400 },
     disciplineId: FROST,
     name: 'Shardstorm',
     text: "A shatter's shards fly to the three nearest enemies and lay frost sigils on them; a frozen one hit by a shard shatters too, once per chain.",
