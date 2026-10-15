@@ -3,8 +3,8 @@
 Kept by the conductor. Plan: [class-first-build-plan-2026-10-14.md](../class-first-build-plan-2026-10-14.md).
 Integration branch `rework/class-first` (conductor worktree `../mmo-rework`).
 
-**Updated:** 2026-10-15 (morning): the Striker's and the Squire's T1 runtimes are in (CS.1–CS.4, CQ.1–CQ.4, with their editor view models); S1–S3 and F6 done; every overnight delegate task merged; the designer's open calls are answered (below).
-**Baseline:** `rework/class-first` at `b3ba6bef` (CS7 merged): full suite **338/338**, typecheck clean (verified in `../mmo-rw-verify2`).
+**Updated:** 2026-10-15 (afternoon): S4, S7, Planted and the Striker FX delete done; F7-PANEL, CS6, CQ6, CQ7 merged; CS5-UI and CQ5-UI are the open delegate tasks.
+**Baseline:** `rework/class-first` after the CQ7 merge: full suite **342/342** (biomeEcology flakes under load), typecheck clean.
 Codex hit rate limits on 2026-10-14, so D5, K1–K3, D1, T0 and D2 ran as Claude subagents of the conductor (same briefs, same worktrees).
 
 ## Designer decisions (2026-10-15)
@@ -24,81 +24,40 @@ Recorded in the bible (§4 Armor/charm row, §5) where they are design.
 
 | ID | Task | Agent | Worktree · branch | State |
 |---|---|---|---|---|
-| F7-PANEL | [The class screen's shell (client)](F7-class-screen-panel.md) | Grok | `../mmo-rw-f7-panel` · `rw/f7-panel` | ready |
-| CS6-ROUTE | [The Striker's guided tutorial and bot route](CS6-striker-route.md) | Codex or Grok | `../mmo-rw-cs6-route` · `rw/cs6-route` | ready |
-| CQ6-ROUTE | [The Squire's guided tutorial and bot route](CQ-squire-delegates.md) | Codex or Grok | `../mmo-rw-cq6-route` · `rw/cq6-route` | ready |
-| CQ7-CLEANUP | [Delete the Squire's old frame and path content](CQ-squire-delegates.md) | Codex or Grok | `../mmo-rw-cq7-cleanup` · `rw/cq7-cleanup` | ready (its prompt fast-forwards to pick up CS7) |
-| ICONS-3 | [Redraw the three Striker crests and five flat T1 icons](ICONS-3.md) | Codex (image generation) | `../mmo-rw-icons-3` · `rw/icons-3` | ready |
-
-F7-PANEL, CS6-ROUTE and CQ6-ROUTE touch disjoint files and can run at once. CS5-UI and CQ5-UI
-(the two class editors and their HUD pieces) are briefed and wait for F7-PANEL: the conductor
-creates their worktrees once the panel is merged.
+| CS5-UI | [The Order editor and beat strip](CS5-striker-ui.md) | Grok | `../mmo-rw-cs5-ui` · `rw/cs5-ui` | ready (worktree made 2026-10-15) |
+| CQ5-UI | [The Response rules editor, Resolve pips, callouts](CQ-squire-delegates.md) | Grok | `../mmo-rw-cq5-ui` · `rw/cq5-ui` | ready (worktree made 2026-10-15) |
+| ICONS-3 | Redraw the Striker crests and flat T1 icons | the designer, via Codex | `../mmo-rw-icons-3` · `rw/icons-3` | **not merged**; the designer handles art themselves. Keep old art, add icons only where needed |
 
 ## Paste-ready prompts
 
 Open the agent **in the task's worktree folder** and paste its prompt.
 
-**F7-PANEL (Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-f7-panel`:
+**CS5-UI (Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-cs5-ui`:
 
 ```text
 You're working on the MMO Idle class-first rework, in this folder, on branch
-rw/f7-panel. First read docs/briefs/class-first-build/AGENT-RULES.md, then do the
-task in docs/briefs/class-first-build/F7-class-screen-panel.md. Work only in this folder;
+rw/cs5-ui. First read docs/briefs/class-first-build/AGENT-RULES.md, then do the
+task in docs/briefs/class-first-build/CS5-striker-ui.md. Work only in this folder;
 never run pnpm install. When you're done, commit on your branch, write your report
 where the brief says, and tell me.
 ```
 
-**CS6-ROUTE (Codex or Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-cs6-route`:
+**CQ5-UI (Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-cq5-ui`:
 
 ```text
 You're working on the MMO Idle class-first rework, in this folder, on branch
-rw/cs6-route. First read docs/briefs/class-first-build/AGENT-RULES.md, then do the
-task in docs/briefs/class-first-build/CS6-striker-route.md. Work only in this folder;
-never run pnpm install. When you're done, commit on your branch, write your report
-where the brief says, and tell me.
-```
-
-**CQ6-ROUTE (Codex or Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-cq6-route`:
-
-```text
-You're working on the MMO Idle class-first rework, in this folder, on branch
-rw/cq6-route. First read docs/briefs/class-first-build/AGENT-RULES.md, then do the
-task marked CQ6-ROUTE in docs/briefs/class-first-build/CQ-squire-delegates.md. Work only
-in this folder; never run pnpm install. When you're done, commit on your branch, write your
-report where the brief says, and tell me.
-```
-
-**CQ7-CLEANUP (Codex or Grok)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-cq7-cleanup`:
-
-```text
-You're working on the MMO Idle class-first rework, in this folder, on branch
-rw/cq7-cleanup. First run `git merge --ff-only rework/class-first` to pick up the
-conductor's latest. Then read docs/briefs/class-first-build/AGENT-RULES.md and do the
-task marked CQ7-CLEANUP in docs/briefs/class-first-build/CQ-squire-delegates.md. Work only
-in this folder; never run pnpm install. When you're done, commit on your branch, write your
-report where the brief says, and tell me.
-```
-
-**ICONS-3 (Codex, image generation)**, folder `C:\Users\osaif\Documents\Claude\Projects\mmo-rw-icons-3`:
-
-```text
-You're making game icons for the MMO Idle class-first rework, in this folder, on branch
-rw/icons-3. First read docs/briefs/class-first-build/AGENT-RULES.md, then do the task in
-docs/briefs/class-first-build/ICONS-3.md with your built-in image generation, one image per
-call. The redrawn icons must match the set the game now ships: the T1-T4 class icons in
-client/public/assets/concept-icons/class-pieces/ and the discipline crests in .../disciplines/.
-Follow ICONS-T1.md and ICONS-2.md's style rules and attach the references the brief lists to
-every generation. Check every icon at its in-game size and regenerate any that don't read.
-When you're done, commit on your branch, write your report where the brief says, and tell me.
+rw/cq5-ui. First read docs/briefs/class-first-build/AGENT-RULES.md and
+CS5-striker-ui.md, then do the task marked CQ5-UI in
+docs/briefs/class-first-build/CQ-squire-delegates.md. Work only in this folder; never
+run pnpm install. When you're done, commit on your branch, write your report where the
+brief says, and tell me.
 ```
 
 ## Queued (briefs written when their inputs land)
 
 | ID | Task | Agent | Waits for |
 |---|---|---|---|
-| CQ5-UI | [The Response rules editor, Resolve pips, callouts](CQ-squire-delegates.md) | Grok | F7-PANEL merged |
 | Next class | The Conduit (the old slice plan's map), then Slinger, Spirit, Apprentice | Conductor | — |
-| CS5-UI | [The Order editor and beat strip](CS5-striker-ui.md) | Grok | F7-PANEL merged |
 | G-GEAR-C | Second armor and charm bases for moved lines (T3–T4), every class | Conductor brief, Grok data | — (decided) |
 
 ## Known follow-ups (not yet a task)
@@ -152,6 +111,7 @@ When you're done, commit on your branch, write your report where the brief says,
 
 | ID | Task | Merged |
 |---|---|---|
+| F7-PANEL, CS6-ROUTE, CQ6-ROUTE, CQ7-CLEANUP | The class screen shell; the Striker's and Squire's tutorials and bot routes; the Squire's frame loop and T3 paths deleted (Grok) | merges `093c1050`, `84a63cc5`, `a15f697f`, then CQ7; 342/342 |
 | S7 | The timed ward on the Mountain (big hit) and Tundra (frozen) charm bases, replacing their barrier; `charmWards.test.ts` | next commit |
 | S4 | The always-on in-combat Recovery share for every class; Recovery-multiplier lines (Rhythm, Cairnstone, Counterbalance, Stone Patience); `recoveryBoost.test.ts` | `76ae8143` + test fix |
 | Planted, Striker FX | Braced Squire takes no forced movement at all; Striker special-move FX and Swiftblade branch deleted (`attackProgression` count 36) | `bb1a196e` |
