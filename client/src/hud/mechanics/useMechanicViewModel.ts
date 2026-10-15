@@ -8,6 +8,7 @@ import {
   cadenceEmpoweredArmedAtom,
   cadenceThresholdAtom,
   channelingPctAtom,
+  classConfigAtom,
   combatArchetypeAtom,
   empoweredReadyAtom,
   energyCountAtom,
@@ -18,6 +19,7 @@ import {
   heatPctAtom,
   isChannelingAtom,
   laserOverheatedAtom,
+  localPlayerViewAtom,
   passivesAtom,
   selectedSubVariantAtom,
   summonActiveCountAtom,
@@ -44,6 +46,8 @@ function clampPct(value: number): number {
  */
 export function useMechanicViewModel(): MechanicViewModel | null {
   const combatArchetype = useAtomValue(combatArchetypeAtom);
+  const classConfig = useAtomValue(classConfigAtom);
+  const playerView = useAtomValue(localPlayerViewAtom);
   const passives = useAtomValue(passivesAtom);
   const selectedSubVariant = useAtomValue(selectedSubVariantAtom);
   const unlockedSkills = useAtomValue(unlockedSkillsAtom);
@@ -88,6 +92,9 @@ export function useMechanicViewModel(): MechanicViewModel | null {
         channelRemainingPct: clampPct(100 - channelingPct),
         executionPct: clampPct(executionPct),
         executionReady,
+        responses: classConfig?.system.kind === 'responses',
+        resolve: Math.max(0, playerView?.resolve ?? 0),
+        resolveMax: Math.max(0, playerView?.resolveMax ?? 0),
       };
 
     case 'energy': {

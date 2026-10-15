@@ -5,6 +5,7 @@ import { DotMechanic } from './DotMechanic';
 import { EnergyMechanic } from './EnergyMechanic';
 import { EvasionInstrument } from './EvasionInstrument';
 import { ReloadMechanic } from './ReloadMechanic';
+import { ResolvePips } from './ResolvePips';
 import { SummonerMechanic } from './SummonerMechanic';
 import { useMechanicViewModel } from './useMechanicViewModel';
 import './mechanics.css';
@@ -12,7 +13,8 @@ import './mechanics.css';
 function ClassMechanic({ model }: { model: NonNullable<ReturnType<typeof useMechanicViewModel>> }) {
   switch (model.kind) {
     case 'cadence': return <CadenceMechanic model={model} />;
-    case 'cooldown': return <CooldownMechanic model={model} />;
+    case 'cooldown':
+      return model.responses ? <ResolvePips model={model} /> : <CooldownMechanic model={model} />;
     case 'energy': return <EnergyMechanic model={model} />;
     case 'reload': return <ReloadMechanic model={model} />;
     case 'summoner': return <SummonerMechanic model={model} />;

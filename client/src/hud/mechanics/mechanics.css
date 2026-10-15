@@ -1053,6 +1053,95 @@
   100% { stroke: #514660; stroke-width: 1.4; filter: none; }
 }
 
+.mechanic-resolve {
+  --resolve-tone: var(--hud-mechanic-cooldown);
+  --resolve-bright: #e4d4f7;
+  --resolve-dark: #3a2a52;
+  --resolve-glow: rgba(150, 112, 189, 0.48);
+  display: grid;
+  width: 100%;
+  min-height: 42px;
+  align-items: end;
+  gap: 4px;
+  box-sizing: border-box;
+  margin-top: 8px;
+}
+
+.mechanic-resolve__pip,
+.mechanic-resolve__slam {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  background: #15130f;
+  border: 1px solid var(--hud-edge-light);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.72);
+}
+
+.mechanic-resolve__pip {
+  height: 28px;
+}
+
+.mechanic-resolve__fill {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: block;
+  background: linear-gradient(180deg, var(--resolve-bright), var(--resolve-tone) 42%, var(--resolve-dark));
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.22);
+  transition: height var(--hud-motion-state) ease;
+}
+
+.mechanic-resolve__slam {
+  height: 38px;
+  background:
+    linear-gradient(180deg, transparent 42%, rgba(150, 112, 189, 0.18) 42% 46%, transparent 46%),
+    #1a1614;
+  border-color: var(--hud-edge-strong);
+}
+
+.mechanic-resolve__slam::before,
+.mechanic-resolve__slam::after {
+  position: absolute;
+  left: 18%;
+  width: 64%;
+  content: '';
+  background: #514660;
+}
+
+.mechanic-resolve__slam::before {
+  top: 8px;
+  height: 8px;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.mechanic-resolve__slam::after {
+  bottom: 7px;
+  height: 3px;
+}
+
+.mechanic-resolve__slam--lit {
+  border-color: var(--hud-success);
+  background:
+    linear-gradient(180deg, transparent 42%, rgba(185, 221, 145, 0.9) 42% 46%, transparent 46%),
+    #182313;
+  box-shadow: 0 0 7px rgba(116, 170, 78, 0.55);
+}
+
+.mechanic-resolve__slam--lit::before,
+.mechanic-resolve__slam--lit::after {
+  background: #b9dd91;
+}
+
+.mechanic-resolve--pulse .mechanic-resolve__fill {
+  animation: resolve-refund 420ms ease-out;
+}
+
+@keyframes resolve-refund {
+  0% { filter: brightness(2.2); }
+  100% { filter: brightness(1); }
+}
+
 .mechanic-summons {
   --summon-tone: var(--hud-mechanic-summoner);
   --summon-bright: #bceee8;
@@ -2210,6 +2299,7 @@
   .mechanic-capacitor__wake,
   .mechanic-cadence__segment,
   .mechanic-cadence__charge,
+  .mechanic-resolve__fill,
   .mechanic-heat__fill,
   .compact-mechanic__track > span,
   .mechanic-cooldown__progress,
@@ -2253,7 +2343,8 @@
   .mechanic-cadence__segment--struck,
   .mechanic-cadence--armed .mechanic-cadence__segment--empowered,
   .mechanic-cadence--finisher .mechanic-cadence__impact,
-  .mechanic-cadence--finisher .mechanic-cadence__segment--empowered {
+  .mechanic-cadence--finisher .mechanic-cadence__segment--empowered,
+  .mechanic-resolve--pulse .mechanic-resolve__fill {
     animation: none;
   }
 

@@ -1,3 +1,4 @@
+import { ResolveCompact } from './ResolvePips';
 import type { MechanicViewModel } from './types';
 
 const SUMMONER_COMPACT_LABELS = {
@@ -47,6 +48,7 @@ function compactState(model: MechanicViewModel): { label: string; value: string;
 
 /** Existing one-line mobile presentation, intentionally separate from desktop widgets. */
 export function CompactMechanic({ model }: { model: MechanicViewModel }) {
+  if (model.kind === 'cooldown' && model.responses) return <ResolveCompact model={model} />;
   const state = compactState(model);
   const tone = model.kind === 'dot'
     ? model.element

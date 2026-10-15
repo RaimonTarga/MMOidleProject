@@ -14,6 +14,11 @@ export type CooldownMechanicModel = {
   channelRemainingPct: number;
   executionPct: number;
   executionReady: boolean;
+  /** A Squire with Response rules. Without it the cooldown dial stays. */
+  responses: boolean;
+  /** Pip fill and bar size. Meaningful when `responses` is set. */
+  resolve: number;
+  resolveMax: number;
 };
 
 export type EnergyMechanicModel = {
