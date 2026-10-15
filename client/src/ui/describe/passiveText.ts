@@ -101,8 +101,6 @@ const WORD_OVERRIDES: Record<string, string> = {
  * module exists to prevent. Anything genuinely unit-less stays out of this list.
  */
 const PERCENT_KEYS = new Set([
-  'cooldown.reverb-echo-strength',
-  'cooldown.rupture-dr-pierce',
   'defense.debuff-resist',
   'defense.debuff-resistance',
   'defense.dot-resistance',
@@ -160,7 +158,7 @@ export function passiveNamespaceLabel(key: string): string {
   return NAMESPACE_LABELS[namespace] ?? humanize(namespace);
 }
 
-/** The feature name, without its namespace: `cooldown.overdrive-attack-speed` → "Overdrive Attack Speed". */
+/** The feature name, without its namespace: `energy.overdrive` → "Overdrive". */
 function stemLabel(stem: string): string {
   const dot = stem.indexOf('.');
   return humanize(dot === -1 ? stem : stem.slice(dot + 1));
@@ -331,7 +329,7 @@ export function passiveLines(
 
   const lines: PassiveLine[] = [];
   for (const [stem, entries] of groups) {
-    // The headline is the key that IS the feature (a flag like `cooldown.overdrive`)
+    // The headline is the key that IS the feature (a flag like `energy.overdrive`)
     // when present, otherwise the most magnitude-like qualifier.
     const bare = entries.find((entry) => entry.suffix === null);
     const headline = bare

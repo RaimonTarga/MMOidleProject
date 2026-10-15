@@ -179,74 +179,11 @@ export const CADENCE_KEYS = [
 ] as const;
 
 export const COOLDOWN_KEYS = [
+  // The slam's multiplier. `empowered-cd-ms` is the old clock's length: the relic
+  // preview still reads it. The runtime slam fills on Resolve (class-first CQ7).
+  // The frame-loop and T3 path keys were deleted with the paths.
   'cooldown.empowered-cd-ms',
   'cooldown.empowered-mult',
-  'cooldown.overdrive',
-  'cooldown.overdrive-duration-ms',
-  'cooldown.overdrive-attack-speed-pct',
-  'cooldown.eternal-cycle',
-  'cooldown.eternal-cycle-flat',
-  'cooldown.temporal-extension',
-  'cooldown.acceleration-ms',
-  'cooldown.battery',
-  'cooldown.battery-stack-interval-ms',
-  'cooldown.battery-damage-per-stack',
-  'cooldown.alignment',
-  'cooldown.entropy-collapse',
-  // Destroyer (heavy, design §22.5): the execution is delivered by the player's
-  // Techniques — primed, it waits for the next Technique that lands and fires with
-  // that Technique's shape (the armed hit; a cast's target or area).
-  'cooldown.technique-execution',
-  'cooldown.channeled-beam',
-  // Devout Priest: damage per beam tick = player.attack × this (authored on the node).
-  'cooldown.channeled-beam-mult',
-  // Read-only tuning keys — no producer today, included for forward compat
-  'cooldown.temporal-buff-init-ms',
-  'cooldown.temporal-buff-max-ms',
-  'cooldown.temporal-flat-dmg',
-  'cooldown.entropy-base-damage',
-  // T4 specs ─────────────────────────────────────────────────────────────────
-  // Rupture (light): execution bypasses plating; brief window bypasses 50% on regulars.
-  'cooldown.rupture',
-  'cooldown.rupture-dr-pierce',
-  // Reverb (balanced, design §22.5): the execution echoes — it lands again when its
-  // recharge reaches the halfway mark, at `echo-strength` × the execution's own
-  // multiplier, on whatever the player is hitting then (nothing in reach: lost).
-  'cooldown.reverb',
-  'cooldown.reverb-echo-strength',
-  // Patience Paid (balanced): uninterrupted CD ramps attack + execution damage.
-  'cooldown.patience-paid',
-  'cooldown.patience-ramp-ms',
-  'cooldown.patience-attack-max',
-  'cooldown.patience-execution-max',
-  // Vengeance (heavy): execution bonus from damage taken since last execution.
-  'cooldown.vengeance',
-  'cooldown.vengeance-mult',
-  'cooldown.vengeance-floor',
-  // ── T4 spec tuning knobs (node-authored; constants are fallback defaults) ────
-  // Transcendant: ms of idle before banked stacks fall off.
-  'cooldown.eternal-charge-duration-ms',
-  // Sunderer: post-execution window (ms) + the plating multiplier applied during it.
-  'cooldown.rupture-window-ms',
-  'cooldown.rupture-window-plating-mult',
-  // Devout Priest: holy-beam channel duration and per-tick interval (ms).
-  'cooldown.beam-duration-ms',
-  'cooldown.beam-tick-ms',
-  // ── Squire frame loops (progression rework Phase 3) ─────────────────────────
-  // Warrior/Knight: the execution opens a window, and regular hits landed inside
-  // it shave `frame-refund-ms` off the next recharge. The window is clamped to a
-  // share of the live recharge at runtime (design §10); the refund can never take
-  // the recharge into its last quarter, so an execution is never made instant.
-  'cooldown.frame-window-ms',
-  'cooldown.frame-refund-ms',
-  // Bulwark/Knight: the bank. A time-based mechanic has no hit threshold to derive
-  // a cap from, so unlike the Striker's this one IS authored.
-  'cooldown.frame-charge-cap',
-  'cooldown.frame-charge-per-stack',
-  // Bulwark's rider: the execution strips a fraction of the target's plating,
-  // through the shared `plating-shred` record under the §18.1 max-wins rule.
-  'cooldown.frame-shred-pct',
-  'cooldown.frame-shred-duration-ms',
   // ── Range nodes (progression rework Phase 3, `rangeMechanics.ts`) ───────────
   // Phalanx (mid): the at-bay slow, plus a stagger when the EXECUTION lands on a
   // target held at bay (the stun ladder's shortest rung).
