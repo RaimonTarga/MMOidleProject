@@ -86,7 +86,7 @@ const PIECES: readonly SlingerPiece[] = [
     family: 'control',
     color: '#39c9b8',
     text: "Each round slows the target's movement and attacks a little. The slow stops growing past a point.",
-    ranks: [{ rank: 2, text: "It builds faster, and at its strongest the target's wind-ups take longer." }],
+    ranks: [{ rank: 2, text: "It builds faster, and at its strongest the target's wind-ups take longer.", params: { slowPerRound: 0.12, capAttackSlow: 0.3 } }],
   }),
   clip({
     id: 'slinger-venom',
@@ -95,7 +95,7 @@ const PIECES: readonly SlingerPiece[] = [
     family: 'damage',
     color: '#8fdc3c',
     text: 'Each round poisons the target, and the poison keeps hurting them.',
-    ranks: [{ rank: 2, text: 'The poison hurts more and lasts longer.' }],
+    ranks: [{ rank: 2, text: 'The poison hurts more and lasts longer.', params: { ticksPerRound: 3, maxTicks: 18, tickShare: 0.3 } }],
   }),
   clip({
     id: 'slinger-stopping',
@@ -113,11 +113,12 @@ const PIECES: readonly SlingerPiece[] = [
     family: 'damage',
     color: '#ff5a3c',
     text: "Each round ignores most of the target's plating.",
-    ranks: [{ rank: 2, text: "Rounds ignore all of the target's plating." }],
+    ranks: [{ rank: 2, text: "Rounds ignore all of the target's plating.", params: { platingMult: 0 } }],
   }),
   // ── T2 (§10.16) ──
   clip({
     id: 'slinger-buckshot',
+    params: { damagePct: 0.9, pelletPct: 0.25, maxPellets: 3, coneDeg: 35, coneRangePx: 220, closeBonus: 0.5, closePx: 160 },
     name: 'Buckshot',
     family: 'damage',
     color: '#d9822b',
@@ -126,6 +127,7 @@ const PIECES: readonly SlingerPiece[] = [
   }),
   clip({
     id: 'slinger-shellbreaker',
+    params: { damagePct: 0.9, barrierMult: 2 },
     name: 'Shellbreaker',
     family: 'utility',
     color: '#b8c4ff',
@@ -134,6 +136,7 @@ const PIECES: readonly SlingerPiece[] = [
   }),
   clip({
     id: 'slinger-tracer',
+    params: { damagePct: 0.9, tracedMs: 8000 },
     name: 'Tracer',
     family: 'utility',
     color: '#ff6fd8',
@@ -145,6 +148,7 @@ const PIECES: readonly SlingerPiece[] = [
   }),
   clip({
     id: 'slinger-hollow-point',
+    params: { damagePct: 0.9, belowHp: 0.5, bonusPct: 0.5 },
     name: 'Hollow-point',
     family: 'damage',
     color: '#ff9f6b',
@@ -261,7 +265,7 @@ const TROPHIES: readonly SlingerTrophy[] = [
     lineage: 'plains',
     name: 'Stampede Round',
     text: 'Your last round knocks the target, and everything in a line behind it, back.',
-    ranks: [{ rank: 2, bossTier: 2, text: 'The shove also knocks them down.' }],
+    ranks: [{ rank: 2, bossTier: 2, text: 'The shove also knocks them down.', params: { knockdownMs: 1200 } }],
   }),
   slingerTrophy({
     id: 'slinger-relic-forest',
@@ -269,7 +273,7 @@ const TROPHIES: readonly SlingerTrophy[] = [
     lineage: 'forest',
     name: 'Twin Round',
     text: 'Your last round fires twice.',
-    ranks: [{ rank: 2, bossTier: 2, text: 'Both shots hit at full strength.' }],
+    ranks: [{ rank: 2, bossTier: 2, text: 'Both shots hit at full strength.', params: { secondShotPct: 1 } }],
   }),
   slingerTrophy({
     id: 'slinger-relic-swamp',
@@ -278,7 +282,7 @@ const TROPHIES: readonly SlingerTrophy[] = [
     name: 'Rot Round',
     text: "Your last round's wound rots, and it hits again over a few seconds.",
     ranks: [
-      { rank: 2, bossTier: 2, text: 'The rot deals a bigger share.' },
+      { rank: 2, bossTier: 2, text: 'The rot deals a bigger share.', params: { sharePct: 0.8 } },
       { rank: 3, bossTier: 3, text: 'Rot Round grows stronger.' },
     ],
   }),
@@ -289,7 +293,7 @@ const TROPHIES: readonly SlingerTrophy[] = [
     name: 'Quake Round',
     text: 'Your last round is a heavy slug that hits everything around the target.',
     ranks: [
-      { rank: 2, bossTier: 2, text: 'The blast is wider, and it also cracks plating.' },
+      { rank: 2, bossTier: 2, text: 'The blast is wider, and it also cracks plating.', params: { radius: 150, crackFraction: 0.3, crackMs: 6000 } },
       { rank: 3, bossTier: 3, text: 'It knocks down.' },
       { rank: 4, bossTier: 4, text: 'The blast leaves aftershocks.' },
     ],
@@ -301,12 +305,13 @@ const TROPHIES: readonly SlingerTrophy[] = [
     name: 'Splinter Round',
     text: 'Your last round splits into three that strike the nearest other enemies.',
     ranks: [
-      { rank: 2, bossTier: 2, text: 'It splits into four.' },
+      { rank: 2, bossTier: 2, text: 'It splits into four.', params: { splinters: 4 } },
       { rank: 3, bossTier: 3, text: 'Each splinter splits once more.' },
     ],
   }),
   slingerTrophy({
     id: 'slinger-relic-jungle',
+    params: { farPctPer100px: 0.2 },
     lineage: 'jungle',
     name: "Hunter's Round",
     text: "Your last round follows its target, can't miss a fleeing enemy, and hits harder the farther it flies.",
@@ -317,6 +322,7 @@ const TROPHIES: readonly SlingerTrophy[] = [
   }),
   slingerTrophy({
     id: 'slinger-relic-desert',
+    params: { threshold: 0.15 },
     lineage: 'desert',
     name: 'Bounty Round',
     text: 'Your last round finishes a target below a threshold of its health.',

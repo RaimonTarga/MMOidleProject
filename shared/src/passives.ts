@@ -144,6 +144,13 @@ export const DEFENSE_KEYS = [
   'slinger.last-vs-poisoned-pct',  // Snakebite Pistol: the last round hits a poisoned target this much harder
   'slinger.last-round-pct',  // Hand Cannon: the last round hits this much harder
   'slinger.ramp-pct',  // Drum Gun: each round of a clip hits this much harder than the last
+  // Slinger T2 gear (class-first build plan T2-SLINGER)
+  'slinger.far-pct',  // Hunting Rifle: rounds hit this much harder at full reach, scaling with distance
+  'slinger.damage-pct',  // Glass Duster: every round hits this much harder
+  'slinger.reload-faster-pct',  // Glass Duster: reloads take this much less time
+  'slinger.lookout',  // Lookout: an enemy that ambushes you while you reload is slowed this much and revealed
+  'slinger.undergrowth',  // Undergrowth: Recovery share multiplied while no enemy is targeting you
+  'slinger.shade',  // Shade: every this many ms a mark or slow on you ends
   'spirit.area-extra',  // Forked Rod: area spends reach this many more enemies
   'spirit.cost-mult',  // Weapon: spends cost this much (1 = normal)
   'spirit.damage-mult',  // Weapon: spends hit this much (1 = normal)
