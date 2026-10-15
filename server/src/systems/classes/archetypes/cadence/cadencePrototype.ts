@@ -6,6 +6,7 @@ import { initCadenceFrameLoop } from './frameLoop';
 import { initCadenceT3 } from './t3';
 import { relicRatingsFromPassives, resolveCadenceRelicProfile } from '@mmo-idle/shared';
 import { advanceStrikerBeat, initStrikerOrder, runStrikerBeat } from './order';
+import { initStrikerGear } from './strikerGear';
 
 const CADENCE_THRESHOLD_DEFAULT   = 5;   // cycle length: (N-1) normal hits + 1 empowered
 const CADENCE_DAMAGE_MULT_DEFAULT = 2.0;
@@ -36,6 +37,7 @@ export function initCadenceArchetype(): void {
   // The Order (class-first build plan CS.1): its casts, swing gate and finisher. After the
   // empowered multiplier, so the finisher's trophy reads the multiplied hit.
   initStrikerOrder();
+  initStrikerGear();
 
   initCadenceT3();
 

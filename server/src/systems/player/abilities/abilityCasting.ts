@@ -61,6 +61,8 @@ import { techniquePowerPctFor } from "./abilityKata";
 export interface ClassCast {
   /** The wind-up finished: apply the piece. */
   resolve(world: World, player: PlayerEntity, now: number): void;
+  /** Hard control doesn't break this player's cast (the Striker's Braced Cast). */
+  unbreakable?(player: PlayerEntity): boolean;
 }
 
 const CLASS_CASTS = new Map<string, ClassCast>();
@@ -106,7 +108,7 @@ function updateClassCast(
   endsAt: number,
   now: number,
 ): void {
-  if (isHardControlled(player.tracksCombat)) {
+  if (isHardControlled(player.tracksCombat) && !cast.unbreakable?.(player)) {
     detachComponent(world, player, "isCastingAbility");
     world.pushEvent(player.hasPosition.nodeId, {
       kind: "player-cast-end",

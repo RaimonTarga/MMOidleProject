@@ -13,9 +13,9 @@ const dotModule = defineMechanic({
   init: () => {
     initDotArchetype();
   },
-  tick: (world, dt) => {
+  tick: (world, dt, now) => {
     updateDotT3(world, dt);
-    updateDotArchetype(world, dt);
+    updateDotArchetype(world, dt, now);
   },
   buffs: DOT_T3_BUFFS,
 });

@@ -121,7 +121,7 @@ import {
   engageSequenceHoldsAttack,
   engageSequenceSlamReady,
 } from '../ai/engageSequence';
-import { harmfulStatusDurationMult } from "../status/harmfulStatus";
+import { harmfulStatusDurationMult, playerControlDurationMult } from "../status/harmfulStatus";
 import { attackCadenceMult } from "./attackCadence";
 import type {
   MinionEntity,
@@ -1234,7 +1234,7 @@ function resolveMonsterAbilityArea(
           target.tracksCombat,
           action.stunMs,
           monster.isMonster.id,
-          harmfulStatusDurationMult(target),
+          playerControlDurationMult(target),
         );
       }
       if (action.knockback) {
@@ -2025,7 +2025,7 @@ function resolveChargedSlam(
           victim.tracksCombat,
           charged.stunMs,
           monster.isMonster.id,
-          harmfulStatusDurationMult(victim),
+          playerControlDurationMult(victim),
         );
       }
       applyChargedAttackKnockback(world, monster, victim, charged);
@@ -2569,7 +2569,7 @@ export function updateCombat(world: World, dt: number, now: number) {
               target.tracksCombat,
               charged.precastStunMs,
               e.isMonster.id,
-              harmfulStatusDurationMult(target),
+              playerControlDurationMult(target),
             );
           }
           if (forcedByEngageSequence) completeEngageSequence(e);

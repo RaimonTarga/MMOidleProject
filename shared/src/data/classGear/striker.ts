@@ -1,7 +1,9 @@
 /**
  * The Striker's gear (`cadence`): its weapons and its lines on the shared armor and charm
- * bases, from bible §12.4 (T1) and §12.16 (T2–T4). Placeholder numbers are copied from the biome's first
- * generic weapon at that tier; mechanic keys stay empty until the class runtime.
+ * bases, from bible §12.4 (T1) and §12.16 (T2–T4). Stats are copied from the biome's first
+ * generic weapon at that tier. The T1 jobs and lines carry their `striker.*` / `defense.*` keys
+ * (CS.4: placeholders, a little stronger each tier the job recurs); the T2+ jobs and the two
+ * Recovery lines (Rhythm, Cairnstone) stay empty until their runtime.
  */
 import type { ClassGearDef } from './types';
 
@@ -23,7 +25,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { yellow: 10 }, stats: { attack: 19 }, attacksPerSecond: 0.90, tier: 1,
       icon: 'items/weapons/iron-broadsword.png',
       description: 'Every beat also nicks the nearest other enemy.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.nick-pct': 0.25 },
     },
     {
       id: 'striker-twin-fangs-t1', name: 'Twin Fangs',
@@ -31,7 +33,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { green: 20 }, stats: { attack: 12 }, attacksPerSecond: 1.60, tier: 1,
       icon: 'items/weapons/flash-rapier.png',
       description: 'Fast, light hits, each with a small extra strike.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.extra-strike-pct': 0.2 },
     },
     {
       id: 'striker-hooked-sickle-t1', name: 'Hooked Sickle',
@@ -39,7 +41,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { purple: 22 }, stats: { attack: 18 }, attacksPerSecond: 0.90, tier: 1,
       icon: 'items/weapons/poison-dagger.png',
       description: 'Your damage over time lasts longer, and the finisher hits a bleeding or rotting target harder.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.dot-duration-pct': 0.5, 'striker.finisher-vs-dot-pct': 0.3 },
     },
     {
       id: 'striker-maul-t1', name: 'Maul',
@@ -47,7 +49,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { blue: 22 }, stats: { attack: 38 }, attacksPerSecond: 0.55, tier: 1,
       icon: 'items/weapons/heavy-hammer.png',
       description: 'Slow, heavy beats, a much bigger finisher, and faster wind-ups.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.finisher-pct': 0.4, 'striker.windup-speed-pct': 0.3 },
     },
     {
       id: 'striker-bastard-sword-t1', name: 'Bastard Sword',
@@ -55,7 +57,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { red: 26 }, stats: { attack: 29 }, attacksPerSecond: 1.10, tier: 1,
       icon: 'items/weapons/chaotic-axe.png',
       description: 'Damage techniques and the finisher hit harder, and setups wear off sooner.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.technique-damage-pct': 0.25, 'striker.setup-duration-cut-pct': 0.3 },
     },
     // ── T2 ──
     {
@@ -64,7 +66,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { yellow: 45 }, stats: { attack: 51 }, attacksPerSecond: 1.00, tier: 2,
       icon: 'items/weapons/knight-steelsword.png',
       description: 'Every beat also nicks the nearest other enemy.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.nick-pct': 0.312 },
     },
     {
       id: 'striker-twin-fangs-t2', name: 'Twin Fangs',
@@ -72,7 +74,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { green: 60 }, stats: { attack: 35 }, attacksPerSecond: 1.70, tier: 2,
       icon: 'items/weapons/gale-needle.png',
       description: 'Fast, light hits, each with a small extra strike.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.extra-strike-pct': 0.25 },
     },
     {
       id: 'striker-hooked-sickle-t2', name: 'Hooked Sickle',
@@ -80,7 +82,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { purple: 52 }, stats: { attack: 47 }, attacksPerSecond: 1.0, tier: 2,
       icon: 'items/weapons/venom-knife.png',
       description: 'Your damage over time lasts longer, and the finisher hits a bleeding or rotting target harder.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.dot-duration-pct': 0.625, 'striker.finisher-vs-dot-pct': 0.375 },
     },
     {
       id: 'striker-maul-t2', name: 'Maul',
@@ -88,7 +90,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { blue: 52 }, stats: { attack: 85 }, attacksPerSecond: 0.55, tier: 2,
       icon: 'items/weapons/quake-hammer.png',
       description: 'Slow, heavy beats, a much bigger finisher, and faster wind-ups.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.finisher-pct': 0.5, 'striker.windup-speed-pct': 0.375 },
     },
     {
       id: 'striker-bastard-sword-t2', name: 'Bastard Sword',
@@ -96,7 +98,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { red: 60 }, stats: { attack: 60 }, attacksPerSecond: 1.20, tier: 2,
       icon: 'items/weapons/ruinous-axe.png',
       description: 'Damage techniques and the finisher hit harder, and setups wear off sooner.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.technique-damage-pct': 0.312, 'striker.setup-duration-cut-pct': 0.375 },
     },
     {
       id: 'striker-hunters-blade-t2', name: "Hunter's Blade",
@@ -121,7 +123,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { purple: 116 }, stats: { attack: 86 }, attacksPerSecond: 1.00, tier: 3,
       icon: 'items/weapons/plague-fang.png',
       description: 'Your damage over time lasts longer, and the finisher hits a bleeding or rotting target harder.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.dot-duration-pct': 0.75, 'striker.finisher-vs-dot-pct': 0.45 },
     },
     {
       id: 'striker-maul-t3', name: 'Maul',
@@ -129,7 +131,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { blue: 116 }, stats: { attack: 164 }, attacksPerSecond: 0.55, tier: 3,
       icon: 'items/weapons/avalanche-maul.png',
       description: 'Slow, heavy beats, a much bigger finisher, and faster wind-ups.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.finisher-pct': 0.6, 'striker.windup-speed-pct': 0.45 },
     },
     {
       id: 'striker-bastard-sword-t3', name: 'Bastard Sword',
@@ -137,7 +139,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { red: 120 }, stats: { attack: 112 }, attacksPerSecond: 1.20, tier: 3,
       icon: 'items/weapons/cataclysm-axe.png',
       description: 'Damage techniques and the finisher hit harder, and setups wear off sooner.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.technique-damage-pct': 0.375, 'striker.setup-duration-cut-pct': 0.45 },
     },
     {
       id: 'striker-hunters-blade-t3', name: "Hunter's Blade",
@@ -154,7 +156,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { green: 120 }, stats: { attack: 50, onHitDamage: 38 }, attacksPerSecond: 1.65, tier: 3,
       icon: 'items/weapons/venomthorn-rapier.png',
       description: 'Fast, light hits, each with a small extra strike.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.extra-strike-pct': 0.3 },
     },
     {
       id: 'striker-executioners-blade-t3', name: "Executioner's Blade",
@@ -187,7 +189,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { red: 140 }, stats: { attack: 70 }, attacksPerSecond: 1.65, tier: 3,
       icon: 'items/weapons/cinderlash.png',
       description: 'Every beat also nicks the nearest other enemy.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.nick-pct': 0.375 },
     },
     // ── T4 ──
     {
@@ -196,7 +198,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { blue: 256 }, stats: { attack: 486 }, attacksPerSecond: 0.40, tier: 4,
       icon: 'items/weapons/earthsunder-maul.png',
       description: 'Slow, heavy beats, a much bigger finisher, and faster wind-ups.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.finisher-pct': 0.7, 'striker.windup-speed-pct': 0.525 },
     },
     {
       id: 'striker-hunters-blade-t4', name: "Hunter's Blade",
@@ -213,7 +215,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { green: 264 }, stats: { attack: 108, onHitDamage: 70 }, attacksPerSecond: 1.75, tier: 4,
       icon: 'items/weapons/deathfang-rapier.png',
       description: 'Fast, light hits, each with a small extra strike.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.extra-strike-pct': 0.35 },
     },
     {
       id: 'striker-executioners-blade-t4', name: "Executioner's Blade",
@@ -246,7 +248,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { red: 308 }, stats: { attack: 119 }, attacksPerSecond: 1.80, tier: 4,
       icon: 'items/weapons/eruption-lash.png',
       description: 'Every beat also nicks the nearest other enemy.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.nick-pct': 0.438 },
     },
     {
       id: 'striker-reapers-scythe-t4', name: "Reaper's Scythe",
@@ -263,7 +265,7 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { purple: 270 }, stats: { attack: 258 }, attacksPerSecond: 1.10, tier: 4,
       icon: 'items/weapons/plague-axe.png',
       description: 'Your damage over time lasts longer, and the finisher hits a bleeding or rotting target harder.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.dot-duration-pct': 0.875, 'striker.finisher-vs-dot-pct': 0.525 },
     },
     {
       id: 'striker-exploit-t4', name: 'Exploit',
@@ -280,43 +282,43 @@ export const STRIKER_GEAR: ClassGearDef = {
       cost: { green: 270 }, stats: { attack: 257 }, attacksPerSecond: 1.15, tier: 4,
       icon: 'items/weapons/abyssal-axe.png',
       description: 'Damage techniques and the finisher hit harder, and setups wear off sooner.',
-      mechanicEffects: {},
+      mechanicEffects: { 'striker.technique-damage-pct': 0.438, 'striker.setup-duration-cut-pct': 0.525 },
     },
   ],
   lines: {
     // ── T1 ──
-    'plains-vest-t1': { name: 'Shoulder Through', text: 'Each extra enemy around you adds a little plating.', effects: {} },
-    'plains-charm-t1': { name: 'Grit', text: 'Part of every hit you take heals back over a few seconds while you keep attacking; stop and it is lost.', effects: {} },
-    'forest-vest-t1': { name: 'Unbroken', text: 'Stuns, knockdowns and slows are shorter and never break your resource.', effects: {} },
+    'plains-vest-t1': { name: 'Shoulder Through', text: 'Each extra enemy around you adds a little plating.', effects: { 'striker.plating-per-enemy': 1 } },
+    'plains-charm-t1': { name: 'Grit', text: 'Part of every hit you take heals back over a few seconds while you keep attacking; stop and it is lost.', effects: { 'striker.grit-pct': 0.15, 'striker.grit-ms': 3000 } },
+    'forest-vest-t1': { name: 'Unbroken', text: 'Stuns, knockdowns and slows are shorter and never break your resource.', effects: { 'defense.control-duration-cut-pct': 0.25 } },
     'forest-charm-t1': { name: 'Rhythm', text: 'Recovery rises the longer you fight without a break, up to double.', effects: {} },
-    'swamp-vest-t1': { name: 'Bloodless', text: "While you keep attacking, damage over time can't take you below a quarter of your HP.", effects: {} },
-    'swamp-charm-t1': { name: 'Antidote', text: 'Every few seconds, the poison or bleed on you with the most time left ends.', effects: {} },
-    'mountain-vest-t1': { name: 'Braced Cast', text: 'Nothing interrupts your casts, and the cap is lower while you cast.', effects: {} },
+    'swamp-vest-t1': { name: 'Bloodless', text: "While you keep attacking, damage over time can't take you below a quarter of your HP.", effects: { 'striker.dot-floor-pct': 0.25 } },
+    'swamp-charm-t1': { name: 'Antidote', text: 'Every few seconds, the poison or bleed on you with the most time left ends.', effects: { 'defense.dot-cleanse-interval-ms': 6000 } },
+    'mountain-vest-t1': { name: 'Braced Cast', text: 'Nothing interrupts your casts, and the cap is lower while you cast.', effects: { 'striker.cast-unbreakable': 1, 'striker.cast-cap-cut-pct': 0.25 } },
     'mountain-charm-t1': { name: 'Cairnstone', text: 'After a hit over a quarter of your HP, Recovery triples for a few seconds.', effects: {} },
-    'cave-vest-t1': { name: 'Weighty', text: 'More bulk, and slower beats.', effects: {} },
-    'cave-charm-t1': { name: 'Deep Breath', text: 'Out-of-combat Recovery is much faster.', effects: {} },
+    'cave-vest-t1': { name: 'Weighty', text: 'More bulk, and slower beats.', effects: { 'striker.bulk-pct': 0.1, 'striker.beat-slow-pct': 0.1 } },
+    'cave-charm-t1': { name: 'Deep Breath', text: 'Out-of-combat Recovery is much faster.', effects: { 'defense.ooc-recovery-pct': 1 } },
     // ── T2 ──
-    'plains-vest-t2': { name: 'Shoulder Through', text: 'Each extra enemy around you adds a little plating.', effects: {} },
-    'plains-charm-t2': { name: 'Grit', text: 'Part of every hit you take heals back over a few seconds while you keep attacking; stop and it is lost.', effects: {} },
-    'forest-vest-t2': { name: 'Unbroken', text: 'Stuns, knockdowns and slows are shorter and never break your resource.', effects: {} },
+    'plains-vest-t2': { name: 'Shoulder Through', text: 'Each extra enemy around you adds a little plating.', effects: { 'striker.plating-per-enemy': 2.6 } },
+    'plains-charm-t2': { name: 'Grit', text: 'Part of every hit you take heals back over a few seconds while you keep attacking; stop and it is lost.', effects: { 'striker.grit-pct': 0.188, 'striker.grit-ms': 3000 } },
+    'forest-vest-t2': { name: 'Unbroken', text: 'Stuns, knockdowns and slows are shorter and never break your resource.', effects: { 'defense.control-duration-cut-pct': 0.312 } },
     'forest-charm-t2': { name: 'Rhythm', text: 'Recovery rises the longer you fight without a break, up to double.', effects: {} },
-    'swamp-vest-t2': { name: 'Bloodless', text: "While you keep attacking, damage over time can't take you below a quarter of your HP.", effects: {} },
-    'swamp-charm-t2': { name: 'Antidote', text: 'Every few seconds, the poison or bleed on you with the most time left ends.', effects: {} },
-    'mountain-vest-t2': { name: 'Braced Cast', text: 'Nothing interrupts your casts, and the cap is lower while you cast.', effects: {} },
+    'swamp-vest-t2': { name: 'Bloodless', text: "While you keep attacking, damage over time can't take you below a quarter of your HP.", effects: { 'striker.dot-floor-pct': 0.25 } },
+    'swamp-charm-t2': { name: 'Antidote', text: 'Every few seconds, the poison or bleed on you with the most time left ends.', effects: { 'defense.dot-cleanse-interval-ms': 5000 } },
+    'mountain-vest-t2': { name: 'Braced Cast', text: 'Nothing interrupts your casts, and the cap is lower while you cast.', effects: { 'striker.cast-unbreakable': 1, 'striker.cast-cap-cut-pct': 0.25 } },
     'mountain-charm-t2': { name: 'Cairnstone', text: 'After a hit over a quarter of your HP, Recovery triples for a few seconds.', effects: {} },
-    'cave-vest-t2': { name: 'Weighty', text: 'More bulk, and slower beats.', effects: {} },
-    'cave-charm-t2': { name: 'Deep Breath', text: 'Out-of-combat Recovery is much faster.', effects: {} },
+    'cave-vest-t2': { name: 'Weighty', text: 'More bulk, and slower beats.', effects: { 'striker.bulk-pct': 0.125, 'striker.beat-slow-pct': 0.1 } },
+    'cave-charm-t2': { name: 'Deep Breath', text: 'Out-of-combat Recovery is much faster.', effects: { 'defense.ooc-recovery-pct': 1.25 } },
     'jungle-vest-t2': { name: 'Watchful', text: "An ambush can't interrupt a cast or break your combo.", effects: {} },
     'jungle-charm-t2': { name: 'Chase', text: 'Recovery doubles while you close on a target.', effects: {} },
     'desert-vest-t2': { name: 'Close In', text: 'While a ranged enemy hits you, you move faster toward it.', effects: {} },
     'desert-charm-t2': { name: 'Shake Off', text: 'Every few seconds a mark or slow on you ends.', effects: {} },
     // ── T3 ──
-    'swamp-vest-t3': { name: 'Bloodless', text: "While you keep attacking, damage over time can't take you below a quarter of your HP.", effects: {} },
-    'swamp-charm-t3': { name: 'Antidote', text: 'Every few seconds, the poison or bleed on you with the most time left ends.', effects: {} },
-    'mountain-vest-t3': { name: 'Braced Cast', text: 'Nothing interrupts your casts, and the cap is lower while you cast.', effects: {} },
+    'swamp-vest-t3': { name: 'Bloodless', text: "While you keep attacking, damage over time can't take you below a quarter of your HP.", effects: { 'striker.dot-floor-pct': 0.25 } },
+    'swamp-charm-t3': { name: 'Antidote', text: 'Every few seconds, the poison or bleed on you with the most time left ends.', effects: { 'defense.dot-cleanse-interval-ms': 4000 } },
+    'mountain-vest-t3': { name: 'Braced Cast', text: 'Nothing interrupts your casts, and the cap is lower while you cast.', effects: { 'striker.cast-unbreakable': 1, 'striker.cast-cap-cut-pct': 0.25 } },
     'mountain-charm-t3': { name: 'Cairnstone', text: 'After a hit over a quarter of your HP, Recovery triples for a few seconds.', effects: {} },
-    'cave-vest-t3': { name: 'Weighty', text: 'More bulk, and slower beats.', effects: {} },
-    'cave-charm-t3': { name: 'Deep Breath', text: 'Out-of-combat Recovery is much faster.', effects: {} },
+    'cave-vest-t3': { name: 'Weighty', text: 'More bulk, and slower beats.', effects: { 'striker.bulk-pct': 0.15, 'striker.beat-slow-pct': 0.1 } },
+    'cave-charm-t3': { name: 'Deep Breath', text: 'Out-of-combat Recovery is much faster.', effects: { 'defense.ooc-recovery-pct': 1.5 } },
     'jungle-vest-t3': { name: 'Watchful', text: "An ambush can't interrupt a cast or break your combo.", effects: {} },
     'jungle-charm-t3': { name: 'Chase', text: 'Recovery doubles while you close on a target.', effects: {} },
     'desert-vest-t3': { name: 'Close In', text: 'While a ranged enemy hits you, you move faster toward it.', effects: {} },
@@ -326,7 +328,7 @@ export const STRIKER_GEAR: ClassGearDef = {
     'volcanic-vest-t3': { name: 'Cinderskin', text: "The Heat's extra damage taken doesn't apply to you while you keep attacking.", effects: {} },
     'volcanic-charm-t3': { name: 'Fuel', text: 'Your Recovery rises with the Heat.', effects: {} },
     // ── T4 ──
-    'mountain-vest-t4': { name: 'Braced Cast', text: 'Nothing interrupts your casts, and the cap is lower while you cast.', effects: {} },
+    'mountain-vest-t4': { name: 'Braced Cast', text: 'Nothing interrupts your casts, and the cap is lower while you cast.', effects: { 'striker.cast-unbreakable': 1, 'striker.cast-cap-cut-pct': 0.25 } },
     'mountain-charm-t4': { name: 'Cairnstone', text: 'After a hit over a quarter of your HP, Recovery triples for a few seconds.', effects: {} },
     'jungle-vest-t4': { name: 'Watchful', text: "An ambush can't interrupt a cast or break your combo.", effects: {} },
     'jungle-charm-t4': { name: 'Chase', text: 'Recovery doubles while you close on a target.', effects: {} },

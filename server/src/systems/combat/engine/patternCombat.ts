@@ -23,7 +23,7 @@ import { markEngaged } from '../ai/engagement';
 import { pullPlayer } from '../damage/forcedMovement';
 import { canApplyPlayerDebuff } from '../status/debuffGuard';
 import { applyStun } from '../status/stun';
-import { harmfulStatusDurationMult } from '../status/harmfulStatus';
+import { harmfulStatusDurationMult, playerControlDurationMult } from '../status/harmfulStatus';
 import { runMonsterAttack, runMonsterAttackOnMinion } from './combat';
 import { formationAreaMults } from '../../classes/archetypes/summoner/formationArea';
 import type { RuntimeSlamTelegraph } from '../../world/groundZones';
@@ -103,7 +103,7 @@ function resolvePatternCircle(
           victim.tracksCombat,
           stunMs,
           monster.isMonster.id,
-          harmfulStatusDurationMult(victim),
+          playerControlDurationMult(victim),
         );
       }
       const refreshed = world.getPlayerEntity(victim.isPlayer.id);

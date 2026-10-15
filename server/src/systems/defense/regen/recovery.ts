@@ -157,7 +157,9 @@ export function recoveryPerSecond(player: PlayerEntity, fraction: number): numbe
  */
 export function oocRecoveryPerSecond(player: PlayerEntity, oocSuppressed = false): number {
   if (oocSuppressed) return 0;
-  return player.hasHealth.maxHp * GAME_CONFIG.OOC_RECOVERY_PCT;
+  // A class line may speed it up (the Striker's Deep Breath).
+  const faster = 1 + (player.usesSkills.passives['defense.ooc-recovery-pct'] ?? 0);
+  return player.hasHealth.maxHp * GAME_CONFIG.OOC_RECOVERY_PCT * faster;
 }
 
 function rampFraction(player: PlayerEntity): number {

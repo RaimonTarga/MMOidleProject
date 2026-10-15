@@ -11,6 +11,7 @@ import {
 import type { PlayerEntity } from '../../../ecs/entity';
 import { getDebuffResistanceMult } from '../../defense/regen/healing';
 import { refusesHardControl } from './playerHardControl';
+import { playerControlCutMult } from './harmfulStatus';
 
 /**
  * THE ADMISSION CHECK for a harmful status on its way onto a player: the keystone
@@ -72,6 +73,7 @@ export function resistedPlayerDebuffMagnitude(player: PlayerEntity, key: string,
 
 export function applyResistedPlayerDebuff(player: PlayerEntity, config: StatusEffectConfig): StatusEffect | undefined {
   if (playerRefusesStatus(player, config.id, config.data)) return undefined;
+  config = withControlCut(player, config);
   if (config.data?.isDot || config.data?.isAmbientRamp || config.data?.isNodeFeature || config.data?.isGroundZone) {
     return applyStatusEffect(player.tracksCombat, config);
   }
@@ -91,6 +93,16 @@ export function applyResistedPlayerDebuff(player: PlayerEntity, config: StatusEf
  * ask the question — a future immunity source only has to apply the effect.
  */
 export const DEBUFF_IMMUNE_EFFECT = 'debuff-immune';
+
+/** A slow or root on a player is shorter by the player's control cut (Unbroken). */
+function withControlCut(player: PlayerEntity, config: StatusEffectConfig): StatusEffectConfig {
+  const control = config.id === 'slow' || statusPolicyFor(config.id, config.data ?? {}).hardControl;
+  const cut = control ? playerControlCutMult(player) : 1;
+  if (cut === 1 || config.remainingMs === undefined || config.remainingMs <= 0) return config;
+  const remainingMs = Math.max(1, Math.round(config.remainingMs * cut));
+  const data = config.data?.totalMs !== undefined ? { ...config.data, totalMs: remainingMs } : config.data;
+  return { ...config, remainingMs, data };
+}
 
 export function canApplyPlayerDebuff(player: PlayerEntity): boolean {
   if (!player.tracksCombat) return true;

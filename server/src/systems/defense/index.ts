@@ -1,4 +1,5 @@
 import { withCombatRegistrationLabel } from '../combat/engine/combatPipeline';
+import { runDotCleanse } from './mitigation/dotCleanse';
 import { getResource, setResource } from "@mmo-idle/shared";
 import type { World } from "../../world/World";
 import { registerEvasion, resetEvadeAccumulator } from "./mitigation/evasion";
@@ -95,6 +96,7 @@ export function updateDefensiveSystems(
     runStationaryDr(world, player, dt);
     runReactivePlating(world, player, dt);
     runBramblePlating(world, player);
+    runDotCleanse(player, dt);
   }
 }
 

@@ -47,6 +47,20 @@ export function harmfulStatusDurationMult(player: PlayerEntity): number {
  * percentage), and one function cannot honestly scale all of them. DoT damage is the
  * one that is unambiguously a magnitude, so it is the one this covers.
  */
+/**
+ * The duration multiplier for control on a player (stuns, roots, knockdowns, slows): status
+ * tenacity, then `defense.control-duration-cut-pct` (the Striker's Unbroken).
+ */
+export function playerControlDurationMult(player: PlayerEntity): number {
+  const cut = player.usesSkills?.passives["defense.control-duration-cut-pct"] ?? 0;
+  return harmfulStatusDurationMult(player) * resistMult(cut);
+}
+
+/** The control cut alone, for appliers that already paid tenacity. */
+export function playerControlCutMult(player: PlayerEntity): number {
+  return resistMult(player.usesSkills?.passives["defense.control-duration-cut-pct"] ?? 0);
+}
+
 export function harmfulStatusPotencyMult(player: PlayerEntity): number {
   return resistMult(player.usesSkills?.passives["shared.status-potency-resist"] ?? 0);
 }

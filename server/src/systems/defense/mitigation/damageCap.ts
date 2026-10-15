@@ -19,7 +19,9 @@ export function registerDamageCap(): void {
     const maxHitPct = player.usesSkills.passives['defense.max-hit-pct'] ?? 0;
     if (maxHitPct <= 0) return;
 
-    const threshold = player.hasHealth.maxHp * maxHitPct;
+    // The Striker's Braced Cast: the cap is lower while you cast.
+    const castCut = player.isCastingAbility ? player.usesSkills.passives['striker.cast-cap-cut-pct'] ?? 0 : 0;
+    const threshold = player.hasHealth.maxHp * maxHitPct * Math.max(0.1, 1 - castCut);
     if (ctx.damage <= threshold) return;
 
     const mult = player.usesSkills.passives['defense.max-hit-mult'] ?? 1;

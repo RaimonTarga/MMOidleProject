@@ -99,6 +99,39 @@ export const DEFENSE_KEYS = [
   'defense.hit-plating-per-stack',
   'defense.hit-plating-max-stacks',
   'defense.hit-plating-duration-ms',
+  // ── Class lines' generic defenses (class-first build plan CS.4) ─────────────
+  // Out-of-combat healing runs this much faster (a Striker's Deep Breath).
+  'defense.ooc-recovery-pct',
+  // Stuns, roots, knockdowns and slows on you are this much shorter (Unbroken).
+  'defense.control-duration-cut-pct',
+  // Every `interval-ms`, the poison or bleed on you with the most time left ends (Antidote).
+  'defense.dot-cleanse-interval-ms',
+] as const;
+
+/**
+ * The Striker's weapon jobs and armor/charm lines (class-first build plan CS.4, bible §12.4).
+ * Read by the Order runtime (`classes/archetypes/cadence/`). Numbers are placeholders.
+ */
+export const STRIKER_KEYS = [
+  // Weapons
+  'striker.nick-pct',              // Broadblade: every beat also nicks the nearest other enemy
+  'striker.extra-strike-pct',      // Twin Fangs: each hit strikes once more, lightly
+  'striker.dot-duration-pct',      // Hooked Sickle: your bleeds and rot last longer
+  'striker.finisher-vs-dot-pct',   // Hooked Sickle: the finisher hits a bleeding or rotting target harder
+  'striker.finisher-pct',          // Maul: a much bigger finisher
+  'striker.windup-speed-pct',      // Maul: wind-ups (Coil, Skyfall) are shorter
+  'striker.technique-damage-pct',  // Bastard Sword: damage techniques and the finisher hit harder
+  'striker.setup-duration-cut-pct', // Bastard Sword: setups wear off sooner
+  // Armor lines
+  'striker.plating-per-enemy',     // Shoulder Through: plating per extra enemy on you
+  'striker.dot-floor-pct',         // Bloodless: while attacking, DoTs can't take you below this share
+  'striker.cast-unbreakable',      // Braced Cast: nothing interrupts your casts
+  'striker.cast-cap-cut-pct',      // Braced Cast: the damage cap is lower while you cast
+  'striker.bulk-pct',              // Weighty: more max HP
+  'striker.beat-slow-pct',         // Weighty: slower beats
+  // Charm lines
+  'striker.grit-pct',              // Grit: this share of every hit heals back while you keep attacking
+  'striker.grit-ms',               // Grit: over this long
 ] as const;
 
 export const CADENCE_KEYS = [
@@ -753,13 +786,14 @@ export type MobilityPassiveKey = typeof MOBILITY_KEYS[number];
 export type TechniquePassiveKey = typeof TECHNIQUE_KEYS[number];
 export type GuardPassiveKey    = typeof GUARD_KEYS[number];
 export type RelicPassiveKey    = typeof RELIC_KEYS[number];
+export type StrikerPassiveKey  = typeof STRIKER_KEYS[number];
 
 export type PassiveKey =
   | DefensePassiveKey | CadencePassiveKey | CooldownPassiveKey
   | ReloadPassiveKey  | EnergyPassiveKey  | DotPassiveKey
   | SharedPassiveKey  | SummonerPassiveKey | MobilityPassiveKey
   | GuardPassiveKey   | TechniquePassiveKey
-  | RelicPassiveKey;
+  | RelicPassiveKey   | StrikerPassiveKey;
 
 export type PassiveMap      = Partial<Record<PassiveKey, number>>;
 export type MechanicEffects = Partial<Record<PassiveKey, number>>;
@@ -769,7 +803,7 @@ export const ALL_PASSIVE_KEYS = [
   ...DEFENSE_KEYS, ...CADENCE_KEYS, ...COOLDOWN_KEYS,
   ...RELOAD_KEYS, ...ENERGY_KEYS, ...DOT_KEYS, ...SHARED_KEYS, ...SUMMONER_KEYS,
   ...MOBILITY_KEYS, ...GUARD_KEYS, ...TECHNIQUE_KEYS,
-  ...RELIC_KEYS,
+  ...RELIC_KEYS, ...STRIKER_KEYS,
 ] as const;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

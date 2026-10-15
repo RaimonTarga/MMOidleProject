@@ -48,6 +48,7 @@ import { classConfigContextOf } from '../../../player/progression/classConfig';
 import { beginClassCast, registerClassCast } from '../../../player/abilities/abilityCasting';
 import { applyPlayerDebuff } from '../../shared/applyPlayerDebuff';
 import { ATTACK_HASTE_PCT_KEY } from '../../../combat/engine/attackCadence';
+import { runStrikerWeaponStrikes, strikerWeaponDamageMult } from './strikerGear';
 import { defineBuff } from '../../../combat/buffs/descriptor';
 
 /** Focus's combo haste on the player (self only; one copy). */
@@ -150,15 +151,17 @@ const BEATS: Readonly<Record<string, BeatHandler>> = {
     applyPlayerAoe(world, player, player.hasPosition.current, p.radius, swing * p.splashPct,
       target.isMonster.id, 'player', {}, { feedsWeaponReservoir: true });
   },
-  // The target moves and attacks slower for a moment (the strongest slow wins).
+  // The target moves and attacks slower for a moment (the strongest slow wins). A setup:
+  // Bastard Sword makes it wear off sooner.
   'striker-hamstring': (world, player, target, p) => {
-    applyMonsterSlow(world, target, p.moveSlowPct, p.durationMs, player.isPlayer.id);
+    const cut = player.usesSkills.passives['striker.setup-duration-cut-pct'] ?? 0;
+    applyMonsterSlow(world, target, p.moveSlowPct, p.durationMs * Math.max(0.1, 1 - cut), player.isPlayer.id);
     const slow = getStatusEffect(target.tracksCombat, ABILITY_SLOW_EFFECT_ID);
     if (slow) slow.data['attackSlowPct'] = Math.max(slow.data['attackSlowPct'] ?? 0, p.attackSlowPct);
   },
-  // A bleed, a share of the swing per tick.
+  // A bleed, a share of the swing per tick (Hooked Sickle: more ticks).
   'striker-rend': (world, player, target, p, swing) => {
-    applyBleed(world, player, target, CADENCE_BLEED_ID, swing * p.tickPct, p.ticks, p.tickMs);
+    applyBleed(world, player, target, CADENCE_BLEED_ID, swing * p.tickPct, p.ticks * dotDurationMult(player), p.tickMs);
   },
 };
 
@@ -189,7 +192,7 @@ const CASTS: Readonly<Record<string, (world: World, player: PlayerEntity, o: Ord
 const WEIGHTS: Readonly<Record<string, (world: World, player: PlayerEntity, target: MonsterEntity, ctx: CombatContext, p: Record<string, number>) => void>> = {
   // The finisher's wound rots, dealing a share of its damage again over a few ticks.
   'striker-relic-swamp': (world, player, target, ctx, p) => {
-    applyBleed(world, player, target, STRIKER_ROT_ID, (ctx.damage * p.sharePct) / p.ticks, p.ticks, p.tickMs);
+    applyBleed(world, player, target, STRIKER_ROT_ID, (ctx.damage * p.sharePct) / p.ticks, p.ticks * dotDurationMult(player), p.tickMs);
   },
   // The finisher is a cast (see beforeAttack); the blow it resolves into is bigger.
   'striker-relic-mountain': (_world, _player, _target, ctx, p) => {
@@ -225,6 +228,22 @@ const SPARKS: Readonly<Record<string, (world: World, player: PlayerEntity, targe
     applyPlayerAoeTo(world, player, [target], strike, 'player', {}, { feedsWeaponReservoir: true });
   },
 };
+
+/** Hooked Sickle: your bleeds and rot last longer. */
+function dotDurationMult(player: PlayerEntity): number {
+  return 1 + (player.usesSkills.passives['striker.dot-duration-pct'] ?? 0);
+}
+
+/** A cast's wind-up after Maul's faster wind-ups (the opener isn't a wind-up). */
+function castMsFor(player: PlayerEntity, authoredMs: number, windup: boolean): number {
+  const cut = windup ? player.usesSkills.passives['striker.windup-speed-pct'] ?? 0 : 0;
+  return authoredMs * Math.max(0.1, 1 - cut);
+}
+
+/** Braced Cast: nothing interrupts your casts. */
+function castUnbreakable(player: PlayerEntity): boolean {
+  return (player.usesSkills.passives['striker.cast-unbreakable'] ?? 0) > 0;
+}
 
 function dist2(m: MonsterEntity, at: { x: number; y: number }): number {
   const dx = m.hasPosition.current.x - at.x;
@@ -297,14 +316,15 @@ function beforeStrikerSwing(ctx: CombatContext, world: World): void {
     // Skyfall: the finisher becomes a cast.
     if (o.trophy?.id === 'striker-relic-mountain') {
       const p = trophyParams(o, o.trophy);
-      if (beginClassCast(world, player, o.trophy.id, p.castMs, now)) ctx.cancelled = true;
+      if (beginClassCast(world, player, o.trophy.id, castMsFor(player, p.castMs, true), now)) ctx.cancelled = true;
     }
     return;
   }
 
   const piece = PIECES.get(o.order.beats[cadence.count] ?? '');
   if (piece?.cast && CASTS[piece.id]) {
-    if (beginClassCast(world, player, piece.id, pieceParams(o, piece).castMs, now)) ctx.cancelled = true;
+    const castMs = castMsFor(player, pieceParams(o, piece).castMs, piece.cast === 'windup');
+    if (beginClassCast(world, player, piece.id, castMs, now)) ctx.cancelled = true;
   }
 }
 
@@ -322,13 +342,16 @@ export function runStrikerBeat(world: World, ctx: CombatContext): void {
   const piece = PIECES.get(o.order.beats[index] ?? '');
   const handler = piece ? BEATS[piece.id] : undefined;
   if (piece && handler) {
-    const swing = ctx.damage;
+    // Bastard Sword: damage techniques hit harder, their swing and their effect.
+    const swing = ctx.damage * strikerWeaponDamageMult(player, ctx.defender, { finisher: false, damageTechnique: piece.family === 'damage' });
+    ctx.damage = Math.max(1, Math.round(swing));
     const { mastered } = strikerSlots(o.ctx.budget, o.order.beats.length);
     if (!strikerMasteredBeats(o.order.beats, mastered).has(index)) {
       ctx.damage = Math.max(1, Math.round(ctx.damage * STRIKER_TECHNIQUE_SWING));
     }
     handler(world, player, ctx.defender, pieceParams(o, piece), swing);
   }
+  runStrikerWeaponStrikes(world, player, ctx);
   runSpark(world, player, ctx, o);
 }
 
@@ -351,9 +374,12 @@ function onStrikerFinisher(ctx: CombatContext, world: World): void {
     const coil = PIECES.get('striker-coil')!;
     ctx.damage = Math.round(ctx.damage * (1 + (pieceParams(o, coil).finisherBonusPct ?? 0)));
   }
+  // Maul, Bastard Sword and Hooked Sickle on the finisher.
+  ctx.damage = Math.round(ctx.damage * strikerWeaponDamageMult(player, ctx.defender, { finisher: true, damageTechnique: false }));
   if (o.trophy && o.trophy.kind === 'weight') {
     WEIGHTS[o.trophy.id]?.(world, player, ctx.defender, ctx, trophyParams(o, o.trophy));
   }
+  runStrikerWeaponStrikes(world, player, ctx);
   runSpark(world, player, ctx, o);
   // The combo ends: the next one rides this trophy's spark, and starts unfocused, uncoiled.
   cadence.sparkTrophyId = o.trophy?.kind === 'spark' ? o.trophy.id : null;
@@ -370,6 +396,7 @@ function onStrikerFinisher(ctx: CombatContext, world: World): void {
 export function initStrikerOrder(): void {
   for (const [id, apply] of Object.entries(CASTS)) {
     registerClassCast(id, {
+      unbreakable: castUnbreakable,
       resolve(world, player) {
         const o = strikerOrderOf(world, player);
         const piece = PIECES.get(id);
@@ -380,7 +407,7 @@ export function initStrikerOrder(): void {
       },
     });
   }
-  registerClassCast('striker-relic-mountain', { resolve: resolveSkyfall });
+  registerClassCast('striker-relic-mountain', { resolve: resolveSkyfall, unbreakable: castUnbreakable });
   registerCombatListener('beforeAttack', beforeStrikerSwing);
   registerCombatListener('onHit', onStrikerFinisher);
 }

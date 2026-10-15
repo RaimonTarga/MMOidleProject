@@ -256,6 +256,9 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
   if (poolFactor !== 1) {
     p.hasHealth.maxHp = Math.max(1, Math.round(p.hasHealth.maxHp * poolFactor));
   }
+  // The Striker's Weighty line (class-first build plan CS.4): more bulk.
+  const bulk = p.usesSkills.passives['striker.bulk-pct'] ?? 0;
+  if (bulk > 0) p.hasHealth.maxHp = Math.max(1, Math.round(p.hasHealth.maxHp * (1 + bulk)));
 
   // 3d. Class affinity layer. Base + equipment have now established raw magnitude,
   // so the summed class-tree percentages land here — once each, never compounding
@@ -349,6 +352,10 @@ export function recalculatePlayerStats(p: PlayerStatsTarget): PlayerStatsResult 
       }
     }
   }
+
+  // The Striker's Weighty line (class-first build plan CS.4): slower beats.
+  const beatSlow = p.usesSkills.passives['striker.beat-slow-pct'] ?? 0;
+  if (beatSlow > 0) p.performsAttack.attackCooldown = Math.round(p.performsAttack.attackCooldown * (1 + beatSlow));
 
   // 4. Range floor. Negative range bonuses can reduce ranged builds down to
   // melee, but should never remove the base contact reach needed to attack.

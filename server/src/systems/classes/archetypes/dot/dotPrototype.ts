@@ -40,6 +40,7 @@ import {
 import { canApplyPlayerDebuff } from "../../../combat/status/debuffGuard";
 import { evadeBlocksDebuffs } from "../../../defense/mitigation/evasion";
 import { applyMonsterDotToPlayer } from '../../../combat/status/monsterDot';
+import { strikerDotFloor } from '../cadence/strikerGear';
 import {
   pushDotTickEvent,
   dotElementForSource,
@@ -174,7 +175,7 @@ export { computeScaledDotDamage };
  *   - Monster-side: player-applied DoT stacks on monsters.
  *   - Player-side: monster-applied DoT stacks on players.
  */
-export function updateDotArchetype(world: World, dt: number): void {
+export function updateDotArchetype(world: World, dt: number, now = Date.now()): void {
   // ── Monster-side: player-applied DoT ticking on monsters ─────────────────
   const monstersToKill: Array<{
     monsterId: string;
@@ -358,6 +359,8 @@ export function updateDotArchetype(world: World, dt: number): void {
       buildSimpleBreakdown(base, hpDamage),
     );
 
+    // The Striker's Bloodless: while attacking, DoTs can't take you below its floor.
+    hpDamage = strikerDotFloor(entity, hpDamage, now);
     entity.hasHealth.hp -= hpDamage;
     pushPlayerDotTickEvent(world, entity, monsterDotElement(world, effect.sourceId, effect), hpDamage, { sourceType: "monster", sourceId: effect.sourceId, absorbed });
 
