@@ -62,9 +62,9 @@ function discipline(
 }
 
 function specialization(
-  entry: Omit<SpecializationDef, 'classId' | 'params'> & { disciplineId: SquireDisciplineId },
+  entry: Omit<SpecializationDef, 'classId' | 'params'> & { disciplineId: SquireDisciplineId; params?: KitParams },
 ): SpecializationDef {
-  return { classId: 'cooldown', params: {}, ...entry };
+  return { classId: 'cooldown', ...entry, params: entry.params ?? {} };
 }
 
 function leaf(
@@ -122,7 +122,8 @@ const PIECES: readonly SquirePiece[] = [
     // The brace holds until the blow lands (at most `maxWindowMs`); a caught blow takes `cut` off.
     params: { cost: 1, refund: 2, cut: 0.7, maxWindowMs: 4000 },
     ranks: [
-      { rank: 2, text: 'One brace also catches a second telegraphed blow that comes within a few seconds.' },
+      // PLACEHOLDER (T3-SQUIRE): after a catch, the brace stays up this long for a second blow.
+      { rank: 2, text: 'One brace also catches a second telegraphed blow that comes within a few seconds.', params: { secondCatchMs: 3000 } },
       { rank: 3, text: 'A caught blow also staggers its attacker.' },
     ],
   }),
@@ -198,6 +199,8 @@ const PIECES: readonly SquirePiece[] = [
     family: 'guard',
     answers: 'drag-or-push',
     text: "When something drags or pushes you, you plant your feet: you don't move, and it fills your Resolve.",
+    // PLACEHOLDERS (T3-RT): the brace holds until the push or drag lands (at most `maxWindowMs`).
+    params: { cost: 1, refund: 2, maxWindowMs: 4000, lockoutMs: 2500 },
     ranks: [{ rank: 2, text: 'Not even a push into a hazard can move you.' }],
   }),
   response({
@@ -206,6 +209,8 @@ const PIECES: readonly SquirePiece[] = [
     family: 'hold',
     answers: 'target-flees',
     text: 'When your target flees, you hook it and drag it back.',
+    // PLACEHOLDERS: reaches `range` px; the hooked enemy lands `PULL_GAP_PX` from you.
+    params: { cost: 1, refund: 2, range: 700, lockoutMs: 3000 },
   }),
   response({
     id: 'squire-frostward',
@@ -213,6 +218,9 @@ const PIECES: readonly SquirePiece[] = [
     family: 'guard',
     answers: 'chill-threshold',
     text: 'When the Chill on you is about to freeze you, you hold it there for a few seconds instead.',
+    // PLACEHOLDERS: fires at `thresholdStacks` of Chill (the Deep Freeze gate is 4) and keeps it
+    // at `holdStacks` for `holdMs`.
+    params: { cost: 1, refund: 2, thresholdStacks: 3, holdStacks: 3, holdMs: 4000, lockoutMs: 8000 },
   }),
   response({
     id: 'squire-backdraft',
@@ -220,6 +228,8 @@ const PIECES: readonly SquirePiece[] = [
     family: 'counter',
     answers: 'fire-attack',
     text: 'When a fire attack or burning shot comes at you, you throw the heat back at its source.',
+    // PLACEHOLDERS: the counter hits for `damagePct` of a swing; one per `cooldownMs`.
+    params: { cost: 1, refund: 2, damagePct: 1.5, cooldownMs: 1500 },
   }),
   // ── T4 (§8.16) ──
   response({
@@ -359,7 +369,7 @@ const TROPHIES: readonly SquireTrophy[] = [
     params: { dotFillMult: 1, debuffFill: 0 },
     ranks: [
       { rank: 2, bossTier: 2, text: 'Every debuff that lands on you also fills your Resolve.', params: { debuffFill: 0.5 } },
-      { rank: 3, bossTier: 3, text: 'Rot-Eater grows stronger.' },
+      { rank: 3, bossTier: 3, text: 'Rot-Eater grows stronger.', params: { dotFillMult: 1.5, debuffFill: 0.75 } },
     ],
   }),
   squireTrophy({
@@ -371,7 +381,7 @@ const TROPHIES: readonly SquireTrophy[] = [
     params: { length: 320, width: 70, barrierMult: 1 },
     ranks: [
       { rank: 2, bossTier: 2, text: 'The shockwave hits barriers twice as hard.', params: { barrierMult: 2 } },
-      { rank: 3, bossTier: 3, text: 'The line runs longer.' },
+      { rank: 3, bossTier: 3, text: 'The line runs longer.', params: { length: 420 } },
       { rank: 4, bossTier: 4, text: 'Aftershocks follow along the line.' },
     ],
   }),
@@ -384,7 +394,7 @@ const TROPHIES: readonly SquireTrophy[] = [
     params: { platingPerSlam: 2, maxStacks: 5, durationMs: 8000 },
     ranks: [
       { rank: 2, bossTier: 2, text: 'Your slams can strip more plating in all.', params: { maxStacks: 8 } },
-      { rank: 3, bossTier: 3, text: 'Corrode grows stronger.' },
+      { rank: 3, bossTier: 3, text: 'Corrode grows stronger.', params: { platingPerSlam: 3, maxStacks: 10 } },
     ],
   }),
   squireTrophy({
@@ -418,7 +428,9 @@ const TROPHIES: readonly SquireTrophy[] = [
     name: 'Deep Winter',
     kind: 'resolve',
     text: 'Your Resolve bar can fill past full, up to double, and an overfull slam hits as hard as two.',
-    ranks: [{ rank: 2, bossTier: 4, text: 'The bar can fill up to triple.' }],
+    // The bar holds up to `capMult` times its size; the slam is sized by how full it is when it lands.
+    params: { capMult: 2 },
+    ranks: [{ rank: 2, bossTier: 4, text: 'The bar can fill up to triple.', params: { capMult: 3 } }],
   }),
   squireTrophy({
     id: 'squire-relic-volcanic',
@@ -426,7 +438,9 @@ const TROPHIES: readonly SquireTrophy[] = [
     name: 'Kindling',
     kind: 'resolve',
     text: 'Everything that fills your Resolve fills a bit more the longer the fight has lasted.',
-    ranks: [{ rank: 2, bossTier: 4, text: 'Kindling grows stronger.' }],
+    // PLACEHOLDERS: every `stepMs` of the fight adds `perStep` to every gain, up to `maxSteps` steps.
+    params: { stepMs: 10000, perStep: 0.1, maxSteps: 6 },
+    ranks: [{ rank: 2, bossTier: 4, text: 'Kindling grows stronger.', params: { perStep: 0.15 } }],
   }),
   squireTrophy({
     id: 'squire-relic-graveyard',
@@ -488,18 +502,24 @@ const SPECIALIZATIONS: readonly SpecializationDef[] = [
     disciplineId: 'squire-bulwark',
     name: 'Reverb',
     text: 'Your slam lands, then rings out again at half strength a few seconds later.',
+    // PLACEHOLDERS (T3-RT): the echo lands `delayMs` later at `pct` of the slam.
+    params: { delayMs: 3000, pct: 0.5 },
   }),
   specialization({
     id: 'squire-bastion',
     disciplineId: 'squire-bulwark',
     name: 'Bastion',
     text: 'Each enemy on you adds a pip to your Resolve bar, up to double its size; a boss counts as several.',
+    // PLACEHOLDER: each enemy on you adds a pip (a boss counts as several) up to `maxMult` times the bar.
+    params: { maxMult: 2 },
   }),
   specialization({
     id: 'squire-consecrate',
     disciplineId: 'squire-bulwark',
     name: 'Consecrate',
     text: 'Your slam lasts a few seconds instead: everything around you is struck again and again, and nothing can move you.',
+    // PLACEHOLDERS: the slam's blow lands, then the circle is struck every `pulseMs` for `channelMs`, each for `pulsePct` of the slam.
+    params: { channelMs: 3000, pulseMs: 500, pulsePct: 0.25 },
   }),
   // Avenger
   specialization({
@@ -507,18 +527,24 @@ const SPECIALIZATIONS: readonly SpecializationDef[] = [
     disciplineId: 'squire-avenger',
     name: 'Measure for Measure',
     text: 'Each counter hits back with part of what its answer stopped, up to a limit: the bigger the blow you caught, the harder you hit back.',
+    // PLACEHOLDERS: a counter adds `sharePct` of the blow its answer stopped, up to `capAttackMult` swings.
+    params: { sharePct: 0.5, capAttackMult: 3 },
   }),
   specialization({
     id: 'squire-second-nature',
     disciplineId: 'squire-avenger',
     name: 'Second Nature',
     text: 'For a few seconds after a counter lands, your answers cost nothing.',
+    // PLACEHOLDER: answers are free for `freeMs` after a counter lands.
+    params: { freeMs: 4000 },
   }),
   specialization({
     id: 'squire-sunderer',
     disciplineId: 'squire-avenger',
     name: 'Sunderer',
     text: 'Your counters ignore plating and crack shells.',
+    // PLACEHOLDER: a counter hits a raised barrier `barrierMult` times as hard.
+    params: { barrierMult: 2 },
   }),
   // Juggernaut
   specialization({
@@ -526,18 +552,24 @@ const SPECIALIZATIONS: readonly SpecializationDef[] = [
     disciplineId: 'squire-juggernaut',
     name: 'Destroyer',
     text: 'Your slam becomes a charge: you crash into your next target from range.',
+    // PLACEHOLDER: with the slam armed, you crash into a target up to `chargeRangePx` away.
+    params: { chargeRangePx: 450 },
   }),
   specialization({
     id: 'squire-inexorable',
     disciplineId: 'squire-juggernaut',
     name: 'Inexorable',
     text: 'Your bulk keeps filling your Resolve between fights and while you walk, so every fight opens with a slam.',
+    // PLACEHOLDER: the discipline's steady fill runs `fillMult` times over out of combat and while you walk.
+    params: { fillMult: 5 },
   }),
   specialization({
     id: 'squire-rampage',
     disciplineId: 'squire-juggernaut',
     name: 'Rampage',
     text: 'Each slam starts a burst of faster swings.',
+    // PLACEHOLDERS: each slam hastens your swings by `hastePct` for `burstMs`.
+    params: { hastePct: 0.5, burstMs: 4000 },
   }),
 ];
 
