@@ -1,3 +1,6 @@
+import { CLASS_ARCHETYPES, classKitFor } from '../classKits/registry';
+import type { ClassArchetype } from '../classKits/types';
+
 // Keys: 'default', '{archetype}', '{archetype}-{variant}', or '{archetype}-{variant}-t3'.
 //
 // Player bodies are FLAT frames produced by img2img evolution chains
@@ -335,11 +338,36 @@ export const MONSTER_FRAMES: Record<string, string> = {
 };
 
 const VARIANTS = ['light', 'balanced', 'heavy'] as const;
+const T3_LETTERS = ['a', 'b', 'c'] as const;
+
+/**
+ * The class-first picks on the existing bodies (overnight 2026-10-16, PLACEHOLDER: the
+ * designer owns art and may reassign them). A class's disciplines take the three T2 bodies in
+ * kit order (first = the `light` body, second `balanced`, third `heavy`); the specializations
+ * under a discipline take that body's three T3 variants in kit order (`-t3-a`, `-b`, `-c`).
+ * Returns the old-style frame key, or null before a discipline is picked.
+ */
+function classFirstFrameKey(archetype: string, unlockedSkills: readonly string[]): string | null {
+  if (!(CLASS_ARCHETYPES as readonly string[]).includes(archetype)) return null;
+  const kit = classKitFor(archetype as ClassArchetype);
+  const disciplineIndex = kit.disciplines.findIndex((d) => unlockedSkills.includes(d.id));
+  if (disciplineIndex < 0 || disciplineIndex >= VARIANTS.length) return null;
+  const discipline = kit.disciplines[disciplineIndex];
+  const variantKey = `${archetype}-${VARIANTS[disciplineIndex]}`;
+  const specs = kit.specializations.filter((s) => s.disciplineId === discipline.id);
+  const specIndex = specs.findIndex((s) => unlockedSkills.includes(s.id));
+  if (specIndex >= 0 && specIndex < T3_LETTERS.length) {
+    const specKey = `${variantKey}-t3-${T3_LETTERS[specIndex]}`;
+    if (PLAYER_FRAMES[specKey]) return specKey;
+  }
+  return variantKey;
+}
 
 /**
  * Returns the atlas frame name for a player.
  * Resolution order: '{archetype}-{variant}-t3-{spec}' → '{archetype}-{variant}-t3'
- * → '{archetype}-{variant}' → '{archetype}' → 'default' → null.
+ * → '{archetype}-{variant}' → the class-first pick's body (`classFirstFrameKey`)
+ * → '{archetype}' → 'default' → null.
  * Range choice deliberately does NOT swap the body (class-frame identity stays
  * visible); it may register an identity accent instead.
  */
@@ -367,6 +395,9 @@ export function resolvePlayerFrame(input: {
       const variantFrame = PLAYER_FRAMES[`${input.combatArchetype}-${variant}`];
       if (variantFrame) return variantFrame;
     }
+    const classFirstKey = classFirstFrameKey(input.combatArchetype, input.unlockedSkills);
+    const classFirstFrame = classFirstKey ? PLAYER_FRAMES[classFirstKey] : undefined;
+    if (classFirstFrame) return classFirstFrame;
     const archetypeFrame = PLAYER_FRAMES[input.combatArchetype];
     if (archetypeFrame) return archetypeFrame;
   }
