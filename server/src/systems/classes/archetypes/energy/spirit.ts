@@ -91,6 +91,13 @@ const SPILL_TARGETS = 2;
 const SPILL_DAMAGE_PER_PIP = 1;
 /** Reservoir: a much deeper bottle (x the pips). PLACEHOLDER. */
 const RESERVOIR_DEPTH_X = 2;
+/**
+ * Reservoir's flow, set against its deeper pool (§11.2 "the flow's rate is set against the pool's size"): at the
+ * shared flow the deep bank never filled under a boss's pressure (sim, OV2: T3 Swamp and T4 Jungle bosses, zero
+ * spends in 535 s, the storm pinned at the floor by 45-65 a second against a 30-36 flow), so it never released.
+ * PLACEHOLDER.
+ */
+const RESERVOIR_FLOW_X = 1.5;
 /** Tide: the flow runs this many times as fast in the ebb; spends cost this share in the surge. PLACEHOLDER. */
 const TIDE_EBB_FLOW_X = 3;
 const TIDE_SURGE_COST_X = 0.7;
@@ -658,6 +665,7 @@ export function updateSpirit(world: World, player: PlayerEntity, dt: number, now
   // The flow is constant: taking damage never pauses it. Out of combat it gathers faster (Still Air).
   const inCombat = isPlayerInCombat(player, now);
   let flow = FLOW_BASE_PIPS * STORM_PIP * tierScale(player) * FLOW_PCT_PER_SEC * (dt / 1_000);
+  if (t.discipline === 'spirit-reservoir') flow *= RESERVOIR_FLOW_X;
   if (!inCombat) flow *= OOC_FLOW_X * (1 + (passives['spirit.ooc-flow-pct'] ?? 0));
   if ((passives['spirit.clear-sky-pct'] ?? 0) > 0 && !conditionsHold(world, player, [{ id: 'touched' }], now)) flow *= 1 + (passives['spirit.clear-sky-pct'] ?? 0);
   if (getResource(cs, AFTERSTORM_UNTIL) > now) flow *= passives['spirit.afterstorm-x'] ?? 1;
