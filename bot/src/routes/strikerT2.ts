@@ -1,4 +1,4 @@
-import { biomeLevelCap, strikerComboLength, type ClassConfig } from "@mmo-idle/shared";
+import { biomeLevelCap, RECIPE_DATABASE, strikerComboLength, type ClassConfig } from "@mmo-idle/shared";
 import { allOf, type NodeRef, type Route, type RouteStep } from "../route/types";
 import { STRIKER_CLASS_ROOT, strikerT1Route, wearInOrder } from "./strikerT1";
 
@@ -53,17 +53,15 @@ function autoOrder(disciplineId: string): ClassConfig {
 }
 
 /**
- * The T2 pieces every arm wears, in each zone's unlock order (an old zone's T2 recipes open at
- * 7 / 8 / 9 / 10, a new zone's at 1 / 2 / 3 / 4). PLACEHOLDER picks (OV-STRIKER): only what beats
- * what is worn. The Plains set first (the first T2 seal meets the Plains weapon, vest, Grit
- * charm and boots of the tier); the Forest's evasion vest and boots over the Plains'; the
- * Jungle's vest (112 HP and evasion) and boots over the Forest's.
+ * A T2 zone's own vest, charm and boots, in unlock order (an old zone's T2 recipes open at
+ * 8 / 9 / 10, a new zone's at 2 / 3 / 4): the answer to that zone's threat, worn at its boss, as
+ * at T3 and T4. PLACEHOLDER (OV-STRIKER): in classBossSim the Swamp's set won the Mire-Gorged
+ * Behemoth for every discipline (Light 51%, Balanced 87%, Heavy 25% HP left) where the Forest's
+ * vest and boots lost it (Light at boss 5-26% left, Heavy at 3%).
  */
-const T2_ARMOR: Readonly<Record<string, readonly string[]>> = {
-  plains: ["plains-vest-t2", "plains-charm-t2", "plains-boots-t2"],
-  forest: ["forest-vest-t2", "forest-boots-t2"],
-  jungle: ["jungle-vest-t2", "jungle-boots-t2"],
-};
+export function strikerT2ZoneSet(biomeGroup: string): string[] {
+  return ["vest", "charm", "boots"].map((slot) => `${biomeGroup}-${slot}-t${TIER}`).filter((id) => RECIPE_DATABASE.has(id));
+}
 
 /**
  * The weapon each arm takes as its zone opens it (bible §12.5 "Wants", §12.9 jobs). Every arm
@@ -90,7 +88,7 @@ export function unlessDone(route: Route, what: string): RouteStep {
 /** What the arm wears from this T2 zone, weapon first (its recipe opens first). */
 export function strikerT2ZoneGear(disciplineId: string, biomeGroup: string): string[] {
   const weapon = T2_WEAPONS[disciplineId]?.[biomeGroup];
-  return [...(weapon ? [weapon] : []), ...(T2_ARMOR[biomeGroup] ?? [])];
+  return [...(weapon ? [weapon] : []), ...strikerT2ZoneSet(biomeGroup)];
 }
 
 /**
@@ -129,7 +127,11 @@ export function strikerT2Route(disciplineId = "striker-light"): Route {
     });
     if (!STRIKER_T2_LATE_SEALS.includes(biomeGroup)) steps.push({ type: "attemptBoss", biomeGroup, tier: TIER });
   }
-  for (const biomeGroup of STRIKER_T2_LATE_SEALS) steps.push({ type: "attemptBoss", biomeGroup, tier: TIER });
+  // A late seal is fought in its own zone's set again (crafted in the zone's turn).
+  for (const biomeGroup of STRIKER_T2_LATE_SEALS) {
+    steps.push({ type: "equip", definitionIds: strikerT2ZoneSet(biomeGroup), label: `wear the ${biomeGroup} T2 set` });
+    steps.push({ type: "attemptBoss", biomeGroup, tier: TIER });
+  }
 
   const milestones: Route["milestones"] = [...t1.milestones];
   for (const biomeGroup of STRIKER_T2_ZONES) {

@@ -75,7 +75,7 @@ function byRank(a: StrikerPiece, b: StrikerPiece): number {
 /**
  * Which techniques a default Order fields, first first, when there are more than open beats
  * (§12.13): T1 and Balanced, Coil and the opener, one setup early, damage late; Light, the opener
- * (Focus), attack setups, then damage; Heavy, Coil, control and setups, then damage. At most one
+ * (Focus), a stop and an attack setup, then damage; Heavy, Coil, control and setups, then damage. At most one
  * cast of each kind: a second opener or wind-up has no beat to sit on.
  */
 function defaultChoice(owned: readonly StrikerPiece[], disciplineId: string | null): StrikerPiece[] {
@@ -87,9 +87,13 @@ function defaultChoice(owned: readonly StrikerPiece[], disciplineId: string | nu
   const casts = (first: StrikerPiece | undefined, second: StrikerPiece | undefined) =>
     [first, second].filter((piece): piece is StrikerPiece => piece !== undefined);
   if (disciplineId === 'striker-light') {
+    // One stop (a stun or root) first, then one attack setup, then damage: with attack setups
+    // only, Light lost the Stoneplate Juggernaut and the Dune-Stalker Emperor in classBossSim
+    // (boss 50% / 45% left); with Concuss it won both (50% / 65% HP left). PLACEHOLDER.
     const attack = setups.filter((piece) => piece.family === 'attack-setup');
-    const others = setups.filter((piece) => piece.family !== 'attack-setup');
-    return [...casts(opener, windup), ...attack, ...damage, ...others];
+    const control = setups.filter((piece) => piece.family !== 'attack-setup');
+    const first = [...control.slice(0, 1), ...attack.slice(0, 1)];
+    return [...casts(opener, windup), ...first, ...damage, ...setups.filter((piece) => !first.includes(piece))];
   }
   if (disciplineId === 'striker-heavy') return [...casts(windup, opener), ...setups, ...damage];
   return [...casts(windup, opener), ...setups.slice(0, 1), ...damage, ...setups.slice(1)];

@@ -76,7 +76,7 @@ for (const [disciplineId, id] of Object.entries(STRIKER_T2_ROUTE_IDS)) {
         "farm",
         ...(STRIKER_T2_LATE_SEALS.includes(biomeGroup) ? [] : ["attemptBoss"]),
       ]),
-      ...STRIKER_T2_LATE_SEALS.map(() => "attemptBoss"),
+      ...STRIKER_T2_LATE_SEALS.flatMap(() => ["equip", "attemptBoss"]),
     ],
   );
 
