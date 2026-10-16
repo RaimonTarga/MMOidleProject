@@ -35,7 +35,9 @@ because it is detailed.
   authoritative boundaries, tick schedule, persistence, and system seams.
 - [Class-first bible](../design_docs/class-first-bible.md) and the
   [class-first build board](briefs/class-first-build/STATUS.md) — the six classes'
-  design authority and the rework's live status, stand-ins and follow-ups.
+  design authority and the rework's live status, stand-ins and follow-ups. The
+  [overnight report](briefs/class-first-build/OVERNIGHT-REPORT.md) (2026-10-16) holds the
+  first T1-T4 bot pass, its decisions, open issues and the playtest command.
 - [Playtest command center](briefs/playtest-followup-command-center-2026-09-25.md)
   — active release/playtest scope and evidence rules.
 - [Release flow](release-flow.md) — local, Docker, and Railway-shaped delivery.

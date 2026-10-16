@@ -3,9 +3,21 @@
 Kept by the conductor. Plan: [class-first-build-plan-2026-10-14.md](../class-first-build-plan-2026-10-14.md).
 Integration branch `rework/class-first` (conductor worktree `../mmo-rework`).
 
-**Updated:** 2026-10-15 (night): all delegate tasks merged except CD8-CLEANUP (running); 353/353; the first live smoke run found no server errors, the Striker cannot yet beat the Plains boss (balance).
-**Baseline:** `rework/class-first` after the CQ7 merge: full suite **342/342** (biomeEcology flakes under load), typecheck clean.
-Codex hit rate limits on 2026-10-14, so D5, K1–K3, D1, T0 and D2 ran as Claude subagents of the conductor (same briefs, same worktrees).
+**Updated:** 2026-10-16 (overnight polish, see [OVERNIGHT-REPORT.md](OVERNIGHT-REPORT.md)): all nine OV agents
+merged (six classes, hooks, docs, client); every class route crafts its gear and is tuned toward the T1-T4 bar;
+the monster tier factor, tier-aware travel and the playtest command (`node tools/lane/playtest.mjs`) are in.
+**Baseline:** `rework/class-first` after the OV merges and their test fixes, typecheck clean (suite count in
+the report). Codex hit rate limits on 2026-10-14, and the Claude usage limits cut the OV agents twice on
+2026-10-16; the conductor finished their branches.
+
+## Overnight 2026-10-16 (OV-*)
+
+Briefs [OV-overnight-tasks.md](OV-overnight-tasks.md); reports `reports/OV-<ID>.md`; summary, decisions,
+final runs and the designer's questions in [OVERNIGHT-REPORT.md](OVERNIGHT-REPORT.md). Tools: `tools/lane/lane.mjs`
+(isolated lanes, port 4310+n, `gamedb_ov<n>`), `tools/lane/runSummary.mjs`, `server/bench/classBossSim.ts`
+(a route's character against one boss in-process), `tools/lane/playtest.mjs`. Open after the night: Avoid
+Hazards not default, the Mountain armor's missing damage cap, guide gear beats, the Spirit's binary storm,
+one discipline per class run live (the report's "Still broken" list).
 
 ## Designer decisions (2026-10-15)
 
