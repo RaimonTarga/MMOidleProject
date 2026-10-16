@@ -1,9 +1,11 @@
 import {
   biomeLevelCap,
   CLEARING_NODE_ID,
+  DEFAULT_RUNE_LOADOUT,
   T1_BIOME_ORDER,
   TUTORIAL_SEALS,
   type ClassConfig,
+  type EquippedRule,
 } from "@mmo-idle/shared";
 import { allOf, type NodeRef, type Route, type RouteStep } from "../route/types";
 
@@ -52,6 +54,52 @@ export function slingerFarmLevel(biomeGroup: string): number {
 }
 
 /**
+ * Craft each piece in `at` (the step farms there until the recipe is unlocked and
+ * affordable) and wear it at once, in the order given: a zone's weapon at its
+ * first level, the vest one level later, the charm two, the boots three. That is
+ * how a real player gears up, piece by piece as the zone opens it, rather than
+ * all at once before a seal. Already held, already worn: both steps pass.
+ */
+export function wearAsUnlocked(at: NodeRef, ids: readonly string[]): RouteStep[] {
+  return ids.flatMap((id): RouteStep[] => [
+    { type: "craft", recipeIds: [id], farmAt: at, label: `craft ${id}` },
+    { type: "equip", definitionIds: [id], label: `wear ${id}` },
+  ]);
+}
+
+/**
+ * The standing orders a Slinger plays with: the default set, with Keep Distance in
+ * place of the chase while fighting. Keep Distance is a free universal standing
+ * order (bible §3, decided in the Slinger dive: "it decides where the Slinger
+ * stands for its stationary reload"); without it the Slinger trades shots at
+ * melee distance (the Plains boss sim: ~60 px from the boss, a loss every time;
+ * with it ~100 px and a win).
+ */
+export const SLINGER_STANDING_ORDERS: readonly EquippedRule[] = DEFAULT_RUNE_LOADOUT.map((rule) =>
+  rule.conditionId === "in-combat" && rule.actionId === "chase-enemy" ? { conditionId: "in-combat", actionId: "orbit" } : { ...rule });
+
+/** The Clearing set, made right after the class pick (the pistol is class gear). */
+export const SLINGER_CLEARING_GEAR: readonly string[] = [
+  "slinger-plain-pistol-t1", "clearing-vest-t1", "clearing-charm-t1", "clearing-boots-t1",
+];
+
+/**
+ * Each T1 zone's pieces, worn as they unlock. The guns are the ones that beat the
+ * gun already held (PLACEHOLDER, by DPS: attack x fire rate x the share of the
+ * cycle spent firing): Pepperbox, then Carbine, then the Drum Gun; the Snakebite
+ * Pistol and the Hand Cannon are below the Carbine and the Drum Gun, so they stay
+ * on the bench. The Mountain is fought at its lesson level, so only its vest
+ * (level 2, Dig In) is open before the seal.
+ */
+export const SLINGER_T1_ZONE_GEAR: Readonly<Record<string, readonly string[]>> = {
+  plains: ["slinger-pepperbox-t1", "plains-vest-t1", "plains-charm-t1", "plains-boots-t1"],
+  forest: ["slinger-carbine-t1", "forest-vest-t1", "forest-charm-t1", "forest-boots-t1"],
+  swamp: ["swamp-vest-t1", "swamp-charm-t1", "swamp-boots-t1"],
+  cave: ["slinger-drum-gun-t1", "cave-vest-t1", "cave-charm-t1", "cave-boots-t1"],
+  mountain: ["mountain-vest-t1"],
+};
+
+/**
  * `auto` hands the Loadout back to the class default. This is the fresh
  * Loadout: the plain clip is always loaded and takes no slot, nothing else is
  * owned yet, and the two free reload rules are on. A racked clip or a trophy
@@ -83,11 +131,15 @@ export function slingerT1Route(): Route {
     },
     { type: "chooseClass", skillId: SLINGER_CLASS_ROOT },
     { type: "classConfig", config: autoLoadout() },
+    { type: "configureRunes", rules: [...SLINGER_STANDING_ORDERS], label: "Keep Distance while fighting" },
+    // The guide's Clearing set (opening.ts): the bot would otherwise walk into the Plains bare.
+    ...wearAsUnlocked(CLEARING, SLINGER_CLEARING_GEAR),
   ];
 
   for (const biomeGroup of ZONE_ORDER) {
     const at = zone(biomeGroup);
     steps.push({ type: "travel", to: at });
+    steps.push(...wearAsUnlocked(at, SLINGER_T1_ZONE_GEAR[biomeGroup] ?? []));
     steps.push({
       type: "farm",
       at,
