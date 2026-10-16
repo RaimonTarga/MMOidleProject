@@ -123,13 +123,14 @@ export function zoneGearSteps(biomeGroup: string, tier: number, guns: readonly D
  * with it ~100 px and a win). Step Back out of a telegraph goes first (the same
  * movement channel; the first rule that holds moves you): without it the Slinger
  * stood in the T2 Mountain boss's charge lane and died in 9 s (sim); with it,
- * it dodged the charges. PLACEHOLDER: the bible's free-order list (§3) is
- * Proposed and names Avoid Hazards, not Step Back.
+ * it dodged the charges. Step Back is in the default loadout since 2026-10-16 (first
+ * rule), so only the chase is swapped. PLACEHOLDER: Keep Distance default-on for the
+ * Slinger alone is the route's choice, not yet a default.
  */
-export const SLINGER_STANDING_ORDERS: readonly EquippedRule[] = DEFAULT_RUNE_LOADOUT.flatMap((rule): EquippedRule[] =>
+export const SLINGER_STANDING_ORDERS: readonly EquippedRule[] = DEFAULT_RUNE_LOADOUT.map((rule): EquippedRule =>
   rule.conditionId === "in-combat" && rule.actionId === "chase-enemy"
-    ? [{ conditionId: "inside-telegraph", actionId: "step-back" }, { conditionId: "in-combat", actionId: "orbit" }]
-    : [{ ...rule }]);
+    ? { conditionId: "in-combat", actionId: "orbit" }
+    : { ...rule });
 
 /** The Clearing set, made right after the class pick (the pistol is class gear). */
 export const SLINGER_CLEARING_GEAR: readonly string[] = [

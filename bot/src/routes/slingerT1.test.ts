@@ -92,7 +92,7 @@ assert(!orders.rules.some((rule) => rule.actionId === "chase-enemy"), "no chase 
 const step = orders.rules.findIndex((rule) => rule.conditionId === "inside-telegraph" && rule.actionId === "step-back");
 const kite = orders.rules.findIndex((rule) => rule.actionId === "orbit");
 assert(step >= 0 && step < kite, "Step Back out of a telegraph first, then Keep Distance");
-assert.equal(orders.rules.length, DEFAULT_RUNE_LOADOUT.length + 1, "otherwise the default standing orders");
+assert.equal(orders.rules.length, DEFAULT_RUNE_LOADOUT.length, "otherwise the default standing orders (Step Back is one of them)");
 
 // ── Gear: the Clearing set, then each zone's pieces as they unlock ───────────
 const crafts = route.steps.filter((step): step is Extract<RouteStep, { type: "craft" }> => step.type === "craft");

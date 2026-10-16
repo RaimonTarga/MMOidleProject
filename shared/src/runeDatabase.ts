@@ -718,6 +718,9 @@ export const ALL_RUNE_IDS: string[] = [
 ];
 
 export const DEFAULT_RUNE_LOADOUT: EquippedRule[] = [
+  // Avoid Hazards, on for every new character (designer's call, 2026-10-16): step out of a
+  // visible attack telegraph. First, because movement rules arbitrate top to bottom.
+  { conditionId: "inside-telegraph", actionId: "step-back" },
   { conditionId: "always", actionId: "auto-path-enemy" },
   { conditionId: "in-combat", actionId: "chase-enemy" },
   { conditionId: "always", actionId: "wait-for-regen" },

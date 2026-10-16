@@ -70,12 +70,10 @@ function autoOrder(): ClassConfig {
  * Avoid Hazards, "Read The Ground" (step out of a visible attack telegraph). PLACEHOLDER
  * (OV-STRIKER): without it the auto-fighter stands in every boss charge lane; classBossSim had
  * the Mountain seal at 29% HP left with it against 21% without, and the T2 Stoneplate
- * Juggernaut's 2x charge one-shots a T2 Striker that stays in the lane.
+ * Juggernaut's 2x charge one-shots a T2 Striker that stays in the lane. Avoid Hazards is in the
+ * default loadout since 2026-10-16, so this is that loadout, kept as a named step.
  */
-export const STRIKER_STANDING_ORDERS: readonly EquippedRule[] = [
-  { conditionId: "inside-telegraph", actionId: "step-back" },
-  ...DEFAULT_RUNE_LOADOUT,
-];
+export const STRIKER_STANDING_ORDERS: readonly EquippedRule[] = [...DEFAULT_RUNE_LOADOUT];
 
 /**
  * The Clearing set, as the guide makes it (`shared/src/tutorial/scripts/opening.ts`): the
