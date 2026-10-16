@@ -7,8 +7,11 @@ how the class system was checked live, open issues) is in `reports/OV-<CLASS>.md
 
 ## In one minute
 
-- **The six classes pass the bar in the final runs** (table below): the auto config clears every
-  boss on its route, T1 to T4, from a fresh character, with no death loops, stalls or crashes.
+- **The six classes pass the bar in the final runs** (table below): from a fresh character on the
+  merged tree, the auto config clears all 23 bosses on its route, T1 to T4, with no death loops,
+  stalls or crashes. The Squire, Slinger, Spirit and Striker took every boss on the first try; the
+  Conduit needed four tries at the T4 Volcanic boss, the Apprentice two at the T4 Wasteland boss. The
+  Striker passed after a route fix found during its final run (the T2 Jungle guard, below).
 - **The routes now play like a player.** No route used to craft any gear (the bot reached the
   Plains unarmed, and fought T4 in T1 gear). Every route now crafts the Clearing set and each
   zone's class weapon, armor, charm and boots as they unlock. No upgrades (the rework disables them).
@@ -23,7 +26,27 @@ how the class system was checked live, open issues) is in `reports/OV-<CLASS>.md
 
 ## Final runs (merged tree, fresh characters, one private server each, 100× rewards)
 
-FINAL_RUNS_TABLE
+Boss kills / attempts per tier (T1 is the two seals; T2-T4 every zone's boss), deaths anywhere on
+the route, run minutes.
+
+| Class (route, discipline chain) | T1 | T2 | T3 | T4 | Deaths | Minutes | Bar |
+|---|---|---|---|---|---|---|---|
+| Striker (`striker-t4-read-the-blow`: Balanced, Iaido, Read the Blow) | 2/2 | 7/7 | 7/7 | 7/7 | 0 | 128 | pass (after the Jungle fix below) |
+| Squire (`squire-t4`: Bulwark, Measure for Measure, Last Word) | 2/2 | 7/7 | 7/7 | 7/7 | 0 | 132 | pass |
+| Conduit (`conduit-t4`: Pack, The Hunt, Avenge) | 2/2 | 7/7 | 7/7 | 7/10 (Volcanic won on the 4th try) | 3 (all at the Volcanic boss) | 89 | pass, Volcanic thin |
+| Slinger (`slinger-t4`: Gunslinger, Fan the Hammer, Light Hands) | 2/2 | 7/7 | 7/7 | 7/7 | 0 | 115 | pass |
+| Spirit (`spirit-t4`: Tide, Spring Tide, Wading) | 2/2 | 7/7 | 7/7 | 7/7 | 0 | 79 | pass (fights 8-47 s, never in danger) |
+| Apprentice (`apprentice-t4`: Fire, Afterburn, Tinderbox) | 2/2 | 7/7 | 7/7 | 7/8 (Wasteland on the 2nd try) | 3 (2 on the walk into T2 in T1 gear, 1 at the Wasteland boss) | 102 | pass |
+
+**The Striker needed a route fix during the final run.** Its first final run hit a death loop at the
+T2 Jungle dungeon's nine-guard poison pack (four deaths in 15 minutes, all nine guards standing):
+each zone's set had swapped the Plains' Grit charm out by then, and the boss sim never meets guards.
+With Grit put back on at the Jungle (b4a6a755) the character resumed and cleared it, and a second,
+fresh Striker (resumed once at minute 25, before the Jungle, to load the fix) is the row above.
+The first character, resumed after the fix, then lost the **T2 Desert boss** (Dune-Stalker Emperor)
+six times (boss at 3% and 4% left, then 26% four times: the phase at a quarter kills it) and went on
+to win every T3 and T4 boss it reached on the first try: that boss is borderline for the Balanced
+Striker (the fresh character won it first try). The other five ran untouched from start to finish.
 
 100× rewards shortens the farm only: the route farms each zone to a fixed level and buys no
 upgrades, so the character at each boss is the 1× character. Each run is one class route
