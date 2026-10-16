@@ -8,7 +8,7 @@
  * the world); at T4 the leaves turn what empties the storm (spiritT4.ts holds the T4 lessons). Wiring only: every number is a kit `params` placeholder or a constant below.
  *
  * `usesEnergy.energy` is the storm in HP-like units and `energyMax` its size: `pips` (the class
- * budget) times `STORM_PIP` times the tier scale. Gear never grows the pool (bible §11.2).
+ * budget) times `BOTTLE_PIP` times the tier scale. Gear never grows the pool (bible §11.2).
  */
 import {
   PLATING_SHRED_EFFECT_ID,
@@ -54,7 +54,14 @@ import {
 /** One pip of the storm at T1, in HP-like units. PLACEHOLDER. */
 const STORM_PIP = 20;
 /**
- * The flow: this share of the T1 bottle (FLOW_BASE_PIPS) per second, at the tier's storm scale. Mastery pips
+ * One pip of the bottle (the shield it holds), smaller than a spend pip: the flow and every cost stay in
+ * STORM_PIP units, so damage per storm spent is unchanged, but a boss's peak pressure (300-440 storm in five
+ * seconds at T3-T4) breaks through the shield instead of the bottle swallowing it whole (the storm-absorb
+ * finding: with the bottle at 20 a pip no T2-T4 boss ever reached HP). PLACEHOLDER.
+ */
+const BOTTLE_PIP = 12;
+/**
+ * The flow: this share of FLOW_BASE_PIPS spend pips (STORM_PIP) per second, at the tier's storm scale. Mastery pips
  * deepen the bottle (a bigger shield, bigger bursts) but not the flow: with the flow a share of the whole
  * bottle, Storm 9 at T2 refilled ~80 a second against bosses landing 4-8 (overnight sims). PLACEHOLDER.
  */
@@ -267,7 +274,7 @@ function tierScale(player: PlayerEntity): number {
 
 /** The bottle's size now: pips x pip x tier. Gear never changes it. */
 export function stormMaxFor(player: PlayerEntity, pips: number): number {
-  return Math.max(1, Math.round(pips * STORM_PIP * tierScale(player)));
+  return Math.max(1, Math.round(pips * BOTTLE_PIP * tierScale(player)));
 }
 
 /** The bottle with the discipline's depth: Reservoir's is much deeper. */
@@ -650,7 +657,7 @@ export function updateSpirit(world: World, player: PlayerEntity, dt: number, now
 
   // The flow is constant: taking damage never pauses it. Out of combat it gathers faster (Still Air).
   const inCombat = isPlayerInCombat(player, now);
-  let flow = stormMaxFor(player, FLOW_BASE_PIPS) * FLOW_PCT_PER_SEC * (dt / 1_000);
+  let flow = FLOW_BASE_PIPS * STORM_PIP * tierScale(player) * FLOW_PCT_PER_SEC * (dt / 1_000);
   if (!inCombat) flow *= OOC_FLOW_X * (1 + (passives['spirit.ooc-flow-pct'] ?? 0));
   if ((passives['spirit.clear-sky-pct'] ?? 0) > 0 && !conditionsHold(world, player, [{ id: 'touched' }], now)) flow *= 1 + (passives['spirit.clear-sky-pct'] ?? 0);
   if (getResource(cs, AFTERSTORM_UNTIL) > now) flow *= passives['spirit.afterstorm-x'] ?? 1;
