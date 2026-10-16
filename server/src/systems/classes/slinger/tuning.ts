@@ -14,7 +14,9 @@ export const TRICKSHOT = 'slinger-trickshot';
  * never a multiplier, so a small gun never drops to a handful of rounds (§10.2).
  */
 const CLIP_SHIFT: Readonly<Record<string, number>> = { [GUNSLINGER]: -2, [SIEGE]: 4 };
-const RELOAD_SHIFT_MS: Readonly<Record<string, number>> = { [GUNSLINGER]: -400, [SIEGE]: 900 };
+// Siege +900 → +400 ms (OV2): the T2 Cave boss's eruptions land in the stationary reload; sim, Drum Gun:
+// 3/6 wins at +900, 5/6 at +400. Still the longest reload of the three.
+const RELOAD_SHIFT_MS: Readonly<Record<string, number>> = { [GUNSLINGER]: -400, [SIEGE]: 400 };
 
 export function clipShiftFor(disciplineId: string | null | undefined): number {
   return (disciplineId && CLIP_SHIFT[disciplineId]) || 0;
