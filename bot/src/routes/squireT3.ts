@@ -1,6 +1,6 @@
 import { SQUIRE_KIT, absoluteZoneLevel, biomeLevelCap, type KitBiome } from "@mmo-idle/shared";
 import type { Condition, NodeRef, Route, RouteStep } from "../route/types";
-import { SQUIRE_CLASS_ROOT, SQUIRE_LESSON_LEVEL } from "./squireT1";
+import { SQUIRE_CLASS_ROOT, SQUIRE_LESSON_LEVEL, farmWearingGear } from "./squireT1";
 import { squireT2Route } from "./squireT2";
 
 /**
@@ -10,20 +10,40 @@ import { squireT2Route } from "./squireT2";
  * specialization pick, then every T3 zone in the order the Squire's tutorial walks them
  * (`buildSquireTierThreeBeats`): each farmed to the tier cap, then its boss. The Tundra and
  * Volcanic are new at this tier. The specialization is one `unlockSkill` step on a node under
- * the discipline the T2 route picked (the default Avenger's Measure for Measure; a
- * specialization of another discipline needs the matching `squireT2Route` pick, so
- * `squireT3Route(specializationId)` derives the discipline from the kit).
+ * the discipline the T2 route picked (`squireT3Route(specializationId)` derives the discipline
+ * from the kit).
+ *
+ * Gear (OV-SQUIRE): each zone's tier-3 pieces are crafted and worn as soon as its level
+ * unlocks them (`SQUIRE_T3_ZONE_GEAR`), so the first T3 boss (the Mountain's) is met in the
+ * tier-3 Warhammer, armor, charm and boots. Base crafts only, no upgrades.
  *
  * Not in `CONTROLLED_ROUTE_IDS` until it has run live.
  */
 export const SQUIRE_T3_ID = "squire-t3";
 
-/** The default pick: an Avenger specialization (bible section 8.6). */
-export const SQUIRE_T3_SPECIALIZATION = "squire-measure-for-measure";
+/** The default pick: a specialization of the default discipline (bible section 8.6). PLACEHOLDER (OV-SQUIRE). */
+export const SQUIRE_T3_SPECIALIZATION = "squire-reverb";
 
 /** The T3 zones in tutorial order; the Plains and Forest have retired, the Tundra and Volcanic are new. */
 export const SQUIRE_T3_BIOMES = ["mountain", "cave", "swamp", "jungle", "desert", "tundra", "volcanic"] as const;
 export type SquireT3Biome = (typeof SQUIRE_T3_BIOMES)[number];
+
+/**
+ * The tier-3 pieces a Squire wears from each zone, in unlock order. PLACEHOLDER picks
+ * (OV-SQUIRE): every zone's armor and charm (the zone's own line; the Jungle and Volcanic
+ * main bases, not the moved-line `-b` ones), boots only when faster, and the Mountain's
+ * Warhammer for every discipline: the slam is a swing, so the heaviest attack makes the
+ * biggest slam, and no later tier-3 weapon out-hits it.
+ */
+export const SQUIRE_T3_ZONE_GEAR: Record<SquireT3Biome, readonly string[]> = {
+  mountain: ["squire-warhammer-t3", "mountain-vest-t3", "mountain-charm-t3", "mountain-boots-t3"],
+  cave: ["cave-vest-t3", "cave-charm-t3", "cave-boots-t3"],
+  swamp: ["swamp-vest-t3", "swamp-charm-t3"],
+  jungle: ["jungle-vest-t3", "jungle-charm-t3", "jungle-boots-t3"],
+  desert: ["desert-vest-t3", "desert-charm-t3", "desert-boots-t3"],
+  tundra: ["tundra-vest-t3", "tundra-charm-t3"],
+  volcanic: ["volcanic-vest-t3", "volcanic-charm-t3"],
+};
 
 /** Where the tutorial stops farming a T3 zone. */
 export function squireT3TutorialFarmLevel(biome: SquireT3Biome): number {
@@ -39,13 +59,9 @@ function biomeRef(biome: SquireT3Biome): NodeRef {
   return { kind: "biome", biomeGroup: biome, tier: 3, pick: "uncleared" };
 }
 
-function farmZone(biome: SquireT3Biome): RouteStep {
-  return {
-    type: "farm",
-    at: biomeRef(biome),
-    until: { type: "biomeLevelAtLeast", biomeGroup: biome, level: squireT3TutorialFarmLevel(biome) },
-    label: `farm the tier 3 ${biome}`,
-  };
+function farmZone(biome: SquireT3Biome): RouteStep[] {
+  return farmWearingGear(biomeRef(biome), biome, squireT3TutorialFarmLevel(biome), SQUIRE_T3_ZONE_GEAR[biome],
+    `farm the tier 3 ${biome}`);
 }
 
 export function squireT3Route(specializationId: string = SQUIRE_T3_SPECIALIZATION): Route {
@@ -55,15 +71,15 @@ export function squireT3Route(specializationId: string = SQUIRE_T3_SPECIALIZATIO
   const bossCleared = (biome: SquireT3Biome): Condition => ({ type: "bossCleared", biomeGroup: biome, tier: 3 });
   return {
     id: SQUIRE_T3_ID,
-    version: "1.0.0",
+    version: "1.1.0",
     classRoot: SQUIRE_CLASS_ROOT,
     description:
-      "Squire T3: the T2 route to tier 3, a specialization, then every T3 zone farmed to the tier cap and its boss.",
+      "Squire T3: the T2 route to tier 3, a specialization, then every T3 zone farmed to the tier cap wearing its gear, and its boss.",
     steps: [
       ...t2.steps,
       { type: "unlockSkill", skillId: specializationId, label: "pick the specialization" },
       ...SQUIRE_T3_BIOMES.flatMap((biome): RouteStep[] => [
-        farmZone(biome),
+        ...farmZone(biome),
         { type: "attemptBoss", biomeGroup: biome, tier: 3 },
       ]),
     ],

@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+  RECIPE_DATABASE,
   SKILL_TREE,
   buildSquireBeats,
   type TutorialBeat,
@@ -10,12 +11,15 @@ import {
   SQUIRE_T2_BIOMES,
   SQUIRE_T2_DISCIPLINE,
   SQUIRE_T2_ID,
+  SQUIRE_T2_WEAPONS,
   squireT2LessonLevel,
   squireT2Route,
   squireT2TutorialFarmLevel,
+  squireT2ZoneGear,
   type SquireT2Biome,
 } from "./squireT2";
 import { squireT1Route } from "./squireT1";
+import { checkFirstBossKit, checkZoneSegments } from "./squireGearChecks";
 
 /** The last biome-level gate the Squire's tutorial farms this tier-2 zone to. */
 function tutorialFarmLevel(biome: SquireT2Biome): number {
@@ -60,21 +64,25 @@ const node = SKILL_TREE.get(SQUIRE_T2_DISCIPLINE);
 assert(node && node.tier === 1 && node.classId === SQUIRE_CLASS_ROOT, "the pick is a tier-1 node of the Squire");
 assert.equal(squireT2Route("squire-juggernaut").steps[t1.steps.length].type, "unlockSkill");
 
-// Then each T2 zone: a farm to the tutorial's level, then its boss.
+/// Then each T2 zone: farmed to the tutorial's level, wearing its gear as it unlocks, then its boss.
 const rest = route.steps.slice(t1.steps.length + 1);
-assert.equal(rest.length, SQUIRE_T2_BIOMES.length * 2, "a farm and a boss per T2 zone");
-SQUIRE_T2_BIOMES.forEach((biome, index) => {
-  const farm = rest[index * 2];
-  const boss = rest[index * 2 + 1];
+SQUIRE_T2_BIOMES.forEach((biome) => {
   const level = squireT2TutorialFarmLevel(biome);
   assert.equal(level, tutorialFarmLevel(biome), `${biome}: the route farms to the tutorial's level`);
   assert(level >= squireT2LessonLevel(biome), `${biome}: the lesson is learned before the boss`);
-  assert(farm.type === "farm" && farm.at.kind === "biome" && farm.at.biomeGroup === biome && farm.at.tier === 2,
-    `${biome}: farms the tier-2 zone`);
-  assert(farm.type === "farm" && farm.until.type === "biomeLevelAtLeast" && farm.until.level === level,
-    `${biome}: until the tutorial's level`);
-  assert(boss.type === "attemptBoss" && boss.biomeGroup === biome && boss.tier === 2, `${biome}: the tier-2 boss`);
 });
+checkZoneSegments(rest, 2, SQUIRE_T2_BIOMES.map((biome) => ({
+  biome,
+  level: squireT2TutorialFarmLevel(biome),
+  gear: squireT2ZoneGear(SQUIRE_T2_DISCIPLINE, biome),
+})));
+// The first T2 boss is met in a tier-2 weapon, armor, charm and boots, for every discipline.
+for (const discipline of Object.keys(SQUIRE_T2_WEAPONS)) {
+  checkFirstBossKit(squireT2ZoneGear(discipline, SQUIRE_T2_BIOMES[0]), 2);
+  for (const id of Object.values(SQUIRE_T2_WEAPONS[discipline])) {
+    assert(RECIPE_DATABASE.get(id ?? "")?.slot === "weapon", `${id}: a weapon`);
+  }
+}
 
 assert(route.completion.type === "allOf" && route.completion.of.length === SQUIRE_T2_BIOMES.length,
   "done when every T2 boss has fallen");

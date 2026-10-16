@@ -2,11 +2,13 @@ import assert from "node:assert/strict";
 import { SKILL_TREE, buildSquireBeats, SQUIRE_KIT, type TutorialBeat } from "@mmo-idle/shared";
 import { ROUTES, isControlledRouteId, requireRoute } from "./index";
 import { SQUIRE_CLASS_ROOT } from "./squireT1";
-import { squireT2Route } from "./squireT2";
+import { SQUIRE_T2_DISCIPLINE, squireT2Route } from "./squireT2";
+import { checkFirstBossKit, checkZoneSegments } from "./squireGearChecks";
 import {
   SQUIRE_T3_BIOMES,
   SQUIRE_T3_ID,
   SQUIRE_T3_SPECIALIZATION,
+  SQUIRE_T3_ZONE_GEAR,
   squireT3LessonLevel,
   squireT3Route,
   squireT3TutorialFarmLevel,
@@ -51,7 +53,7 @@ const pick = route.steps[t2.steps.length];
 assert(pick.type === "unlockSkill" && pick.skillId === SQUIRE_T3_SPECIALIZATION, "the specialization is picked after tier 3");
 const node = SKILL_TREE.get(SQUIRE_T3_SPECIALIZATION);
 assert(node && node.tier === 2 && node.classId === SQUIRE_CLASS_ROOT, "the pick is a tier-2 node of the Squire");
-assert.equal(node.disciplineId, "squire-avenger", "and sits under the discipline the T2 route picked");
+assert.equal(node.disciplineId, SQUIRE_T2_DISCIPLINE, "and sits under the discipline the T2 route picked");
 for (const spec of SQUIRE_KIT.specializations) {
   const other = squireT3Route(spec.id);
   const discipline = other.steps.find((step) => step.type === "unlockSkill");
@@ -60,19 +62,20 @@ for (const spec of SQUIRE_KIT.specializations) {
 }
 assert.throws(() => squireT3Route("squire-nope"), /unknown specialization/);
 
-// Then each T3 zone: a farm to the tutorial's level, then its boss.
+// Then each T3 zone: farmed to the tutorial's level, wearing its gear as it unlocks, then its boss.
 const rest = route.steps.slice(t2.steps.length + 1);
-assert.equal(rest.length, SQUIRE_T3_BIOMES.length * 2, "a farm and a boss per T3 zone");
-SQUIRE_T3_BIOMES.forEach((biome, index) => {
-  const farm = rest[index * 2];
-  const boss = rest[index * 2 + 1];
+SQUIRE_T3_BIOMES.forEach((biome) => {
   const level = squireT3TutorialFarmLevel(biome);
   assert.equal(level, tutorialFarmLevel(biome), `${biome}: the route farms to the tutorial's level`);
   assert(level >= squireT3LessonLevel(biome), `${biome}: the lesson is learned before the boss`);
-  assert(farm.type === "farm" && farm.at.kind === "biome" && farm.at.biomeGroup === biome && farm.at.tier === 3,
-    `${biome}: farms the tier-3 zone`);
-  assert(boss.type === "attemptBoss" && boss.biomeGroup === biome && boss.tier === 3, `${biome}: the tier-3 boss`);
 });
+checkZoneSegments(rest, 3, SQUIRE_T3_BIOMES.map((biome) => ({
+  biome,
+  level: squireT3TutorialFarmLevel(biome),
+  gear: SQUIRE_T3_ZONE_GEAR[biome],
+})));
+// The first T3 boss is met in a tier-3 weapon, armor, charm and boots.
+checkFirstBossKit(SQUIRE_T3_ZONE_GEAR[SQUIRE_T3_BIOMES[0]], 3);
 assert(route.completion.type === "allOf" && route.completion.of.length === SQUIRE_T3_BIOMES.length,
   "done when every T3 boss has fallen");
 
