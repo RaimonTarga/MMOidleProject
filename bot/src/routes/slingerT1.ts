@@ -86,10 +86,13 @@ export interface DisciplineGun {
 export const SLINGER_DISCIPLINE_CHOICE = "slinger-discipline";
 export const SLINGER_DEFAULT_DISCIPLINE = "gunslinger";
 
-/** Craft and wear one discipline gun; the steps exist only on that discipline's run. */
-export function gunSteps(gun: DisciplineGun, tier: number): RouteStep[] {
+/**
+ * Craft and wear one discipline gun; the steps exist only on that discipline's run.
+ * `defaultDiscipline` is the route's own default (a chain route, `slinger-t4-siege`, defaults to its discipline).
+ */
+export function gunSteps(gun: DisciplineGun, tier: number, defaultDiscipline: string = SLINGER_DEFAULT_DISCIPLINE): RouteStep[] {
   const at: NodeRef = { kind: "biome", biomeGroup: gun.zone, tier, pick: "uncleared" };
-  const choice = { id: SLINGER_DISCIPLINE_CHOICE, option: gun.discipline, defaultOption: SLINGER_DEFAULT_DISCIPLINE };
+  const choice = { id: SLINGER_DISCIPLINE_CHOICE, option: gun.discipline, defaultOption: defaultDiscipline };
   return [
     { type: "craft", recipeIds: [gun.id], farmAt: at, label: `craft ${gun.id}`, choice },
     { type: "equip", definitionIds: [gun.id], label: `wear ${gun.id}`, choice },
@@ -100,15 +103,21 @@ export function gunSteps(gun: DisciplineGun, tier: number): RouteStep[] {
  * One zone's steps on a T2+ route: the discipline guns that detour in front of it, the
  * travel, the zone's own discipline guns, then its vest, charm and boots as they unlock.
  */
-export function zoneGearSteps(biomeGroup: string, tier: number, guns: readonly DisciplineGun[], kit: readonly string[]): {
+export function zoneGearSteps(
+  biomeGroup: string,
+  tier: number,
+  guns: readonly DisciplineGun[],
+  kit: readonly string[],
+  defaultDiscipline: string = SLINGER_DEFAULT_DISCIPLINE,
+): {
   before: RouteStep[];
   inZone: RouteStep[];
 } {
   const at: NodeRef = { kind: "biome", biomeGroup, tier, pick: "uncleared" };
   return {
-    before: guns.filter((gun) => gun.before === biomeGroup).flatMap((gun) => gunSteps(gun, tier)),
+    before: guns.filter((gun) => gun.before === biomeGroup).flatMap((gun) => gunSteps(gun, tier, defaultDiscipline)),
     inZone: [
-      ...guns.filter((gun) => gun.zone === biomeGroup && !gun.before).flatMap((gun) => gunSteps(gun, tier)),
+      ...guns.filter((gun) => gun.zone === biomeGroup && !gun.before).flatMap((gun) => gunSteps(gun, tier, defaultDiscipline)),
       ...wearAsUnlocked(at, kit),
     ],
   };

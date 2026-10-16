@@ -67,6 +67,10 @@ const SLINGER_ROUTE = slingerT1Route();
 const SLINGER_T2_ROUTE = slingerT2Route();
 const SLINGER_T3_ROUTE = slingerT3Route();
 const SLINGER_T4_ROUTE = slingerT4Route();
+/** The Slinger's other two discipline chains (OV2): `slinger-t2..t4-siege`, `slinger-t2..t4-trickshot`. */
+const SLINGER_CHAIN_ROUTES = (["siege", "trickshot"] as const).flatMap((discipline) => [
+  slingerT2Route(discipline), slingerT3Route(discipline), slingerT4Route(discipline),
+]);
 const SPIRIT_ROUTE = spiritT1Route();
 const SPIRIT_T2_ROUTE = spiritT2Route();
 const SPIRIT_T3_ROUTE = spiritT3Route();
@@ -93,6 +97,7 @@ export const ROUTES = new Map<string, Route>([
   [SLINGER_T2_ROUTE.id, SLINGER_T2_ROUTE],
   [SLINGER_T3_ROUTE.id, SLINGER_T3_ROUTE],
   [SLINGER_T4_ROUTE.id, SLINGER_T4_ROUTE],
+  ...SLINGER_CHAIN_ROUTES.map((route): [string, Route] => [route.id, route]),
   [SPIRIT_ROUTE.id, SPIRIT_ROUTE],
   [SPIRIT_T2_ROUTE.id, SPIRIT_T2_ROUTE],
   [SPIRIT_T3_ROUTE.id, SPIRIT_T3_ROUTE],

@@ -5,6 +5,7 @@ import {
 } from "@mmo-idle/shared";
 import { allOf, type Condition, type NodeRef, type Route, type RouteStep } from "../route/types";
 import { SLINGER_CLASS_ROOT, wearAsUnlocked, zoneGearSteps, type DisciplineGun } from "./slingerT1";
+import { DEFAULT_SLINGER_DISCIPLINE, SLINGER_CHAINS, slingerRouteId, type SlingerDiscipline } from "./slingerT2";
 import { slingerT3Route } from "./slingerT3";
 
 /**
@@ -28,7 +29,7 @@ import { slingerT3Route } from "./slingerT3";
  */
 export const SLINGER_T4_ID = "slinger-t4";
 
-export const DEFAULT_SLINGER_LEAF = "light-hands";
+export const DEFAULT_SLINGER_LEAF = SLINGER_CHAINS[DEFAULT_SLINGER_DISCIPLINE].leaf;
 
 /** The nine leaves by discipline id (the kit is the one source). */
 export const SLINGER_LEAVES: readonly { id: string; disciplineId: string }[] = SLINGER_KIT.leaves.map(
@@ -95,8 +96,9 @@ function optionOf(leafId: string): string {
   return leafId.replace(/^slinger-/, "");
 }
 
-export function slingerT4Route(): Route {
-  const t3 = slingerT3Route();
+export function slingerT4Route(chainId: SlingerDiscipline = DEFAULT_SLINGER_DISCIPLINE): Route {
+  const chain = SLINGER_CHAINS[chainId];
+  const t3 = slingerT3Route(chainId);
   const steps: RouteStep[] = [...t3.steps];
 
   for (const leaf of SLINGER_LEAVES) {
@@ -104,7 +106,7 @@ export function slingerT4Route(): Route {
       type: "unlockSkill",
       skillId: leaf.id,
       label: `pick the ${optionOf(leaf.id)} leaf`,
-      choice: { id: "slinger-leaf", option: optionOf(leaf.id), defaultOption: DEFAULT_SLINGER_LEAF },
+      choice: { id: "slinger-leaf", option: optionOf(leaf.id), defaultOption: chain.leaf },
     });
   }
 
@@ -113,7 +115,7 @@ export function slingerT4Route(): Route {
 
   for (const biomeGroup of T4_ZONE_ORDER) {
     const at = zone(biomeGroup);
-    const gear = zoneGearSteps(biomeGroup, 4, SLINGER_T4_GUNS, SLINGER_T4_ZONE_KIT[biomeGroup] ?? []);
+    const gear = zoneGearSteps(biomeGroup, 4, SLINGER_T4_GUNS, SLINGER_T4_ZONE_KIT[biomeGroup] ?? [], chain.discipline);
     steps.push(...gear.before);
     steps.push({ type: "travel", to: at });
     steps.push(...gear.inZone);
@@ -144,11 +146,11 @@ export function slingerT4Route(): Route {
   const t4Bosses: Condition[] = T4_ZONE_ORDER.map((biomeGroup) => ({ type: "bossCleared", biomeGroup, tier: 4 }));
 
   return {
-    id: SLINGER_T4_ID,
+    id: slingerRouteId(4, chain.discipline),
     version: "1.0.0",
     classRoot: SLINGER_CLASS_ROOT,
     description:
-      "Slinger T4: the T3 route, a leaf (Light Hands by default), each T4 zone to the " +
+      `Slinger T4: the T3 route, a leaf (${chain.leaf} by default), each T4 zone to the ` +
       "tier-4 cap, then its tier-4 boss.",
     steps,
     completion: allOf(t3.completion, ...t4Bosses),
