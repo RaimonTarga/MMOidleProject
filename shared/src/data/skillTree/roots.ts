@@ -134,7 +134,7 @@ export const rootEntries = [
     parent: null, children: [],
     description: 'Class mechanic — channel each blow into a building surge of power. The lightest, fastest, highest-output chassis — almost no natural bulk, so a barrier worth 30% of your max HP takes the hits that do reach you. It recharges after a quiet window without taking damage.',
     cost: 1, statEffects: {"attackPct": 0.15, "maxHpPct": 0.03, "attackSpeedPct": 0.12, "moveSpeedPct": 0.12, "attackRange": 130},
-    mechanicEffects: {"defense.barrier-pct": 0.3},
+    mechanicEffects: {},
   }],
 
 
