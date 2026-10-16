@@ -40,6 +40,7 @@ import { attachComponent, detachComponent } from '../../../ecs/markerHelpers';
 import { NODE_REGISTRY } from '../../../world/nodeRegistry';
 import {
   clearGroundZonesByOwner,
+  delayGroundZonesByOwner,
   publishChargeCorridor,
   publishFaultLineBurst,
   publishGroundZone,
@@ -80,7 +81,7 @@ import { isMonsterFrozen } from '../../combat/status/frost';
 import { isMonsterStunned } from '../status/stun';
 import { applyMonsterDotToPlayer } from '../status/monsterDot';
 import { monsterIgnoresControl } from '../status/controlImmunity';
-import { BOSS_FRENZY_EFFECT_ID } from '../engine/monsterMechanics';
+import { BOSS_FRENZY_EFFECT_ID, delayMonsterCasts, monsterWindupSlowPct } from '../engine/monsterMechanics';
 import { bossAdds } from './bossAdds';
 import { raiseCorpsesBurst } from './raiseDead';
 
@@ -719,7 +720,36 @@ export function setPatternCombatHooks(next: PatternCombatHooks): void {
 
 // ── Main update ──────────────────────────────────────────────────────────────
 
+/** Pattern steps whose clock is a wind-up the player reads (a cast bar or a filling telegraph). */
+const WINDUP_STEP_KINDS: ReadonlySet<BossPatternStep['kind']> = new Set<BossPatternStep['kind']>([
+  'cast', 'impact', 'payoff', 'apply-status', 'pull', 'raise',
+]);
+
+/**
+ * THE WIND-UP SLOW (Numb II; `monsterWindupSlowPct`): every wind-up a slowed monster is in
+ * the middle of loses `dt × pct` of this tick, a pattern step's and an ordinary cast's alike,
+ * and the telegraphs it painted move with it. Run first in the pattern pass: before anything
+ * this tick reads a cast end, and before ordinary combat resolves one.
+ */
+function stretchWindups(world: World, monster: MonsterEntity, dt: number, now: number): void {
+  const pct = monsterWindupSlowPct(monster);
+  if (pct <= 0) return;
+  const delayMs = dt * pct;
+  let stretched = delayMonsterCasts(monster, delayMs, now);
+  const state = monster.runsBossPattern;
+  if (state?.stepStarted && state.stepEndsAtMs > now) {
+    const step = runningBossPatternDef(monster)?.steps[state.stepIndex];
+    if (step && WINDUP_STEP_KINDS.has(step.kind)) {
+      state.stepEndsAtMs += delayMs;
+      stretched = true;
+    }
+  }
+  if (stretched) delayGroundZonesByOwner(world, monster.hasPosition.nodeId, monster.isMonster.id, delayMs, now);
+}
+
 export function updateBossPatterns(world: World, dt: number, now = Date.now()): void {
+  for (const monster of world.aggroedMonsters) stretchWindups(world, monster, dt, now);
+
   for (const monster of [...world.recoveringMonsters]) {
     const recovery = monster.recoversFromPattern!;
     if (now >= recovery.endsAtMs) {
