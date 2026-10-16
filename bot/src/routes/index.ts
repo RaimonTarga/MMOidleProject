@@ -71,6 +71,8 @@ const SPIRIT_ROUTE = spiritT1Route();
 const SPIRIT_T2_ROUTE = spiritT2Route();
 const SPIRIT_T3_ROUTE = spiritT3Route();
 const SPIRIT_T4_ROUTE = spiritT4Route();
+const SPIRIT_OTHER_DISCIPLINE_ROUTES = ["spirit-overflow", "spirit-reservoir"].flatMap((discipline) =>
+  [spiritT2Route(discipline), spiritT3Route(discipline), spiritT4Route(discipline)]);
 const APPRENTICE_ROUTE = apprenticeT1Route();
 const APPRENTICE_T2_ROUTE = apprenticeT2Route();
 const APPRENTICE_T3_ROUTE = apprenticeT3Route();
@@ -97,6 +99,7 @@ export const ROUTES = new Map<string, Route>([
   [SPIRIT_T2_ROUTE.id, SPIRIT_T2_ROUTE],
   [SPIRIT_T3_ROUTE.id, SPIRIT_T3_ROUTE],
   [SPIRIT_T4_ROUTE.id, SPIRIT_T4_ROUTE],
+  ...SPIRIT_OTHER_DISCIPLINE_ROUTES.map((route): [string, Route] => [route.id, route]),
   [APPRENTICE_ROUTE.id, APPRENTICE_ROUTE],
   [APPRENTICE_T2_ROUTE.id, APPRENTICE_T2_ROUTE],
   [APPRENTICE_T3_ROUTE.id, APPRENTICE_T3_ROUTE],

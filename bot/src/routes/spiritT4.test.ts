@@ -15,12 +15,13 @@ import {
 import type { RouteStep } from "../route/types";
 import { isControlledRouteId, requireRoute, ROUTES } from "./index";
 import { SPIRIT_CLASS_ROOT } from "./spiritT1";
-import { SPIRIT_T2_DISCIPLINE, SPIRIT_T2_ZONES, spiritT2FarmLevel } from "./spiritT2";
-import { SPIRIT_T3_SPECIALIZATION, SPIRIT_T3_ZONES, spiritT3FarmLevel, spiritT3Route } from "./spiritT3";
+import { spiritRouteId, SPIRIT_T2_DISCIPLINE, SPIRIT_T2_ZONES, spiritT2FarmLevel, spiritT2Route } from "./spiritT2";
+import { SPIRIT_T3_SPECIALIZATION, SPIRIT_T3_SPECIALIZATIONS, SPIRIT_T3_ZONES, spiritT3FarmLevel, spiritT3Route } from "./spiritT3";
 import {
   SPIRIT_T4_GEAR,
   SPIRIT_T4_ID,
   SPIRIT_T4_LEAF,
+  SPIRIT_T4_LEAVES,
   SPIRIT_T4_ZONES,
   spiritT4FarmLevel,
   spiritT4LessonLevel,
@@ -129,5 +130,23 @@ assert.equal(new Set(ids).size, ids.length);
 assert(ids.every((id) => /^[a-z0-9]+(-[a-z0-9]+)*$/.test(id)));
 assert(ids.includes("tier-4") && ids.includes("trench-t4-boss") && ids.includes("volcanic-t3-boss"));
 assert(SPIRIT_KIT.leaves.some((entry) => entry.id === SPIRIT_T4_LEAF));
+
+// The other two disciplines' chains (OV2): the same steps, with the discipline's own picks at T2, T3 and T4.
+for (const discipline of ["spirit-overflow", "spirit-reservoir"]) {
+  const chain = [spiritT2Route(discipline), spiritT3Route(discipline), spiritT4Route(discipline)];
+  assert.deepEqual(chain.map((entry) => entry.id), [2, 3, 4].map((tier) => spiritRouteId(tier as 2 | 3 | 4, discipline)));
+  for (const entry of chain) {
+    assert.deepEqual(ROUTES.get(entry.id), entry, `${entry.id} is registered`);
+    assert.equal(isControlledRouteId(entry.id), false);
+  }
+  const [two, three, four] = chain;
+  assert.deepEqual(four.steps.slice(0, three.steps.length), three.steps, `${four.id}: the T3 route comes first`);
+  assert.deepEqual(three.steps.slice(0, two.steps.length), two.steps, `${three.id}: the T2 route comes first`);
+  assert.equal(four.steps.length, route.steps.length, `${four.id}: the Tide chain's steps, other picks`);
+  const picks = four.steps.filter((step) => step.type === "unlockSkill").map((step) => step.type === "unlockSkill" ? step.skillId : "");
+  const own = [discipline, SPIRIT_T3_SPECIALIZATIONS[discipline], SPIRIT_T4_LEAVES[discipline]];
+  assert.deepEqual(picks.slice(-3), own, `${four.id}: discipline, specialization, leaf`);
+  for (const id of own.slice(1)) assert.equal(SKILL_TREE.get(id)?.disciplineId, discipline, `${id} is under ${discipline}`);
+}
 
 console.log("spiritT4: ok");

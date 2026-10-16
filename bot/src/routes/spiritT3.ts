@@ -5,7 +5,7 @@ import {
   type KitBiome,
 } from "@mmo-idle/shared";
 import { allOf, type Condition, type NodeRef, type Route, type RouteStep } from "../route/types";
-import { spiritT2Route, SPIRIT_T2_DISCIPLINE, SPIRIT_T2_ZONES } from "./spiritT2";
+import { spiritRouteId, spiritT2Route, SPIRIT_DISCIPLINE_NAME, SPIRIT_T2_DISCIPLINE, SPIRIT_T2_ZONES } from "./spiritT2";
 import { SPIRIT_CLASS_ROOT, wearZoneGear } from "./spiritT1";
 
 /**
@@ -18,6 +18,16 @@ export const SPIRIT_T3_ID = "spirit-t3";
 
 /** One of the discipline's three specializations. Spring Tide (Tide) is a placeholder pick. */
 export const SPIRIT_T3_SPECIALIZATION = "spirit-spring-tide";
+
+/**
+ * Each discipline's T3 pick (OV2, PLACEHOLDER): Lightning Rod puts all of Overflow's spill on the
+ * target and Gathering Dark grows Reservoir's release, the two boss-leaning specializations (§11.6 notes).
+ */
+export const SPIRIT_T3_SPECIALIZATIONS: Readonly<Record<string, string>> = {
+  "spirit-tide": SPIRIT_T3_SPECIALIZATION,
+  "spirit-overflow": "spirit-lightning-rod",
+  "spirit-reservoir": "spirit-gathering-dark",
+};
 
 /** Each T3 zone and the piece its lesson teaches (a rank-up or a new piece). */
 export const SPIRIT_T3_ZONES: ReadonlyArray<{ biome: KitBiome; pieceId: string }> = [
@@ -65,11 +75,13 @@ function zone(biomeGroup: KitBiome): NodeRef {
   return { kind: "biome", biomeGroup, tier: 3, pick: "uncleared" };
 }
 
-export function spiritT3Route(): Route {
-  const t2 = spiritT2Route();
-  const spec = SPIRIT_KIT.specializations.find((entry) => entry.id === SPIRIT_T3_SPECIALIZATION);
-  if (!spec || spec.disciplineId !== SPIRIT_T2_DISCIPLINE) {
-    throw new Error(`spirit-t3: ${SPIRIT_T3_SPECIALIZATION} is not under ${SPIRIT_T2_DISCIPLINE}`);
+export function spiritT3Route(disciplineId = SPIRIT_T2_DISCIPLINE): Route {
+  const t2 = spiritT2Route(disciplineId);
+  const id = spiritRouteId(3, disciplineId);
+  const specId = SPIRIT_T3_SPECIALIZATIONS[disciplineId];
+  const spec = SPIRIT_KIT.specializations.find((entry) => entry.id === specId);
+  if (!spec || spec.disciplineId !== disciplineId) {
+    throw new Error(`${id}: ${specId} is not under ${disciplineId}`);
   }
   // Wait out the tier-3 promotion where the T2 route ended, as the T1 route does for tier 2.
   const lastT2 = SPIRIT_T2_ZONES[SPIRIT_T2_ZONES.length - 1].biome;
@@ -81,7 +93,7 @@ export function spiritT3Route(): Route {
       until: { type: "playerTierAtLeast", tier: 3 },
       label: "wait for the tier-3 promotion",
     },
-    { type: "unlockSkill", skillId: SPIRIT_T3_SPECIALIZATION, label: "pick a specialization" },
+    { type: "unlockSkill", skillId: spec.id, label: "pick a specialization" },
   ];
   const milestones: Route["milestones"] = [
     ...t2.milestones,
@@ -108,11 +120,11 @@ export function spiritT3Route(): Route {
   }
 
   return {
-    id: SPIRIT_T3_ID,
+    id,
     version: "1.0.0",
     classRoot: SPIRIT_CLASS_ROOT,
     description:
-      "Spirit T3: the T2 route, the tier-3 promotion, a specialization (Spring Tide), each T3 zone " +
+      `Spirit T3: the T2 route, the tier-3 promotion, a specialization (${SPIRIT_DISCIPLINE_NAME[disciplineId]}: ${spec.name}), each T3 zone ` +
       "to the guide's level, and the seven T3 bosses.",
     steps,
     completion: allOf(t2.completion, ...bosses),
