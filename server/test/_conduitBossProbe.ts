@@ -32,6 +32,7 @@ import { equipItem } from '../src/systems/player/economy/inventory';
 import { refreshClassConfig } from '../src/systems/player/progression/classConfig';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
+import { flushConduitMechanics } from '../src/systems/classes/archetypes/summoner/mechanicLog';
 
 const ARGV = process.argv.slice(2);
 const argOf = (name: string): string | null => {
@@ -79,7 +80,7 @@ function slices(nodeId: string, pos: { x: number; y: number }): PersistedPlayerS
       level: 0, skillPoints: 0, essences: { red: 0, blue: 0, green: 0, yellow: 0, purple: 0 },
       biomeXP: {}, biomeLevel: levels(), unlockedRecipes: [], questProgress: {}, playerTier: TIER,
       currentSkillTier: 0, bossesCleared: [...CLEARED], clearedNodes: [],
-      runesOwned: runeIdsForArchetype(null), runesEquipped: [...DEFAULT_RUNE_LOADOUT],
+      runesOwned: runeIdsForArchetype(null), runesEquipped: DEFAULT_RUNE_LOADOUT.filter((rule) => !(ARGV.includes("--no-step-back") && rule.actionId === "step-back")),
     },
     holdsInventory: { inventory: [], equipment: emptyEquipment(), itemUpgrades: {} },
     usesSkills: { unlockedSkills: [], passives: {}, selectedClass: null, selectedSubVariant: null, selectedRange: null, combatArchetype: null },
@@ -208,13 +209,15 @@ function fight(node: { nodeId: string; biomeGroup: string; bossId: string }, run
         const tgt = m.hasAttackTarget ? (boss && m.hasAttackTarget.targetId === boss.isMonster.id ? 'B' : 'o') : '-';
         return `${slot} ${Math.round(m.hasHealth.hp)}/${m.hasHealth.maxHp} a${m.dealsDamage.attack}${tgt}`;
       });
-      const aggro = boss?.hasAggroTarget ? `${boss.hasAggroTarget.targetKind === 'player' ? 'YOU' : 'summon'}${boss.heldByTaunt ? '(T)' : ''}` : '-';
+      const dist = boss ? Math.round(Math.hypot(boss.hasPosition.current.x - p.hasPosition.current.x, boss.hasPosition.current.y - p.hasPosition.current.y)) : -1;
+      const aggro = `d${dist} ` + (boss?.hasAggroTarget ? `${boss.hasAggroTarget.targetKind === 'player' ? 'YOU' : 'summon'}${boss.heldByTaunt ? '(T)' : ''}` : '-');
       const adds = [...world.monsterEntitiesInNode(node.nodeId)].filter((m) => m !== boss).length;
       console.log(`t${((now - t0) / 1000).toFixed(0).padStart(3)} boss ${boss ? Math.round(boss.hasHealth.hp) : 0} on ${aggro} adds ${adds} | you ${Math.round(p.hasHealth.hp)}/${p.hasHealth.maxHp} q${q} | ${minions.join(' | ')}`);
     }
     if (p.hasHealth.hp <= 0 || p.isDead) { outcome = 'died'; break; }
     if (bossSeen && !boss) { bossHp = 0; outcome = 'win'; break; }
   }
+  flushConduitMechanics(p, now + 60_000);
   const seconds = (now - bossStart) / 1000;
   if (VERBOSE) {
     console.log('events', JSON.stringify(counts));
