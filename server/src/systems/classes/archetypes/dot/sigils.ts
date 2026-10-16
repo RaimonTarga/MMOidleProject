@@ -54,7 +54,7 @@ import { cancelDelayedAttacks, hidersInReach, leafOf, registerApprenticeT4, tida
 import { flushApprentice, noteApprentice } from './telemetry';
 
 /** A sigil's tick damage, as a share of the weapon's attack (potency), per tick. PLACEHOLDER. */
-const SIGIL_TICK_PCT = 0.12;
+const SIGIL_TICK_PCT = 0.25;
 /** The base tick and lifetime of a sigil (ms). PLACEHOLDERS. */
 const SIGIL_TICK_MS = 1_000;
 const SIGIL_LIFE_MS = 6_000;

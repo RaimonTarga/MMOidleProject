@@ -64,7 +64,7 @@ const FROST = 'apprentice-frost';
 const PIECES: readonly ApprenticePiece[] = [
   payoff({
     id: 'apprentice-detonate',
-    params: { payoffPct: 0.8, cooldownMs: 1500 },
+    params: { payoffPct: 1, cooldownMs: 1500 },
     name: 'Detonate',
     family: 'fire',
     text: "Sets off every sigil on the target at once, dealing what they still had to deal in one blast.",

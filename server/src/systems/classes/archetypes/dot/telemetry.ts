@@ -6,7 +6,8 @@
 import type { PlayerEntity } from '../../../../ecs/entity';
 import { log } from '../../../../log';
 
-const FLUSH_MS = 60_000;
+/** How often the counts are logged (ms); `APPRENTICE_PAYOFF_LOG_MS` overrides it (the boss sim uses a short one). */
+const FLUSH_MS = Number(process.env.APPRENTICE_PAYOFF_LOG_MS ?? 60_000);
 const ENABLED = process.env.NODE_ENV !== 'production';
 
 const counts = new WeakMap<PlayerEntity, { since: number; byKey: Record<string, number> }>();
