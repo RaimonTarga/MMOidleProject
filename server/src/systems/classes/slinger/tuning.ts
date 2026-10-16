@@ -13,7 +13,9 @@ export const TRICKSHOT = 'slinger-trickshot';
  * The discipline shifts the clip by a flat amount (rounds) and the reload by a flat amount (ms),
  * never a multiplier, so a small gun never drops to a handful of rounds (§10.2).
  */
-const CLIP_SHIFT: Readonly<Record<string, number>> = { [GUNSLINGER]: -2, [SIEGE]: 4 };
+// Siege +4 → +8 rounds (OV2): fewer stationary reloads per fight; sim, T2 Cave boss 5/6 → 6/6 (HP left
+// 16-20% → 33%), the thin T2 bosses' margins up (Forest 23% → 45%, Mountain 11-69% → 66%).
+const CLIP_SHIFT: Readonly<Record<string, number>> = { [GUNSLINGER]: -2, [SIEGE]: 8 };
 // Siege +900 → +400 ms (OV2): the T2 Cave boss's eruptions land in the stationary reload; sim, Drum Gun:
 // 3/6 wins at +900, 5/6 at +400. Still the longest reload of the three.
 const RELOAD_SHIFT_MS: Readonly<Record<string, number>> = { [GUNSLINGER]: -400, [SIEGE]: 400 };

@@ -26,7 +26,7 @@ const NATURAL_RULES: Readonly<Record<string, ConditionRef[]>> = {
   'slinger-stopping': [{ id: 'charging-at-me' }],
   'slinger-breaching': [{ id: 'target-plated' }],
   // T2
-  'slinger-buckshot': [{ id: 'charging-at-me' }],
+  'slinger-buckshot': [{ id: 'enemies-near', param: 3 }],
   'slinger-shellbreaker': [{ id: 'target-shielded' }],
   'slinger-tracer': [{ id: 'target-flees' }],
   'slinger-hollow-point': [{ id: 'target-low', param: 0.5 }],
@@ -53,7 +53,11 @@ const RULE_ORDER: readonly string[] = [
   'target-low', 'enemies-near', 'target-elite', 'target-plated',
 ];
 
-/** The crowd clips (§10.4: Scatter answers the Plains entry spike); the default always racks one. */
+/**
+ * The crowd clips (§10.4: Scatter answers the Plains entry spike); the default always racks one.
+ * Buckshot, Scatter's sidegrade, takes the same crowd rule (on a charge alone, the live T2 Jungle
+ * guards' nine-pack met a rack with no crowd clip that ever loaded).
+ */
 const CROWD_CLIPS: ReadonlySet<string> = new Set(['slinger-scatter', 'slinger-buckshot']);
 
 /** Where a piece's current rank was taught in the kit's lesson order: the later, the newer. */
