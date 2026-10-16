@@ -1,6 +1,7 @@
 import { RECIPE_DATABASE } from '../data/recipes';
+import { NODE_BIOMES } from '../world/nodeBiomes';
 import type { TUTORIAL_ANCHORS } from './anchors';
-import type { TutorialCondition, TutorialScript } from './types';
+import type { TutorialCondition, TutorialNodeRef, TutorialScript } from './types';
 
 /**
  * The first-hour checklist (docs/guided-tutorial-plan.md, "The first-hour
@@ -130,6 +131,11 @@ export interface TutorialChecklistRow {
   teaches: readonly TutorialConceptId[];
 }
 
+/** The zone a farm fights in. */
+export function farmZone(at: TutorialNodeRef): string | undefined {
+  return at.kind === 'node' ? NODE_BIOMES[at.nodeId]?.biomeGroup : at.biomeGroup;
+}
+
 function gatesIn(condition: TutorialCondition): TutorialCondition[] {
   switch (condition.type) {
     case 'allOf':
@@ -164,11 +170,17 @@ export function tutorialChecklist(script: TutorialScript): TutorialChecklistRow[
 
     for (const step of beat.steps) {
       if (step.type !== 'farm') continue;
+      // A farm only levels the zone it fights in; a gate on another zone is a guard (`scripts/gear.ts`).
+      const fought = farmZone(step.at);
       for (const gate of gatesIn(step.until)) {
-        if (gate.type === 'biomeLevelAtLeast') levels[gate.biomeGroup] = Math.max(levels[gate.biomeGroup] ?? 0, gate.level);
+        if (gate.type === 'biomeLevelAtLeast' && gate.biomeGroup === fought) {
+          levels[gate.biomeGroup] = Math.max(levels[gate.biomeGroup] ?? 0, gate.level);
+        }
         if (gate.type === 'canCraft' || gate.type === 'recipeUnlocked') {
           const recipe = RECIPE_DATABASE.get(gate.recipeId);
-          if (recipe) levels[recipe.recipeGroup] = Math.max(levels[recipe.recipeGroup] ?? 0, recipe.requiredBiomeLevel);
+          if (recipe && recipe.recipeGroup === fought) {
+            levels[recipe.recipeGroup] = Math.max(levels[recipe.recipeGroup] ?? 0, recipe.requiredBiomeLevel);
+          }
         }
       }
     }

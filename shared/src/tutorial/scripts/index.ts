@@ -8,6 +8,7 @@ import { buildSpiritBeats } from './spirit';
 import { buildSquireBeats } from './squire';
 import { buildStrikerBeats } from './striker';
 import { buildApprenticeBeats } from './apprentice';
+import { buildGearBeats } from './gear';
 
 export { TUTORIAL_FAREWELL } from './farewell';
 export { TUTORIAL_OPENING } from './opening';
@@ -15,6 +16,8 @@ export { TUTORIAL_SEALS, T1_BIOME_ORDER, type T1Biome } from './plans';
 export { buildConduitBeats } from './conduit';
 export { buildSealRouteBeats } from './sealRoute';
 export { buildSquireBeats } from './squire';
+export { buildGearBeats, tutorialStretches } from './gear';
+export { TUTORIAL_GEAR_PLANS, type TutorialGearPlan } from './gearPlans';
 
 const scripts = new Map<string, TutorialScript>();
 
@@ -49,10 +52,16 @@ export function tutorialScriptFor(classRoot: string | null): TutorialScript {
     const className = classRoot
       ? (SKILL_TREE.get(classRoot)?.name.toLowerCase() ?? classRoot)
       : null;
+    // The class's gear (`gearPlans.ts`): its Clearing weapon right after the class pick, then
+    // each zone's pieces as the zone opens them.
+    const gear = classRoot ? buildGearBeats(classRoot, tail) : null;
+    const opening = gear
+      ? TUTORIAL_OPENING.beats.flatMap((beat) => (beat.id === 'choose-class' ? [beat, gear.start] : [beat]))
+      : TUTORIAL_OPENING.beats;
     script = {
       id: className ? `tutorial-${className}` : TUTORIAL_OPENING.id,
       classRoot,
-      beats: [...TUTORIAL_OPENING.beats, ...tail],
+      beats: [...opening, ...(gear ? gear.beats : tail)],
     };
     scripts.set(key, script);
   }
