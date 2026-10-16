@@ -21,6 +21,14 @@ export const CONDUIT_T2_ID = "conduit-t2";
 /** Pack: the roster's variety is what the T2 lessons add, so the route plays that. */
 export const CONDUIT_T2_DISCIPLINE = "conduit-pack";
 
+/**
+ * A chain's route id at a tier: Pack's keeps the plain `conduit-t<N>`; the other disciplines'
+ * chains (OV2-CONDUIT) are `conduit-t<N>-swarm` and `conduit-t<N>-elite`.
+ */
+export function conduitRouteId(tier: number, disciplineId: string): string {
+  return disciplineId === CONDUIT_T2_DISCIPLINE ? `conduit-t${tier}` : `conduit-t${tier}-${disciplineId.replace(/^conduit-/, "")}`;
+}
+
 /** The zones the T2 guide walks, in its order (the T2 beats of `shared/src/tutorial/scripts/conduit.ts`). */
 export const CONDUIT_T2_ZONES: readonly KitBiome[] = ["plains", "forest", "swamp", "cave", "mountain", "jungle", "desert"];
 
@@ -92,7 +100,7 @@ export function conduitT2Route(disciplineId: string = CONDUIT_T2_DISCIPLINE): Ro
   }
 
   return {
-    id: CONDUIT_T2_ID,
+    id: conduitRouteId(TIER, disciplineId),
     version: "1.0.0",
     classRoot: CONDUIT_CLASS_ROOT,
     description:

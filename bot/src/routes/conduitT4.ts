@@ -1,6 +1,7 @@
 import { absoluteZoneLevel, biomeLevelCap, type KitBiome } from "@mmo-idle/shared";
 import { allOf, type NodeRef, type Route, type RouteStep } from "../route/types";
 import { CONDUIT_CLASS_ROOT, wearAsUnlocked } from "./conduitT1";
+import { CONDUIT_T2_DISCIPLINE, conduitRouteId, conduitT2Route } from "./conduitT2";
 import { CONDUIT_T3_SPECIALIZATION, CONDUIT_T3_ZONES, conduitT3Route } from "./conduitT3";
 
 /**
@@ -56,8 +57,12 @@ export function conduitT4LessonLevel(biome: KitBiome): number {
   return absoluteZoneLevel({ kind: "zone", biome, tier: TIER, level: 2 });
 }
 
-export function conduitT4Route(leafId: string = CONDUIT_T4_LEAF, specializationId: string = CONDUIT_T3_SPECIALIZATION): Route {
-  const t3 = conduitT3Route(specializationId);
+export function conduitT4Route(
+  leafId: string = CONDUIT_T4_LEAF,
+  specializationId: string = CONDUIT_T3_SPECIALIZATION,
+  disciplineId: string = CONDUIT_T2_DISCIPLINE,
+): Route {
+  const t3 = conduitT3Route(specializationId, disciplineId);
   const lastT3 = CONDUIT_T3_ZONES[CONDUIT_T3_ZONES.length - 1];
   const steps: RouteStep[] = [
     ...t3.steps,
@@ -101,7 +106,7 @@ export function conduitT4Route(leafId: string = CONDUIT_T4_LEAF, specializationI
   }
 
   return {
-    id: CONDUIT_T4_ID,
+    id: conduitRouteId(TIER, disciplineId),
     version: "1.0.0",
     classRoot: CONDUIT_CLASS_ROOT,
     description:
@@ -111,4 +116,26 @@ export function conduitT4Route(leafId: string = CONDUIT_T4_LEAF, specializationI
     completion: allOf(...CONDUIT_T4_ZONES.map((biomeGroup) => ({ type: "bossCleared" as const, biomeGroup, tier: TIER }))),
     milestones,
   };
+}
+
+/**
+ * The Conduit's other two discipline chains (OV2-CONDUIT, PLACEHOLDER picks): each discipline's
+ * route at T2, T3 and T4 (`conduit-t<N>-<discipline>`), the T1 route and Pack's gear tables
+ * replayed. Swarm takes Legion (the default masses one summon to its thresholds) and Devour (the
+ * leaf that keeps a long-lived summon standing); Elite takes Ascendant (the boss build: stronger the longer the
+ * fight) and Last Stand (an elite that would die holds a few seconds), the picks that won every T3/T4 boss in the
+ * sim (Colossus lost the T3 Swamp, Two Souls the T3 Mountain).
+ */
+export const CONDUIT_OTHER_CHAINS: Readonly<Record<string, { discipline: string; specialization: string; leaf: string }>> = {
+  swarm: { discipline: "conduit-swarm", specialization: "conduit-legion", leaf: "conduit-devour" },
+  elite: { discipline: "conduit-elite", specialization: "conduit-ascendant", leaf: "conduit-last-stand" },
+};
+
+/** Every route of the other two chains, T2 to T4. */
+export function conduitOtherChainRoutes(): Route[] {
+  return Object.values(CONDUIT_OTHER_CHAINS).flatMap((chain) => [
+    conduitT2Route(chain.discipline),
+    conduitT3Route(chain.specialization, chain.discipline),
+    conduitT4Route(chain.leaf, chain.specialization, chain.discipline),
+  ]);
 }
