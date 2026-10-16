@@ -518,8 +518,13 @@ function emptyBarLeaf(pieceId: string): { leaf: string; clock: string } | undefi
   return undefined;
 }
 
-/** Rules that go first when they share a moment: Parry is the stronger form of Guard. PLACEHOLDER. */
-const RESPONSE_PRIORITY: Readonly<Record<string, number>> = { 'squire-parry': -1 };
+/**
+ * Rules that go first when they share a moment. PLACEHOLDER. Shield Bash first: a wind-up it
+ * interrupts never lands, so nothing else pays for it (§8.13: "Shield Bash on an interruptible
+ * cast, Guard otherwise"; OV-SQUIRE: the Guard used to brace for the blow the Bash had stopped
+ * and lose its pip). Then Parry, the stronger form of Guard.
+ */
+const RESPONSE_PRIORITY: Readonly<Record<string, number>> = { 'squire-shield-bash': -2, 'squire-parry': -1 };
 
 const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
   // Three or more enemies on you: shove them all back a step. Lands if it moves enough.
@@ -602,6 +607,8 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
         if (threat.targetId === player.isPlayer.id) endsAt = Math.max(endsAt, threat.completesAtMs);
       }
     }
+    // Nothing is coming any more (a Shield Bash just interrupted it): no brace, no cost.
+    if (endsAt <= now) return 'none';
     const windowMs = Math.min(p.maxWindowMs, Math.max(0, endsAt - now) + 500);
     // Planted: while braced, knockback and stuns don't move you. An Anchor already holding
     // you in place keeps doing so under the new brace.
@@ -632,13 +639,16 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
     return 'braced';
   },
   // The enemy you fight winds up: bash it; the stun interrupts the cast. A boss pattern's
-  // step can't be interrupted, and the bash is wasted on it.
+  // step can't be interrupted and a control-immune enemy can't be stunned: the default rule
+  // bashes only what it can interrupt (§8.13), so those are left to the Guard (OV-SQUIRE: it
+  // used to bash them anyway and waste a pip on every such wind-up).
   'squire-shield-bash': (world, player, p, now) => {
     for (const monster of world.aggroedMonsters) {
       if (monster.hasAggroTarget.targetKind !== 'player' || monster.hasAggroTarget.targetId !== player.isPlayer.id) continue;
       const threats = guardableThreatsFor(world, monster, now);
       if (threats.length === 0) continue;
-      if (threats.some((t) => t.source === 'boss-pattern')) return 'wasted';
+      if (threats.some((t) => t.source === 'boss-pattern')) continue;
+      if (MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.controlImmune) continue;
       const stunMs = p.stunMs * (1 + (player.usesSkills.passives['squire.bash-stun-pct'] ?? 0));
       if (!applyStun(monster.tracksCombat, stunMs, player.isPlayer.id)) return 'wasted';
       abortMonsterCast(world, monster);
