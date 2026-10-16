@@ -1,4 +1,4 @@
-import type { WorldLogActor } from '@mmo-idle/shared';
+import { classKitFor, type WorldLogActor } from '@mmo-idle/shared';
 import type { MinionMonsterType } from '@mmo-idle/shared';
 import type { MinionEntity, MonsterEntity, PlayerEntity } from '../ecs/entity';
 import type { World } from './World';
@@ -25,12 +25,26 @@ export function actorFromMinion(
 ): WorldLogActor {
   return {
     id: minion.isMinion.id,
-    name: minionDisplayName(minion.isMinion.monsterTypeId),
+    name: rosterPieceName(minion.isMinion.slotId) ?? minionDisplayName(minion.isMinion.monsterTypeId),
     actorType: 'minion',
     ownerPlayerId,
   };
 }
 
+/**
+ * The Conduit piece a class-first roster slot fields (`<pieceId>#<n>`): its own name
+ * (Thrall, Plains Warden, a Soul's name...), so the log never says "Your Summon".
+ */
+function rosterPieceName(slotId: string | undefined): string | null {
+  if (!slotId) return null;
+  const pieceId = slotId.split('#')[0];
+  const kit = classKitFor('summoner');
+  return kit.pieces.find((piece) => piece.id === pieceId)?.name
+    ?? kit.trophies.find((trophy) => trophy.id === pieceId)?.name
+    ?? null;
+}
+
+/** The pre-rework body names, for a slot that names no kit piece. */
 function minionDisplayName(monsterTypeId: MinionMonsterType): string {
   switch (monsterTypeId) {
     case 'conduit-summon':
