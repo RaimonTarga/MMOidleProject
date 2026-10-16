@@ -727,7 +727,9 @@ export function updateSpirit(world: World, player: PlayerEntity, dt: number, now
 
   // Tide: ebb to full, then surge down to the floor.
   if (tide) {
-    if (!surging && energy.energy >= cap * 0.98) {
+    // The surge breaks over an enemy in reach: with none, the full ebb waits (it used to surge and end at once,
+    // every tick between kills: ~3.5 turns a second in the live T3 run, each one counted by Spring Tide).
+    if (!surging && energy.energy >= cap * 0.98 && targetOf(world, player, t)) {
       surging = true;
       setResource(cs, TIDE_SURGE, 1);
       setResource(cs, SURGE_SPENT, 0);

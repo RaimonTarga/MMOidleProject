@@ -218,6 +218,8 @@ const aggro = (w: World, p: PlayerEntity, m: MonsterEntity): void => setAggroTar
   // Cleansing Tide: every turn of the tide washes a debuff off you.
   const rig = (leaf: boolean): PlayerEntity => {
     const s = setup({ discipline: 'spirit-tide', picks: leaf ? ['spirit-cleansing-tide'] : [], edit: noBands });
+    // The surge breaks over an enemy in reach: without one the full ebb waits.
+    setAttackTarget(s.world, s.player, s.spawn(430, 400).isMonster.id);
     run(s.world, s.player, 100);
     debuff(s.player, 'monster-dot:poison', 9_000, { isDot: 1, damagePerStack: 1, nextTickIn: 1000, tickIntervalMs: 1000 });
     s.player.usesEnergy!.energy = maxOf(s.player);
