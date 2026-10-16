@@ -5,7 +5,7 @@ import {
 } from "@mmo-idle/shared";
 import { allOf, type Condition, type NodeRef, type Route, type RouteStep } from "../route/types";
 import { SLINGER_CLASS_ROOT, wearAsUnlocked, zoneGearSteps, type DisciplineGun } from "./slingerT1";
-import { slingerT2Route } from "./slingerT2";
+import { DEFAULT_SLINGER_DISCIPLINE, SLINGER_CHAINS, slingerRouteId, slingerT2Route, type SlingerDiscipline } from "./slingerT2";
 
 /**
  * The Slinger's T3 route (T3-W2, bible §10.6 and §10.16).
@@ -28,7 +28,7 @@ import { slingerT2Route } from "./slingerT2";
  */
 export const SLINGER_T3_ID = "slinger-t3";
 
-export const DEFAULT_SLINGER_SPECIALIZATION = "fan-the-hammer";
+export const DEFAULT_SLINGER_SPECIALIZATION = SLINGER_CHAINS[DEFAULT_SLINGER_DISCIPLINE].specialization;
 
 /** The nine specializations by discipline id (the kit is the one source). */
 export const SLINGER_SPECIALIZATIONS: readonly { id: string; disciplineId: string }[] = SLINGER_KIT.specializations.map(
@@ -97,8 +97,9 @@ function optionOf(specializationId: string): string {
   return specializationId.replace(/^slinger-/, "");
 }
 
-export function slingerT3Route(): Route {
-  const t2 = slingerT2Route();
+export function slingerT3Route(chainId: SlingerDiscipline = DEFAULT_SLINGER_DISCIPLINE): Route {
+  const chain = SLINGER_CHAINS[chainId];
+  const t2 = slingerT2Route(chainId);
   const steps: RouteStep[] = [...t2.steps];
 
   for (const spec of SLINGER_SPECIALIZATIONS) {
@@ -106,7 +107,7 @@ export function slingerT3Route(): Route {
       type: "unlockSkill",
       skillId: spec.id,
       label: `pick the ${optionOf(spec.id)} specialization`,
-      choice: { id: "slinger-specialization", option: optionOf(spec.id), defaultOption: DEFAULT_SLINGER_SPECIALIZATION },
+      choice: { id: "slinger-specialization", option: optionOf(spec.id), defaultOption: chain.specialization },
     });
   }
 
@@ -115,7 +116,7 @@ export function slingerT3Route(): Route {
 
   for (const biomeGroup of T3_ZONE_ORDER) {
     const at = zone(biomeGroup);
-    const gear = zoneGearSteps(biomeGroup, 3, SLINGER_T3_GUNS, SLINGER_T3_ZONE_KIT[biomeGroup] ?? []);
+    const gear = zoneGearSteps(biomeGroup, 3, SLINGER_T3_GUNS, SLINGER_T3_ZONE_KIT[biomeGroup] ?? [], chain.discipline);
     steps.push(...gear.before);
     steps.push({ type: "travel", to: at });
     steps.push(...gear.inZone);
@@ -146,11 +147,11 @@ export function slingerT3Route(): Route {
   const t3Bosses: Condition[] = T3_ZONE_ORDER.map((biomeGroup) => ({ type: "bossCleared", biomeGroup, tier: 3 }));
 
   return {
-    id: SLINGER_T3_ID,
+    id: slingerRouteId(3, chain.discipline),
     version: "1.0.0",
     classRoot: SLINGER_CLASS_ROOT,
     description:
-      "Slinger T3: the T2 route, a specialization (Fan the Hammer by default), each T3 zone to the " +
+      `Slinger T3: the T2 route, a specialization (${chain.specialization} by default), each T3 zone to the ` +
       "tier-3 cap, then its tier-3 boss.",
     steps,
     completion: allOf(t2.completion, ...t3Bosses),

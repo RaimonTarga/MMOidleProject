@@ -345,7 +345,7 @@ const refill = (player: PlayerEntity, ammo = 8): void => { player.usesReload!.am
 {
   const siege = setup({ discipline: 'slinger-siege', passives: { 'reload.max-ammo': 8, 'reload.reload-time-ms': 1600 }, ammo: 3 });
   updateReloadArchetype(siege.world, 0);
-  assert.equal(siege.player.usesReload!.ammoMax, 12, 'Siege: the biggest clip (a flat shift)');
+  assert.equal(siege.player.usesReload!.ammoMax, 16, 'Siege: the biggest clip (a flat shift, +8)');
   assert.ok(resolveReloadTimeMs(siege.player) > 1600, 'Siege: the longest reload');
   siege.player.usesReload!.ammoMax = 3;
   siege.player.usesReload!.ammo = 3;

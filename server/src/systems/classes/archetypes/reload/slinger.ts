@@ -259,7 +259,9 @@ export function deadeyeWaits(world: World, player: PlayerEntity, now: number): b
   const reload = player.usesReload;
   if (!loadout || !reload || disciplineOf(player) !== TRICKSHOT || specializationOf(player) !== DEADEYE) return false;
   if (reload.reloadingMs > 0 || reload.ammo !== 1) return false;
-  return deadeyeHolds(player, calledMomentHolds(world, player, loadout.config.calledShot, DEADEYE_LOW_HP, now), DEADEYE_HOLD_MS, now);
+  // The held round's own rule (`deadeyeHold`) when set, else the called shot's.
+  const rule = loadout.config.deadeyeHold && loadout.config.deadeyeHold.length > 0 ? loadout.config.deadeyeHold : loadout.config.calledShot;
+  return deadeyeHolds(player, calledMomentHolds(world, player, rule, DEADEYE_LOW_HP, now), DEADEYE_HOLD_MS, now);
 }
 
 /** How long an empty clip may wait on a telegraph before it reloads anyway (ms). PLACEHOLDER. */
@@ -305,21 +307,23 @@ export function chooseClip(world: World, player: PlayerEntity, loadout: Loadout,
 }
 
 /**
- * Gunslinger's second gun (bible §10.5): its own clip type from the rack. The next rule that
- * holds and differs from the first gun's clip; failing that, the first racked clip of another
- * family (a damage clip and a control clip is the bot default, §10.13); failing that, any other
- * racked clip; else the plain clip. PLACEHOLDER reading: the config has no field for the second
- * gun's clip yet.
+ * Gunslinger's second gun (bible §10.5): its own clip type from the rack. A damage clip and a
+ * control clip is the default (§10.13), so another family comes first: the next rule of another
+ * family that holds; failing that, the first racked clip of another family; failing that, the next
+ * rule that holds and differs from the first gun's clip; else any other racked clip, else the plain
+ * clip. PLACEHOLDER reading: the config has no field for the second gun's clip yet.
  */
 export function chooseTwinClip(world: World, player: PlayerEntity, loadout: Loadout, first: string, now: number): string {
   const racked = new Set(loadout.config.rack);
-  for (const rule of loadout.config.clipRules) {
-    if (rule.clip === first || (rule.clip !== PLAIN && !racked.has(rule.clip))) continue;
-    if (conditionsHold(world, player, rule.conditions, now)) return rule.clip;
-  }
   const family = CLIPS.get(first)?.family;
+  const holding = loadout.config.clipRules.filter((rule) =>
+    rule.clip !== first && (rule.clip === PLAIN || racked.has(rule.clip)) && conditionsHold(world, player, rule.conditions, now));
   const others = loadout.config.rack.filter((id) => id !== first);
-  return others.find((id) => CLIPS.get(id)?.family !== family) ?? others[0] ?? PLAIN;
+  return holding.find((rule) => CLIPS.get(rule.clip)?.family !== family)?.clip
+    ?? others.find((id) => CLIPS.get(id)?.family !== family)
+    ?? holding[0]?.clip
+    ?? others[0]
+    ?? PLAIN;
 }
 
 /** The clip that fires round `index` (1-based) of the clip: with twin guns the even rounds are the second gun's. */

@@ -13,8 +13,12 @@ export const TRICKSHOT = 'slinger-trickshot';
  * The discipline shifts the clip by a flat amount (rounds) and the reload by a flat amount (ms),
  * never a multiplier, so a small gun never drops to a handful of rounds (§10.2).
  */
-const CLIP_SHIFT: Readonly<Record<string, number>> = { [GUNSLINGER]: -2, [SIEGE]: 4 };
-const RELOAD_SHIFT_MS: Readonly<Record<string, number>> = { [GUNSLINGER]: -400, [SIEGE]: 900 };
+// Siege +4 → +8 rounds (OV2): fewer stationary reloads per fight; sim, T2 Cave boss 5/6 → 6/6 (HP left
+// 16-20% → 33%), the thin T2 bosses' margins up (Forest 23% → 45%, Mountain 11-69% → 66%).
+const CLIP_SHIFT: Readonly<Record<string, number>> = { [GUNSLINGER]: -2, [SIEGE]: 8 };
+// Siege +900 → +400 ms (OV2): the T2 Cave boss's eruptions land in the stationary reload; sim, Drum Gun:
+// 3/6 wins at +900, 5/6 at +400. Still the longest reload of the three.
+const RELOAD_SHIFT_MS: Readonly<Record<string, number>> = { [GUNSLINGER]: -400, [SIEGE]: 400 };
 
 export function clipShiftFor(disciplineId: string | null | undefined): number {
   return (disciplineId && CLIP_SHIFT[disciplineId]) || 0;
@@ -90,7 +94,10 @@ export const RICOCHET_SHARE = 0.7;
 export const PIERCE_WIDTH_PX = 44;
 
 /** Deadeye: the longest the last round waits (ms), what a held round hits for, and "below a third". */
-export const DEADEYE_HOLD_MS = 4_000;
+// Deadeye's longest wait 4 s -> 2 s (OV2): on enemies that never wind up or drop low (the T3 Mountain
+// dungeon's Stone Wardens) every clip waited the whole hold; the live Trickshot gave up on the four guards
+// after 15 minutes. Sim, T3 Mountain guards, 300 s: 2 kills at 4 s, 8 at 2 s (8 without Deadeye).
+export const DEADEYE_HOLD_MS = 2_000;
 export const DEADEYE_HELD_MULT = 1.6;
 export const DEADEYE_LOW_HP = 1 / 3;
 

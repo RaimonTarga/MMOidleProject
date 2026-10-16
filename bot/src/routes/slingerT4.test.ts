@@ -11,6 +11,7 @@ import { resolveChoices } from "../policy/choices";
 import type { Condition, RouteStep } from "../route/types";
 import { isControlledRouteId, requireRoute, ROUTES } from "./index";
 import { SLINGER_CLASS_ROOT } from "./slingerT1";
+import { SLINGER_CHAINS, slingerRouteId } from "./slingerT2";
 import { slingerT3Route } from "./slingerT3";
 import {
   DEFAULT_SLINGER_LEAF,
@@ -150,6 +151,34 @@ for (const biomeGroup of T4_ZONE_ORDER) {
   for (const suffix of ["lesson", `level-${slingerT4FarmLevel(biomeGroup)}`, "boss"]) {
     assert(milestoneIds.includes(`t4-${biomeGroup}-${suffix}`), `t4-${biomeGroup}-${suffix} is a milestone`);
   }
+}
+
+// ── The other two discipline chains (OV2): registered, each defaulting to its own picks ──
+for (const discipline of ["siege", "trickshot"] as const) {
+  const chain = SLINGER_CHAINS[discipline];
+  for (const tier of [2, 3, 4]) {
+    const id = slingerRouteId(tier, discipline);
+    assert.equal(id, `slinger-t${tier}-${discipline}`);
+    assert(ROUTES.has(id), `${id} is registered`);
+    assert.equal(isControlledRouteId(id), false, `${id} stays out of the controlled batch`);
+  }
+  const chainRoute = requireRoute(slingerRouteId(4, discipline), "reload");
+  assert.deepEqual(chainRoute, slingerT4Route(discipline));
+  const { route: resolved, selected } = resolveChoices(chainRoute, {});
+  assert.equal(selected["slinger-discipline"], discipline, `${discipline}: the chain's discipline by default`);
+  assert.equal(selected["slinger-specialization"], chain.specialization);
+  assert.equal(selected["slinger-leaf"], chain.leaf);
+  const picks = resolved.steps.filter((step): step is Extract<RouteStep, { type: "unlockSkill" }> => step.type === "unlockSkill").map((step) => step.skillId);
+  assert.deepEqual(picks, [`slinger-${discipline}`, `slinger-${chain.specialization}`, `slinger-${chain.leaf}`], `${discipline}: one pick per tier`);
+  const [spec, leaf] = picks.slice(-2);
+  assert.equal(SLINGER_KIT.specializations.find((entry) => entry.id === spec)?.disciplineId, `slinger-${discipline}`, `${discipline}: the specialization sits under the discipline`);
+  assert.equal(SLINGER_KIT.leaves.find((entry) => entry.id === leaf)?.disciplineId, `slinger-${discipline}`, `${discipline}: the leaf sits under the discipline`);
+  // The chain is the default route with the chain's choices passed.
+  const passed = resolveChoices(route, {
+    "slinger-discipline": discipline, "slinger-specialization": chain.specialization, "slinger-leaf": chain.leaf,
+  }).route;
+  const bare = (steps: RouteStep[]) => steps.map(({ choice: _choice, ...step }) => step);
+  assert.deepEqual(bare(resolved.steps), bare(passed.steps), `${discipline}: the default route with the choices passed`);
 }
 
 console.log("slingerT4: ok");

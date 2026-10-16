@@ -31,6 +31,30 @@ export const SLINGER_DISCIPLINES = ["gunslinger", "siege", "trickshot"] as const
 export type SlingerDiscipline = (typeof SLINGER_DISCIPLINES)[number];
 export const DEFAULT_SLINGER_DISCIPLINE: SlingerDiscipline = "gunslinger";
 
+/**
+ * One discipline chain: the discipline (T2), the specialization (T3) and the leaf (T4) its
+ * routes default to (choice options, without the `slinger-` prefix). Gunslinger's chain is the
+ * routes' original default (`slinger-t2..t4`); the other two register as `slinger-t<n>-<discipline>`
+ * (OV2). Bible §10.13 names no default specialization or leaf; these are the most natural
+ * for the bar (tier bosses): PLACEHOLDER picks, the evidence is in reports/OV2-SLINGER.md.
+ */
+export interface SlingerChain {
+  discipline: SlingerDiscipline;
+  specialization: string;
+  leaf: string;
+}
+
+export const SLINGER_CHAINS: Readonly<Record<SlingerDiscipline, SlingerChain>> = {
+  gunslinger: { discipline: "gunslinger", specialization: "fan-the-hammer", leaf: "light-hands" },
+  siege: { discipline: "siege", specialization: "entrenched", leaf: "bunker" },
+  trickshot: { discipline: "trickshot", specialization: "deadeye", leaf: "cool-reload" },
+};
+
+/** A tier's route id for a chain: the Gunslinger keeps the bare id (`slinger-t2`), the others carry the discipline. */
+export function slingerRouteId(tier: number, discipline: SlingerDiscipline): string {
+  return discipline === DEFAULT_SLINGER_DISCIPLINE ? `slinger-t${tier}` : `slinger-t${tier}-${discipline}`;
+}
+
 /** The T2 zones, in the tutorial's order. */
 export const T2_ZONE_ORDER: readonly string[] = ["plains", "forest", "mountain", "swamp", "cave", "jungle", "desert"];
 
@@ -61,16 +85,27 @@ export const SLINGER_T2_ZONE_KIT: Readonly<Record<string, readonly string[]>> = 
 /**
  * The T2 guns each discipline fits (bible §10.4), so the first T2 boss (the Plains) is
  * met in a T2 class weapon. Gunslinger: the Pepperbox, then the Carbine. Siege: the
- * Pepperbox, then the Drum Gun. Trickshot: the Hand Cannon, made in the Mountain before
+ * Drum Gun, made in the Cave before the Plains boss (a detour; OV2: with the Pepperbox the sim
+ * lost the T2 Mountain boss 3/3, boss 39-60% left, with the Drum Gun won 2/2). Trickshot: the Hand Cannon, made in the Mountain before
  * the Plains boss (a detour), then the Snakebite Pistol stays on the bench (below the
  * Hand Cannon). The Jungle's Hunting Rifle and the Desert's Long Rifle fit no discipline.
  */
 export const SLINGER_T2_GUNS: readonly DisciplineGun[] = [
   { discipline: "gunslinger", zone: "plains", id: "slinger-pepperbox-t2" },
   { discipline: "gunslinger", zone: "forest", id: "slinger-carbine-t2" },
-  { discipline: "siege", zone: "plains", id: "slinger-pepperbox-t2" },
-  { discipline: "siege", zone: "cave", id: "slinger-drum-gun-t2" },
+  { discipline: "siege", zone: "cave", id: "slinger-drum-gun-t2", before: "plains" },
   { discipline: "trickshot", zone: "mountain", id: "slinger-hand-cannon-t2", before: "plains" },
+];
+
+/**
+ * Discipline-only pieces, made like the guns (a choice step on that discipline's run). Siege puts on
+ * the Jungle's vest as it enters the Jungle (anti-ambush base: more HP, evasion, damage-over-time
+ * resistance; Lookout) in place of the Forest's Quickdraw: the live Siege died three times to the
+ * Jungle dungeon's nine guards (poison: 152 of 347 damage in the last death's window), and the sim's
+ * Jungle boss went 2/3 -> 3/3 in it (Desert 3/3 either way). PLACEHOLDER pick.
+ */
+export const SLINGER_T2_DISCIPLINE_PIECES: readonly DisciplineGun[] = [
+  { discipline: "siege", zone: "jungle", id: "jungle-vest-t2" },
 ];
 
 /** How far the route farms a T2 zone: the tier-2 cap, as the guide does. */
@@ -87,7 +122,8 @@ export function slingerT2LessonLevel(biomeGroup: string): number {
   throw new Error(`slinger T2: no tier-2 lesson in ${biomeGroup}`);
 }
 
-export function slingerT2Route(): Route {
+export function slingerT2Route(chainId: SlingerDiscipline = DEFAULT_SLINGER_DISCIPLINE): Route {
+  const chain = SLINGER_CHAINS[chainId];
   const t1 = slingerT1Route();
   const steps: RouteStep[] = [...t1.steps];
 
@@ -96,13 +132,13 @@ export function slingerT2Route(): Route {
       type: "unlockSkill",
       skillId: `slinger-${discipline}`,
       label: `pick the ${discipline} discipline`,
-      choice: { id: "slinger-discipline", option: discipline, defaultOption: DEFAULT_SLINGER_DISCIPLINE },
+      choice: { id: "slinger-discipline", option: discipline, defaultOption: chain.discipline },
     });
   }
 
   for (const biomeGroup of T2_ZONE_ORDER) {
     const at = zone(biomeGroup);
-    const gear = zoneGearSteps(biomeGroup, 2, SLINGER_T2_GUNS, SLINGER_T2_ZONE_KIT[biomeGroup] ?? []);
+    const gear = zoneGearSteps(biomeGroup, 2, [...SLINGER_T2_GUNS, ...SLINGER_T2_DISCIPLINE_PIECES], SLINGER_T2_ZONE_KIT[biomeGroup] ?? [], chain.discipline);
     steps.push(...gear.before);
     steps.push({ type: "travel", to: at });
     steps.push(...gear.inZone);
@@ -133,11 +169,11 @@ export function slingerT2Route(): Route {
   const t2Bosses: Condition[] = T2_ZONE_ORDER.map((biomeGroup) => ({ type: "bossCleared", biomeGroup, tier: 2 }));
 
   return {
-    id: SLINGER_T2_ID,
+    id: slingerRouteId(2, chain.discipline),
     version: "1.0.0",
     classRoot: SLINGER_CLASS_ROOT,
     description:
-      "Slinger T2: the T1 route, a discipline (Gunslinger by default), each T2 zone to the " +
+      `Slinger T2: the T1 route, a discipline (${chain.discipline} by default), each T2 zone to the ` +
       "tier-2 cap, then its tier-2 boss.",
     steps,
     completion: allOf(t1.completion, ...t2Bosses),
