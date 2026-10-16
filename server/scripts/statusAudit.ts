@@ -34,78 +34,8 @@ export const ACCEPTED_GAPS: Readonly<Record<string, string>> = {
     'The post-stun ward. The Stunned tile is the hard control the player answers; a second tile for the ward that follows it would be HUD noise (design §26.4: the HUD may not be dense). Its target-side badge and copy exist.',
   'icon key defense-hardening-maxdr: icon registry entry has no descriptor, runtime-id or alias consumer':
     'Authored art kept in the registry for the Hardening family; no status uses it today. Not a status id.',
-  'conduit-bark: player: no tile/projection':
-    'Barkward coats a SUMMON, never the player, and summons show no statuses yet (the audit cannot tell a minion from a player here, so it reads the carrier as unknown). The client copy, badge and icon exist for the day a summon status strip does.',
-  'conduit-bark: target: fallback help':
-    'Same carrier read: the statusHelp entry exists; the audit only credits copy to a monster or player carrier.',
-  'conduit-bark: target: fallback badge':
-    'Same carrier read: the targetStatusMeta entry exists; the audit only credits a badge to a monster or player carrier.',
-  'conduit-bark: no authored icon lookup':
-    'Same carrier read: the conceptIcons alias exists (a stand-in obsidian shell); the audit only credits icons to a monster or player carrier.',
-  'conduit-horn: player: no tile/projection':
-    'Warhorn hastens SUMMONS, never the player, and summons show no statuses yet (the audit reads a minion carrier as unknown, as for conduit-bark). The client copy, badge and icon exist for the day a summon status strip does.',
-  'conduit-horn: target: fallback help':
-    'Same carrier read: the statusHelp entry exists; the audit only credits copy to a monster or player carrier.',
-  'conduit-horn: target: fallback badge':
-    'Same carrier read: the targetStatusMeta entry exists; the audit only credits a badge to a monster or player carrier.',
-  'conduit-horn: no authored icon lookup':
-    'Same carrier read: the conceptIcons alias exists (a stand-in); the audit only credits icons to a monster or player carrier.',
-  'conduit-burn-bright: player: no tile/projection':
-    'Burn Bright hastens a fresh SUMMON, never the player, and summons show no statuses yet (the audit reads a minion carrier as unknown, as for conduit-bark). The client copy, badge and icon exist for the day a summon status strip does.',
-  'conduit-burn-bright: target: fallback help':
-    'Same carrier read: the statusHelp entry exists; the audit only credits copy to a monster or player carrier.',
-  'conduit-burn-bright: target: fallback badge':
-    'Same carrier read: the targetStatusMeta entry exists; the audit only credits a badge to a monster or player carrier.',
-  'conduit-burn-bright: no authored icon lookup':
-    'Same carrier read: the conceptIcons alias exists (a stand-in); the audit only credits icons to a monster or player carrier.',
-  'conduit-hibernate: player: no tile/projection':
-    'Hibernate encases a SUMMON, never the player, and summons show no statuses yet (the audit reads a minion carrier as unknown, as for conduit-bark). The client copy, badge and icon exist for the day a summon status strip does.',
-  'conduit-hibernate: target: fallback help':
-    'Same carrier read: the statusHelp entry exists; the audit only credits copy to a monster or player carrier.',
-  'conduit-hibernate: target: fallback badge':
-    'Same carrier read: the targetStatusMeta entry exists; the audit only credits a badge to a monster or player carrier.',
-  'conduit-hibernate: no authored icon lookup':
-    'Same carrier read: the conceptIcons alias exists (a stand-in); the audit only credits icons to a monster or player carrier.',
-  'conduit-ice-shell: player: no tile/projection':
-    'Ice Shell wraps a SUMMON, and summons show no statuses yet (the audit reads a minion carrier as unknown, as for conduit-bark). The client copy, badge and icon exist for the day a summon status strip does.',
-  'conduit-ice-shell: target: fallback help':
-    'Same carrier read: the statusHelp entry exists; the audit only credits copy to a monster or player carrier.',
-  'conduit-ice-shell: target: fallback badge':
-    'Same carrier read: the targetStatusMeta entry exists; the audit only credits a badge to a monster or player carrier.',
-  'conduit-ice-shell: no authored icon lookup':
-    'Same carrier read: the conceptIcons alias exists (a stand-in); the audit only credits icons to a monster or player carrier.',
-  'conduit-withdraw: player: no tile/projection':
-    'Withdraw draws a SUMMON into its shell, and summons show no statuses yet (the audit reads a minion carrier as unknown, as for conduit-bark). The client copy, badge and icon exist for the day a summon status strip does.',
-  'conduit-withdraw: target: fallback help':
-    'Same carrier read: the statusHelp entry exists; the audit only credits copy to a monster or player carrier.',
-  'conduit-withdraw: target: fallback badge':
-    'Same carrier read: the targetStatusMeta entry exists; the audit only credits a badge to a monster or player carrier.',
-  'conduit-withdraw: no authored icon lookup':
-    'Same carrier read: the conceptIcons alias exists (a stand-in); the audit only credits icons to a monster or player carrier.',
-  'conduit-last-stand: player: no tile/projection':
-    'Last Stand holds an elite SUMMON at 1 HP, and summons show no statuses yet (the audit reads a minion carrier as unknown, as for conduit-bark). The client copy, badge and icon exist for the day a summon status strip does.',
-  'conduit-last-stand: target: fallback help':
-    'Same carrier read: the statusHelp entry exists; the audit only credits copy to a monster or player carrier.',
-  'conduit-last-stand: target: fallback badge':
-    'Same carrier read: the targetStatusMeta entry exists; the audit only credits a badge to a monster or player carrier.',
-  'conduit-last-stand: no authored icon lookup':
-    'Same carrier read: the conceptIcons alias exists (a stand-in); the audit only credits icons to a monster or player carrier.',
-  'conduit-fall-back: player: no tile/projection':
-    'Fall Back marks a retreating SUMMON, and summons show no statuses yet (the audit reads a minion carrier as unknown, as for conduit-bark). The client copy, badge and icon exist for the day a summon status strip does.',
-  'conduit-fall-back: target: fallback help':
-    'Same carrier read: the statusHelp entry exists; the audit only credits copy to a monster or player carrier.',
-  'conduit-fall-back: target: fallback badge':
-    'Same carrier read: the targetStatusMeta entry exists; the audit only credits a badge to a monster or player carrier.',
-  'conduit-fall-back: no authored icon lookup':
-    'Same carrier read: the conceptIcons alias exists (a stand-in); the audit only credits icons to a monster or player carrier.',
   'conduit-seal: player: no tile/projection':
-    'Pressure Seal sits on you AND on each SUMMON (the player seal has no tile yet), and summons show no statuses yet (the audit reads a minion carrier as unknown, as for conduit-bark). The client copy, badge and icon exist for the day a summon status strip does.',
-  'conduit-seal: target: fallback help':
-    'Same carrier read: the statusHelp entry exists; the audit only credits copy to a monster or player carrier.',
-  'conduit-seal: target: fallback badge':
-    'Same carrier read: the targetStatusMeta entry exists; the audit only credits a badge to a monster or player carrier.',
-  'conduit-seal: no authored icon lookup':
-    'Same carrier read: the conceptIcons alias exists (a stand-in); the audit only credits icons to a monster or player carrier.',
+    'Pressure Seal sits on you AND on each summon. The summon side is credited by the summon carrier rule (copy, badge and icon); the player side has no tile yet.',
   'ability-entangled: authored label/help/badge; no status writer or descriptor found':
     'Its writer was an ability keystone, removed with the ability node rows (class-first rework D1). The status and its copy stay with the abilities until task D3 removes them.',
   'ability-immunity: descriptor requires unproduced status: ability-immunity (server/src/systems/player/abilities/abilityBuffs.ts:208)':
@@ -246,6 +176,51 @@ export function auditStatusRegistry(root: string = AUDIT_DEFAULT_ROOT) {
     const type = checker.typeToString(checker.getTypeAtLocation(expression));
     return /PlayerEntity/.test(type) ? 'player' : /MonsterEntity/.test(type) ? 'monster' : fallback;
   }
+  // Every call in the server systems, by the declaration it calls: built once, on demand.
+  let callSites: Map<ts.Node, ts.CallExpression[]> | undefined;
+  function callersOf(fn: ts.Node): ts.CallExpression[] {
+    if (!callSites) {
+      const map = new Map<ts.Node, ts.CallExpression[]>();
+      for (const file of files.filter((f) => f.startsWith('server/src/systems'))) visit(source(file), (node) => {
+        if (!ts.isCallExpression(node)) return;
+        const decl = declaration(node.expression);
+        if (decl) map.set(decl, [...map.get(decl) ?? [], node]);
+      });
+      callSites = map;
+    }
+    return callSites.get(fn) ?? [];
+  }
+  /**
+   * THE SUMMON CARRIER RULE. Which entities a status target reaches, when one is a SUMMON: a
+   * `MinionEntity`, or a TracksCombat handle read off one, as a local (`const cs =
+   * minion.tracksCombat`) or a parameter whose callers pass one (Pressure Seal's, on you and on
+   * each summon). Undefined when no summon is among them, so every other target keeps the
+   * reading above.
+   */
+  function summonCarriers(node: ts.Node, seen = new Set<ts.Node>()): string[] | undefined {
+    const found = new Set<string>();
+    const walk = (input: ts.Node): void => {
+      const target = unwrap(input);
+      if (seen.has(target)) return;
+      seen.add(target);
+      const owner = ts.isPropertyAccessExpression(target) ? target.expression : target;
+      const type = checker.typeToString(checker.getTypeAtLocation(owner));
+      const entities = ([['minion', /MinionEntity/], ['player', /PlayerEntity/], ['monster', /MonsterEntity/]] as const)
+        .filter(([, pattern]) => pattern.test(type)).map(([who]) => who);
+      if (entities.length) { entities.forEach((who) => found.add(who)); return; }
+      if (!ts.isIdentifier(target)) { found.add('?'); return; }
+      const decl = declaration(target);
+      if (decl && ts.isVariableDeclaration(decl) && decl.initializer) { walk(decl.initializer); return; }
+      if (decl && ts.isParameter(decl) && ts.isFunctionLike(decl.parent)) {
+        const index = decl.parent.parameters.indexOf(decl);
+        const args = callersOf(decl.parent).map((call) => call.arguments[index]).filter((arg): arg is ts.Expression => !!arg);
+        if (args.length) { args.forEach(walk); return; }
+      }
+      found.add('?');
+    };
+    walk(node);
+    return found.has('minion') ? [...found] : undefined;
+  }
   function readsFrom(input: ts.Node, seen = new Set<ts.Node>()): string[] {
     if (seen.has(input)) return [];
     seen.add(input);
@@ -284,7 +259,9 @@ export function auditStatusRegistry(root: string = AUDIT_DEFAULT_ROOT) {
       const ids = strings(idNode);
       if (!ids.length) dynamic.push({ at: loc(node), expression: idNode?.getText() ?? api, target, config: cfg?.getText().replace(/\s+/g, ' ').slice(0, 180) ?? '' });
       const targetNode = node.arguments[indexes[0]];
-      for (const id of ids) applications.push({ id, at: loc(node), carrier: targetNode ? inferredCarrier(targetNode, carrier(target, file, api)) : carrier(target, file, api),
+      const fallback = targetNode ? inferredCarrier(targetNode, carrier(target, file, api)) : carrier(target, file, api);
+      const carriers = (targetNode && summonCarriers(targetNode)) || [fallback];
+      for (const id of ids) for (const who of carriers) applications.push({ id, at: loc(node), carrier: who,
         totalMs: cfg && prop(cfg, 'data')?.getText().includes('totalMs') ? 'yes' : 'no', via: api });
     }
     if (api === 'defineBuff') {
@@ -450,17 +427,26 @@ export function auditStatusRegistry(root: string = AUDIT_DEFAULT_ROOT) {
     return [...descriptors].filter(([, row]) => row.reads.includes(id) && !(row.text.includes('targetCs') && !row.text.includes('playerCs'))).map(([key]) => key);
   }
   function coverage(id: string, rows: Application[]) {
-    const side = rows.some((r) => r.carrier === 'both') || rows.some((r) => r.carrier === 'player') && rows.some((r) => r.carrier === 'monster') ? 'both' : rows[0].carrier;
+    // A status on a SUMMON (the summon carrier rule) shows on no player tile: it owes what a
+    // summon status strip would read, the target frame's copy, badge and icon.
+    const summon = rows.some((r) => r.carrier === 'minion');
+    const others = rows.filter((r) => r.carrier !== 'minion');
+    const side = others.length === 0 ? 'minion'
+      : others.some((r) => r.carrier === 'both') || others.some((r) => r.carrier === 'player') && others.some((r) => r.carrier === 'monster') ? 'both' : others[0].carrier;
     // A bookkeeping record the target mirror never forwards (`isTargetHiddenStatusId`)
     // owes the target frame nothing.
     const hidden = isTargetHiddenStatusId(id);
-    const p = side === 'player' || side === 'both', m = (side === 'monster' || side === 'both') && !hidden;
+    const p = side === 'player' || side === 'both', m = (side === 'monster' || side === 'both' || summon) && !hidden;
     const tiles = p ? playerTiles(id) : [];
     const help = p && (id.startsWith('monster-dot:') ? dotHelp.has(id.slice(12)) || playerHelp.has('debuff-dot') : bossHelp.has(id) || tiles.some((tile) => playerHelp.has(tile)));
     const targetCopy = m && (targetHelp.has(id) || playerHelp.has(id) || id.startsWith('barrier:'));
     const icons = [...(p ? tiles.map((tile) => iconPath(tile === 'debuff-dot' ? dotIcons.get(id) ?? id : descriptors.get(tile)?.icon ?? tile, tile === 'debuff-boss' ? id : undefined)) : []), ...(m ? [targetIcon(id)] : [])].filter((icon): icon is string => !!icon);
     const missingArt = [...new Set(icons)].filter((icon) => !fs.existsSync(path.join(root, 'client/public/assets/concept-icons', `${icon}.png`)));
-    return { side, hidden, tiles, help: Boolean(help), targetCopy: Boolean(targetCopy), badge: m && (badge.has(id) || id.startsWith('barrier:')), icons: [...new Set(icons)], missingArt,
+    return { side, summon, hidden, tiles, help: Boolean(help),
+      // What it owes: a player tile (a player carrier, or one the audit cannot read), and the
+      // target frame's copy, badge and icon (a monster or summon carrier, or an unread one).
+      playerSide: p || side === '?', targetSide: (m || side === '?') && !hidden,
+      targetCopy: Boolean(targetCopy), badge: m && (badge.has(id) || id.startsWith('barrier:')), icons: [...new Set(icons)], missingArt,
       label: p ? tiles.length ? m ? 'player runtime; target badge/fallback' : 'runtime' : m ? 'target badge/fallback only' : 'none' : badge.has(id) || id.startsWith('barrier:') ? 'authored' : 'fallback',
       tooltip: p && !tiles.length ? m ? 'target fallback only' : 'none' : 'generic builder',
       totalMs: [...new Set(rows.map((r) => r.totalMs))].join('/'),
@@ -515,11 +501,11 @@ export function auditStatusRegistry(root: string = AUDIT_DEFAULT_ROOT) {
   // Every gap, one per (id, issue), so an acceptance covers exactly one issue.
   const allGaps: AuditGap[] = [];
   for (const row of rows) {
-    const target = row.side !== 'player' && !row.hidden;
-    if (row.side !== 'monster' && !row.tiles.length) allGaps.push({ key: row.id, issue: 'player: no tile/projection' });
+    const target = row.targetSide;
+    if (row.playerSide && !row.tiles.length) allGaps.push({ key: row.id, issue: 'player: no tile/projection' });
     if (target && !row.targetCopy) allGaps.push({ key: row.id, issue: 'target: fallback help' });
     if (target && !row.badge) allGaps.push({ key: row.id, issue: 'target: fallback badge' });
-    if (!row.icons.length && (target || row.side !== 'monster')) allGaps.push({ key: row.id, issue: 'no authored icon lookup' });
+    if (!row.icons.length && (target || row.playerSide)) allGaps.push({ key: row.id, issue: 'no authored icon lookup' });
     if (row.missingArt.length) allGaps.push({ key: row.id, issue: `missing icon file: ${row.missingArt.join(', ')}` });
   }
   for (const id of uiOnly) allGaps.push({ key: id, issue: 'authored label/help/badge; no status writer or descriptor found' });
