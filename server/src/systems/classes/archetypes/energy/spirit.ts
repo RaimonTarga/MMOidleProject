@@ -17,7 +17,7 @@ import {
   getResource,
   getString,
   hasStatusEffect,
-  pieceTierScale,
+  GAME_CONFIG,
   removeStatusEffect,
   setResource,
   setString,
@@ -27,6 +27,8 @@ import {
 } from '@mmo-idle/shared';
 import { mutateSlice } from '../../../../ecs/dirtyHelpers';
 import type { MonsterEntity, PlayerEntity } from '../../../../ecs/entity';
+import { IS_DEV } from '../../../../env';
+import { log } from '../../../../log';
 import type { World } from '../../../../world/World';
 import { isPlayerInCombat } from '../../../combat/ai/engagement';
 import { applyPlayerAoeTo, playerAoeTargets } from '../../../combat/damage/aoeDamage';
@@ -51,15 +53,20 @@ import {
 } from './spiritT4';
 
 /** One pip of the storm at T1, in HP-like units. PLACEHOLDER. */
-const STORM_PIP = 12;
-/** The flow: this share of the bottle per second (full in ten seconds). PLACEHOLDER. */
-const FLOW_PCT_PER_SEC = 0.1;
+const STORM_PIP = 20;
+/**
+ * The flow: this share of the T1 bottle (FLOW_BASE_PIPS) per second, at the tier's storm scale. Mastery pips
+ * deepen the bottle (a bigger shield, bigger bursts) but not the flow: with the flow a share of the whole
+ * bottle, Storm 9 at T2 refilled ~80 a second against bosses landing 4-8 (overnight sims). PLACEHOLDER.
+ */
+const FLOW_PCT_PER_SEC = 0.25;
+const FLOW_BASE_PIPS = 4;
 /** Out of combat the storm gathers this many times as fast, before Still Air. PLACEHOLDER. */
 const OOC_FLOW_X = 2;
 /** The gap between two spends (ms). PLACEHOLDER. */
 const SPEND_GAP_MS = 700;
 /** Plain zaps are about a quarter of the damage (bible §11.2). PLACEHOLDER. */
-const ZAP_SHARE = 0.25;
+const ZAP_SHARE = 0.5;
 /** Afterstorm's window after a big hit, and what is big. PLACEHOLDER. */
 const AFTERSTORM_MS = 4_000;
 const BIG_HIT_SHARE = 0.25;
@@ -130,6 +137,59 @@ const TURN_UNTIL = 'spirit.turnUntil';
 const DEPTH_ARMED = 'spirit.depthArmed';
 const DEPTH_TICK = 'spirit.depthTick';
 
+// ── Dev-only telemetry: what the storm did, once a minute per Spirit ─────────
+
+/** The proof that the class system fires in real fights (spends by piece, drains by source, time bare). */
+interface StormStats {
+  since: number;
+  spends: Record<string, number>;
+  spent: number;
+  absorbed: { hit: number; dot: number };
+  zaps: number;
+  bareMs: number;
+  floorMs: number;
+  combatMs: number;
+  wasted: number;
+  procs: Record<string, number>;
+}
+/** The window; `SPIRIT_STATS_MS` shortens it for a bench fight. */
+const STATS_EVERY_MS = Number(process.env.SPIRIT_STATS_MS ?? 60_000);
+const stormStats = new WeakMap<PlayerEntity, StormStats>();
+
+function statsOf(player: PlayerEntity): StormStats | null {
+  if (!IS_DEV) return null;
+  let stats = stormStats.get(player);
+  if (!stats) {
+    // `since` is stamped by the storm's own tick (flushStats), the one clock the window reads.
+    stats = { since: 0, spends: {}, spent: 0, absorbed: { hit: 0, dot: 0 }, zaps: 0, bareMs: 0, floorMs: 0, combatMs: 0, wasted: 0, procs: {} };
+    stormStats.set(player, stats);
+  }
+  return stats;
+}
+
+function countProc(player: PlayerEntity, id: string): void {
+  const stats = statsOf(player);
+  if (stats) stats.procs[id] = (stats.procs[id] ?? 0) + 1;
+}
+
+function flushStats(player: PlayerEntity, t: Thresholds, now: number): void {
+  const stats = stormStats.get(player);
+  if (!stats) return;
+  if (stats.since === 0) stats.since = now;
+  if (now - stats.since < STATS_EVERY_MS) return;
+  const round = (n: number): number => Math.round(n);
+  log.info(`spirit-storm ${JSON.stringify({
+    player: player.isPlayer.name, tier: player.tracksProgression.playerTier, discipline: t.discipline, spec: t.spec,
+    trophy: t.trophy?.id ?? null, rank: t.trophyRank, pips: t.pips, max: player.usesEnergy?.energyMax,
+    attack: player.dealsDamage.attack, cd: player.performsAttack.attackCooldown, range: player.performsAttack.attackRange, hp: Math.round(player.hasHealth.hp), maxHp: player.hasHealth.maxHp,
+    floor: t.config.floorPct, phase: t.config.phase, bands: t.config.bands.map((b) => `${b.pieceId.replace('spirit-', '')}@${b.atLeastPct}`),
+    spends: stats.spends, spent: round(stats.spent), absorbedHit: round(stats.absorbed.hit), absorbedDot: round(stats.absorbed.dot),
+    zaps: stats.zaps, combatS: round(stats.combatMs / 1000), bareS: round(stats.bareMs / 1000), floorS: round(stats.floorMs / 1000),
+    wasted: round(stats.wasted), procs: stats.procs,
+  })}`);
+  stormStats.delete(player);
+}
+
 const PIECES = new Map<string, SpiritPiece>(SPIRIT_KIT.pieces.map((piece) => [piece.id, piece]));
 const TROPHIES = new Map<string, SpiritTrophy>(SPIRIT_KIT.trophies.map((trophy) => [trophy.id, trophy]));
 
@@ -191,8 +251,17 @@ export function hasThresholds(player: PlayerEntity): boolean {
   return !!player.usesEnergy && player.configuresClass?.config.system.kind === 'thresholds';
 }
 
+/**
+ * The storm's size by tier follows the game's HP curve (`RECOVERY_REFERENCE_POOL_BY_TIER`, 130 → 200 →
+ * 330 → 560), not the piece damage curve: the storm is a shield, and on the damage curve (x2.6 / x5 / x10,
+ * compounding with the Mastery pips) it outgrew every boss's pressure by T2 (overnight sims, 2026-10-16).
+ * Spends still scale with the tier through attack. Costs share this scale, so a band's share of the bottle
+ * is the same at every tier. PLACEHOLDER.
+ */
 function tierScale(player: PlayerEntity): number {
-  return pieceTierScale(player.tracksProgression.playerTier);
+  const pools = GAME_CONFIG.RECOVERY_REFERENCE_POOL_BY_TIER;
+  const tier = Math.min(Math.max(Math.floor(player.tracksProgression.playerTier), 1), pools.length - 1);
+  return pools[tier] / pools[1];
 }
 
 /** The bottle's size now: pips x pip x tier. Gear never changes it. */
@@ -267,10 +336,13 @@ export function drainStorm(
   const absorbed = Math.min(damage, spendable / cost);
   const before = energy.energy;
   energy.energy = Math.max(0, energy.energy - absorbed * cost);
+  const stats = statsOf(player);
+  if (stats) stats.absorbed[kind] += absorbed;
   // Static Skin: an enemy that strikes the storm is charged; the next spend on it hits harder.
   if (source && absorbed > 0 && (passives['spirit.static-skin'] ?? 0) > 0) setResource(source.tracksCombat, CHARGED, 1);
   // Marsh Fire: when hits empty the storm, it bursts around you.
   if (before > 0 && energy.energy <= 0 && t.trophy?.id === 'spirit-relic-swamp') {
+    countProc(player, 'marsh-fire');
     const p = t.trophy.params;
     const around = aliveNear(world, player, p['radius'] ?? 140);
     if (around.length > 0) applyPlayerAoeTo(world, player, around, player.dealsDamage.attack * (p['mult'] ?? 3) * (t.trophyRank >= 3 ? (p['rank3MultX'] ?? 1.5) : 1), 'player', {}, {});
@@ -382,13 +454,16 @@ function fire(world: World, player: PlayerEntity, t: Thresholds, piece: SpiritPi
   switch (piece.id) {
     case 'spirit-thunderclap': {
       const around = aliveNear(world, player, piece.params['radius'] ?? 120);
-      if (around.length === 0) return false;
+      // It waits for a body it can stagger: an enemy still in its post-stun ward is no moment (the clap
+      // used to spend on a boss it could not stagger, over and over).
+      let staggered = 0;
       for (const monster of around) {
-        applyStun(monster.tracksCombat, piece.params['staggerMs'] ?? 700, player.isPlayer.id);
+        if (!applyStun(monster.tracksCombat, piece.params['staggerMs'] ?? 700, player.isPlayer.id)) continue;
+        staggered++;
         // Thunderclap II: what the clap staggers also attacks slower for a few seconds.
         if (rank >= 2) slowAttacks(world, player, monster, piece.params);
       }
-      return true;
+      return staggered > 0;
     }
     case 'spirit-downpour': {
       let washed = 0;
@@ -574,7 +649,7 @@ export function updateSpirit(world: World, player: PlayerEntity, dt: number, now
 
   // The flow is constant: taking damage never pauses it. Out of combat it gathers faster (Still Air).
   const inCombat = isPlayerInCombat(player, now);
-  let flow = max * FLOW_PCT_PER_SEC * (dt / 1_000);
+  let flow = stormMaxFor(player, FLOW_BASE_PIPS) * FLOW_PCT_PER_SEC * (dt / 1_000);
   if (!inCombat) flow *= OOC_FLOW_X * (1 + (passives['spirit.ooc-flow-pct'] ?? 0));
   if ((passives['spirit.clear-sky-pct'] ?? 0) > 0 && !conditionsHold(world, player, [{ id: 'touched' }], now)) flow *= 1 + (passives['spirit.clear-sky-pct'] ?? 0);
   if (getResource(cs, AFTERSTORM_UNTIL) > now) flow *= passives['spirit.afterstorm-x'] ?? 1;
@@ -603,6 +678,14 @@ export function updateSpirit(world: World, player: PlayerEntity, dt: number, now
   // At full the flow is wasted; Capacitor turns it into healing (Overflow wastes nothing until its room is full).
   const wasted = flow - room;
   if (wasted > 0 && (passives['spirit.capacitor'] ?? 0) > 0) applyHealToPlayer(player, cs, wasted * (passives['spirit.capacitor'] ?? 0), world);
+  const stats = inCombat ? statsOf(player) : null;
+  if (stats) {
+    stats.combatMs += dt;
+    if (energy.energy <= 0) stats.bareMs += dt;
+    if (energy.energy <= floorAbs + 1) stats.floorMs += dt;
+    if (wasted > 0) stats.wasted += wasted;
+  }
+  flushStats(player, t, now);
 
   // Overflow: what is held past the brim arcs off into the nearest enemies, faster the more you hold.
   if (overflow && energy.energy > max) {
@@ -713,6 +796,7 @@ function spillDamage(player: PlayerEntity, energy: number): number {
  */
 function endSurge(world: World, player: PlayerEntity, t: Thresholds): void {
   const cs = player.tracksCombat;
+  countProc(player, 'surge-end');
   setResource(cs, TIDE_SURGE, 0);
   const count = getResource(cs, TIDE_COUNT) + 1;
   setResource(cs, TIDE_COUNT, count);
@@ -751,6 +835,13 @@ function commit(world: World, player: PlayerEntity, t: Thresholds, piece: Spirit
     if (stray) applyPlayerAoeTo(world, player, [stray], Math.max(1, Math.round(player.dealsDamage.attack * (t.trophy.params['pct'] ?? 0.5) * (player.usesSkills.passives['spirit.damage-mult'] ?? 1))), 'player', {}, {});
   }
   if (t.discipline === 'spirit-tide' && getResource(cs, TIDE_SURGE) > 0) setResource(cs, SURGE_SPENT, getResource(cs, SURGE_SPENT) + cost);
+  const stats = statsOf(player);
+  if (stats) {
+    const id = piece.id.replace('spirit-', '');
+    stats.spends[id] = (stats.spends[id] ?? 0) + 1;
+    stats.spent += cost;
+    if (thunderheadFull(t, energy)) countProc(player, 'thunderhead');
+  }
   energy.energy -= cost;
   // Squall II: count the spends in a row.
   const inRow = now - getResource(cs, LAST_SPEND_AT) <= (t.trophy?.params['windowMs'] ?? 3000);
@@ -784,6 +875,8 @@ export function registerSpirit(): void {
     const t = thresholdsOf(world, player);
     if (t?.trophy?.id === 'spirit-relic-cave' && getResource(target.tracksCombat, WEB_UNTIL) > attackNow(ctx)) mult *= t.trophy.params['zapMult'] ?? 2;
     ctx.damage = Math.max(1, Math.round(ctx.damage * mult));
+    const stats = statsOf(player);
+    if (stats) stats.zaps += 1;
   });
 
   // Ironbound: while your storm is empty, your plating doubles.
