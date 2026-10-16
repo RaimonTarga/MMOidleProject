@@ -9,6 +9,7 @@ import { emitMonsterSession } from '../../../combat/engine/sessionObservation';
  * weapon effects) apply naturally.
  */
 import {
+  CONDUIT_KIT,
   FALLBACK_MONSTER_AABB,
   GAME_CONFIG,
   initIsMinion,
@@ -105,13 +106,17 @@ export function computeMinionMaxHp(owner: PlayerEntity, slot = 0): number {
  * Summons fight in the Conduit's armor: each body carries the owner's live
  * plating and DR in full (a copy, not a split). Plains/Forest swarm hits are
  * tuned to be eaten by plating, so unarmored summons took every hit at full
- * strength while every other class shrugged them off.
+ * strength while every other class shrugged them off. A plated piece (the Plains Warden, "a tank
+ * with plating", §7.4) multiplies that copy by its `platingMult`.
  */
 export function computeMinionMitigation(
   owner: PlayerEntity,
+  slotId?: string,
 ): { plating: number; damageReduction: number } {
+  const piece = slotId ? CONDUIT_KIT.pieces.find((candidate) => candidate.id === slotId.split('#')[0]) : undefined;
   return {
-    plating: owner.mitigatesDamage.plating * (1 + (owner.usesSkills.passives['conduit.plating-share'] ?? 0)),
+    plating: owner.mitigatesDamage.plating * (1 + (owner.usesSkills.passives['conduit.plating-share'] ?? 0))
+      * (piece?.params.platingMult ?? 1),
     damageReduction: owner.mitigatesDamage.damageReduction,
   };
 }
@@ -121,7 +126,7 @@ export function syncMinionMitigation(
   minion: MinionEntity,
   owner: PlayerEntity,
 ): void {
-  const desired = computeMinionMitigation(owner);
+  const desired = computeMinionMitigation(owner, minion.isMinion.slotId);
   if (minion.mitigatesDamage.plating === desired.plating
     && minion.mitigatesDamage.damageReduction === desired.damageReduction) return;
   minion.mitigatesDamage.plating = desired.plating;
@@ -241,7 +246,7 @@ export function spawnMinionForOwner(
     // completes the formation sees it one call later in the same summoner pass
     // anyway, and sharing the one function is what keeps spawn and resync from
     // drifting apart.
-    mitigatesDamage: computeMinionMitigation(owner),
+    mitigatesDamage: computeMinionMitigation(owner, slotProfile.slotId),
     tracksCombat: makeTracksCombat(),
     hasStatus: {},
   };
