@@ -14,7 +14,7 @@ import { isConcealedEntity, isInvulnerableMonster } from '../../combat/invulnera
 /** The default pick order when the player set no rule (§10.13). */
 const DEFAULT_ORDER: readonly string[] = ['enemy-winds-up', 'target-elite', 'target-low'];
 
-const isElite = (monster: MonsterEntity): boolean =>
+export const isElite = (monster: MonsterEntity): boolean =>
   monster.isMonster.isBoss === true || MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.elite === true;
 
 const hpShare = (monster: MonsterEntity): number => monster.hasHealth.hp / Math.max(1, monster.hasHealth.maxHp);

@@ -58,7 +58,7 @@ import { classConfigContextOf } from '../../../player/progression/classConfig';
 import { applyFramePlatingShred } from '../../shared/frameLoop';
 import { applyTickDot } from '../../shared/tickDot';
 import { applyBurn, tickBurns } from '../../slinger/burn';
-import { calledMomentHolds, pickCalledTarget } from '../../slinger/calledShot';
+import { calledMomentHolds, isElite, pickCalledTarget } from '../../slinger/calledShot';
 import { bankShell, fireShell, markDeathmark, markShellPending, shellBank, shellPending } from '../../slinger/shell';
 import {
   clearEntrench,
@@ -252,13 +252,17 @@ function heatStacks(player: PlayerEntity): number {
 /**
  * Deadeye (bible §10.6): should the last round wait? True while the clip holds it for the rule's moment
  * (an enemy winds up, an elite is in reach, the target is below a third) or a few seconds. Asked by the
- * reload gate on the attack that would fire the last round.
+ * reload gate on the attack that would fire the last round, with that attack's target.
  */
-export function deadeyeWaits(world: World, player: PlayerEntity, now: number): boolean {
+export function deadeyeWaits(world: World, player: PlayerEntity, now: number, target?: MonsterEntity): boolean {
   const loadout = loadoutOf(player);
   const reload = player.usesReload;
   if (!loadout || !reload || disciplineOf(player) !== TRICKSHOT || specializationOf(player) !== DEADEYE) return false;
   if (reload.reloadingMs > 0 || reload.ammo !== 1) return false;
+  // Only a boss or an elite is worth the wait. PLACEHOLDER (2026-10-16): held against plain foes, the
+  // cancelled attack left the auto AI idle between kills (the T4 Mountain's rooted Stone Wardens: one kill in
+  // 15 minutes live, 56% of samples "no worthy target nearby"; 3 kills in 300 s in the sim against 8 for Ricochet).
+  if (!target || !isElite(target)) return false;
   // The held round's own rule (`deadeyeHold`) when set, else the called shot's.
   const rule = loadout.config.deadeyeHold && loadout.config.deadeyeHold.length > 0 ? loadout.config.deadeyeHold : loadout.config.calledShot;
   return deadeyeHolds(player, calledMomentHolds(world, player, rule, DEADEYE_LOW_HP, now), DEADEYE_HOLD_MS, now);

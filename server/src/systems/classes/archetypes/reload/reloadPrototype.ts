@@ -1,6 +1,7 @@
 import { attackNow, registerCombatListener } from '../../../combat/engine/combatPipeline';
 import { registerEmpoweredMultiplier } from '../../../combat/engine/empoweredAttacks';
 import type { World } from '../../../../world/World';
+import type { MonsterEntity } from '../../../../ecs/entity';
 import { getFlag } from '@mmo-idle/shared';
 import { clipShiftFor } from '../../slinger/tuning';
 import { isPlayerActivelyInCombat } from '../../../combat/ai/engagement';
@@ -97,7 +98,8 @@ export function initReloadArchetype(): void {
     if (ctx.metadata['chaoticMiss']) return;
 
     // Deadeye (bible §10.6): the last round waits for the rule's moment. The attack is cancelled and the clip pauses.
-    if (reload.ammo === 1 && deadeyeWaits(world, entity, attackNow(ctx))) {
+    const target = ctx.defenderType === 'monster' ? (ctx.defender as MonsterEntity) : undefined;
+    if (reload.ammo === 1 && deadeyeWaits(world, entity, attackNow(ctx), target)) {
       ctx.cancelled = true;
       return;
     }

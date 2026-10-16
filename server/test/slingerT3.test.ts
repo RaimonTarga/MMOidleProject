@@ -457,26 +457,28 @@ const TWIN = { rack: ['slinger-snare', 'slinger-venom'], clipRules: [{ clip: 'sl
   assert.equal(aside.hasHealth.hp, aside.hasHealth.maxHp, 'one off the line does not');
 }
 {
-  // Deadeye: the last round waits for the moment (or a few seconds), then hits much harder.
+  // Deadeye: against a boss or an elite the last round waits for the moment (or a few seconds), then hits
+  // much harder; against a plain foe it never waits (PLACEHOLDER 2026-10-16: the held attack left the
+  // auto AI idle between plain guards).
   const s = setup({ discipline: TRICKSHOT, specialization: 'slinger-deadeye', ammo: 1 });
-  const target = s.spawn(430, 400);
-  assert.equal(shoot(s.world, s.player, target), 0, 'Deadeye: with no moment the last round waits');
-  assert.equal(s.player.usesReload!.ammo, 1, 'the clip is paused, the round is still chambered');
-  const elite = s.spawn(450, 440);
-  elite.isMonster.isBoss = true;
-  const held = shoot(s.world, s.player, elite);
-  assert.ok(held > 0, 'an elite appears: the round flies');
+  const foe = s.spawn(430, 400);
+  assert.ok(shoot(s.world, s.player, foe) > 0, 'Deadeye: a plain foe gets the last round at once');
+  const b = setup({ discipline: TRICKSHOT, specialization: 'slinger-deadeye', ammo: 1 });
+  // The auto default's hold rule: an enemy winds up (a boss in reach is no moment of its own here).
+  const loadoutConfig = b.player.configuresClass!.config.system as { deadeyeHold?: { id: string }[] };
+  loadoutConfig.deadeyeHold = [{ id: 'enemy-winds-up' }];
+  const boss = b.spawn(450, 440);
+  boss.isMonster.isBoss = true;
+  assert.equal(shoot(b.world, b.player, boss), 0, 'Deadeye: against a boss with no moment the last round waits');
+  assert.equal(b.player.usesReload!.ammo, 1, 'the clip is paused, the round is still chambered');
+  clock += 6_000;
+  const held = shoot(b.world, b.player, boss);
+  assert.ok(held > 0, 'Deadeye: after a few seconds the round goes');
   const plain = setup({ discipline: TRICKSHOT, ammo: 1 });
   const e2 = plain.spawn(450, 440);
   e2.isMonster.isBoss = true;
   const unheld = shoot(plain.world, plain.player, e2);
   assert.ok(held > unheld * 1.3, `a held round hits much harder (${held} vs ${unheld})`);
-  // A few seconds and it goes anyway.
-  const slow = setup({ discipline: TRICKSHOT, specialization: 'slinger-deadeye', ammo: 1 });
-  const lone = slow.spawn(430, 400);
-  assert.equal(shoot(slow.world, slow.player, lone), 0, 'waiting');
-  clock += 6_000;
-  assert.ok(shoot(slow.world, slow.player, lone) > 0, 'Deadeye: after a few seconds the round goes');
 }
 
 // ── Tundra and Volcanic gear ─────────────────────────────────────────────────
