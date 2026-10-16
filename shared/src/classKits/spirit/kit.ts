@@ -113,7 +113,7 @@ const PIECES: readonly SpiritPiece[] = [
   // ── Discipline pieces (§11.5), all strikes ──
   spiritPiece({
     id: 'spirit-ball-lightning',
-    params: { costPips: 1, mult: 0.4, radius: 70, durationMs: 4000, speed: 60, tickMs: 400 },
+    params: { costPips: 1, mult: 0.6, radius: 70, durationMs: 4000, speed: 60, tickMs: 400 },
     name: 'Ball Lightning',
     family: 'strike',
     text: 'A slow orb drifts through the pack and zaps everything it passes.',

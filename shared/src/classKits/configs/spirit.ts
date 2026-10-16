@@ -32,10 +32,13 @@ const DISCIPLINE_DEFAULTS: Readonly<Record<string, { floorPct: number; phase: 'g
   'spirit-reservoir': { floorPct: 40, phase: 'gather' },
 };
 const RESERVOIR_MARK_PCT = 100;
+const OVERFLOW_FIRST = 'spirit-ball-lightning';
 
 function defaultBand(piece: SpiritPiece, floorPct: number, disciplineId: string | null): number {
   if (piece.atFloor || piece.id === 'spirit-bolt') return floorPct;
   if (disciplineId === 'spirit-overflow') return floorPct;
+  // Reservoir: calms at the floor (§11.13); it holds.
+  if (disciplineId === 'spirit-reservoir' && piece.family === 'calm') return floorPct;
   if (piece.id === 'spirit-cloudburst') return RESERVOIR_MARK_PCT;
   if (piece.family === 'strike') return Math.max(floorPct, TOP_BAND_PCT);
   return Math.max(floorPct, MIDDLE_BAND_PCT);
@@ -59,7 +62,11 @@ export const SPIRIT_SYSTEM: ClassSystemSpec<ThresholdsConfig> = {
 
   defaults(ctx) {
     const shape = (ctx.disciplineId ? DISCIPLINE_DEFAULTS[ctx.disciplineId] : undefined) ?? { floorPct: DEFAULT_FLOOR_PCT, phase: 'gather' as const };
-    const bands = ownedPieces(SPIRIT_KIT, ctx).map((piece) => ({
+    const pieces = ownedPieces(SPIRIT_KIT, ctx);
+    // Overflow fields Ball Lightning first (§11.13): every band sits at the brim, and among equal bands the
+    // first listed spends first (the starter Bolt used to take every spend). PLACEHOLDER.
+    if (ctx.disciplineId === 'spirit-overflow') pieces.sort((a, b) => Number(b.id === OVERFLOW_FIRST) - Number(a.id === OVERFLOW_FIRST));
+    const bands = pieces.map((piece) => ({
       pieceId: piece.id,
       atLeastPct: defaultBand(piece, shape.floorPct, ctx.disciplineId),
     }));
