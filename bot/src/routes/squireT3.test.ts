@@ -8,6 +8,7 @@ import {
   SQUIRE_T3_BIOMES,
   SQUIRE_T3_ID,
   SQUIRE_T3_SPECIALIZATION,
+  SQUIRE_T3_BOSS_GEAR,
   SQUIRE_T3_ZONE_GEAR,
   squireT3LessonLevel,
   squireT3Route,
@@ -73,6 +74,7 @@ checkZoneSegments(rest, 3, SQUIRE_T3_BIOMES.map((biome) => ({
   biome,
   level: squireT3TutorialFarmLevel(biome),
   gear: SQUIRE_T3_ZONE_GEAR[biome],
+  bossGear: SQUIRE_T3_BOSS_GEAR[biome],
 })));
 // The first T3 boss is met in a tier-3 weapon, armor, charm and boots.
 checkFirstBossKit(SQUIRE_T3_ZONE_GEAR[SQUIRE_T3_BIOMES[0]], 3);

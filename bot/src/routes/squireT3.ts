@@ -45,6 +45,19 @@ export const SQUIRE_T3_ZONE_GEAR: Record<SquireT3Biome, readonly string[]> = {
   volcanic: ["volcanic-vest-t3", "volcanic-charm-t3"],
 };
 
+/**
+ * What the Squire puts on right before some T3 bosses (crafted earlier; equip only). PLACEHOLDER
+ * (OV-SQUIRE): the Cave's vest (the tier's highest damage reduction) and Old Guard charm, the
+ * Squire's tank set. Class boss sim, Bulwark + Reverb: the Volcanic boss lost 3/3 in the zone's
+ * own set and won 3/3 in this one; the Desert boss went from a loss (boss at 1%) to a win at full
+ * HP; the Tundra boss from 37% to 70% HP left. The Swamp boss keeps its own set (100% vs 35%).
+ */
+export const SQUIRE_T3_BOSS_GEAR: Partial<Record<SquireT3Biome, readonly string[]>> = {
+  desert: ["cave-vest-t3", "cave-charm-t3"],
+  tundra: ["cave-vest-t3", "cave-charm-t3"],
+  volcanic: ["cave-vest-t3", "cave-charm-t3"],
+};
+
 /** Where the tutorial stops farming a T3 zone. */
 export function squireT3TutorialFarmLevel(biome: SquireT3Biome): number {
   return biomeLevelCap(3, biome);
@@ -78,10 +91,14 @@ export function squireT3Route(specializationId: string = SQUIRE_T3_SPECIALIZATIO
     steps: [
       ...t2.steps,
       { type: "unlockSkill", skillId: specializationId, label: "pick the specialization" },
-      ...SQUIRE_T3_BIOMES.flatMap((biome): RouteStep[] => [
-        ...farmZone(biome),
-        { type: "attemptBoss", biomeGroup: biome, tier: 3 },
-      ]),
+      ...SQUIRE_T3_BIOMES.flatMap((biome): RouteStep[] => {
+        const bossGear = SQUIRE_T3_BOSS_GEAR[biome];
+        return [
+          ...farmZone(biome),
+          ...(bossGear ? [{ type: "equip" as const, definitionIds: [...bossGear], label: `wear the ${biome} boss gear` }] : []),
+          { type: "attemptBoss", biomeGroup: biome, tier: 3 },
+        ];
+      }),
     ],
     completion: { type: "allOf", of: SQUIRE_T3_BIOMES.map(bossCleared) },
     milestones: [

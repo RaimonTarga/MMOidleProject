@@ -6,18 +6,19 @@ import type { RouteStep } from "../route/types";
  * Test helper for the Squire's T2-T4 route tests (OV-SQUIRE): split a tier's steps into one
  * segment per zone (everything before that zone's boss) and check each segment farms only
  * that zone of that tier, ends at `level`, and crafts and wears each of `gear` as soon as the
- * zone's level unlocks it. Returns the boss step of each zone.
+ * zone's level unlocks it; `bossGear` is worn last, right before the boss. Returns the boss step of each zone.
  */
 export function checkZoneSegments(
   steps: readonly RouteStep[],
   tier: number,
-  zones: readonly { biome: string; level: number; gear: readonly string[] }[],
+  zones: readonly { biome: string; level: number; gear: readonly string[]; bossGear?: readonly string[] }[],
 ): RouteStep[] {
   const bossAt = steps.flatMap((step, index) => (step.type === "attemptBoss" ? [index] : []));
   assert.equal(bossAt.length, zones.length, `tier ${tier}: one boss per zone`);
   let from = 0;
-  return zones.map(({ biome, level, gear }, index) => {
-    const segment = steps.slice(from, bossAt[index]);
+  const crafted = new Set<string>();
+  return zones.map(({ biome, level, gear, bossGear }, index) => {
+    let segment = steps.slice(from, bossAt[index]);
     const boss = steps[bossAt[index]];
     from = bossAt[index] + 1;
     assert(boss.type === "attemptBoss" && boss.biomeGroup === biome && boss.tier === tier, `${biome}: the tier-${tier} boss`);
@@ -26,6 +27,14 @@ export function checkZoneSegments(
       if (step.type === "farm") {
         assert(step.at.kind === "biome" && step.at.biomeGroup === biome && step.at.tier === tier, `${biome}: farms the tier-${tier} zone`);
       }
+    }
+    for (const step of segment) if (step.type === "craft") step.recipeIds.forEach((id) => crafted.add(id));
+    if (bossGear) {
+      // The boss set goes on right before the boss, and every piece was crafted earlier in the tier.
+      const wear = segment[segment.length - 1];
+      assert(wear?.type === "equip" && wear.definitionIds.join() === bossGear.join(), `${biome}: its boss gear is worn first`);
+      for (const id of bossGear) assert(crafted.has(id), `${id}: crafted before the ${biome} boss`);
+      segment = segment.slice(0, -1);
     }
     const last = segment[segment.length - 1];
     assert(last?.type === "farm" && last.until.type === "biomeLevelAtLeast" && last.until.biomeGroup === biome &&

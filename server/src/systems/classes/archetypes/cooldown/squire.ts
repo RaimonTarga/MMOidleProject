@@ -1486,6 +1486,9 @@ export function initSquire(): void {
     const r = player.usesCooldown ? squireRulesOf(world, player) : null;
     if (!r) return;
     noteAttacked(player, ctx.attacker.isMonster.id, attackNow(ctx));
+    const by = typeof ctx.metadata['abilityName'] === 'string' ? ctx.metadata['abilityName']
+      : ctx.metadata['empoweredAttack'] === true ? 'charged' : ctx.attacker.isMonster.isBoss ? 'boss-swing' : 'add-swing';
+    squireCount(player, `taken.${by}`, ctx.damage);
     // A full dodge fills nothing, unless Turn Aside says it fills as if it had landed.
     if (ctx.metadata['evadeFull'] === true && !((player.usesSkills.passives['squire.dodge-fills'] ?? 0) > 0)) return;
     const raw = Number(ctx.metadata['incomingGross'] ?? ctx.damage);

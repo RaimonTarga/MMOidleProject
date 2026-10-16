@@ -231,7 +231,7 @@ const PIECES: readonly SquirePiece[] = [
     answers: 'fire-attack',
     text: 'When a fire attack or burning shot comes at you, you throw the heat back at its source.',
     // PLACEHOLDERS: the counter hits for `damagePct` of a swing; one per `cooldownMs`.
-    params: { cost: 1, refund: 2, damagePct: 1.5, cooldownMs: 1500 },
+    params: { cost: 1, refund: 2, damagePct: 3, cooldownMs: 1500 },
   }),
   // ── T4 (§8.16) ──
   response({
