@@ -74,11 +74,11 @@ for (const id of ["conduit-avenge", "conduit-fall-back", "conduit-rally"]) {
 // The T4 zones: travel, farm to the cap, the T4 boss.
 const zoneSteps = tail.slice(3).filter((step) => step.type !== "ifPossible");
 
-// ── Gear: each zone's pieces as its levels unlock them, skipped from tier 5 ──
+// ── Gear: each zone's pieces as its levels unlock them, skipped from tier 6 ──
 const wears = tail.filter((step): step is Extract<RouteStep, { type: "ifPossible" }> => step.type === "ifPossible");
 assert.equal(wears.length, Object.values(CONDUIT_T4_GEAR).flat().length, "one wear step per piece");
 for (const step of wears) {
-  assert.deepEqual(step.when, { type: "not", of: { type: "playerTierAtLeast", tier: 5 } });
+  assert.deepEqual(step.when, { type: "not", of: { type: "playerTierAtLeast", tier: 6 } }, "T4 gear is kept until tier 6: five T4 seals already make the character tier 5");
   const [farm, craft, equip] = step.steps;
   assert(farm.type === "farm" && craft.type === "craft" && equip.type === "equip", "farm, craft, equip");
   const recipe = RECIPE_DATABASE.get(craft.recipeIds[0]);

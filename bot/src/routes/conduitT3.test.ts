@@ -72,11 +72,11 @@ for (const id of ["conduit-burn-bright", "conduit-legion", "conduit-infestation"
 // ── The T3 zones: travel, farm to the cap, the T3 boss ───────────────────────
 const zoneSteps = tail.slice(3).filter((step) => step.type !== "ifPossible");
 
-// ── Gear: each zone's pieces as its levels unlock them, skipped from tier 4 ──
+// ── Gear: each zone's pieces as its levels unlock them, skipped from tier 5 ──
 const wears = tail.filter((step): step is Extract<RouteStep, { type: "ifPossible" }> => step.type === "ifPossible");
 assert.equal(wears.length, Object.values(CONDUIT_T3_GEAR).flat().length, "one wear step per piece");
 for (const step of wears) {
-  assert.deepEqual(step.when, { type: "not", of: { type: "playerTierAtLeast", tier: 4 } });
+  assert.deepEqual(step.when, { type: "not", of: { type: "playerTierAtLeast", tier: 5 } }, "T3 gear is kept until tier 5: four T3 seals already make the character tier 4");
   const [farm, craft, equip] = step.steps;
   assert(farm.type === "farm" && craft.type === "craft" && equip.type === "equip", "farm, craft, equip");
   const recipe = RECIPE_DATABASE.get(craft.recipeIds[0]);

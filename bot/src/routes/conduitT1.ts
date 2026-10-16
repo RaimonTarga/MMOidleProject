@@ -68,8 +68,10 @@ export const CONDUIT_T1_GEAR: Readonly<Record<string, readonly string[]>> = {
 /**
  * Wear `recipeIds` from the zone at `at`, each as soon as the zone's level unlocks it: farm to
  * the recipe's level, craft it (farming its essence there), equip it. Skipped once the character
- * has reached `beforeTier`, so a later tier's route replaying this tier never swaps back to this
- * tier's gear.
+ * has reached `beforeTier`, so a later tier's route replaying this tier does not swap back to
+ * this tier's gear for long. T1 passes 2 (its last boss promotes); T2-T4 pass their tier + 2,
+ * since 3 / 4 / 5 seals promote before a tier's last bosses are fought (`SEALS_REQUIRED_BY_TIER`):
+ * a replay may wear the older piece again until the later tier's own steps put the newer one back.
  */
 export function wearAsUnlocked(recipeIds: readonly string[], at: NodeRef, beforeTier: number): RouteStep[] {
   return recipeIds.map((recipeId): RouteStep => {

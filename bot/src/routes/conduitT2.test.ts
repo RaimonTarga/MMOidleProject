@@ -70,11 +70,11 @@ for (const id of ["conduit-swarm", "conduit-pack", "conduit-elite"]) {
 // ── The T2 zones: travel, farm to the cap, the T2 boss ───────────────────────
 const zoneSteps = tail.slice(2).filter((step) => step.type !== "ifPossible");
 
-// ── Gear: each zone's pieces as its levels unlock them, skipped from tier 3 ──
+// ── Gear: each zone's pieces as its levels unlock them, skipped from tier 4 ──
 const wears = tail.filter((step): step is Extract<RouteStep, { type: "ifPossible" }> => step.type === "ifPossible");
 assert.equal(wears.length, Object.values(CONDUIT_T2_GEAR).flat().length, "one wear step per piece");
 for (const step of wears) {
-  assert.deepEqual(step.when, { type: "not", of: { type: "playerTierAtLeast", tier: 3 } });
+  assert.deepEqual(step.when, { type: "not", of: { type: "playerTierAtLeast", tier: 4 } }, "T2 gear is kept until tier 4: three T2 seals already make the character tier 3");
   const [farm, craft, equip] = step.steps;
   assert(farm.type === "farm" && craft.type === "craft" && equip.type === "equip", "farm, craft, equip");
   const recipe = RECIPE_DATABASE.get(craft.recipeIds[0]);

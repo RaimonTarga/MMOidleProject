@@ -66,7 +66,7 @@ export function conduitT2Route(disciplineId: string = CONDUIT_T2_DISCIPLINE): Ro
   for (const biomeGroup of CONDUIT_T2_ZONES) {
     const at = zone(biomeGroup);
     steps.push({ type: "travel", to: at });
-    steps.push(...wearAsUnlocked(CONDUIT_T2_GEAR[biomeGroup] ?? [], at, TIER + 1));
+    steps.push(...wearAsUnlocked(CONDUIT_T2_GEAR[biomeGroup] ?? [], at, TIER + 2));
     steps.push({
       type: "farm",
       at,

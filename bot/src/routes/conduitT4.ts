@@ -73,7 +73,7 @@ export function conduitT4Route(leafId: string = CONDUIT_T4_LEAF, specializationI
   for (const biomeGroup of CONDUIT_T4_ZONES) {
     const at = zone(biomeGroup);
     steps.push({ type: "travel", to: at });
-    steps.push(...wearAsUnlocked(CONDUIT_T4_GEAR[biomeGroup] ?? [], at, TIER + 1));
+    steps.push(...wearAsUnlocked(CONDUIT_T4_GEAR[biomeGroup] ?? [], at, TIER + 2));
     steps.push({
       type: "farm",
       at,
