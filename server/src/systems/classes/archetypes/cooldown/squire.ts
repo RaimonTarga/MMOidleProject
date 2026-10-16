@@ -528,9 +528,14 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
     const passives = player.usesSkills.passives;
     const weaken = passives['squire.shove-weaken-pct'] ?? 0;
     const weakenTicks = ((passives['squire.shove-weaken-ms'] ?? 0) / 1000) * TICKS_PER_SEC;
+    // A boss or a rooted enemy can't be moved, so it doesn't count toward the three: with
+    // fewer movable enemies on you the shove isn't thrown (OV-SQUIRE fix: a boss and two adds
+    // used to fire it every lockout and waste its cost).
+    const unmovable = (m: MonsterEntity): boolean => !!m.isRooted || m.isMonster.isBoss;
+    if (engagedWith(world, player).filter((m) => !unmovable(m)).length < p.minMoved) return 'none';
     let moved = 0;
     for (const monster of playerAoeTargets(world, player, at, p.radius)) {
-      if (monster.isRooted || monster.isMonster.isBoss) continue;
+      if (unmovable(monster)) continue;
       applyKnockback(world, monster.isMonster.id, at, p.distance);
       // Rampart: the shoved enemy deals this Squire less damage for a few seconds.
       if (weaken > 0) {

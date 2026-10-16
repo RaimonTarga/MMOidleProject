@@ -85,7 +85,7 @@ const PIECES: readonly SquirePiece[] = [
     text: 'When your Resolve bar is full, you slam everything around you with the shield. Each boss you beat changes the slam or how Resolve flows.',
     // The target takes the swing times `mult` (the empowered multiplier); everything within
     // `radius` px of you takes the same blow.
-    params: { mult: 2, radius: 110 },
+    params: { mult: 5, radius: 110 },
   }),
   // ── T1 (§8.4) ──
   response({

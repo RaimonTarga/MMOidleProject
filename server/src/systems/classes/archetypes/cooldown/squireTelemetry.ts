@@ -10,8 +10,8 @@ import { log } from '../../../../log';
 import type { World } from '../../../../world/World';
 
 const ENABLED = process.env.NODE_ENV === 'development' || process.env.SQUIRE_TELEMETRY === '1';
-/** One line per player per this many world ticks (60 s at 10 Hz). */
-const PERIOD_TICKS = 600;
+/** One line per player per this many world ticks (60 s at 10 Hz; `SQUIRE_TELEMETRY_TICKS` overrides). */
+const PERIOD_TICKS = Number(process.env.SQUIRE_TELEMETRY_TICKS) || 600;
 
 const counts = new WeakMap<PlayerEntity, Record<string, number>>();
 
