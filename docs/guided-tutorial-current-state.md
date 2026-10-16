@@ -86,14 +86,16 @@ do. Built by OV2-GUIDE.
   "it suits <default pick>, the default discipline (the Apprentice: school), and the Make tab has
   weapons for the others". *PLACEHOLDER wording.*
 - **Moot pieces.** Every gear craft and equip carries an `unless`: the piece no longer matters
-  once the next zone in the guide's order has been fought in, the zone's boss for that tier is
+  once the next zone in the guide's order has been fought in (where the guide fights this zone's
+  boss, only once the player is also past the piece's tier: fighting back on the road levels the
+  zones it crosses), the zone's boss for that tier is
   down, or the tier is two promotions on (one for Tier 1; three to five seals promote before a
   tier's last bosses), or the player already wears a later piece of the plan for that slot. A
   hand-played or older character is never sent back for gear it has outgrown.
 - **No Next for gear.** Every gear beat is `auto` (`TutorialBeat.auto`): `TutorialPanel` starts it as
   soon as it is current and nothing else runs, keeps its line on screen while it runs (not the
   waiting text), and moves on by itself; the Next glow and chime come only when a beat that needs
-  Next is up. A stop, an error or a death leaves the beat waiting for Next, as before. Every
+  Next is up; it never flashes Next before it starts. A stop, an error or a death leaves the beat waiting for Next, as before. Every
   other beat keeps its Next.
 - The farewell line now reads "Two seals, Tier 2, and a full set of gear made for your class."
 
@@ -124,7 +126,8 @@ do. Built by OV2-GUIDE.
   `off` or `done`). Progress is never stored.
 - **Stop** asks for confirmation; the guide keeps working until it is confirmed. A character
   switch or unmount aborts the running beat.
-- **Death** turns the card into "You fell…"; Next presses the same respawn as the death overlay.
+- **Death** turns the card into "You fell… press Respawn": the death overlay covers the card until
+  its Respawn is pressed (the card's Next, when reachable, does the same respawn); then Next carries on.
 - **From Tier 2** an "I'm done" button leads to the farewell card (the three
   `TUTORIAL_FAREWELL` lines, `scripts/farewell.ts`, and Thanks!). The card also shows on its own
   once the script has run out after the last Tier 4 boss.
@@ -177,7 +180,7 @@ pick, each piece is a real recipe of the right class and tier made in its own zo
 guide farms to that level in that tier, before the next boss of another tier, each line one
 sentence with no numbers (T2–T4 weapons name the default pick), the gear never brings a builder
 line up earlier, gear beats and only gear beats are `auto`, and resume with gear (a later piece worn skips earlier ones, a finished zone's
-gear is moot, the Jungle's re-worn charm does not loop); and the checklist above. It is a static
+gear is moot, the Jungle's re-worn charm does not loop, a Forest levelled on the road does not make the Tier 2 Plains set moot); and the checklist above. It is a static
 check: no live run has walked the class scripts end to end.
 
 ## Open
