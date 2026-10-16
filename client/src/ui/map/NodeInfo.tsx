@@ -221,8 +221,8 @@ export function NodeInfo({ nodeId, playerNodeId, onClose }: NodeInfoProps) {
   // Travel path (computed regardless of biome resolution so the button always works).
   const isCurrent = nodeId === playerNodeId;
   const travelPath = useMemo(
-    () => (!playerNodeId || isCurrent ? null : bfsPath(playerNodeId, nodeId)),
-    [playerNodeId, nodeId, isCurrent],
+    () => (!playerNodeId || isCurrent ? null : bfsPath(playerNodeId, nodeId, playerTier)),
+    [playerNodeId, nodeId, isCurrent, playerTier],
   );
   const steps = travelPath ? travelPath.length - 1 : 0;
 

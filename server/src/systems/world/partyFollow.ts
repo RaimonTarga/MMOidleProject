@@ -41,7 +41,7 @@ export function updatePartyFollow(world: World, now: number): void {
 
     // Leader is in another zone — path toward the gate that heads their way.
     if (leaderNode !== playerNode) {
-      const path = findShortestNodePath(playerNode, leaderNode);
+      const path = findShortestNodePath(playerNode, leaderNode, player.tracksProgression.playerTier);
       if (path && path.length >= 2) {
         const dir = directionFromTo(playerNode, path[1]);
         if (dir) {

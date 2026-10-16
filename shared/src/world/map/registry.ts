@@ -119,13 +119,27 @@ export function directionBetweenWorldNodes(
   return null;
 }
 
-/** Shared cardinal BFS used by server travel and both map surfaces. */
+/**
+ * What entering a node above the traveller's tier costs, in hops: the path goes around
+ * higher-tier content whenever a way around exists that is shorter than this per node.
+ */
+const ABOVE_TIER_HOP_COST = 20;
+
+/**
+ * Shared cardinal path used by server travel and both map surfaces: the fewest hops.
+ * With `maxTier` (the traveller's tier), nodes of a higher biome tier cost
+ * `ABOVE_TIER_HOP_COST` hops each, so a T3 walk from the Swamp to the T3 Mountain stays
+ * out of the T4 zones that border both when a way around exists (overnight 2026-10-16:
+ * the plain BFS sent T3 bots through the T4 Tundra, Trench and Wasteland).
+ */
 export function shortestWorldPath(
   fromId: string,
   toId: string,
+  maxTier?: number,
 ): string[] | null {
   if (!WORLD_NODES.has(fromId) || !WORLD_NODES.has(toId)) return null;
   if (fromId === toId) return [fromId];
+  if (maxTier !== undefined) return cheapestWorldPath(fromId, toId, maxTier);
 
   const queue = [fromId];
   const previous = new Map<string, string | null>([[fromId, null]]);
@@ -144,6 +158,44 @@ export function shortestWorldPath(
         return path.reverse();
       }
       queue.push(neighbor);
+    }
+  }
+  return null;
+}
+
+/** Dijkstra over the node graph with the above-tier hop cost (the map is a few hundred nodes). */
+function cheapestWorldPath(fromId: string, toId: string, maxTier: number): string[] | null {
+  const cost = new Map<string, number>([[fromId, 0]]);
+  const previous = new Map<string, string | null>([[fromId, null]]);
+  const done = new Set<string>();
+  const open = new Set<string>([fromId]);
+  while (open.size > 0) {
+    let current: string | null = null;
+    for (const id of open) {
+      if (current === null || cost.get(id)! < cost.get(current)!) current = id;
+    }
+    if (current === null) break;
+    open.delete(current);
+    if (current === toId) {
+      const path: string[] = [];
+      let cursor: string | null = toId;
+      while (cursor) {
+        path.push(cursor);
+        cursor = previous.get(cursor) ?? null;
+      }
+      return path.reverse();
+    }
+    done.add(current);
+    for (const neighbor of adjacentWorldNodeIds(current)) {
+      if (done.has(neighbor)) continue;
+      const tier = WORLD_NODES.get(neighbor)?.biomeTier ?? 0;
+      const step = 1 + (tier > maxTier ? ABOVE_TIER_HOP_COST : 0);
+      const next = cost.get(current)! + step;
+      if (next < (cost.get(neighbor) ?? Infinity)) {
+        cost.set(neighbor, next);
+        previous.set(neighbor, current);
+        open.add(neighbor);
+      }
     }
   }
   return null;

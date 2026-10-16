@@ -13,9 +13,10 @@ function isTraversableMapNode(nodeId: string): boolean {
   return nodeId !== TEST_ROOM_NODE_ID && NODE_BIOMES[nodeId]?.biomeGroup !== 'testroom';
 }
 
-export function findShortestNodePath(fromId: string, toId: string): string[] | null {
+/** `maxTier` is the traveller's tier: the path goes around higher-tier zones when it can. */
+export function findShortestNodePath(fromId: string, toId: string, maxTier?: number): string[] | null {
   if (!isTraversableMapNode(fromId) || !isTraversableMapNode(toId)) return null;
-  return shortestWorldPath(fromId, toId);
+  return shortestWorldPath(fromId, toId, maxTier);
 }
 
 export function findRegularNodeFor(biomeGroup: string, tier: number): string | null {
