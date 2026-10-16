@@ -4,7 +4,7 @@ import {
   SLINGER_KIT,
 } from "@mmo-idle/shared";
 import { allOf, type Condition, type NodeRef, type Route, type RouteStep } from "../route/types";
-import { SLINGER_CLASS_ROOT } from "./slingerT1";
+import { SLINGER_CLASS_ROOT, zoneGearSteps, type DisciplineGun } from "./slingerT1";
 import { slingerT3Route } from "./slingerT3";
 
 /**
@@ -57,6 +57,32 @@ export function slingerT4LessonLevel(biomeGroup: string): number {
 }
 
 /** The choice option for a leaf id: `slinger-light-hands` is `light-hands`. */
+/**
+ * Each T4 zone's vest, charm and boots, worn as they unlock. The Jungle's are its second
+ * bases (the Forest's moved Quickdraw and Fleet, as at T3); the Trench's boots are the
+ * Stalkers (the faster pair). PLACEHOLDER picks.
+ */
+export const SLINGER_T4_ZONE_KIT: Readonly<Record<string, readonly string[]>> = {
+  mountain: ["mountain-vest-t4", "mountain-charm-t4", "mountain-boots-t4"],
+  tundra: ["tundra-vest-t4", "tundra-charm-t4", "tundra-boots-t4"],
+  jungle: ["jungle-vest-t4-b", "jungle-charm-t4-b", "jungle-boots-t4"],
+  desert: ["desert-vest-t4", "desert-charm-t4", "desert-boots-t4"],
+  volcanic: ["volcanic-vest-t4", "volcanic-charm-t4", "volcanic-boots-t4"],
+  graveyard: ["graveyard-vest-t4", "graveyard-charm-t4", "graveyard-boots-t4"],
+  trench: ["trench-vest-t4", "trench-charm-t4", "trench-boots-t4-stalkers"],
+};
+
+/**
+ * The T4 guns each discipline fits, so the first T4 boss (the Mountain) is met in one:
+ * Gunslinger's Carbine (the Jungle's, a detour), Siege's Drum Gun (moved to the Trench,
+ * a detour), Trickshot's Hand Cannon (the Mountain's own).
+ */
+export const SLINGER_T4_GUNS: readonly DisciplineGun[] = [
+  { discipline: "gunslinger", zone: "jungle", id: "slinger-carbine-t4", before: "mountain" },
+  { discipline: "siege", zone: "trench", id: "slinger-drum-gun-t4", before: "mountain" },
+  { discipline: "trickshot", zone: "mountain", id: "slinger-hand-cannon-t4" },
+];
+
 function optionOf(leafId: string): string {
   return leafId.replace(/^slinger-/, "");
 }
@@ -76,7 +102,10 @@ export function slingerT4Route(): Route {
 
   for (const biomeGroup of T4_ZONE_ORDER) {
     const at = zone(biomeGroup);
+    const gear = zoneGearSteps(biomeGroup, 4, SLINGER_T4_GUNS, SLINGER_T4_ZONE_KIT[biomeGroup] ?? []);
+    steps.push(...gear.before);
     steps.push({ type: "travel", to: at });
+    steps.push(...gear.inZone);
     steps.push({
       type: "farm",
       at,

@@ -68,6 +68,53 @@ export function wearAsUnlocked(at: NodeRef, ids: readonly string[]): RouteStep[]
 }
 
 /**
+ * A gun the discipline fits (bible §10.4: Gunslinger the Carbine and Pepperbox, Siege
+ * the Drum Gun and Pepperbox, Trickshot the Hand Cannon and Snakebite Pistol), made in
+ * `zone` of `tier`. `before` names the zone whose steps it goes in front of when the
+ * gun's own zone comes later in the route (a detour, so the tier's first boss is met
+ * in that tier's class weapon); without it the gun is made when the route reaches its
+ * zone, before that zone's armor.
+ */
+export interface DisciplineGun {
+  discipline: string;
+  zone: string;
+  id: string;
+  before?: string;
+}
+
+/** The discipline route choice every T2+ Slinger route shares. */
+export const SLINGER_DISCIPLINE_CHOICE = "slinger-discipline";
+export const SLINGER_DEFAULT_DISCIPLINE = "gunslinger";
+
+/** Craft and wear one discipline gun; the steps exist only on that discipline's run. */
+export function gunSteps(gun: DisciplineGun, tier: number): RouteStep[] {
+  const at: NodeRef = { kind: "biome", biomeGroup: gun.zone, tier, pick: "uncleared" };
+  const choice = { id: SLINGER_DISCIPLINE_CHOICE, option: gun.discipline, defaultOption: SLINGER_DEFAULT_DISCIPLINE };
+  return [
+    { type: "craft", recipeIds: [gun.id], farmAt: at, label: `craft ${gun.id}`, choice },
+    { type: "equip", definitionIds: [gun.id], label: `wear ${gun.id}`, choice },
+  ];
+}
+
+/**
+ * One zone's steps on a T2+ route: the discipline guns that detour in front of it, the
+ * travel, the zone's own discipline guns, then its vest, charm and boots as they unlock.
+ */
+export function zoneGearSteps(biomeGroup: string, tier: number, guns: readonly DisciplineGun[], kit: readonly string[]): {
+  before: RouteStep[];
+  inZone: RouteStep[];
+} {
+  const at: NodeRef = { kind: "biome", biomeGroup, tier, pick: "uncleared" };
+  return {
+    before: guns.filter((gun) => gun.before === biomeGroup).flatMap((gun) => gunSteps(gun, tier)),
+    inZone: [
+      ...guns.filter((gun) => gun.zone === biomeGroup && !gun.before).flatMap((gun) => gunSteps(gun, tier)),
+      ...wearAsUnlocked(at, kit),
+    ],
+  };
+}
+
+/**
  * The standing orders a Slinger plays with: the default set, with Keep Distance in
  * place of the chase while fighting. Keep Distance is a free universal standing
  * order (bible §3, decided in the Slinger dive: "it decides where the Slinger
