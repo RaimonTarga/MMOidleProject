@@ -97,6 +97,17 @@ export const SLINGER_T2_GUNS: readonly DisciplineGun[] = [
   { discipline: "trickshot", zone: "mountain", id: "slinger-hand-cannon-t2", before: "plains" },
 ];
 
+/**
+ * Discipline-only pieces, made like the guns (a choice step on that discipline's run). Siege puts on
+ * the Jungle's vest as it enters the Jungle (anti-ambush base: more HP, evasion, damage-over-time
+ * resistance; Lookout) in place of the Forest's Quickdraw: the live Siege died three times to the
+ * Jungle dungeon's nine guards (poison: 152 of 347 damage in the last death's window), and the sim's
+ * Jungle boss went 2/3 -> 3/3 in it (Desert 3/3 either way). PLACEHOLDER pick.
+ */
+export const SLINGER_T2_DISCIPLINE_PIECES: readonly DisciplineGun[] = [
+  { discipline: "siege", zone: "jungle", id: "jungle-vest-t2" },
+];
+
 /** How far the route farms a T2 zone: the tier-2 cap, as the guide does. */
 export function slingerT2FarmLevel(biomeGroup: string): number {
   return biomeLevelCap(2, biomeGroup);
@@ -127,7 +138,7 @@ export function slingerT2Route(chainId: SlingerDiscipline = DEFAULT_SLINGER_DISC
 
   for (const biomeGroup of T2_ZONE_ORDER) {
     const at = zone(biomeGroup);
-    const gear = zoneGearSteps(biomeGroup, 2, SLINGER_T2_GUNS, SLINGER_T2_ZONE_KIT[biomeGroup] ?? [], chain.discipline);
+    const gear = zoneGearSteps(biomeGroup, 2, [...SLINGER_T2_GUNS, ...SLINGER_T2_DISCIPLINE_PIECES], SLINGER_T2_ZONE_KIT[biomeGroup] ?? [], chain.discipline);
     steps.push(...gear.before);
     steps.push({ type: "travel", to: at });
     steps.push(...gear.inZone);
