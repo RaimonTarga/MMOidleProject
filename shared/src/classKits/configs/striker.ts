@@ -71,10 +71,16 @@ export const STRIKER_SYSTEM: ClassSystemSpec<OrderConfig> = {
   defaults(ctx) {
     const beats: (string | null)[] = new Array(strikerComboLength(ctx.disciplineId) - 1).fill(null);
     const { open } = strikerSlots(ctx.budget, beats.length);
-    const chosen = ownedPieces(STRIKER_KIT, ctx)
-      .filter((piece) => !piece.finisher)
-      .sort((a, b) => defaultPriority(a) - defaultPriority(b))
-      .slice(0, open);
+    // At most one cast of each kind: a second opener or wind-up has no beat to sit on, and
+    // taking it would leave an open beat empty (OV-STRIKER fix).
+    const chosen: StrikerPiece[] = [];
+    for (const piece of ownedPieces(STRIKER_KIT, ctx)
+      .filter((p) => !p.finisher)
+      .sort((a, b) => defaultPriority(a) - defaultPriority(b))) {
+      if (chosen.length >= open) break;
+      if (piece.cast && chosen.some((p) => p.cast === piece.cast)) continue;
+      chosen.push(piece);
+    }
     // Casts on their own positions; then setups early and damage late (§12.13).
     const opener = chosen.find((piece) => piece.cast === 'opener');
     const windup = chosen.find((piece) => piece.cast === 'windup');

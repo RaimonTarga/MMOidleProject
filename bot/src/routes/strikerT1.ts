@@ -1,10 +1,12 @@
 import {
   biomeLevelCap,
   CLEARING_NODE_ID,
+  DEFAULT_RUNE_LOADOUT,
   strikerComboLength,
   T1_BIOME_ORDER,
   TUTORIAL_SEALS,
   type ClassConfig,
+  type EquippedRule,
 } from "@mmo-idle/shared";
 import { allOf, type NodeRef, type Route, type RouteStep } from "../route/types";
 
@@ -64,6 +66,18 @@ function autoOrder(): ClassConfig {
 }
 
 /**
+ * The universal standing orders (bible §3: free for every class): the default loadout plus
+ * Avoid Hazards, "Read The Ground" (step out of a visible attack telegraph). PLACEHOLDER
+ * (OV-STRIKER): without it the auto-fighter stands in every boss charge lane; classBossSim had
+ * the Mountain seal at 29% HP left with it against 21% without, and the T2 Stoneplate
+ * Juggernaut's 2x charge one-shots a T2 Striker that stays in the lane.
+ */
+export const STRIKER_STANDING_ORDERS: readonly EquippedRule[] = [
+  { conditionId: "inside-telegraph", actionId: "step-back" },
+  ...DEFAULT_RUNE_LOADOUT,
+];
+
+/**
  * The Clearing set, as the guide makes it (`shared/src/tutorial/scripts/opening.ts`): the
  * Striker's start weapon, then the shared vest, charm and boots, in unlock order (Clearing
  * levels 1-4).
@@ -116,6 +130,7 @@ export function strikerT1Route(): Route {
     },
     { type: "chooseClass", skillId: STRIKER_CLASS_ROOT },
     { type: "classConfig", config: autoOrder() },
+    { type: "configureRunes", rules: [...STRIKER_STANDING_ORDERS], label: "avoid hazards (Read The Ground)" },
     // The guide's Clearing set (the Clearing caps at level 4).
     ...wearInOrder(STRIKER_CLEARING_GEAR, CLEARING, "the Clearing"),
   ];

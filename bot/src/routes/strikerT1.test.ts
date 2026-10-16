@@ -72,12 +72,16 @@ const walks = T1_BIOME_ORDER.filter((biome) => biome !== FIRST_SEAL && biome !==
 const wear = (ids: readonly string[]) => ids.flatMap(() => ["craft", "equip"]);
 const gearOf = (biomeGroup: string) => STRIKER_T1_ZONE_GEAR[biomeGroup] ?? [];
 assert.deepEqual(kinds, [
-  "travel", "farm", "chooseClass", "classConfig", ...wear(STRIKER_CLEARING_GEAR),
+  "travel", "farm", "chooseClass", "classConfig", "configureRunes", ...wear(STRIKER_CLEARING_GEAR),
   "travel", ...wear(gearOf(FIRST_SEAL)), "farm", "attemptBoss",
   ...walks.flatMap((biome) => ["travel", ...wear(gearOf(biome)), "farm"]),
   "travel", ...wear(gearOf(SECOND_SEAL)), "farm", "attemptBoss",
   "farm",
 ]);
+
+const runes = route.steps.find((step) => step.type === "configureRunes");
+assert(runes?.type === "configureRunes" && runes.rules[0]?.actionId === "step-back",
+  "Avoid Hazards (Read The Ground) leads the standing orders");
 
 // ── Gear: the Clearing set, then each zone's pieces as the zone unlocks them ──
 assert.equal(STRIKER_CLEARING_GEAR.length, 4, "the Clearing set is a weapon, a vest, a charm and boots");

@@ -288,7 +288,7 @@ export const STRIKER_GEAR: ClassGearDef = {
   lines: {
     // ── T1 ──
     'plains-vest-t1': { name: 'Shoulder Through', text: 'Each extra enemy around you adds a little plating.', effects: { 'striker.plating-per-enemy': 1 } },
-    'plains-charm-t1': { name: 'Grit', text: 'Part of every hit you take heals back over a few seconds while you keep attacking; stop and it is lost.', effects: { 'striker.grit-pct': 0.4, 'striker.grit-ms': 3000 } },
+    'plains-charm-t1': { name: 'Grit', text: 'Part of every hit you take heals back over a few seconds while you keep attacking; stop and it is lost.', effects: { 'striker.grit-pct': 0.5, 'striker.grit-ms': 3000 } },
     'forest-vest-t1': { name: 'Unbroken', text: 'Stuns, knockdowns and slows are shorter and never break your resource.', effects: { 'defense.control-duration-cut-pct': 0.25 } },
     'forest-charm-t1': { name: 'Rhythm', text: 'Recovery rises the longer you fight without a break, up to double.', effects: { 'defense.recovery-rhythm-max': 2, 'defense.recovery-rhythm-ms': 10000 } },
     'swamp-vest-t1': { name: 'Bloodless', text: "While you keep attacking, damage over time can't take you below a quarter of your HP.", effects: { 'striker.dot-floor-pct': 0.25 } },
@@ -299,7 +299,7 @@ export const STRIKER_GEAR: ClassGearDef = {
     'cave-charm-t1': { name: 'Deep Breath', text: 'Out-of-combat Recovery is much faster.', effects: { 'defense.ooc-recovery-pct': 1 } },
     // ── T2 ──
     'plains-vest-t2': { name: 'Shoulder Through', text: 'Each extra enemy around you adds a little plating.', effects: { 'striker.plating-per-enemy': 2.6 } },
-    'plains-charm-t2': { name: 'Grit', text: 'Part of every hit you take heals back over a few seconds while you keep attacking; stop and it is lost.', effects: { 'striker.grit-pct': 0.45, 'striker.grit-ms': 3000 } },
+    'plains-charm-t2': { name: 'Grit', text: 'Part of every hit you take heals back over a few seconds while you keep attacking; stop and it is lost.', effects: { 'striker.grit-pct': 0.55, 'striker.grit-ms': 3000 } },
     'forest-vest-t2': { name: 'Unbroken', text: 'Stuns, knockdowns and slows are shorter and never break your resource.', effects: { 'defense.control-duration-cut-pct': 0.312 } },
     'forest-charm-t2': { name: 'Rhythm', text: 'Recovery rises the longer you fight without a break, up to double.', effects: { 'defense.recovery-rhythm-max': 2, 'defense.recovery-rhythm-ms': 10000 } },
     'swamp-vest-t2': { name: 'Bloodless', text: "While you keep attacking, damage over time can't take you below a quarter of your HP.", effects: { 'striker.dot-floor-pct': 0.25 } },
@@ -354,8 +354,8 @@ export const STRIKER_GEAR: ClassGearDef = {
     // Plains → Volcanic
     'volcanic-vest-t3': { name: 'Shoulder Through', text: 'Each extra enemy around you adds a little plating.', effects: { 'striker.plating-per-enemy': 2.6 } },
     'volcanic-vest-t4': { name: 'Shoulder Through', text: 'Each extra enemy around you adds a little plating.', effects: { 'striker.plating-per-enemy': 2.6 } },
-    'volcanic-charm-t3': { name: 'Grit', text: 'Part of every hit you take heals back over a few seconds while you keep attacking; stop and it is lost.', effects: { 'striker.grit-pct': 0.45, 'striker.grit-ms': 3000 } },
-    'volcanic-charm-t4': { name: 'Grit', text: 'Part of every hit you take heals back over a few seconds while you keep attacking; stop and it is lost.', effects: { 'striker.grit-pct': 0.45, 'striker.grit-ms': 3000 } },
+    'volcanic-charm-t3': { name: 'Grit', text: 'Part of every hit you take heals back over a few seconds while you keep attacking; stop and it is lost.', effects: { 'striker.grit-pct': 0.55, 'striker.grit-ms': 3000 } },
+    'volcanic-charm-t4': { name: 'Grit', text: 'Part of every hit you take heals back over a few seconds while you keep attacking; stop and it is lost.', effects: { 'striker.grit-pct': 0.55, 'striker.grit-ms': 3000 } },
     // Swamp → Graveyard
     'graveyard-vest-t4': { name: 'Bloodless', text: "While you keep attacking, damage over time can't take you below a quarter of your HP.", effects: { 'striker.dot-floor-pct': 0.25 } },
     'graveyard-charm-t4': { name: 'Antidote', text: 'Every few seconds, the poison or bleed on you with the most time left ends.', effects: { 'defense.dot-cleanse-interval-ms': 4000 } },

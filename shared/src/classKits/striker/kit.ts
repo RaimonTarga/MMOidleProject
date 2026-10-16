@@ -88,7 +88,7 @@ const PIECES: readonly StrikerPiece[] = [
     family: 'finisher-setup',
     cast: 'windup',
     text: 'You wind up before the finisher, and the finisher hits much harder.',
-    params: { castMs: 900, finisherBonusPct: 0.6 },
+    params: { castMs: 900, finisherBonusPct: 1 },
   }),
   technique({
     id: 'striker-focus',
