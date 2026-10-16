@@ -54,6 +54,7 @@ import { laySigils, nearestTo, payoffMult, payoffsOf, PIECES, sigilsOn, spend, t
 import { firePayoffT3, ripestAge, seepBurst, snagNeighbours, specParam, surfaced } from './sigilsT3';
 import { dirgeBlast, firstAmbusherHit, hidersInReach, pressureHold, recoilBack, stampSmoke, type RecoilSource } from './sigilsT4';
 import type { ApprenticePiece } from '@mmo-idle/shared';
+import { noteApprentice } from './telemetry';
 
 const FUSE_AT = 'apprentice.fuseAt';
 const PLAGUE_AT = 'apprentice.plagueAt';
@@ -190,6 +191,9 @@ export function detonate(
   }
   spend(target);
   applyPlayerAoeTo(world, player, [target], Math.max(1, damage), 'player', {}, {});
+  noteApprentice(player, topLevel ? 'blast-dmg' : 'chain-link-dmg', Math.round(damage));
+  if (!topLevel) noteApprentice(player, 'chain-link');
+  if (shattered) noteApprentice(player, 'shatter');
   stampSmoke(world, p, [target]);
   if (opts.splash) {
     const around = playerAoeTargets(world, player, at, opts.splash.radius, id).filter((monster) => monster.hasHealth.hp > 0 && !chain.has(monster.isMonster.id));

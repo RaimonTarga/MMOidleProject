@@ -1,18 +1,18 @@
 import { biomeLevelCap, type ClassConfig } from "@mmo-idle/shared";
 import { allOf, type NodeRef, type Route, type RouteStep } from "../route/types";
-import { APPRENTICE_CLASS_ROOT } from "./apprenticeT1";
-import { APPRENTICE_T2_ZONES, apprenticeT2Payoffs, apprenticeT2Route } from "./apprenticeT2";
+import { APPRENTICE_CLASS_ROOT, wear } from "./apprenticeT1";
+import { APPRENTICE_T2_DISCIPLINE, APPRENTICE_T2_ZONES, apprenticeT2Payoffs, apprenticeT2Route } from "./apprenticeT2";
 
 /**
  * The Apprentice's T3 route (T3-W2, bible §9.6, §9.16): the T2 route with a school picked, the
  * tier-3 promotion, the specialization pick (an `unlockSkill` on its node under the school), the
- * seven T3 zones to their tier-3 cap, Payoff rules with the T3 payoffs placed, and the seven T3
- * bosses. Registered but not in the controlled batch list until it has run live.
+ * seven T3 zones to their tier-3 cap (wearing each zone's gear), the auto Payoff rules, and the
+ * seven T3 bosses. Registered but not in the controlled batch list until it has run live.
  *
  * Fire, then Afterburn: Cinderfall and Melt are Fire lessons and Afterburn needs no other piece.
  */
 export const APPRENTICE_T3_ID = "apprentice-t3";
-export const APPRENTICE_T3_DISCIPLINE = "apprentice-fire";
+export const APPRENTICE_T3_DISCIPLINE = APPRENTICE_T2_DISCIPLINE;
 export const APPRENTICE_T3_SPECIALIZATION = "apprentice-afterburn";
 
 /** The T3 zones with the lesson each teaches, in the tutorial's order (`shared/.../scripts/apprentice.ts`). */
@@ -31,25 +31,21 @@ function zone(biomeGroup: string): NodeRef {
 }
 
 /**
- * The T2 rules plus each T3 payoff where it fires: Cinderfall on a full bar among three or more
- * enemies, Spore Burst on a target about to die, Melt on the Chill. Signal Fire is a rider on
- * Detonate and needs no placement. The relic stays the first boss's Outbreak.
+ * The T3 pieces worn as each zone unlocks them (PLACEHOLDER picks, OV-APPRENTICE, chosen in the
+ * class boss sim): the Mountain set (the T3 Runestone Staff), then the Desert's charm and boots.
+ */
+export const APPRENTICE_T3_GEAR: Readonly<Record<string, readonly string[]>> = {
+  mountain: ["apprentice-runestone-staff-t3", "mountain-vest-t3", "mountain-charm-t3", "mountain-boots-t3"],
+  desert: ["desert-charm-t3", "desert-boots-t3"],
+};
+
+/**
+ * The rules the T3 bosses are fought with: auto, whose default also places the T3 payoffs
+ * (Cinderfall on a full bar among three or more enemies, Spore Burst on a target about to die,
+ * Melt on the Chill; Signal Fire is a rider on Detonate and needs no placement).
  */
 export function apprenticeT3Payoffs(): ClassConfig {
-  const t2 = apprenticeT2Payoffs();
-  if (t2.system.kind !== "payoffs") throw new Error("apprentice T2 rules are not Payoff rules");
-  return {
-    ...t2,
-    system: {
-      kind: "payoffs",
-      placements: [
-        { moment: "target-full", pieceId: "apprentice-cinderfall", conditions: [{ id: "enemies-near", param: 3 }] },
-        ...t2.system.placements,
-        { moment: "target-low", pieceId: "apprentice-spore-burst", conditions: [] },
-        { moment: "chill-threshold", pieceId: "apprentice-melt", conditions: [] },
-      ],
-    },
-  };
+  return apprenticeT2Payoffs();
 }
 
 export function apprenticeT3Route(): Route {
@@ -70,9 +66,10 @@ export function apprenticeT3Route(): Route {
   for (const { biomeGroup } of APPRENTICE_T3_ZONES) {
     const at = zone(biomeGroup);
     steps.push({ type: "travel", to: at });
+    steps.push(...wear(at, APPRENTICE_T3_GEAR[biomeGroup] ?? []));
     steps.push({ type: "farm", at, until: { type: "biomeLevelAtLeast", biomeGroup, level: biomeLevelCap(3, biomeGroup) } });
   }
-  // Every T3 lesson is learned now, so the rules can place the T3 payoffs.
+  // Every T3 lesson is learned now; auto places them all.
   steps.push({ type: "classConfig", config: apprenticeT3Payoffs() });
   for (const { biomeGroup } of APPRENTICE_T3_ZONES) {
     steps.push({ type: "attemptBoss", biomeGroup, tier: 3 });
@@ -91,8 +88,8 @@ export function apprenticeT3Route(): Route {
     classRoot: APPRENTICE_CLASS_ROOT,
     description:
       "Apprentice T3: the T2 route with the Fire school, the tier-3 promotion, the Afterburn " +
-      "specialization, the seven T3 zones to their cap, Payoff rules with the T3 payoffs placed, " +
-      "and the seven T3 bosses.",
+      "specialization, the seven T3 zones to their cap (wearing each zone's gear), auto Payoff " +
+      "rules, and the seven T3 bosses.",
     steps,
     completion: allOf(
       t2.completion,
