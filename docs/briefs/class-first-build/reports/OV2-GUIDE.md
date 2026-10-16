@@ -57,6 +57,15 @@ steps through `nextStepOf`, which now honours the new `unless`).
   Resume: a new Striker makes its weapon next; worn, the guide goes on; a later weapon worn skips
   earlier ones; a finished zone's gear is moot; the Jungle re-wear does not loop back to the Cave
   charm. The old resume walks give the view the gear made before each beat.
+- **Follow-up (conductor): gear beats run without Next.** `TutorialBeat.auto?: true` (`types.ts`), set
+  on every gear beat (`gear.ts`). `client/src/tutorial/TutorialPanel.tsx`: an effect starts an
+  `auto` beat with `runBeat` as soon as it is current, the guide is on, nothing else runs (no run
+  status) and the player is alive; the beat's own line stays on screen while it runs (not its
+  waiting text); the panel moves on when its steps are done. A stop, error or death leaves its
+  status set, so it waits for Next like any beat. The Next glow and chime fire only when a beat
+  that needs Next comes up (also after an auto beat ends). Every non-gear beat keeps its Next. The
+  director is unchanged. Test: gear beats are `auto`, every other beat is not, and the classless
+  script has none.
 - **Doc**: `docs/guided-tutorial-current-state.md` (new "The gear" section, counts, resume rules,
   test pins, open items).
 
@@ -72,7 +81,7 @@ steps through `nextStepOf`, which now honours the new `unless`).
 ## Checks
 
 - `pnpm typecheck`: clean.
-- `pnpm test -- tutorial`: 2/2 passed (`shared/src/tutorial/tutorial.test.ts`, `server/test/tutorialAnchors.test.ts`).
+- `pnpm test -- tutorial`: 2/2 passed (`shared/src/tutorial/tutorial.test.ts`, `server/test/tutorialAnchors.test.ts`), before and after the follow-up.
 
 ## Not done, or unsure (PLACEHOLDER decisions, the conductor's or designer's call)
 
@@ -84,7 +93,8 @@ steps through `nextStepOf`, which now honours the new `unless`).
    the Mountain set again) and the Squire T1 route's seal sets (it fights both seals at the end):
    the guide fights each boss in its zone's turn, in the latest pieces. The Slinger's detours come
    after the Mountain's first farm (after the tier pointer), not before the trip there.
-4. **Pacing**: 36-79 extra Next presses per class. Never run live.
+4. **Pacing**: 36-79 gear beats per class, now run without Next (follow-up). Never run live: the
+   auto start in the panel is checked by typecheck only, not in a browser.
 5. **Lesson-skip hazard**: a cut farm (e.g. a lesson beat) ends when the next piece can be made; if
    an earlier farm overshot and that piece is already affordable when the lesson comes up, the
    lesson beat is done at once and its line is skipped. Lower risk than a level gate; not seen;

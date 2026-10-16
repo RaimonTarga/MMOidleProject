@@ -250,6 +250,8 @@ export function buildGearBeats(classRoot: string, beats: readonly TutorialBeat[]
         ];
     return {
       id: piece.kind === 'again' ? `gear:${piece.id}:again` : `gear:${piece.id}`,
+      // No press of Next: the panel runs a gear beat as soon as it comes up.
+      auto: true,
       chapter,
       say: gearLine(piece, plan, archetype),
       waiting: trailing ? (trailing.waiting ?? 'Fighting on.') : `Fighting on until the ${name} can be made.`,

@@ -144,20 +144,36 @@ export function TutorialPanel() {
 
   const script = view ? tutorialScriptFor(view.selectedClass) : null;
   const index = script && view ? resolveBeatIndex(script, view) : -1;
-  const currentBeatId = script?.beats[index]?.id ?? null;
+  const currentBeat = script?.beats[index] ?? null;
+  const currentBeatId = currentBeat?.id ?? null;
 
-  // "Your turn" moment: a waiting beat just finished and the next one is up.
-  // Only that transition (not a Stop, not a death) glows and chimes, once.
+  // "Your turn" moment: a waiting beat (or a beat that ran by itself) just
+  // finished and a beat that needs Next is up. Only that transition (not a
+  // Stop, not a death) glows and chimes, once.
   const [readyPulse, setReadyPulse] = useState(0);
   const lastRun = useRef(run);
   useEffect(() => {
     const previous = lastRun.current;
     lastRun.current = run;
-    if (previous?.status === 'waiting' && run === null && previous.beatId !== currentBeatId && choice === 'on') {
+    const previousAuto = !!previous && !!script?.beats.find((b) => b.id === previous.beatId)?.auto;
+    const finished = previous?.status === 'waiting' || (previousAuto && previous?.status === 'working');
+    if (finished && run === null && previous!.beatId !== currentBeatId && !currentBeat?.auto && choice === 'on') {
       setReadyPulse((n) => n + 1);
       playSfx('tutorial-ready');
     }
-  }, [run, currentBeatId, choice]);
+  }, [run, currentBeatId, currentBeat, script, choice]);
+
+  // A beat marked `auto` (the gear beats) needs no Next: start it as soon as it
+  // is current and nothing else runs. A stop, an error or a death leaves its
+  // status set, so it waits for Next like any other beat.
+  const dying = deathOverlay || !!view?.isDead;
+  useEffect(() => {
+    if (choice !== 'on' || !script || !currentBeat?.auto || run !== null || dying) return;
+    controller.current?.abort();
+    const current = new AbortController();
+    controller.current = current;
+    void runBeat(script, currentBeat, current.signal);
+  }, [choice, script, currentBeat, run, dying]);
   // Clear the glow class once its one-shot animation has played.
   useEffect(() => {
     if (readyPulse === 0) return;
@@ -252,7 +268,8 @@ export function TutorialPanel() {
   };
 
   let line = beat?.say ?? '';
-  if (ownRun?.status === 'waiting' || ownRun?.status === 'player') line = beat?.waiting ?? line;
+  // A beat that runs by itself keeps its own line on screen while it runs.
+  if ((ownRun?.status === 'waiting' || ownRun?.status === 'player') && !beat?.auto) line = beat?.waiting ?? line;
   if (ownRun?.message) line = ownRun.message;
   if (lessonRun?.message) line = lessonRun.message;
   if (dead) line = 'You fell. That happens; press Next to get back up, and the guide carries on.';

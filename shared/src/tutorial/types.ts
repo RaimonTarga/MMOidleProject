@@ -94,6 +94,12 @@ export interface TutorialBeat {
    * data: the bot never reads it; `tutorial.test.ts` counts it per level.
    */
   teaches?: TutorialConceptId[];
+  /**
+   * Runs without a press of Next: the panel starts the beat's steps as soon as
+   * it is current, its line shows while it runs, and the panel moves on by
+   * itself when they are done. Set on the gear beats (`scripts/gear.ts`) only.
+   */
+  auto?: true;
 }
 
 export interface TutorialScript {

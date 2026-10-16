@@ -660,6 +660,10 @@ for (const root of CLASS_ROOTS) {
   kept.slice(0, TUTORIAL_OPENING.beats.length).forEach((beat, i) => {
     assert(beat === TUTORIAL_OPENING.beats[i], `${script.id}: opening beat ${beat.id} was replaced`);
   });
+  // The gear beats run without a press of Next; every other beat keeps its Next.
+  for (const beat of script.beats) {
+    assert((beat.auto === true) === isGearBeat(beat), `${script.id}/${beat.id}: ${isGearBeat(beat) ? 'a gear beat runs by itself' : 'only gear beats run by themselves'}`);
+  }
   if (root.id === 'cadence-root') assertStrikerTail(built);
   else if (root.id === 'summoner-root') assertConduitTail(built);
   else if (root.id === 'reload-root') assertSlingerTail(built);
@@ -674,6 +678,7 @@ for (const root of CLASS_ROOTS) {
   assert(classless !== TUTORIAL_OPENING, 'no class still appends the seal route');
   assert(tutorialScriptFor(null) === classless, 'the classless script is cached');
   sameRoute(classless);
+  assert(classless.beats.every((beat) => !beat.auto), 'before a class, every beat waits for Next');
   assert(resolveBeatIndex(classless, view()) === 0, 'before a class, the opening is still the first beat');
 }
 

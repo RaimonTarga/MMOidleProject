@@ -90,6 +90,11 @@ do. Built by OV2-GUIDE.
   down, or the tier is two promotions on (one for Tier 1; three to five seals promote before a
   tier's last bosses), or the player already wears a later piece of the plan for that slot. A
   hand-played or older character is never sent back for gear it has outgrown.
+- **No Next for gear.** Every gear beat is `auto` (`TutorialBeat.auto`): `TutorialPanel` starts it as
+  soon as it is current and nothing else runs, keeps its line on screen while it runs (not the
+  waiting text), and moves on by itself; the Next glow and chime come only when a beat that needs
+  Next is up. A stop, an error or a death leaves the beat waiting for Next, as before. Every
+  other beat keeps its Next.
 - The farewell line now reads "Two seals, Tier 2, and a full set of gear made for your class."
 
 **What the guide does not do, as built:**
@@ -124,6 +129,7 @@ do. Built by OV2-GUIDE.
   `TUTORIAL_FAREWELL` lines, `scripts/farewell.ts`, and Thanks!). The card also shows on its own
   once the script has run out after the last Tier 4 boss.
 - **The route strip** above the line is a thin fill with one tick per chapter.
+- **Auto beats** (the gear) start without Next; see [The gear](#the-gear).
 
 ## Director behavior
 
@@ -170,7 +176,7 @@ the gear (every class): the gear beats wear exactly the plan, the start weapon f
 pick, each piece is a real recipe of the right class and tier made in its own zone, which the
 guide farms to that level in that tier, before the next boss of another tier, each line one
 sentence with no numbers (T2–T4 weapons name the default pick), the gear never brings a builder
-line up earlier, and resume with gear (a later piece worn skips earlier ones, a finished zone's
+line up earlier, gear beats and only gear beats are `auto`, and resume with gear (a later piece worn skips earlier ones, a finished zone's
 gear is moot, the Jungle's re-worn charm does not loop); and the checklist above. It is a static
 check: no live run has walked the class scripts end to end.
 
@@ -182,5 +188,5 @@ check: no live run has walked the class scripts end to end.
 - A lesson line can still be skipped silently if the farm before it overshoots and the next
   piece is already affordable when it comes up (the cut farm then ends at once); not seen, never
   run live.
-- About 35-80 gear beats per class: many presses of Next. No live run has checked the pacing.
+- About 35-80 gear beats per class; they run without Next, but no live run has checked the pacing.
 - Mobile stays outside the guide's scope.
