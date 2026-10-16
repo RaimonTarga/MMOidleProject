@@ -13,6 +13,8 @@ import {
   ACTION_DATABASE,
   getFlag,
   distanceSq,
+  geometryContains,
+  RUNE_TELEGRAPH_ESCAPE_CLEARANCE,
   SUMMONER_RANGE_TUNING,
   type Vec2,
 } from '@mmo-idle/shared';
@@ -38,10 +40,7 @@ import { fallBackSpot } from './leavesT4';
 import { orderedTarget } from './formationOrders';
 import { getRuneDecisions, RUNE_WAIT_FOR_SUMMONS_FLAG } from '../../../combat/ai/runeConfig';
 import { getAutoTargetId } from '../../../combat/ai/targetPriority';
-import {
-  findMinionTelegraphEscape,
-  positionInsideUnresolvedTelegraph,
-} from '../../../combat/ai/telegraphEvasion';
+import { findMinionTelegraphEscape } from '../../../combat/ai/telegraphEvasion';
 import { isConcealedEntity } from "../../../combat/invulnerability";
 
 // Pixels — how close to the follow offset is "close enough" to idle.
@@ -152,6 +151,22 @@ function ownerStepsBack(owner: PlayerEntity): boolean {
 }
 
 /**
+ * Is `pos` under an aimed telegraph that has not landed yet (a slam, a charge corridor, a fault
+ * line)? The arena's scattered hazards (vent eruptions, rockfall: `scattered` fault lines) do not
+ * count. OV2-CONDUIT (PLACEHOLDER, for review): with Avoid Hazards a default order, every summon
+ * stepped out of every vent, and the Caldera's last quarter, a near-bullet-hell of vents around the
+ * boss, left the formation a third of its damage (sim: Pack 300 dps on the boss against 900 with
+ * no summon Step Back) for no fewer summon deaths. Summons still dodge the aimed blows.
+ */
+function insideAimedTelegraph(world: World, nodeId: string, pos: Vec2, clearance = 0): boolean {
+  return (world.groundZones.get(nodeId) ?? []).some((zone) =>
+    zone.kind !== 'toxic-pool'
+    && !(zone.kind === 'fault-line-telegraph' && zone.scattered === true)
+    && world.hasMonster(zone.ownerId)
+    && geometryContains(zone.geometry, pos, clearance));
+}
+
+/**
  * Walk toward `dest`, or stand still when Step Back is on and `dest` lies under
  * a telegraph that has not landed yet � rather than chase, retreat or follow the
  * owner back into a slam the summon just left.
@@ -163,7 +178,7 @@ function moveMinionOutsideTelegraphs(
   dest: Vec2,
 ): void {
   if (ownerStepsBack(owner)
-    && positionInsideUnresolvedTelegraph(world, minion.hasPosition.nodeId, dest)) {
+    && insideAimedTelegraph(world, minion.hasPosition.nodeId, dest)) {
     stopEntity(world, minion);
     return;
   }
@@ -190,7 +205,9 @@ export function driveMinion(
     return;
   }
 
-  const escape = ownerStepsBack(owner) ? findMinionTelegraphEscape(world, minion) : null;
+  const escape = ownerStepsBack(owner)
+    && insideAimedTelegraph(world, minion.hasPosition.nodeId, minion.hasPosition.current, RUNE_TELEGRAPH_ESCAPE_CLEARANCE)
+    ? findMinionTelegraphEscape(world, minion) : null;
   if (escape) {
     setEntityMotion(world, minion, escape);
     return;

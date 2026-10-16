@@ -20,7 +20,7 @@ import { World } from '../src/world/World';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { updateSummonerArchetype } from '../src/systems/classes/archetypes/summoner/summonerPrototype';
 import { driveMinion } from '../src/systems/classes/archetypes/summoner/ai';
-import { publishGroundZone } from '../src/systems/world/groundZones';
+import { publishFaultLineBurst, publishGroundZone } from '../src/systems/world/groundZones';
 import { setEntityMotion, updateMovement } from '../src/systems/world/movement';
 import { setAggroTarget } from '../src/systems/combat/ai/targeting';
 import { RUNE_RECALL_SUMMONS_FLAG, RUNE_TAUNT_CURRENT_TARGET_FLAG, updateRuneDerivedConfig } from '../src/systems/combat/ai/runeConfig';
@@ -79,8 +79,8 @@ function setup(id: string) {
 }
 
 // ── Step Back moves summons out of a pending telegraph ───────────────────────
-function summonsInsideAfterTelegraph(stepBack: boolean): number {
-  const { world, owner, minions, monster } = setup(stepBack ? 'step-back' : 'no-step-back');
+function summonsInsideAfterTelegraph(stepBack: boolean, vent = false): number {
+  const { world, owner, minions, monster } = setup(`${stepBack ? 'step-back' : 'no-step-back'}${vent ? '-vent' : ''}`);
   owner.usesAutocombat.auto = true;
   if (stepBack) {
     owner.tracksProgression.runesEquipped = [{ conditionId: 'inside-telegraph', actionId: 'step-back' }];
@@ -92,14 +92,28 @@ function summonsInsideAfterTelegraph(stepBack: boolean): number {
     updateMovement(world, 100, now);
     now += 100;
   }
-  const zone = publishGroundZone(world, NODE, {
-    kind: 'slam-telegraph',
-    pos: { ...owner.hasPosition.current },
-    radius: 120,
-    startedAtMs: now,
-    resolvesAtMs: now + 5_000,
-    ownerId: monster.isMonster.id,
-  });
+  const zone = vent
+    // An arena hazard (a Caldera vent eruption): a scattered fault line.
+    ? publishFaultLineBurst(world, NODE, {
+      kind: 'fault-line-telegraph',
+      pos: { ...owner.hasPosition.current },
+      radius: 120,
+      startedAtMs: now,
+      resolvesAtMs: now + 5_000,
+      ownerId: monster.isMonster.id,
+      points: [{ ...owner.hasPosition.current }],
+      damageMultiplier: 1,
+      scattered: true,
+      fx: 'vent-eruption',
+    })
+    : publishGroundZone(world, NODE, {
+      kind: 'slam-telegraph',
+      pos: { ...owner.hasPosition.current },
+      radius: 120,
+      startedAtMs: now,
+      resolvesAtMs: now + 5_000,
+      ownerId: monster.isMonster.id,
+    });
   assert(minions().every((m) => geometryContains(zone.geometry, m.hasPosition.current)),
     'fixture: every summon starts inside the telegraph');
   for (let i = 0; i < 20; i++) {
@@ -112,6 +126,8 @@ function summonsInsideAfterTelegraph(stepBack: boolean): number {
 
 assert(summonsInsideAfterTelegraph(false) === 4, 'without Step Back the summons hold their positions');
 assert(summonsInsideAfterTelegraph(true) === 0, 'with Step Back every summon leaves the telegraph');
+// OV2-CONDUIT: summons dodge aimed blows, not the arena's scattered hazards (vents, rockfall).
+assert(summonsInsideAfterTelegraph(true, true) === 4, 'with Step Back the summons hold their ground under a vent eruption');
 
 initCombatSystems();
 
