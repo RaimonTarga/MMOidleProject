@@ -161,7 +161,8 @@ for (const id of ['brace', 'endure', 'second-wind', 'recuperate']) {
   const live = getStatusEffect(p.tracksCombat, (defensive ? guardEffectIdForAbility(id) : recoveryEffectIdForAbility(id))!);
   assert(live, `${itemId} -> ${id} must fire`);
   if (resolved.kind === 'damage-reduction' && base.kind === 'damage-reduction') {
-    assert.equal(resolved.drPct, base.drPct * (1 + fx['guard.potency-pct']!));
+    // The Mountain plate carries no Guard potency since its damage cap (2026-10-16): then none applies.
+    assert.equal(resolved.drPct, base.drPct * (1 + (fx['guard.potency-pct'] ?? 0)));
     assert.equal(live.data.drPct, resolved.drPct);
     assert.equal(live.data.knockbackResistPct, resolved.knockbackResistPct);
     assert.equal(live.remainingMs, base.durationMs);

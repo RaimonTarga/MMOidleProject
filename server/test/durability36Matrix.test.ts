@@ -72,8 +72,9 @@ assertDurability36Definitions();
   const swamp = ITEM_DATABASE.get('swamp-vest-t1')!, plate = ITEM_DATABASE.get('mountain-vest-t1')!;
   const eff = (i: typeof swamp) => (i as unknown as { mechanicEffects?: Record<string, number> }).mechanicEffects ?? {};
   assert('defense.dot-resistance' in eff(swamp), 'the reference armor carries DoT resistance');
-  assert('guard.potency-pct' in eff(plate), 'the local armor carries guard potency');
-  assert(!('defense.damage-cap' in eff(plate)), 'the plate is NOT a damage-cap item');
+  // Since 2026-10-16 the Mountain plate carries the base's damage cap (bible x.16) in place of the
+  // removed Guards' potency: this block's historical treatment no longer matches the live plate.
+  assert('defense.max-hit-pct' in eff(plate), 'the local armor carries the Mountain damage cap');
   const mods = (i: typeof swamp) => (i as unknown as { statModifiers?: Record<string, number> }).statModifiers ?? {};
   assert(mods(plate).maxHp > mods(swamp).maxHp && (mods(plate).plating ?? 0) > (mods(swamp).plating ?? 0),
     'the plate also moves HP and plating, so this is the whole item');
