@@ -40,11 +40,12 @@ export function strikerT3FarmLevel(biomeGroup: string): number {
 /**
  * The weapon each discipline takes as a T3 zone opens it (§12.5 "Wants", §12.9 jobs).
  * PLACEHOLDER (OV-STRIKER): every arm meets the first T3 seal (the Mountain) in the tier's Maul;
- * Balanced then takes the Cave's Bastard Sword, Light the Jungle's Twin Fangs (the Forest's job
+ * Balanced then takes the Cave's Bastard Sword; Light takes it too (it won the Cave T3 boss in
+ * classBossSim at 43% HP where the Maul lost at 13% boss left), then the Jungle's Twin Fangs (the Forest's job
  * moved there).
  */
 const T3_WEAPONS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
-  "striker-light": { mountain: "striker-maul-t3", jungle: "striker-twin-fangs-t3" },
+  "striker-light": { mountain: "striker-maul-t3", cave: "striker-bastard-sword-t3", jungle: "striker-twin-fangs-t3" },
   "striker-balanced": { mountain: "striker-maul-t3", cave: "striker-bastard-sword-t3" },
   "striker-heavy": { mountain: "striker-maul-t3" },
 };

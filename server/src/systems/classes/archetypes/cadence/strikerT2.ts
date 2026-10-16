@@ -48,8 +48,9 @@ export const STRIKER_LIGHT = 'striker-light';
 export const STRIKER_BALANCED = 'striker-balanced';
 export const STRIKER_HEAVY = 'striker-heavy';
 
-/** Light: a lit beat hits this much harder. */
-export const SHINE_DAMAGE_PCT = 0.25;
+/** Light: a lit beat hits this much harder. PLACEHOLDER (OV-STRIKER: 0.25 -> 0.5; Light had about half
+ * Balanced's and Heavy's boss dps in classBossSim and lost the T3 Volcanic boss at 20% left). */
+export const SHINE_DAMAGE_PCT = 0.5;
 /** Balanced: each step of the edge adds this much to a damage technique and the finisher (§12.5: ~+15%). */
 export const EDGE_STEP_PCT = 0.15;
 /** Heavy: a soft beat adds this much to the finisher; a setup multiplies the total by `MOMENTUM_SETUP_MULT`. */
