@@ -126,7 +126,7 @@ function requireView(): PlayerView {
   const view = store.get(localPlayerViewAtom);
   if (!view) throw new TutorialStop('Waiting for your character to load.', 'stopped');
   if (view.isDead || store.get(deathOverlayAtom).active) {
-    throw new TutorialStop('You fell. That happens; press Next to get back up.', 'dead');
+    throw new TutorialStop('You fell. That happens; press Next, and the guide carries on.', 'dead');
   }
   return view;
 }

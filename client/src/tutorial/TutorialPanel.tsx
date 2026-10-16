@@ -246,13 +246,16 @@ export function TutorialPanel() {
 
   if (!script) return null;
   const beat = script.beats[index] ?? null;
-  const busy = !!run && (run.status === 'working' || run.status === 'waiting' || run.status === 'player');
+  const dead = deathOverlay || view.isDead;
+  // An `auto` beat with nothing running is starting this very render (the
+  // effect above runs after paint): show it working, never a Next it does not need.
+  const autoStarting = !!beat?.auto && run === null && !dead;
+  const busy = autoStarting || (!!run && (run.status === 'working' || run.status === 'waiting' || run.status === 'player'));
   const ownRun = run && beat && run.beatId === beat.id ? run : null;
   // A beat whose steps are done can still be talking: its lesson (the card it
   // bought, then that card's readout ring) plays after the purchase has already
   // moved the panel on to the next beat.
   const lessonRun = !ownRun && run?.status === 'working' && run.message ? run : null;
-  const dead = deathOverlay || view.isDead;
 
   const next = () => {
     if (dead) {
@@ -272,7 +275,9 @@ export function TutorialPanel() {
   if ((ownRun?.status === 'waiting' || ownRun?.status === 'player') && !beat?.auto) line = beat?.waiting ?? line;
   if (ownRun?.message) line = ownRun.message;
   if (lessonRun?.message) line = lessonRun.message;
-  if (dead) line = 'You fell. That happens; press Next to get back up, and the guide carries on.';
+  // The death overlay covers this card (and its Next) until its Respawn is pressed.
+  if (deathOverlay) line = 'You fell. That happens; press Respawn, and the guide carries on.';
+  else if (dead) line = 'You fell. That happens; press Next to get back up, and the guide carries on.';
 
   return (
     <HudPanel className="sidebar-panel tutorial-panel">
