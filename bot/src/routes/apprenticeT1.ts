@@ -24,6 +24,40 @@ function zone(biomeGroup: string): NodeRef {
   return { kind: "biome", biomeGroup, tier: 1, pick: "uncleared" };
 }
 
+/**
+ * Craft each recipe at `at` (farming it until the zone's level and the wallet allow) and wear it,
+ * in order: a player wears a zone's gear as soon as it unlocks (weapon at the zone's first level,
+ * armor +1, charm +2, boots +3). Idempotent on resume: a held item is not crafted again.
+ */
+export function wear(at: NodeRef, recipeIds: readonly string[]): RouteStep[] {
+  return recipeIds.flatMap((recipeId): RouteStep[] => [
+    { type: "craft", recipeIds: [recipeId], farmAt: at },
+    { type: "equip", definitionIds: [recipeId] },
+  ]);
+}
+
+/** The Clearing set: the class's start weapon and the shared vest, charm and boots (the guide's opening). */
+export const APPRENTICE_CLEARING_GEAR = [
+  "apprentice-plain-wand-t1",
+  "clearing-vest-t1",
+  "clearing-charm-t1",
+  "clearing-boots-t1",
+] as const;
+
+/**
+ * The T1 pieces the Apprentice wears as each zone unlocks them (PLACEHOLDER picks, OV-APPRENTICE):
+ * a zone's weapon when it is the stronger sigil builder, and the slot pieces that fit a ranged
+ * class (the Forest's evasion vest and big Recovery charm stay on through the Swamp and the Cave;
+ * the Mountain's Stone Sigil vest meets the Behemoth's one big blow).
+ */
+export const APPRENTICE_T1_GEAR: Readonly<Record<string, readonly string[]>> = {
+  plains: ["apprentice-branching-wand-t1", "plains-vest-t1", "plains-charm-t1", "plains-boots-t1"],
+  forest: ["apprentice-thornwood-rod-t1", "forest-vest-t1", "forest-charm-t1", "forest-boots-t1"],
+  swamp: [],
+  cave: ["apprentice-deep-grimoire-t1"],
+  mountain: ["apprentice-runestone-staff-t1", "mountain-vest-t1"],
+};
+
 /** The guide farms the Mountain to Seize; the other zones reach their cap. */
 function farmLevel(biomeGroup: string): number {
   return biomeGroup === SECOND_SEAL ? LESSON_LEVEL : biomeLevelCap(1, biomeGroup);
@@ -43,11 +77,14 @@ export function apprenticeT1Route(): Route {
       type: "classConfig",
       config: { mode: "auto", relic: [], system: { kind: "payoffs", placements: [] } },
     },
+    // The Clearing set, as the guide's opening crafts it (the Clearing caps at level 4).
+    ...wear(CLEARING, APPRENTICE_CLEARING_GEAR),
   ];
 
   for (const biomeGroup of ZONE_ORDER) {
     const at = zone(biomeGroup);
     steps.push({ type: "travel", to: at });
+    steps.push(...wear(at, APPRENTICE_T1_GEAR[biomeGroup] ?? []));
     steps.push({
       type: "farm",
       at,

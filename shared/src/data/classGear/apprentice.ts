@@ -286,7 +286,7 @@ export const APPRENTICE_GEAR: ClassGearDef = {
   ],
   lines: {
     // ── T1 ──
-    'plains-vest-t1': { name: 'Warding Sigils', text: 'Each enemy carrying your sigils deals a little less damage to you (capped).', effects: { 'apprentice.warding': 0.04 } },
+    'plains-vest-t1': { name: 'Warding Sigils', text: 'Each enemy carrying your sigils deals a little less damage to you (capped).', effects: { 'apprentice.warding': 0.08 } },
     'plains-charm-t1': { name: 'Feeding Swarm', text: 'Recovery rises a little for each enemy carrying your sigils (capped).', effects: { 'apprentice.feeding': 0.15 } },
     'forest-vest-t1': { name: 'Give Ground', text: 'While an enemy carrying your sigils is in melee reach, you move faster.', effects: { 'apprentice.give-ground': 0.25 } },
     'forest-charm-t1': { name: 'Numbing Calm', text: 'While two or more enemies near you are numbed, Recovery doubles.', effects: { 'apprentice.numbing-calm': 2 } },

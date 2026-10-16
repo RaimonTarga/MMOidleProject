@@ -53,6 +53,7 @@ import { isInvulnerableMonster, isInvulnerablePlayer } from "../../../combat/inv
 import { drainWards } from "../../../defense/barrier/wards";
 import { drainBarrier, stampBarrierDamage } from "../../../defense/barrier/barrier";
 import { DOT_EFFECT_ID } from "./constants";
+import { noteApprentice } from './telemetry';
 
 /** Sweep's secondary targets use the same sigils as the Apprentice's ordinary hits. */
 export function applyClassDotStack(world: World, attacker: PlayerEntity, defender: MonsterEntity): void {
@@ -105,6 +106,8 @@ export function updateDotArchetype(world: World, dt: number, now = Date.now()): 
     );
 
     entity.hasHealth.hp -= damage;
+    const ticker = world.getPlayerEntity(effect.sourceId);
+    if (ticker) noteApprentice(ticker, 'tick-dmg', damage);
     pushDotTickEvent(world, entity, dotElementForSource(world, effect.sourceId), damage, {
       sourceType: "class",
       sourceId: effect.sourceId,
