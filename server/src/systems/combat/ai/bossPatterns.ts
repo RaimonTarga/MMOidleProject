@@ -199,6 +199,78 @@ export function bossPatternEscaping(monster: MonsterEntity): boolean {
   return step.kind === 'conceal' && step.travelSpeed !== undefined && step.rootable === true;
 }
 
+// ── Escape locks ─────────────────────────────────────────────────────────────
+
+/**
+ * A player's hold on a monster's getaway (bible §8.9 Undertow, §10.16 Tether and Harpoon Round).
+ *
+ *   escape  Harpoon Round, Undertow: it can't dive, burrow or flee. Refuses every conceal,
+ *           every escape guard and a dash away.
+ *   dash    Tether: it can't dash or teleport away. Refuses a dash away and a conceal that
+ *           relocates without travelling. Tether is control, so a boss that accepts none
+ *           (`monsterIgnoresControl`) shrugs it off; the trophies' hold is not.
+ *
+ * A refused step ends the pattern as STOPPED (principle 5), whether it was about to begin or
+ * was already running when the lock landed: the boss stays where it is and the sequence's
+ * payoff never comes. The window is the pattern's own `stoppedBy.root` when it authors one
+ * (the encounter's answer to being held), otherwise the lock's `staggerMs`, otherwise none.
+ * Runtime-only counters on the monster, like every other per-fight boss state.
+ */
+export type EscapeLockKind = 'escape' | 'dash';
+
+const ESCAPE_LOCK_UNTIL_KEY: Record<EscapeLockKind, string> = {
+  escape: 'escapeLock.escape.until',
+  dash: 'escapeLock.dash.until',
+};
+const ESCAPE_LOCK_STAGGER_KEY: Record<EscapeLockKind, string> = {
+  escape: 'escapeLock.escape.staggerMs',
+  dash: 'escapeLock.dash.staggerMs',
+};
+/** Recovery label when the lock's own stagger is the window. PLACEHOLDER wording. */
+const ESCAPE_LOCK_LABEL = 'Held';
+
+/** Hold `monster` against `kind` of getaway for `durationMs`. A longer hold or stagger already in place stands. */
+export function lockMonsterEscape(
+  monster: MonsterEntity,
+  kind: EscapeLockKind,
+  durationMs: number,
+  now: number,
+  staggerMs = 0,
+): void {
+  if (durationMs <= 0) return;
+  const cs = monster.tracksCombat;
+  const live = monsterEscapeLocked(monster, kind, now);
+  setCounter(cs, ESCAPE_LOCK_UNTIL_KEY[kind], Math.max(live ? getCounter(cs, ESCAPE_LOCK_UNTIL_KEY[kind]) : 0, now + durationMs));
+  setCounter(cs, ESCAPE_LOCK_STAGGER_KEY[kind], Math.max(live ? getCounter(cs, ESCAPE_LOCK_STAGGER_KEY[kind]) : 0, staggerMs));
+}
+
+export function monsterEscapeLocked(monster: MonsterEntity, kind: EscapeLockKind, now: number): boolean {
+  return getCounter(monster.tracksCombat, ESCAPE_LOCK_UNTIL_KEY[kind]) > now;
+}
+
+/** The lock that refuses this step now, if any. */
+function escapeLockRefusing(monster: MonsterEntity, step: BossPatternStep, now: number): EscapeLockKind | undefined {
+  const getsAway = step.kind === 'conceal' || step.kind === 'escape-guard' || (step.kind === 'dash' && step.direction === 'away');
+  if (!getsAway) return undefined;
+  if (monsterEscapeLocked(monster, 'escape', now)) return 'escape';
+  const dashes = step.kind === 'dash' || (step.kind === 'conceal' && step.relocate !== 'none' && step.travelSpeed === undefined);
+  if (dashes && monsterEscapeLocked(monster, 'dash', now) && !monsterIgnoresControl(monster)) return 'dash';
+  return undefined;
+}
+
+/** The held boss can't get away: the pattern stops where it stands. */
+function refuseEscape(world: World, monster: MonsterEntity, pattern: BossPattern, lock: EscapeLockKind, now: number): void {
+  const staggerMs = getCounter(monster.tracksCombat, ESCAPE_LOCK_STAGGER_KEY[lock]);
+  const stagger = pattern.stoppedBy?.root ?? (staggerMs > 0 ? { staggerMs, label: ESCAPE_LOCK_LABEL } : undefined);
+  endPattern(world, monster, 'interrupted', now);
+  if (stagger) beginRecovery(world, monster, stagger.label, stagger.staggerMs, true, now);
+  world.pushEvent(monster.hasPosition.nodeId, {
+    kind: 'boss-pattern-stopped',
+    monsterId: monster.isMonster.id,
+    by: 'root',
+  });
+}
+
 /** True while an ordered pattern or its recovery owns this monster. */
 export function patternOwnsMonster(monster: MonsterEntity): boolean {
   return monster.runsBossPattern !== undefined || monster.recoversFromPattern !== undefined;
@@ -855,6 +927,13 @@ function advancePattern(world: World, monster: MonsterEntity, dt: number, now: n
       return;
     }
     const step = pattern.steps[state.stepIndex];
+    // HELD: a dive, burrow or flight the boss is about to start, or is in the middle of,
+    // while a player holds it against getting away (`lockMonsterEscape`).
+    const lock = escapeLockRefusing(monster, step, now);
+    if (lock) {
+      refuseEscape(world, monster, pattern, lock, now);
+      return;
+    }
 
     if (!state.stepStarted) {
       if (!beginStep(world, monster, state, pattern, step, now)) return; // pattern ended

@@ -65,7 +65,7 @@ import { attachMarker, detachComponent } from '../../../../ecs/markerHelpers';
 import type { World } from '../../../../world/World';
 import { applyPlayerAoe, applyPlayerAoeTo, playerAoeTargets } from '../../../combat/damage/aoeDamage';
 import { applyKnockback, repositionPlayer } from '../../../combat/damage/knockback';
-import { bossPatternEscaping, runningBossPatternDef, staggerBoss } from '../../../combat/ai/bossPatterns';
+import { bossPatternEscaping, lockMonsterEscape, runningBossPatternDef, staggerBoss } from '../../../combat/ai/bossPatterns';
 import { guardableThreatsFor } from '../../../combat/ai/guardableThreats';
 import { setAggroTarget } from '../../../combat/ai/targeting';
 import { telegraphsContainingPlayer } from '../../../combat/ai/telegraphEvasion';
@@ -1283,6 +1283,7 @@ function onSquireSlam(ctx: CombatContext, world: World): void {
     held.set(ctx.defender.isMonster.id, { until: now + tp.holdMs, staggerMs: tp.staggerMs });
     undertows.set(player, held);
     applyMonsterRoot(world, ctx.defender, tp.holdMs, player.isPlayer.id);
+    lockMonsterEscape(ctx.defender, 'escape', tp.holdMs, now, tp.staggerMs);
   }
 }
 
