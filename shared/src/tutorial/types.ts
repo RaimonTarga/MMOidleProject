@@ -6,9 +6,8 @@ import type { TutorialConceptId } from './concepts';
  *
  * Step and condition shapes are deliberately the bot harness's route
  * vocabulary (`bot/src/route/types.ts`), restricted to what the client
- * director can perform. `bot/src/routes/tutorialRoutes.ts` flattens a script
- * into an ordinary bot `Route`, so the headless bot validates exactly the
- * script a player is guided through.
+ * director can perform. No bot runs a script (the old adapter was removed);
+ * `tutorial.test.ts` is the guide's check.
  */
 
 export type TutorialNodeRef =
@@ -46,8 +45,13 @@ export type TutorialStep =
   | { type: 'farm'; at: TutorialNodeRef; until: TutorialCondition }
   /** The player picks on the skill tree; the guide only points. The bot adapter supplies the class. */
   | { type: 'chooseClass' }
-  | { type: 'craft'; recipeIds: string[] }
-  | { type: 'equip'; definitionIds: string[] }
+  /**
+   * `unless` marks a craft or equip the guide no longer needs once it holds (the
+   * player has moved past the piece's zone or tier): the step then counts as done
+   * without the item. Monotone, like a farm's `until`.
+   */
+  | { type: 'craft'; recipeIds: string[]; unless?: TutorialCondition }
+  | { type: 'equip'; definitionIds: string[]; unless?: TutorialCondition }
   /**
    * `until` turns one boss attempt into "keep fighting this boss until". Without
    * it the step ends on the first clear.
@@ -90,6 +94,12 @@ export interface TutorialBeat {
    * data: the bot never reads it; `tutorial.test.ts` counts it per level.
    */
   teaches?: TutorialConceptId[];
+  /**
+   * Runs without a press of Next: the panel starts the beat's steps as soon as
+   * it is current, its line shows while it runs, and the panel moves on by
+   * itself when they are done. Set on the gear beats (`scripts/gear.ts`) only.
+   */
+  auto?: true;
 }
 
 export interface TutorialScript {

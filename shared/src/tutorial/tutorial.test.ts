@@ -14,15 +14,18 @@ import {
   TUTORIAL_CONCEPTS,
   TUTORIAL_CONCEPTS_PER_LEVEL,
   TUTORIAL_FAREWELL,
+  TUTORIAL_GEAR_PLANS,
   TUTORIAL_OPENING,
   TUTORIAL_SEALS,
   buildSealRouteBeats,
   evaluateTutorialCondition,
+  farmZone,
   nextStepOf,
   resolveBeatIndex,
   tutorialChecklist,
   tutorialProgress,
   tutorialScriptFor,
+  tutorialStretches,
   type TutorialBeat,
   type TutorialCondition,
   type TutorialConcept,
@@ -632,22 +635,40 @@ function assertSpiritTail(script: TutorialScript): void {
   }
 }
 
+/** Gear beats (`scripts/gear.ts`) are the only beats the script adds to the class builders' own. */
+const isGearBeat = (beat: TutorialBeat) => beat.id.startsWith('gear:');
+
+/**
+ * The class's script as its builder writes it, before the gear is laid in: the class lessons,
+ * splits and pointers are pinned on this; the gear section below pins what the gear adds.
+ */
+function builderScript(script: TutorialScript): TutorialScript {
+  const build = script.classRoot ? TUTORIAL_CLASS_BEATS[script.classRoot] : undefined;
+  return { ...script, beats: [...TUTORIAL_OPENING.beats, ...(build ? build() : route)] };
+}
+
 for (const root of CLASS_ROOTS) {
   const script = tutorialScriptFor(root.id);
   assert(script.id === `tutorial-${root.name.toLowerCase()}`, `${root.id}: id ${script.id}`);
   assert(script.classRoot === root.id, `${root.id}: class root is stored`);
   assert(tutorialScriptFor(root.id) === script, `${root.id}: the script is cached`);
-  if (root.id === 'cadence-root') assertStrikerTail(script);
-  else if (root.id === 'summoner-root') assertConduitTail(script);
-  else if (root.id === 'reload-root') assertSlingerTail(script);
-  else if (root.id === 'energy-root') assertSpiritTail(script);
-  else if (TUTORIAL_CLASS_BEATS[root.id]) {
-    script.beats.slice(0, TUTORIAL_OPENING.beats.length).forEach((beat, i) => {
-      assert(beat === TUTORIAL_OPENING.beats[i], `${script.id}: opening beat ${beat.id} was replaced`);
-    });
-  } else {
-    sameRoute(script);
+  const built = builderScript(script);
+  // The gear only adds beats: every builder beat is still there, in order, with its id and line.
+  const kept = script.beats.filter((beat) => !isGearBeat(beat));
+  assert(kept.map((beat) => `${beat.id}|${beat.say}`).join(',') === built.beats.map((beat) => `${beat.id}|${beat.say}`).join(','),
+    `${script.id}: the gear changed a builder beat's id, order or line`);
+  kept.slice(0, TUTORIAL_OPENING.beats.length).forEach((beat, i) => {
+    assert(beat === TUTORIAL_OPENING.beats[i], `${script.id}: opening beat ${beat.id} was replaced`);
+  });
+  // The gear beats run without a press of Next; every other beat keeps its Next.
+  for (const beat of script.beats) {
+    assert((beat.auto === true) === isGearBeat(beat), `${script.id}/${beat.id}: ${isGearBeat(beat) ? 'a gear beat runs by itself' : 'only gear beats run by themselves'}`);
   }
+  if (root.id === 'cadence-root') assertStrikerTail(built);
+  else if (root.id === 'summoner-root') assertConduitTail(built);
+  else if (root.id === 'reload-root') assertSlingerTail(built);
+  else if (root.id === 'energy-root') assertSpiritTail(built);
+  else if (!TUTORIAL_CLASS_BEATS[root.id]) sameRoute(script);
 }
 
 {
@@ -657,6 +678,7 @@ for (const root of CLASS_ROOTS) {
   assert(classless !== TUTORIAL_OPENING, 'no class still appends the seal route');
   assert(tutorialScriptFor(null) === classless, 'the classless script is cached');
   sameRoute(classless);
+  assert(classless.beats.every((beat) => !beat.auto), 'before a class, every beat waits for Next');
   assert(resolveBeatIndex(classless, view()) === 0, 'before a class, the opening is still the first beat');
 }
 
@@ -720,6 +742,27 @@ for (const script of SCRIPTS) {
   }
 }
 
+/** What a guided player holds and wears on reaching beat `id`: every piece the gear beats before it make and put on. */
+function gearBefore(script: TutorialScript, id: string, base: TutorialView['equipment']): Pick<TutorialView, 'inventory' | 'equipment'> {
+  const inventory: string[] = [];
+  const equipment = { ...base };
+  for (const beat of script.beats.slice(0, beatIndex(script, id))) {
+    if (!isGearBeat(beat)) continue;
+    for (const step of beat.steps) {
+      if (step.type === 'craft') inventory.push(...step.recipeIds);
+      if (step.type !== 'equip') continue;
+      for (const definitionId of step.definitionIds) {
+        const slot = ITEM_DATABASE.get(definitionId)?.slot;
+        if (!slot) continue;
+        const replaced = equipment[slot];
+        if (replaced) inventory.push(replaced);
+        equipment[slot] = definitionId;
+      }
+    }
+  }
+  return { inventory, equipment };
+}
+
 // ── Resume walks the seal route forward ──────────────────────────────────────
 {
   const script = tutorialScriptFor('cadence-root');
@@ -738,7 +781,7 @@ for (const script of SCRIPTS) {
     equipment: equipped,
   };
   const at = (patch: Partial<TutorialView>, id: string) => {
-    const index = resolveBeatIndex(script, view({ ...openingDone, ...patch }));
+    const index = resolveBeatIndex(script, view({ ...openingDone, ...gearBefore(script, id, openingDone.equipment), ...patch }));
     assert(index === beatIndex(script, id), `expected ${id}, landed on ${script.beats[index]?.id ?? 'done'}`);
   };
 
@@ -788,7 +831,7 @@ for (const script of SCRIPTS) {
     },
   };
   const at = (id: string, playerTier = 1) => {
-    const index = resolveBeatIndex(script, view({ ...openingDone, playerTier, biomeLevel: levels, bossesCleared: cleared }));
+    const index = resolveBeatIndex(script, view({ ...openingDone, ...gearBefore(script, id, openingDone.equipment), playerTier, biomeLevel: levels, bossesCleared: cleared }));
     assert(index === beatIndex(script, id), `Spirit expected ${id}, got ${script.beats[index]?.id ?? 'done'}`);
   };
   at('open:plains');
@@ -834,6 +877,159 @@ for (const script of SCRIPTS) {
   const t4Cleared = [...t3Cleared, ...t4Zones.map((biome) => bossClearKey(biome, 4))];
   assert(resolveBeatIndex(script, view({ ...openingDone, playerTier: 4, biomeLevel: t4Done, bossesCleared: t4Cleared })) === script.beats.length,
     'every Tier-4 boss finishes the Spirit script');
+}
+
+// ── The guide's gear (scripts/gearPlans.ts, scripts/gear.ts) ─────────────────
+/** The level each zone has reached before each beat, read off the farms' gates (a craftable piece counts its level). */
+function reachedBefore(beats: readonly TutorialBeat[]): Map<string, Record<string, number>> {
+  const levels: Record<string, number> = {};
+  const out = new Map<string, Record<string, number>>();
+  for (const beat of beats) {
+    out.set(beat.id, { ...levels });
+    for (const step of beat.steps) {
+      if (step.type !== 'farm') continue;
+      // Only the zone the farm fights in; a gate on another zone is a guard.
+      const fought = farmZone(step.at);
+      for (const gate of conditionsIn(step.until)) {
+        if (gate.type === 'biomeLevelAtLeast' && gate.biomeGroup === fought) levels[fought] = Math.max(levels[fought] ?? 0, gate.level);
+        if (gate.type === 'canCraft') {
+          const recipe = RECIPE_DATABASE.get(gate.recipeId);
+          if (recipe && recipe.recipeGroup === fought) levels[fought] = Math.max(levels[fought] ?? 0, recipe.requiredBiomeLevel);
+        }
+      }
+    }
+  }
+  return out;
+}
+
+assert(!TUTORIAL_FAREWELL[0].includes('tier-2 weapon'), 'the farewell no longer promises a tier-2 weapon');
+
+for (const root of CLASS_ROOTS) {
+  const script = tutorialScriptFor(root.id);
+  const plan = TUTORIAL_GEAR_PLANS[root.id];
+  if (!plan) throw new Error(`${root.id}: no gear plan`);
+  const archetype = root.id.replace(/-root$/, '');
+  const built = builderScript(script);
+  const tail = built.beats.slice(TUTORIAL_OPENING.beats.length);
+  const stretches = tutorialStretches(tail);
+  const pickName = SKILL_TREE.get(plan.defaultPick)?.name;
+  assert(!!pickName && SKILL_TREE.get(plan.defaultPick)?.parent === root.id, `${root.id}: the default pick ${plan.defaultPick} is this class's tier-2 node`);
+
+  // How far the guide farms each zone in each tier, in the builder's own beats.
+  const farmedTo = new Map<string, number>();
+  for (const beat of tail) {
+    const step = beat.steps[0];
+    if (step?.type !== 'farm' || step.at.kind !== 'biome') continue;
+    const key = `${step.at.tier}:${step.at.biomeGroup}`;
+    for (const gate of conditionsIn(step.until)) {
+      if (gate.type === 'biomeLevelAtLeast' && gate.biomeGroup === step.at.biomeGroup) {
+        farmedTo.set(key, Math.max(farmedTo.get(key) ?? 0, gate.level));
+      }
+    }
+  }
+
+  const gear = script.beats.map((beat, index) => ({ beat, index })).filter(({ beat }) => isGearBeat(beat));
+  const planned = [plan.start, ...stretches.flatMap((s) => plan.tiers[s.tier as 1 | 2 | 3 | 4]?.[s.zone] ?? [])];
+  const worn = gear.map(({ beat }) => beat.steps.find((step) => step.type === 'equip'));
+  assert(worn.map((step) => (step?.type === 'equip' ? step.definitionIds.join('+') : '?')).sort().join(',') === [...planned].sort().join(','),
+    `${script.id}: the gear beats wear exactly the plan`);
+  for (const [tier, zones] of Object.entries(plan.tiers)) {
+    for (const zone of Object.keys(zones)) {
+      assert(stretches.some((s) => s.tier === Number(tier) && s.zone === zone), `${script.id}: the plan names the tier-${tier} ${zone}, which the guide never farms`);
+    }
+  }
+  assert(script.beats[beatIndex(script, 'choose-class') + 1]?.id === `gear:${plan.start}`, `${script.id}: the class's Clearing weapon comes right after the class pick`);
+
+  for (const { beat, index } of gear) {
+    const where = `${script.id}/${beat.id}`;
+    const equip = beat.steps.find((step) => step.type === 'equip');
+    const craft = beat.steps.find((step) => step.type === 'craft');
+    const farm = beat.steps[0];
+    if (equip?.type !== 'equip') throw new Error(`${where}: wears nothing`);
+    assert(equip.definitionIds.length === 1 && !!equip.unless, `${where}: one piece, with its unless`);
+    const id = equip.definitionIds[0];
+    const recipe = RECIPE_DATABASE.get(id);
+    if (!recipe) throw new Error(`${where}: ${id} is not a recipe`);
+    // A class weapon of this class, or a shared base every class can make.
+    if (recipe.slot === 'weapon') assert(!!recipe.classes?.includes(archetype as never), `${where}: ${id} is not a ${root.name} weapon`);
+    else assert(!recipe.classes || recipe.classes.length === 0, `${where}: ${id} is not a shared base`);
+    assert(/[.!?]$/.test(beat.say) && !/[.!?]\s/.test(beat.say) && !/\d/.test(beat.say), `${where}: one sentence, no numbers: "${beat.say}"`);
+    assert(beat.say.includes(recipe.name), `${where}: the line names the ${recipe.name}`);
+    if (!craft) {
+      // Worn again: made by an earlier gear beat.
+      assert(beat.id === `gear:${id}:again` && gear.some((g) => g.index < index && g.beat.id === `gear:${id}`), `${where}: worn again before it was made`);
+      continue;
+    }
+    assert(craft.type === 'craft' && craft.recipeIds.join() === id && !!craft.unless, `${where}: crafts what it wears`);
+    if (farm.type !== 'farm') throw new Error(`${where}: does not farm first`);
+    if (id === plan.start) {
+      assert(recipe.tier === 1 && recipe.recipeGroup === 'clearing' && recipe.requiredBiomeLevel <= biomeLevelCap(1, 'clearing'), `${where}: a Clearing weapon`);
+      assert(farm.at.kind === 'node', `${where}: made in the Clearing`);
+      continue;
+    }
+    if (farm.at.kind !== 'biome') throw new Error(`${where}: farms no zone`);
+    const tier = farm.at.tier;
+    const level = recipe.requiredBiomeLevel;
+    // The right tier, made in its own zone, which the guide farms to that level in that tier.
+    assert(recipe.tier === tier, `${where}: a tier-${recipe.tier} piece in the tier-${tier} stretch`);
+    assert(farm.at.biomeGroup === recipe.recipeGroup, `${where}: made in ${farm.at.biomeGroup}, but it is a ${recipe.recipeGroup} recipe`);
+    assert(level > biomeLevelCap(tier - 1, recipe.recipeGroup), `${where}: level ${level} belongs to an earlier tier`);
+    assert(level <= (farmedTo.get(`${tier}:${recipe.recipeGroup}`) ?? 0),
+      `${where}: opens at ${recipe.recipeGroup} ${level}, past the ${farmedTo.get(`${tier}:${recipe.recipeGroup}`)} the guide farms it to`);
+    // Made in its tier's stretch: the next boss is one of its tier.
+    const nextBoss = script.beats.slice(index).flatMap((b) => b.steps).find((step) => step.type === 'attemptBoss');
+    assert(nextBoss?.type === 'attemptBoss' && nextBoss.tier === tier, `${where}: made after its tier's bosses`);
+    if (recipe.slot === 'weapon' && tier >= 2) {
+      assert(beat.say.includes(pickName!) && beat.say.includes('Make tab'), `${where}: a T2-T4 weapon line names the default pick and the Make tab`);
+    } else {
+      assert(!beat.say.includes('default'), `${where}: only T2-T4 weapons speak of the default`);
+    }
+  }
+
+  // The gear never brings a builder line up earlier: each beat's zones have reached at least the
+  // levels they had in the builder's script (so a lesson still comes up at its level).
+  const before = reachedBefore(built.beats);
+  const after = reachedBefore(script.beats);
+  for (const beat of built.beats) {
+    const was = before.get(beat.id)!;
+    const now = after.get(beat.id)!;
+    for (const [zone, level] of Object.entries(was)) {
+      assert((now[zone] ?? 0) >= level, `${script.id}/${beat.id}: comes up at ${zone} ${now[zone] ?? 0}, before ${level}`);
+    }
+  }
+}
+
+// Resume with the gear in place.
+{
+  const script = tutorialScriptFor('cadence-root');
+  const clearing = { ...emptyEquipment(), weapon: 'primordial-club', armor: 'clearing-vest-t1' };
+  const classed = { playerTier: 1, selectedClass: 'cadence-root', biomeLevel: { clearing: 3 }, equipment: clearing };
+  assert(resolveBeatIndex(script, view(classed)) === beatIndex(script, 'gear:striker-plain-sword-t1'), 'a new Striker makes its own weapon next');
+  const sword = { ...clearing, weapon: 'striker-plain-sword-t1' };
+  assert(resolveBeatIndex(script, view({ ...classed, inventory: ['primordial-club'], equipment: sword })) === beatIndex(script, 'farm:clearing-charm-t1'),
+    'the Clearing weapon worn, the guide goes on to the charm');
+  // A later weapon worn by hand: the Plains weapon is skipped, not made and put on over it.
+  const set = { ...sword, recovery: 'clearing-charm-t1', mobility: 'clearing-boots-t1', weapon: 'striker-twin-fangs-t1' };
+  const ahead = view({ playerTier: 1, selectedClass: 'cadence-root', biomeLevel: { clearing: 4, plains: 2 }, inventory: ['primordial-club'], equipment: set });
+  assert(resolveBeatIndex(script, ahead) === beatIndex(script, 'gear:plains-vest-t1'), `a later weapon worn skips the earlier ones (at ${script.beats[resolveBeatIndex(script, ahead)]?.id})`);
+  // Past the zone: a Tier 1 Striker fighting in the Forest is not sent back for the Plains set.
+  const past = view({
+    playerTier: 1, selectedClass: 'cadence-root', biomeLevel: { clearing: 4, plains: 6, forest: 1 },
+    bossesCleared: [bossClearKey('plains', 1)], inventory: ['primordial-club'], equipment: { ...set, weapon: 'striker-plain-sword-t1' },
+  });
+  assert(resolveBeatIndex(script, past) === beatIndex(script, 'zone:forest'), 'the Plains gear is moot once the Forest is fought in');
+  // The Plains charm worn again in the Jungle does not send the guide back to the Cave charm.
+  const t2Levels: Record<string, number> = { clearing: 4 };
+  for (const zone of ['plains', 'forest', 'swamp', 'mountain', 'cave']) t2Levels[zone] = biomeLevelCap(2, zone);
+  t2Levels.jungle = absoluteZoneLevel({ kind: 'zone', biome: 'jungle', tier: 2, level: 2 });
+  const t2Cleared = [bossClearKey('plains', 1), bossClearKey('mountain', 1), ...['plains', 'forest', 'mountain', 'swamp', 'cave'].map((zone) => bossClearKey(zone, 2))];
+  const jungle = (id: string) => view({
+    playerTier: 3, selectedClass: 'cadence-root', biomeLevel: t2Levels, bossesCleared: t2Cleared,
+    ...gearBefore(script, id, { ...set, weapon: 'primordial-club', armor: 'clearing-vest-t1' }),
+  });
+  assert(resolveBeatIndex(script, jungle('gear:plains-charm-t2:again')) === beatIndex(script, 'gear:plains-charm-t2:again'),
+    `the Jungle puts the Plains charm back on (at ${script.beats[resolveBeatIndex(script, jungle('gear:plains-charm-t2:again'))]?.id})`);
+  assert(resolveBeatIndex(script, jungle('striker2:jungle-lesson')) === beatIndex(script, 'striker2:jungle-lesson'), 'wearing it again does not undo the Cave charm beat');
 }
 
 // ── The first-hour checklist ─────────────────────────────────────────────────

@@ -16,14 +16,7 @@ import type { TutorialBeat, TutorialScript, TutorialStep } from './types';
  * pick up at the right place.
  */
 
-/**
- * Whether `step` needs no further action.
- *
- * `later` is every step after this one in the script: an equip step that a
- * later step has already replaced is satisfied, otherwise the Clearing club
- * would be re-equipped over the Plains broadsword on every resume.
- */
-/** The steps after one step, without copying (resolution runs at delta rate over ~300 steps). */
+/** The steps after (or before) one step, without copying (resolution runs at delta rate over every step). */
 export interface LaterSteps {
   some(predicate: (step: TutorialStep) => boolean): boolean;
 }
@@ -37,23 +30,61 @@ function laterThan(all: readonly TutorialStep[], from: number): LaterSteps {
   };
 }
 
-export function stepSatisfied(step: TutorialStep, view: TutorialView, later: LaterSteps): boolean {
+function beforeThan(all: readonly TutorialStep[], until: number): LaterSteps {
+  return {
+    some(predicate) {
+      for (let i = 0; i < until; i += 1) if (predicate(all[i])) return true;
+      return false;
+    },
+  };
+}
+
+const NO_STEPS: LaterSteps = { some: () => false };
+
+/**
+ * A later step took `id`'s slot: what is worn there is first put on AFTER this
+ * step. An item the script also put on earlier (the guide wears a piece again
+ * in a later zone) does not count, or every piece between the two would be
+ * skipped.
+ */
+function superseded(id: string, view: TutorialView, later: LaterSteps, earlier: LaterSteps): boolean {
+  const slot = ITEM_DATABASE.get(id)?.slot;
+  if (!slot) return false;
+  const worn = view.equipment[slot];
+  if (!worn || worn === id) return false;
+  const putsOn = (step: TutorialStep) => step.type === 'equip' && step.definitionIds.includes(worn);
+  return later.some(putsOn) && !earlier.some(putsOn);
+}
+
+/**
+ * Whether `step` needs no further action.
+ *
+ * `later` is every step after this one in the script and `earlier` every step
+ * before it: a craft or equip step whose slot a later step has already filled
+ * is satisfied, otherwise the Clearing club would be made and re-equipped over
+ * the Plains weapon on every resume. A craft or equip whose `unless` holds is
+ * satisfied too.
+ */
+export function stepSatisfied(
+  step: TutorialStep,
+  view: TutorialView,
+  later: LaterSteps,
+  earlier: LaterSteps = NO_STEPS,
+): boolean {
   switch (step.type) {
     case 'farm':
       return evaluateTutorialCondition(step.until, view);
     case 'chooseClass':
       return view.selectedClass !== null;
     case 'craft':
-      return step.recipeIds.every((id) => viewHasItem(view, id));
+      if (step.unless && evaluateTutorialCondition(step.unless, view)) return true;
+      return step.recipeIds.every((id) => viewHasItem(view, id) || superseded(id, view, later, earlier));
     case 'equip':
+      if (step.unless && evaluateTutorialCondition(step.unless, view)) return true;
       return step.definitionIds.every((id) => {
         const slot = ITEM_DATABASE.get(id)?.slot;
         if (!slot) return false;
-        const worn = view.equipment[slot];
-        if (worn === id) return true;
-        // A later step took the slot.
-        return !!worn && later.some((next) =>
-          next.type === 'equip' && next.definitionIds.includes(worn));
+        return view.equipment[slot] === id || superseded(id, view, later, earlier);
       });
     case 'attemptBoss':
       return step.until
@@ -76,7 +107,7 @@ export function beatDone(script: TutorialScript, beatIndex: number, view: Tutori
   const all = flattenSteps(script);
   const offset = beatOffset(script, beatIndex);
   const beat = script.beats[beatIndex];
-  return beat.steps.every((step, i) => stepSatisfied(step, view, laterThan(all, offset + i + 1)));
+  return beat.steps.every((step, i) => stepSatisfied(step, view, laterThan(all, offset + i + 1), beforeThan(all, offset + i)));
 }
 
 /** Index of the beat to show, or `script.beats.length` when the script is finished. */
@@ -86,7 +117,7 @@ export function resolveBeatIndex(script: TutorialScript, view: TutorialView): nu
   for (let i = 0; i < script.beats.length; i += 1) {
     const steps = script.beats[i].steps;
     for (let j = 0; j < steps.length; j += 1) {
-      if (!stepSatisfied(steps[j], view, laterThan(all, offset + j + 1))) return i;
+      if (!stepSatisfied(steps[j], view, laterThan(all, offset + j + 1), beforeThan(all, offset + j))) return i;
     }
     offset += steps.length;
   }
@@ -101,7 +132,7 @@ export function nextStepOf(script: TutorialScript, beat: TutorialBeat, view: Tut
   const offset = beatOffset(script, index);
   for (let i = 0; i < beat.steps.length; i += 1) {
     const step = beat.steps[i];
-    if (!stepSatisfied(step, view, laterThan(all, offset + i + 1))) return step;
+    if (!stepSatisfied(step, view, laterThan(all, offset + i + 1), beforeThan(all, offset + i))) return step;
   }
   return null;
 }

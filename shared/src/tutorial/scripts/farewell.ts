@@ -14,7 +14,7 @@
  * rework, so the old "spend it on a style" pointer was replaced.
  */
 export const TUTORIAL_FAREWELL: readonly string[] = [
-  'Two seals, Tier 2, and a tier-2 weapon. The first stretch is done, and the road goes on.',
+  'Two seals, Tier 2, and a full set of gear made for your class. The first stretch is done, and the road goes on.',
   'Keep going forward: every zone is open, and each tier brings a choice on the Passive Tree.',
   'Your class screen sets how your class plays. From here the guide has said all it can, and the rest is yours.',
 ];
