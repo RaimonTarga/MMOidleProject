@@ -68,10 +68,10 @@ export const mountainRecipeEntries = [
     id: 'mountain-vest-t1', name: 'Fallen Knight Plate',
     recipeGroup: 'mountain', requiredBiomeLevel: 2, slot: 'armor',
     cost: { blue: 22 }, stats: { "maxHp": 54, "plating": 2, "damageReduction": 0.04 },
-    mechanicEffects: { "guard.potency-pct": 0.25 },
+    mechanicEffects: { "defense.max-hit-pct": 0.3, "defense.max-hit-mult": 0.5 }, // PLACEHOLDER: the base's damage cap (bible x.16), was the removed Guards' potency 0.25
     tier: 1,
     icon: 'items/armor/fallen-knight-plate.png',
-    description: "A sturdy health reserve that strengthens timed Guards.",
+    description: "Heavy plate that blunts the biggest blows: whatever a hit deals above 30% of your HP lands at half.",
     // T1 economy pass (2026-08-28): accelerating +1..+5 curve, total ~497 (was 496).
     // +5 catalyst from mountain-vest-t2's own tag ("Guard-amplifying plate →
     // Heavy").
@@ -127,10 +127,10 @@ export const mountainRecipeEntries = [
     id: 'mountain-vest-t2', name: 'Iron Crusader Plate',
     recipeGroup: 'mountain', requiredBiomeLevel: 8, slot: 'armor',
     cost: { blue: 52 }, stats: { "maxHp": 99, "plating": 2, "damageReduction": 0.08 }, // family-tag: Guard-amplifying plate → Heavy
-    mechanicEffects: { "guard.potency-pct": 0.3 },
+    mechanicEffects: { "defense.max-hit-pct": 0.3, "defense.max-hit-mult": 0.5 }, // PLACEHOLDER: the base's damage cap (bible x.16), was the removed Guards' potency 0.3
     tier: 2,
     icon: 'items/armor/iron-crusader-plate.png',
-    description: "A sturdy health reserve that strengthens timed Guards.",
+    description: "Heavy plate that blunts the biggest blows: whatever a hit deals above 30% of your HP lands at half.",
   }],
 
   // T2 economy pass (2026-08-29): now an EVOLUTION of mountain-charm-t1 at +5.
@@ -177,10 +177,10 @@ export const mountainRecipeEntries = [
     id: 'mountain-vest-t3', name: 'Summit Aegis',
     recipeGroup: 'mountain', requiredBiomeLevel: 14, slot: 'armor',
     cost: { blue: 116, red: 29 }, stats: { "maxHp": 270, "plating": 3, "damageReduction": 0.17 }, // family-tag: Guard-amplifying plate → Heavy
-    mechanicEffects: { "guard.potency-pct": 0.35 },
+    mechanicEffects: { "defense.max-hit-pct": 0.3, "defense.max-hit-mult": 0.5 }, // PLACEHOLDER: the base's damage cap (bible x.16), was the removed Guards' potency 0.35
     tier: 3,
     icon: 'items/armor/summit-aegis.png',
-    description: "A sturdy health reserve that strengthens timed Guards.",
+    description: "Heavy plate that blunts the biggest blows: whatever a hit deals above 30% of your HP lands at half.",
   }],
 
   ['mountain-charm-t3', {
@@ -240,10 +240,10 @@ export const mountainRecipeEntries = [
     recipeGroup: 'mountain', requiredBiomeLevel: 20, slot: 'armor',
     cost: { blue: 256, red: 64 }, stats: { "maxHp": 519, "plating": 5, "damageReduction": 0.21 }, // family-tag: capstone Guard plate → Heavy
     // Timed Guard potency replaces the former cap-triggered barrier refill.
-    mechanicEffects: { "guard.potency-pct": 0.4 },
+    mechanicEffects: { "defense.max-hit-pct": 0.3, "defense.max-hit-mult": 0.5 }, // PLACEHOLDER: the base's damage cap (bible x.16), was the removed Guards' potency 0.4
     tier: 4,
     icon: 'items/armor/titans-keep.png',
-    description: "A sturdy health reserve that strengthens timed Guards.",
+    description: "Heavy plate that blunts the biggest blows: whatever a hit deals above 30% of your HP lands at half.",
   }],
 
   // Branch: trades some of Titan's Keep plating for a barrier-break payout.
