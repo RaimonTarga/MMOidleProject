@@ -30,13 +30,15 @@ const TIER = 4;
 /**
  * The tier-4 gear the route wears, per zone, as each zone level unlocks it (OV-CONDUIT, PLACEHOLDER
  * picks): the Mountain set (its weapon meets the first T4 boss), the Tundra charm, the Jungle Swift
- * Staff, the Desert boots, the Trench Heavy Staff and vest.
+ * Staff, the Desert boots, the Volcanic vest (Fireproof: the Caldera's Simmering Burn), the Trench Heavy
+ * Staff and vest.
  */
 export const CONDUIT_T4_GEAR: Readonly<Record<string, readonly string[]>> = {
   mountain: ["conduit-ability-staff-t4", "mountain-vest-t4", "mountain-charm-t4", "mountain-boots-t4"],
   tundra: ["tundra-charm-t4"],
   jungle: ["conduit-swift-staff-t4"],
   desert: ["desert-boots-t4"],
+  volcanic: ["volcanic-vest-t4"],
   trench: ["conduit-heavy-staff-t4", "trench-vest-t4"],
 };
 
