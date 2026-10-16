@@ -11,7 +11,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-plain-pistol-t1', name: 'Plain Pistol',
       recipeGroup: 'clearing', requiredBiomeLevel: 1, slot: 'weapon',
-      cost: { green: 4 }, stats: { attack: 8 }, attacksPerSecond: 0.98, tier: 1,
+      cost: { green: 4 }, stats: { attack: 8, attackRange: 40 }, attacksPerSecond: 0.98, tier: 1,
       icon: 'items/weapons/primordial-club.png',
       description: 'A plain pistol. The reload is stationary.',
       mechanicEffects: { 'reload.max-ammo': 8, 'reload.reload-time-ms': 1600 },
@@ -19,7 +19,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-pepperbox-t1', name: 'Pepperbox',
       recipeGroup: 'plains', requiredBiomeLevel: 1, slot: 'weapon',
-      cost: { yellow: 10 }, stats: { attack: 19 }, attacksPerSecond: 1.17, tier: 1,
+      cost: { yellow: 10 }, stats: { attack: 19, attackRange: 80 }, attacksPerSecond: 1.17, tier: 1,
       icon: 'items/weapons/iron-broadsword.png',
       description: 'Fast fire, a big clip, and light rounds. Scatter nicks one more enemy.',
       mechanicEffects: { 'reload.max-ammo': 12, 'reload.reload-time-ms': 1800, 'slinger.scatter-extra': 1 },
@@ -27,7 +27,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-carbine-t1', name: 'Carbine',
       recipeGroup: 'forest', requiredBiomeLevel: 1, slot: 'weapon',
-      cost: { green: 20 }, stats: { attack: 12 }, attacksPerSecond: 2.08, tier: 1,
+      cost: { green: 20 }, stats: { attack: 12, attackRange: 80 }, attacksPerSecond: 2.08, tier: 1,
       icon: 'items/weapons/flash-rapier.png',
       description: 'Quick fire and a quick reload. The first rounds of each clip hit harder.',
       mechanicEffects: { 'reload.max-ammo': 8, 'reload.reload-time-ms': 1000, 'slinger.opener-pct': 0.3 },
@@ -35,7 +35,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-snakebite-pistol-t1', name: 'Snakebite Pistol',
       recipeGroup: 'swamp', requiredBiomeLevel: 1, slot: 'weapon',
-      cost: { purple: 22 }, stats: { attack: 18 }, attacksPerSecond: 1.17, tier: 1,
+      cost: { purple: 22 }, stats: { attack: 18, attackRange: 80 }, attacksPerSecond: 1.17, tier: 1,
       icon: 'items/weapons/poison-dagger.png',
       description: 'Slow fire and a small clip. Your poison lasts longer, and the last round hits a poisoned target harder.',
       mechanicEffects: { 'reload.max-ammo': 5, 'reload.reload-time-ms': 1800, 'slinger.poison-long-pct': 0.5, 'slinger.last-vs-poisoned-pct': 0.5 },
@@ -43,7 +43,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-hand-cannon-t1', name: 'Hand Cannon',
       recipeGroup: 'mountain', requiredBiomeLevel: 1, slot: 'weapon',
-      cost: { blue: 22 }, stats: { attack: 38 }, attacksPerSecond: 0.72, tier: 1,
+      cost: { blue: 22 }, stats: { attack: 38, attackRange: 80 }, attacksPerSecond: 0.72, tier: 1,
       icon: 'items/weapons/heavy-hammer.png',
       description: 'Slow fire and heavy rounds. The last round hits much harder.',
       mechanicEffects: { 'reload.max-ammo': 6, 'reload.reload-time-ms': 2000, 'slinger.last-round-pct': 1 },
@@ -51,7 +51,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-drum-gun-t1', name: 'Drum Gun',
       recipeGroup: 'cave', requiredBiomeLevel: 1, slot: 'weapon',
-      cost: { red: 26 }, stats: { attack: 29 }, attacksPerSecond: 1.43, tier: 1,
+      cost: { red: 26 }, stats: { attack: 29, attackRange: 80 }, attacksPerSecond: 1.43, tier: 1,
       icon: 'items/weapons/chaotic-axe.png',
       description: 'A big drum and a slow reload. Each round of a clip hits a bit harder than the last.',
       mechanicEffects: { 'reload.max-ammo': 16, 'reload.reload-time-ms': 2600, 'slinger.ramp-pct': 0.05 },
@@ -60,7 +60,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-pepperbox-t2', name: 'Pepperbox',
       recipeGroup: 'plains', requiredBiomeLevel: 7, slot: 'weapon',
-      cost: { yellow: 45 }, stats: { attack: 51 }, attacksPerSecond: 1.30, tier: 2,
+      cost: { yellow: 45 }, stats: { attack: 51, attackRange: 80 }, attacksPerSecond: 1.30, tier: 2,
       icon: 'items/weapons/knight-steelsword.png',
       description: 'Fast fire, a big clip, and light rounds. Scatter nicks one more enemy.',
       mechanicEffects: { 'reload.max-ammo': 12, 'reload.reload-time-ms': 1800, 'slinger.scatter-extra': 1 },
@@ -68,7 +68,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-carbine-t2', name: 'Carbine',
       recipeGroup: 'forest', requiredBiomeLevel: 7, slot: 'weapon',
-      cost: { green: 60 }, stats: { attack: 35 }, attacksPerSecond: 2.21, tier: 2,
+      cost: { green: 60 }, stats: { attack: 35, attackRange: 80 }, attacksPerSecond: 2.21, tier: 2,
       icon: 'items/weapons/gale-needle.png',
       description: 'Quick fire and a quick reload. The first rounds of each clip hit harder.',
       mechanicEffects: { 'reload.max-ammo': 8, 'reload.reload-time-ms': 1000, 'slinger.opener-pct': 0.3 },
@@ -76,7 +76,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-snakebite-pistol-t2', name: 'Snakebite Pistol',
       recipeGroup: 'swamp', requiredBiomeLevel: 7, slot: 'weapon',
-      cost: { purple: 52 }, stats: { attack: 47 }, attacksPerSecond: 1.30, tier: 2,
+      cost: { purple: 52 }, stats: { attack: 47, attackRange: 80 }, attacksPerSecond: 1.30, tier: 2,
       icon: 'items/weapons/venom-knife.png',
       description: 'Slow fire and a small clip. Your poison lasts longer, and the last round hits a poisoned target harder.',
       mechanicEffects: { 'reload.max-ammo': 5, 'reload.reload-time-ms': 1800, 'slinger.poison-long-pct': 0.5, 'slinger.last-vs-poisoned-pct': 0.5 },
@@ -84,7 +84,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-hand-cannon-t2', name: 'Hand Cannon',
       recipeGroup: 'mountain', requiredBiomeLevel: 7, slot: 'weapon',
-      cost: { blue: 52 }, stats: { attack: 85 }, attacksPerSecond: 0.72, tier: 2,
+      cost: { blue: 52 }, stats: { attack: 85, attackRange: 80 }, attacksPerSecond: 0.72, tier: 2,
       icon: 'items/weapons/quake-hammer.png',
       description: 'Slow fire and heavy rounds. The last round hits much harder.',
       mechanicEffects: { 'reload.max-ammo': 6, 'reload.reload-time-ms': 2000, 'slinger.last-round-pct': 1 },
@@ -92,7 +92,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-drum-gun-t2', name: 'Drum Gun',
       recipeGroup: 'cave', requiredBiomeLevel: 7, slot: 'weapon',
-      cost: { red: 60 }, stats: { attack: 60 }, attacksPerSecond: 1.56, tier: 2,
+      cost: { red: 60 }, stats: { attack: 60, attackRange: 80 }, attacksPerSecond: 1.56, tier: 2,
       icon: 'items/weapons/ruinous-axe.png',
       description: 'A big drum and a slow reload. Each round of a clip hits a bit harder than the last.',
       mechanicEffects: { 'reload.max-ammo': 16, 'reload.reload-time-ms': 2600, 'slinger.ramp-pct': 0.05 },
@@ -100,7 +100,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-hunting-rifle-t2', name: 'Hunting Rifle',
       recipeGroup: 'jungle', requiredBiomeLevel: 1, slot: 'weapon',
-      cost: { green: 55 }, stats: { attack: 24, onHitDamage: 23, attackRange: 60 }, attacksPerSecond: 2.02, tier: 2,
+      cost: { green: 55 }, stats: { attack: 24, onHitDamage: 23, attackRange: 140 }, attacksPerSecond: 2.02, tier: 2,
       icon: 'items/weapons/stinger-rapier.png',
       description: 'Long reach. Rounds hit harder the farther the target is.',
       // PLACEHOLDER: reach, clip and reload are not in the bible.
@@ -109,7 +109,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-long-rifle-t2', name: 'Long Rifle',
       recipeGroup: 'desert', requiredBiomeLevel: 1, slot: 'weapon',
-      cost: { yellow: 70 }, stats: { attack: 65, attackRange: 140 }, attacksPerSecond: 1.04, tier: 2,
+      cost: { yellow: 70 }, stats: { attack: 65, attackRange: 220 }, attacksPerSecond: 1.04, tier: 2,
       icon: 'items/weapons/sunsteel-falchion.png',
       description: 'The longest reach. It outranges kiters.',
       // PLACEHOLDER: reach, clip and reload are not in the bible.
@@ -119,7 +119,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-snakebite-pistol-t3', name: 'Snakebite Pistol',
       recipeGroup: 'swamp', requiredBiomeLevel: 13, slot: 'weapon',
-      cost: { purple: 116 }, stats: { attack: 86 }, attacksPerSecond: 1.30, tier: 3,
+      cost: { purple: 116 }, stats: { attack: 86, attackRange: 80 }, attacksPerSecond: 1.30, tier: 3,
       icon: 'items/weapons/plague-fang.png',
       description: 'Slow fire and a small clip. Your poison lasts longer, and the last round hits a poisoned target harder.',
       mechanicEffects: { 'reload.max-ammo': 5, 'reload.reload-time-ms': 1800, 'slinger.poison-long-pct': 0.5, 'slinger.last-vs-poisoned-pct': 0.5 },
@@ -127,7 +127,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-hand-cannon-t3', name: 'Hand Cannon',
       recipeGroup: 'mountain', requiredBiomeLevel: 13, slot: 'weapon',
-      cost: { blue: 116 }, stats: { attack: 164 }, attacksPerSecond: 0.72, tier: 3,
+      cost: { blue: 116 }, stats: { attack: 164, attackRange: 80 }, attacksPerSecond: 0.72, tier: 3,
       icon: 'items/weapons/avalanche-maul.png',
       description: 'Slow fire and heavy rounds. The last round hits much harder.',
       mechanicEffects: { 'reload.max-ammo': 6, 'reload.reload-time-ms': 2000, 'slinger.last-round-pct': 1 },
@@ -135,7 +135,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-drum-gun-t3', name: 'Drum Gun',
       recipeGroup: 'cave', requiredBiomeLevel: 13, slot: 'weapon',
-      cost: { red: 120 }, stats: { attack: 112 }, attacksPerSecond: 1.56, tier: 3,
+      cost: { red: 120 }, stats: { attack: 112, attackRange: 80 }, attacksPerSecond: 1.56, tier: 3,
       icon: 'items/weapons/cataclysm-axe.png',
       description: 'A big drum and a slow reload. Each round of a clip hits a bit harder than the last.',
       mechanicEffects: { 'reload.max-ammo': 16, 'reload.reload-time-ms': 2600, 'slinger.ramp-pct': 0.05 },
@@ -143,7 +143,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-hunting-rifle-t3', name: 'Hunting Rifle',
       recipeGroup: 'jungle', requiredBiomeLevel: 7, slot: 'weapon',
-      cost: { green: 120 }, stats: { attack: 50, onHitDamage: 38, attackRange: 60 }, attacksPerSecond: 2.15, tier: 3,
+      cost: { green: 120 }, stats: { attack: 50, onHitDamage: 38, attackRange: 140 }, attacksPerSecond: 2.15, tier: 3,
       icon: 'items/weapons/venomthorn-rapier.png',
       description: 'Long reach. Rounds hit harder the farther the target is.',
       // PLACEHOLDER: reach, clip and reload are not in the bible (copied from the job's first tier).
@@ -153,7 +153,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-carbine-t3', name: 'Carbine',
       recipeGroup: 'jungle', requiredBiomeLevel: 7, slot: 'weapon',
-      cost: { green: 120 }, stats: { attack: 50, onHitDamage: 38 }, attacksPerSecond: 2.15, tier: 3,
+      cost: { green: 120 }, stats: { attack: 50, onHitDamage: 38, attackRange: 80 }, attacksPerSecond: 2.15, tier: 3,
       icon: 'items/weapons/venomthorn-rapier.png',
       description: 'Quick fire and a quick reload. The first rounds of each clip hit harder.',
       mechanicEffects: { 'reload.max-ammo': 8, 'reload.reload-time-ms': 1000, 'slinger.opener-pct': 0.3 },
@@ -161,7 +161,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-long-rifle-t3', name: 'Long Rifle',
       recipeGroup: 'desert', requiredBiomeLevel: 7, slot: 'weapon',
-      cost: { yellow: 116 }, stats: { attack: 112, attackRange: 140 }, attacksPerSecond: 1.04, tier: 3,
+      cost: { yellow: 116 }, stats: { attack: 112, attackRange: 220 }, attacksPerSecond: 1.04, tier: 3,
       icon: 'items/weapons/solar-falchion.png',
       description: 'The longest reach. It outranges kiters.',
       // PLACEHOLDER: reach, clip and reload are not in the bible (copied from the job's first tier).
@@ -170,7 +170,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-frostlock-rifle-t3', name: 'Frostlock Rifle',
       recipeGroup: 'tundra', requiredBiomeLevel: 1, slot: 'weapon',
-      cost: { blue: 124 }, stats: { attack: 162, attackRange: 100 }, attacksPerSecond: 0.65, tier: 3,
+      cost: { blue: 124 }, stats: { attack: 162, attackRange: 180 }, attacksPerSecond: 0.65, tier: 3,
       icon: 'items/weapons/permafrost-maul.png',
       description: 'Rounds hit harder against chilled, slowed or rooted enemies.',
       // PLACEHOLDER: reach, clip and reload are not in the bible (copied from the job's first tier).
@@ -179,7 +179,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-firebrand-pistol-t3', name: 'Firebrand Pistol',
       recipeGroup: 'volcanic', requiredBiomeLevel: 1, slot: 'weapon',
-      cost: { red: 140 }, stats: { attack: 70 }, attacksPerSecond: 2.15, tier: 3,
+      cost: { red: 140 }, stats: { attack: 70, attackRange: 80 }, attacksPerSecond: 2.15, tier: 3,
       icon: 'items/weapons/cinderlash.png',
       description: "Each step of the fight's Heat makes every round hit harder.",
       // PLACEHOLDER: reach, clip and reload are not in the bible (copied from the job's first tier).
@@ -189,7 +189,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-pepperbox-t3', name: 'Pepperbox',
       recipeGroup: 'volcanic', requiredBiomeLevel: 1, slot: 'weapon',
-      cost: { red: 140 }, stats: { attack: 70 }, attacksPerSecond: 2.15, tier: 3,
+      cost: { red: 140 }, stats: { attack: 70, attackRange: 80 }, attacksPerSecond: 2.15, tier: 3,
       icon: 'items/weapons/cinderlash.png',
       description: 'Fast fire, a big clip, and light rounds. Scatter nicks one more enemy.',
       mechanicEffects: { 'reload.max-ammo': 12, 'reload.reload-time-ms': 1800, 'slinger.scatter-extra': 1 },
@@ -198,7 +198,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-hand-cannon-t4', name: 'Hand Cannon',
       recipeGroup: 'mountain', requiredBiomeLevel: 19, slot: 'weapon',
-      cost: { blue: 256 }, stats: { attack: 486 }, attacksPerSecond: 0.52, tier: 4,
+      cost: { blue: 256 }, stats: { attack: 486, attackRange: 80 }, attacksPerSecond: 0.52, tier: 4,
       icon: 'items/weapons/earthsunder-maul.png',
       description: 'Slow fire and heavy rounds. The last round hits much harder.',
       mechanicEffects: { 'reload.max-ammo': 6, 'reload.reload-time-ms': 2000, 'slinger.last-round-pct': 1 },
@@ -206,7 +206,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-hunting-rifle-t4', name: 'Hunting Rifle',
       recipeGroup: 'jungle', requiredBiomeLevel: 13, slot: 'weapon',
-      cost: { green: 264 }, stats: { attack: 108, onHitDamage: 70, attackRange: 60 }, attacksPerSecond: 2.28, tier: 4,
+      cost: { green: 264 }, stats: { attack: 108, onHitDamage: 70, attackRange: 140 }, attacksPerSecond: 2.28, tier: 4,
       icon: 'items/weapons/deathfang-rapier.png',
       description: 'Long reach. Rounds hit harder the farther the target is.',
       // PLACEHOLDER: reach, clip and reload are not in the bible (copied from the job's first tier).
@@ -216,7 +216,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-carbine-t4', name: 'Carbine',
       recipeGroup: 'jungle', requiredBiomeLevel: 13, slot: 'weapon',
-      cost: { green: 264 }, stats: { attack: 108, onHitDamage: 70 }, attacksPerSecond: 2.28, tier: 4,
+      cost: { green: 264 }, stats: { attack: 108, onHitDamage: 70, attackRange: 80 }, attacksPerSecond: 2.28, tier: 4,
       icon: 'items/weapons/deathfang-rapier.png',
       description: 'Quick fire and a quick reload. The first rounds of each clip hit harder.',
       mechanicEffects: { 'reload.max-ammo': 8, 'reload.reload-time-ms': 1000, 'slinger.opener-pct': 0.3 },
@@ -224,7 +224,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-long-rifle-t4', name: 'Long Rifle',
       recipeGroup: 'desert', requiredBiomeLevel: 13, slot: 'weapon',
-      cost: { yellow: 255 }, stats: { attack: 212, attackRange: 140 }, attacksPerSecond: 1.04, tier: 4,
+      cost: { yellow: 255 }, stats: { attack: 212, attackRange: 220 }, attacksPerSecond: 1.04, tier: 4,
       icon: 'items/weapons/zenith-falchion.png',
       description: 'The longest reach. It outranges kiters.',
       // PLACEHOLDER: reach, clip and reload are not in the bible (copied from the job's first tier).
@@ -233,7 +233,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-frostlock-rifle-t4', name: 'Frostlock Rifle',
       recipeGroup: 'tundra', requiredBiomeLevel: 7, slot: 'weapon',
-      cost: { blue: 273 }, stats: { attack: 378, attackRange: 100 }, attacksPerSecond: 0.65, tier: 4,
+      cost: { blue: 273 }, stats: { attack: 378, attackRange: 180 }, attacksPerSecond: 0.65, tier: 4,
       icon: 'items/weapons/glacial-tyrant-maul.png',
       description: 'Rounds hit harder against chilled, slowed or rooted enemies.',
       // PLACEHOLDER: reach, clip and reload are not in the bible (copied from the job's first tier).
@@ -242,7 +242,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-firebrand-pistol-t4', name: 'Firebrand Pistol',
       recipeGroup: 'volcanic', requiredBiomeLevel: 7, slot: 'weapon',
-      cost: { red: 308 }, stats: { attack: 119 }, attacksPerSecond: 2.34, tier: 4,
+      cost: { red: 308 }, stats: { attack: 119, attackRange: 80 }, attacksPerSecond: 2.34, tier: 4,
       icon: 'items/weapons/eruption-lash.png',
       description: "Each step of the fight's Heat makes every round hit harder.",
       // PLACEHOLDER: reach, clip and reload are not in the bible (copied from the job's first tier).
@@ -252,7 +252,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-pepperbox-t4', name: 'Pepperbox',
       recipeGroup: 'volcanic', requiredBiomeLevel: 7, slot: 'weapon',
-      cost: { red: 308 }, stats: { attack: 119 }, attacksPerSecond: 2.34, tier: 4,
+      cost: { red: 308 }, stats: { attack: 119, attackRange: 80 }, attacksPerSecond: 2.34, tier: 4,
       icon: 'items/weapons/eruption-lash.png',
       description: 'Fast fire, a big clip, and light rounds. Scatter nicks one more enemy.',
       mechanicEffects: { 'reload.max-ammo': 12, 'reload.reload-time-ms': 1800, 'slinger.scatter-extra': 1 },
@@ -260,7 +260,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-reapers-repeater-t4', name: "Reaper's Repeater",
       recipeGroup: 'graveyard', requiredBiomeLevel: 1, slot: 'weapon',
-      cost: { purple: 270 }, stats: { attack: 258 }, attacksPerSecond: 1.43, tier: 4,
+      cost: { purple: 270 }, stats: { attack: 258, attackRange: 80 }, attacksPerSecond: 1.43, tier: 4,
       icon: 'items/weapons/plague-axe.png',
       description: 'Each round splashes a share of its damage to the enemies around the target.',
       // PLACEHOLDER: clip, reload and the splash share are not in the bible.
@@ -270,7 +270,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-snakebite-pistol-t4', name: 'Snakebite Pistol',
       recipeGroup: 'graveyard', requiredBiomeLevel: 1, slot: 'weapon',
-      cost: { purple: 270 }, stats: { attack: 258 }, attacksPerSecond: 1.43, tier: 4,
+      cost: { purple: 270 }, stats: { attack: 258, attackRange: 80 }, attacksPerSecond: 1.43, tier: 4,
       icon: 'items/weapons/plague-axe.png',
       description: 'Slow fire and a small clip. Your poison lasts longer, and the last round hits a poisoned target harder.',
       mechanicEffects: { 'reload.max-ammo': 5, 'reload.reload-time-ms': 1800, 'slinger.poison-long-pct': 0.5, 'slinger.last-vs-poisoned-pct': 0.5 },
@@ -278,7 +278,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-pressure-rifle-t4', name: 'Pressure Rifle',
       recipeGroup: 'trench', requiredBiomeLevel: 1, slot: 'weapon',
-      cost: { green: 270 }, stats: { attack: 257 }, attacksPerSecond: 1.50, tier: 4,
+      cost: { green: 270 }, stats: { attack: 257, attackRange: 80 }, attacksPerSecond: 1.50, tier: 4,
       icon: 'items/weapons/abyssal-axe.png',
       description: 'Rounds hit harder the more HP the target has left.',
       // PLACEHOLDER: clip, reload and the bonus are not in the bible.
@@ -288,7 +288,7 @@ export const SLINGER_GEAR: ClassGearDef = {
     {
       id: 'slinger-drum-gun-t4', name: 'Drum Gun',
       recipeGroup: 'trench', requiredBiomeLevel: 1, slot: 'weapon',
-      cost: { green: 270 }, stats: { attack: 257 }, attacksPerSecond: 1.50, tier: 4,
+      cost: { green: 270 }, stats: { attack: 257, attackRange: 80 }, attacksPerSecond: 1.50, tier: 4,
       icon: 'items/weapons/abyssal-axe.png',
       description: 'A big drum and a slow reload. Each round of a clip hits a bit harder than the last.',
       mechanicEffects: { 'reload.max-ammo': 16, 'reload.reload-time-ms': 2600, 'slinger.ramp-pct': 0.05 },
