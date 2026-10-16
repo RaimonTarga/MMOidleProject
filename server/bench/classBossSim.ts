@@ -50,7 +50,9 @@ import { equipItem } from '../src/systems/player/economy/inventory';
 import { refreshClassConfig } from '../src/systems/player/progression/classConfig';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
-/** The real clock; each fight points `Date.now` at its sim clock and restores this after. */const REAL_DATE_NOW = Date.now;
+
+/** The real clock; each fight points `Date.now` at its sim clock and restores this after. */
+const REAL_DATE_NOW = Date.now;
 
 // ── CLI ──────────────────────────────────────────────────────────────────────
 
