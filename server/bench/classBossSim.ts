@@ -50,6 +50,7 @@ import { equipItem } from '../src/systems/player/economy/inventory';
 import { refreshClassConfig } from '../src/systems/player/progression/classConfig';
 import { syncArchetypeSlices } from '../src/ecs/archetypeSliceSync';
 import { recalculatePlayerEntityStats } from '../src/ecs/playerEntityFormulas';
+/** The real clock; each fight points `Date.now` at its sim clock and restores this after. */const REAL_DATE_NOW = Date.now;
 
 // ── CLI ──────────────────────────────────────────────────────────────────────
 
@@ -213,7 +214,11 @@ function fight(node: BossNode, run: number): Row {
     const p = buildPlayer(world, node, run);
     const effects: Record<string, number> = {};
     const events: Record<string, number> = {};
-    let now = 0;
+    // Some server code reads `Date.now()` where other code reads the tick's clock (taunt locks,
+    // aggro stamps); the live loop passes Date.now() to the tick, so the two agree. Here the sim
+    // runs faster than real time, so `Date.now()` follows the sim clock for the whole fight.
+    let now = REAL_DATE_NOW();
+    Date.now = () => now;
     let ticks = 0;
     const maxTicks = Math.ceil((MAX_SECONDS * 1000) / dt);
     let lastHp = p.hasHealth.hp;
@@ -221,7 +226,7 @@ function fight(node: BossNode, run: number): Row {
     let bossSeen = false;
     let bossMaxHp = MONSTER_DATABASE.get(node.bossId)?.stats.hp ?? 1;
     let bossHp = bossMaxHp;
-    let bossStart = -1;
+    let bossStart = now;
     let outcome: Row['outcome'] = 'timeout';
     while (ticks < maxTicks) {
       world.tick(dt, now);
@@ -248,7 +253,7 @@ function fight(node: BossNode, run: number): Row {
       if (p.hasHealth.hp <= 0 || p.isDead) { outcome = 'died'; break; }
       if (bossSeen && !boss) { bossHp = 0; outcome = 'win'; break; }
     }
-    const seconds = (now - Math.max(0, bossStart)) / 1000;
+    const seconds = (now - bossStart) / 1000;
     return {
       boss: MONSTER_DATABASE.get(node.bossId)?.name ?? node.bossId,
       biome: node.biomeGroup,
@@ -265,6 +270,7 @@ function fight(node: BossNode, run: number): Row {
       events,
     };
   } finally {
+    Date.now = REAL_DATE_NOW;
     teardownArena(world);
   }
 }
