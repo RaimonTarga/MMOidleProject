@@ -16,13 +16,14 @@ import {
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { playerDotAtMaxStacks } from '../damage/dotInventory';
-import { bossPatternEscaping } from '../ai/bossPatterns';
+import { bossPatternEscaping, runningBossPatternDef } from '../ai/bossPatterns';
 import { isPlayerActivelyInCombat, isPlayerInCombat } from '../ai/engagement';
 import { guardableThreatsFor, isMonsterThreatening } from '../ai/guardableThreats';
-import { castedBuffCastEndsAt, chargedCastEndsAt, monsterAbilityCastEndsAt } from '../engine/monsterMechanics';
+import { activeMonsterAbilityId, castedBuffCastEndsAt, chargedCastEndsAt, monsterAbilityCastEndsAt } from '../engine/monsterMechanics';
 import { heatEngagementTargets, heatManagementState } from '../ai/heatManagement';
 import { telegraphsContainingPlayer } from '../ai/telegraphEvasion';
 import { isPlayerControlled } from '../status/playerHardControl';
+import { isMonsterStunned } from '../status/stun';
 import { isConcealedEntity, isInvulnerableMonster } from '../invulnerability';
 import { FROZEN_EFFECT } from '../status/frost';
 
@@ -85,6 +86,10 @@ export interface FightSnapshot {
   chillAtThreshold: boolean;
   /** An enemy on the player attacks with fire (a fire style or a burning hit). */
   fireAttackAtMe: boolean;
+  /** When the last push or drag winding up at the player lands (absolute ms), if one is coming. */
+  dragOrPushLandsAt?: number;
+  /** The player's target is stunned or knocked down, or a boss in its stopped-pattern punish window. */
+  targetStaggered: boolean;
   // ── Tier 4 ──
   /** A fallen enemy has risen again in the node near the player. */
   risenNearMe: boolean;
@@ -236,6 +241,41 @@ function chillStacks(player: PlayerEntity): number {
   return chill?.stacks ?? 0;
 }
 
+/**
+ * When the last push or drag winding up at this player lands, if one is coming: a charged
+ * attack or ability whose blow carries knockback, or a boss pattern's `pull` step (Mire Lash,
+ * Magma Shove, the Trench Undertow). The `drag-or-push` moment's look-ahead: an answer that must
+ * be in place before the move (the Squire's Anchor) reads it here, at the wind-up.
+ */
+export function dragOrPushLandsAt(world: World, player: PlayerEntity, now: number): number | undefined {
+  let landsAt: number | undefined;
+  for (const monster of world.aggroedMonsters) {
+    if (monster.hasAggroTarget.targetKind !== 'player' || monster.hasAggroTarget.targetId !== player.isPlayer.id) continue;
+    const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
+    for (const threat of guardableThreatsFor(world, monster, now)) {
+      if (threat.targetId !== player.isPlayer.id) continue;
+      let pushes = false;
+      if (threat.source === 'charged-attack') pushes = !!def?.chargedAttack?.knockback;
+      else if (threat.source === 'monster-ability') {
+        const ability = def?.monsterAbilities?.find((candidate) => candidate.id === activeMonsterAbilityId(monster));
+        pushes = !!ability?.actions.some((action) => 'knockback' in action && !!action.knockback);
+      }
+      if (pushes) landsAt = Math.max(landsAt ?? 0, threat.completesAtMs);
+    }
+    const pattern = monster.runsBossPattern;
+    const step = pattern ? runningBossPatternDef(monster)?.steps[pattern.stepIndex] : undefined;
+    if (pattern && step?.kind === 'pull' && pattern.stepStarted && pattern.stepEndsAtMs > now && pattern.targetId === player.isPlayer.id) {
+      landsAt = Math.max(landsAt ?? 0, pattern.stepEndsAtMs);
+    }
+  }
+  return landsAt;
+}
+
+/** Staggered: a stun (a knockdown is one), or a boss standing in the window a stopped pattern opened. */
+function isStaggered(world: World, monster: MonsterEntity): boolean {
+  return isMonsterStunned(world, monster.isMonster.id) || monster.recoversFromPattern?.fromStagger === true;
+}
+
 /** A fire attack: a fire attack style or a burn applier. */
 function isFireAttacker(monster: MonsterEntity): boolean {
   const def = MONSTER_DATABASE.get(monster.isMonster.monsterTypeId);
@@ -297,6 +337,8 @@ function computeFightSnapshot(world: World, player: PlayerEntity, now: number): 
     allyThreatened: allyThreatened(world, player, now),
     chillAtThreshold: chillStacks(player) >= CHILL_THRESHOLD_STACKS,
     fireAttackAtMe,
+    dragOrPushLandsAt: dragOrPushLandsAt(world, player, now),
+    targetStaggered: target ? isStaggered(world, target) : false,
     risenNearMe: risenNear(world, player),
     moving: player.isMoving !== undefined,
     traveling:

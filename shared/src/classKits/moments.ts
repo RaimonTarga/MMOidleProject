@@ -79,6 +79,7 @@ export const MOMENTS = {
   'target-flees': { subject: 'target', firstTier: 2, text: 'the target flees or kites away' },
   'target-out-of-reach': { subject: 'target', firstTier: 2, text: 'the target burrows, dives or vanishes out of reach' },
   'target-resurfaces': { subject: 'target', firstTier: 2, text: 'the target comes back within reach' },
+  'target-staggered': { subject: 'target', firstTier: 3, text: 'the target is staggered, stunned or knocked down' },
 
   // ── Allies and the fight ───────────────────────────────────────────────────
   'ally-threatened': { subject: 'ally', firstTier: 2, text: 'an ally stands under a telegraph or is low on HP' },
