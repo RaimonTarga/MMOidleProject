@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import {
+  ITEM_DATABASE,
+  RECIPE_DATABASE,
   SKILL_TREE,
   STRIKER_KIT,
   tutorialScriptFor,
@@ -14,6 +16,7 @@ import {
   STRIKER_T3_ZONES,
   strikerT3FarmLevel,
   strikerT3Route,
+  strikerT3ZoneGear,
 } from "./strikerT3";
 
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -65,8 +68,22 @@ for (const [specializationId, id] of Object.entries(STRIKER_T3_ROUTE_IDS)) {
   const rest = route.steps.slice(1);
   assert.deepEqual(
     rest.map((step) => step.type),
-    ["farm", "unlockSkill", ...STRIKER_T3_ZONES.flatMap(() => ["travel", "farm", "attemptBoss"])],
+    ["farm", "unlockSkill", ...STRIKER_T3_ZONES.flatMap((biomeGroup) => [
+      "travel", ...strikerT3ZoneGear(spec.disciplineId, biomeGroup).flatMap(() => ["craft", "equip"]), "farm", "attemptBoss",
+    ])],
   );
+  // Gear: tier-3 recipes of the zone being farmed, in unlock order, inside its T3 farm; the first seal meets a full set.
+  for (const biomeGroup of STRIKER_T3_ZONES) {
+    let last = 0;
+    for (const itemId of strikerT3ZoneGear(spec.disciplineId, biomeGroup)) {
+      const recipe = RECIPE_DATABASE.get(itemId);
+      assert(recipe && recipe.recipeGroup === biomeGroup && ITEM_DATABASE.get(itemId)?.tier === 3, `${itemId} is tier-3 ${biomeGroup} gear`);
+      assert(recipe.requiredBiomeLevel >= last && recipe.requiredBiomeLevel <= strikerT3FarmLevel(biomeGroup), `${itemId} unlocks in order, inside the farm`);
+      last = recipe.requiredBiomeLevel;
+    }
+  }
+  assert.deepEqual(strikerT3ZoneGear(spec.disciplineId, STRIKER_T3_ZONES[0]).map((itemId) => RECIPE_DATABASE.get(itemId)?.slot),
+    ["weapon", "armor", "recovery", "mobility"], "the first T3 seal meets a full set of T3 gear");
 
   const [wait, pick] = rest;
   assert(wait.type === "farm" && wait.until.type === "playerTierAtLeast" && wait.until.tier === 3, "it waits for tier 3");

@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import {
+  ITEM_DATABASE,
+  RECIPE_DATABASE,
   SKILL_TREE,
   STRIKER_KIT,
   tutorialScriptFor,
@@ -14,6 +16,7 @@ import {
   STRIKER_T4_ZONES,
   strikerT4FarmLevel,
   strikerT4Route,
+  strikerT4ZoneGear,
 } from "./strikerT4";
 
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -66,8 +69,22 @@ for (const [leafId, id] of Object.entries(STRIKER_T4_ROUTE_IDS)) {
   const rest = route.steps.slice(1);
   assert.deepEqual(
     rest.map((step) => step.type),
-    ["farm", "unlockSkill", ...STRIKER_T4_ZONES.flatMap(() => ["travel", "farm", "attemptBoss"])],
+    ["farm", "unlockSkill", ...STRIKER_T4_ZONES.flatMap((biomeGroup) => [
+      "travel", ...strikerT4ZoneGear(leaf.disciplineId, biomeGroup).flatMap(() => ["craft", "equip"]), "farm", "attemptBoss",
+    ])],
   );
+  // Gear: tier-4 recipes of the zone being farmed, in unlock order, inside its T4 farm; the first seal meets a full set.
+  for (const biomeGroup of STRIKER_T4_ZONES) {
+    let last = 0;
+    for (const itemId of strikerT4ZoneGear(leaf.disciplineId, biomeGroup)) {
+      const recipe = RECIPE_DATABASE.get(itemId);
+      assert(recipe && recipe.recipeGroup === biomeGroup && ITEM_DATABASE.get(itemId)?.tier === 4, `${itemId} is tier-4 ${biomeGroup} gear`);
+      assert(recipe.requiredBiomeLevel >= last && recipe.requiredBiomeLevel <= strikerT4FarmLevel(biomeGroup), `${itemId} unlocks in order, inside the farm`);
+      last = recipe.requiredBiomeLevel;
+    }
+  }
+  assert.deepEqual(strikerT4ZoneGear(leaf.disciplineId, STRIKER_T4_ZONES[0]).map((itemId) => RECIPE_DATABASE.get(itemId)?.slot),
+    ["weapon", "armor", "recovery", "mobility"], "the first T4 seal meets a full set of T4 gear");
 
   const [wait, pick] = rest;
   assert(wait.type === "farm" && wait.until.type === "playerTierAtLeast" && wait.until.tier === 4, "it waits for tier 4");
