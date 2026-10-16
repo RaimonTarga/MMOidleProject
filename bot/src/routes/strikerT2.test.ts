@@ -58,8 +58,14 @@ for (const [disciplineId, id] of Object.entries(STRIKER_T2_ROUTE_IDS)) {
 
   // It is the T1 route, then the pick, the Order, each T2 zone (travel, its gear, the farm, its
   // boss unless that seal is a late one), then the late seals.
-  assert.deepEqual(route.steps.slice(0, t1.steps.length), t1.steps, "the T1 route comes first, unchanged");
-  const rest = route.steps.slice(t1.steps.length);
+  // The T1 route comes first, unchanged, run only while it is not done (a resume skips the walk).
+  const [replay] = route.steps;
+  assert(replay.type === "ifPossible" && replay.when.type === "not", "the T1 route is wrapped in an unless-done");
+  if (replay.type === "ifPossible" && replay.when.type === "not") {
+    assert.deepEqual(replay.steps, t1.steps, "the T1 route comes first, unchanged");
+    assert.deepEqual(replay.when.of, t1.completion, "it is skipped once the T1 route is complete");
+  }
+  const rest = route.steps.slice(1);
   assert.deepEqual(
     rest.map((step) => step.type),
     [

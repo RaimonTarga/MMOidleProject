@@ -55,8 +55,14 @@ for (const [specializationId, id] of Object.entries(STRIKER_T3_ROUTE_IDS)) {
 
   // It is its discipline's T2 route, then the promotion wait, the pick, and three steps per T3 zone.
   const t2 = strikerT2Route(spec.disciplineId);
-  assert.deepEqual(route.steps.slice(0, t2.steps.length), t2.steps, "the T2 route comes first, unchanged");
-  const rest = route.steps.slice(t2.steps.length);
+  // The T2 route comes first, unchanged, run only while it is not done (a resume skips the walk).
+  const [replay] = route.steps;
+  assert(replay.type === "ifPossible" && replay.when.type === "not", "the T2 route is wrapped in an unless-done");
+  if (replay.type === "ifPossible" && replay.when.type === "not") {
+    assert.deepEqual(replay.steps, t2.steps, "the T2 route comes first, unchanged");
+    assert.deepEqual(replay.when.of, t2.completion, "it is skipped once the T2 route is complete");
+  }
+  const rest = route.steps.slice(1);
   assert.deepEqual(
     rest.map((step) => step.type),
     ["farm", "unlockSkill", ...STRIKER_T3_ZONES.flatMap(() => ["travel", "farm", "attemptBoss"])],

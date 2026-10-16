@@ -56,8 +56,14 @@ for (const [leafId, id] of Object.entries(STRIKER_T4_ROUTE_IDS)) {
   // It is a T3 route of the leaf's discipline, then the promotion wait, the pick, and three steps per T4 zone.
   const spec = STRIKER_KIT.specializations.find((entry) => entry.disciplineId === leaf.disciplineId)!;
   const t3 = strikerT3Route(spec.id);
-  assert.deepEqual(route.steps.slice(0, t3.steps.length), t3.steps, "the T3 route comes first, unchanged");
-  const rest = route.steps.slice(t3.steps.length);
+  // The T3 route comes first, unchanged, run only while it is not done (a resume skips the walk).
+  const [replay] = route.steps;
+  assert(replay.type === "ifPossible" && replay.when.type === "not", "the T3 route is wrapped in an unless-done");
+  if (replay.type === "ifPossible" && replay.when.type === "not") {
+    assert.deepEqual(replay.steps, t3.steps, "the T3 route comes first, unchanged");
+    assert.deepEqual(replay.when.of, t3.completion, "it is skipped once the T3 route is complete");
+  }
+  const rest = route.steps.slice(1);
   assert.deepEqual(
     rest.map((step) => step.type),
     ["farm", "unlockSkill", ...STRIKER_T4_ZONES.flatMap(() => ["travel", "farm", "attemptBoss"])],

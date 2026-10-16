@@ -97,7 +97,7 @@ const PIECES: readonly StrikerPiece[] = [
     cast: 'opener',
     text: 'You open the combo with a breath of focus, and every beat after it swings faster.',
     // Lasts until the finisher; `maxMs` only ends one a broken combo left behind.
-    params: { castMs: 700, attackSpeedPct: 0.25, maxMs: 15000 },
+    params: { castMs: 400, attackSpeedPct: 0.4, maxMs: 15000 },
   }),
   // ── T2 (§12.16) ──
   technique({

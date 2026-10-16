@@ -78,6 +78,15 @@ const T2_WEAPONS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   "striker-heavy": { plains: "striker-broadblade-t2", mountain: "striker-maul-t2" },
 };
 
+/**
+ * A finished earlier tier is not walked again: its steps run only while its completion does not
+ * hold. Every step is idempotent, but each zone's travel is not free (a resumed T2 character spent
+ * ten minutes walking the T1 zones again). OV-STRIKER.
+ */
+export function unlessDone(route: Route, what: string): RouteStep {
+  return { type: "ifPossible", when: { type: "not", of: route.completion }, steps: [...route.steps], label: `${what}, unless done` };
+}
+
 /** What the arm wears from this T2 zone, weapon first (its recipe opens first). */
 export function strikerT2ZoneGear(disciplineId: string, biomeGroup: string): string[] {
   const weapon = T2_WEAPONS[disciplineId]?.[biomeGroup];
@@ -105,7 +114,7 @@ export function strikerT2Route(disciplineId = "striker-light"): Route {
   const t1 = strikerT1Route();
 
   const steps: RouteStep[] = [
-    ...t1.steps,
+    unlessDone(t1, "the T1 route"),
     { type: "unlockSkill", skillId: disciplineId, label: `pick the ${disciplineId} discipline` },
     { type: "classConfig", config: autoOrder(disciplineId) },
   ];

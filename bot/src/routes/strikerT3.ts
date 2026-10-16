@@ -1,7 +1,7 @@
 import { biomeLevelCap, STRIKER_KIT } from "@mmo-idle/shared";
 import { allOf, type NodeRef, type Route, type RouteStep } from "../route/types";
 import { STRIKER_CLASS_ROOT } from "./strikerT1";
-import { STRIKER_T2_ROUTE_IDS, strikerT2Route } from "./strikerT2";
+import { STRIKER_T2_ROUTE_IDS, strikerT2Route, unlessDone } from "./strikerT2";
 
 /**
  * The Striker's T3 route (T3-W2, bible §12.6 and §12.16).
@@ -47,7 +47,7 @@ export function strikerT3Route(specializationId = "striker-thousand-cuts"): Rout
   const t2 = strikerT2Route(spec.disciplineId);
 
   const steps: RouteStep[] = [
-    ...t2.steps,
+    unlessDone(t2, "the T2 route"),
     {
       type: "farm",
       at: { kind: "biome", biomeGroup: "desert", tier: 2, pick: "uncleared" },

@@ -2,6 +2,7 @@ import { biomeLevelCap, STRIKER_KIT } from "@mmo-idle/shared";
 import { allOf, type NodeRef, type Route, type RouteStep } from "../route/types";
 import { STRIKER_CLASS_ROOT } from "./strikerT1";
 import { STRIKER_T3_ROUTE_IDS, strikerT3Route } from "./strikerT3";
+import { unlessDone } from "./strikerT2";
 
 /**
  * The Striker's T4 route (T4-W2, bible §12.7 and §12.16).
@@ -46,7 +47,7 @@ export function strikerT4Route(leafId = "striker-ghoststep"): Route {
   const t3 = strikerT3Route(specialization.id);
 
   const steps: RouteStep[] = [
-    ...t3.steps,
+    unlessDone(t3, "the T3 route"),
     {
       type: "farm",
       at: { kind: "biome", biomeGroup: "volcanic", tier: 3, pick: "uncleared" },
