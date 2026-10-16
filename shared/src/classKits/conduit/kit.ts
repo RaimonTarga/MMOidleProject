@@ -155,7 +155,7 @@ const PIECES: readonly ConduitPiece[] = [
   summon({
     id: 'conduit-ironhorn',
     // The taunt copies the Plains Warden's (a tank holds enemies, §7.3); the bible gives only the brace.
-    params: { tauntEveryMs: 4000, tauntMs: 5000, tauntRadius: 120, braceStunMs: 1500 },
+    params: { hpMult: 3, tauntEveryMs: 4000, tauntMs: 5000, tauntRadius: 120, braceStunMs: 1500 },
     name: 'Ironhorn',
     family: 'tank',
     command: 1,
@@ -280,7 +280,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-carapace-guard',
-    params: { blockShare: 0.6, tauntEveryMs: 4000, tauntMs: 5000, tauntRadius: 120 },
+    params: { hpMult: 3, blockShare: 0.6, tauntEveryMs: 4000, tauntMs: 5000, tauntRadius: 120 },
     name: 'Carapace Guard',
     family: 'tank',
     command: 1,
@@ -360,7 +360,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-obsidian-tortoise',
-    params: { tauntEveryMs: 4000, tauntMs: 5000, tauntRadius: 120, withdrawEveryMs: 10000, withdrawMs: 3000, withdrawBlock: 0.95 },
+    params: { hpMult: 2, tauntEveryMs: 4000, tauntMs: 5000, tauntRadius: 120, withdrawEveryMs: 10000, withdrawMs: 3000, withdrawBlock: 0.95 },
     name: 'Obsidian Tortoise',
     family: 'tank',
     command: 2,
@@ -382,7 +382,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-abyssal-warden',
-    params: { tauntEveryMs: 4000, tauntMs: 5000, tauntRadius: 120, wardenEveryMs: 4000, wardenRadius: 200 },
+    params: { hpMult: 3, tauntEveryMs: 4000, tauntMs: 5000, tauntRadius: 120, wardenEveryMs: 4000, wardenRadius: 200 },
     name: 'Abyssal Warden',
     family: 'tank',
     command: 1,
