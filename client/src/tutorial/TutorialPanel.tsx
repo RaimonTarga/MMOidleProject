@@ -275,7 +275,9 @@ export function TutorialPanel() {
   if ((ownRun?.status === 'waiting' || ownRun?.status === 'player') && !beat?.auto) line = beat?.waiting ?? line;
   if (ownRun?.message) line = ownRun.message;
   if (lessonRun?.message) line = lessonRun.message;
-  if (dead) line = 'You fell. That happens; press Next to get back up, and the guide carries on.';
+  // The death overlay covers this card (and its Next) until its Respawn is pressed.
+  if (deathOverlay) line = 'You fell. That happens; press Respawn, and the guide carries on.';
+  else if (dead) line = 'You fell. That happens; press Next to get back up, and the guide carries on.';
 
   return (
     <HudPanel className="sidebar-panel tutorial-panel">
