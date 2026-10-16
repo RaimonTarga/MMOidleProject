@@ -259,7 +259,9 @@ export function deadeyeWaits(world: World, player: PlayerEntity, now: number): b
   const reload = player.usesReload;
   if (!loadout || !reload || disciplineOf(player) !== TRICKSHOT || specializationOf(player) !== DEADEYE) return false;
   if (reload.reloadingMs > 0 || reload.ammo !== 1) return false;
-  return deadeyeHolds(player, calledMomentHolds(world, player, loadout.config.calledShot, DEADEYE_LOW_HP, now), DEADEYE_HOLD_MS, now);
+  // The held round's own rule (`deadeyeHold`) when set, else the called shot's.
+  const rule = loadout.config.deadeyeHold && loadout.config.deadeyeHold.length > 0 ? loadout.config.deadeyeHold : loadout.config.calledShot;
+  return deadeyeHolds(player, calledMomentHolds(world, player, rule, DEADEYE_LOW_HP, now), DEADEYE_HOLD_MS, now);
 }
 
 /** How long an empty clip may wait on a telegraph before it reloads anyway (ms). PLACEHOLDER. */

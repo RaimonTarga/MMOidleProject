@@ -94,7 +94,10 @@ export const RICOCHET_SHARE = 0.7;
 export const PIERCE_WIDTH_PX = 44;
 
 /** Deadeye: the longest the last round waits (ms), what a held round hits for, and "below a third". */
-export const DEADEYE_HOLD_MS = 4_000;
+// Deadeye's longest wait 4 s -> 2 s (OV2): on enemies that never wind up or drop low (the T3 Mountain
+// dungeon's Stone Wardens) every clip waited the whole hold; the live Trickshot gave up on the four guards
+// after 15 minutes. Sim, T3 Mountain guards, 300 s: 2 kills at 4 s, 8 at 2 s (8 without Deadeye).
+export const DEADEYE_HOLD_MS = 2_000;
 export const DEADEYE_HELD_MULT = 1.6;
 export const DEADEYE_LOW_HP = 1 / 3;
 

@@ -119,6 +119,13 @@ function defaultRules(rack: readonly string[], siege: boolean): ClipRule[] {
 /** Trickshot's default pick (§10.13): the enemy winding up, else the elite, else the lowest HP. */
 const CALLED_SHOT_DEFAULT: readonly ConditionRef[] = [{ id: 'enemy-winds-up' }, { id: 'target-elite' }, { id: 'target-low' }];
 
+/**
+ * Deadeye's held round waits for a moment (§10.6: an enemy winds up, the target drops below a third),
+ * not for a standing state: with the called shot's "an elite" in the list the moment always held on a
+ * boss, so the round was never held and never paid. PLACEHOLDER (OV2).
+ */
+const DEADEYE_HOLD_DEFAULT: readonly ConditionRef[] = [{ id: 'enemy-winds-up' }, { id: 'target-low' }];
+
 export const SLINGER_SYSTEM: ClassSystemSpec<LoadoutConfig> = {
   kind: 'loadout',
 
@@ -165,6 +172,7 @@ export const SLINGER_SYSTEM: ClassSystemSpec<LoadoutConfig> = {
       reloadEarlyWhenSafe: true, neverReloadInTelegraph: true,
     };
     if (ctx.disciplineId === 'slinger-trickshot') config.calledShot = CALLED_SHOT_DEFAULT.map((ref) => ({ ...ref }));
+    if (ctx.specializationId === 'slinger-deadeye') config.deadeyeHold = DEADEYE_HOLD_DEFAULT.map((ref) => ({ ...ref }));
     return config;
   },
 

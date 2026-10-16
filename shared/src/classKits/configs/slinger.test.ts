@@ -81,6 +81,11 @@ for (const id of ['slinger-shellbreaker', 'slinger-tracer', 'slinger-hollow-poin
   assert(trick.calledShot?.map((ref) => ref.id).join(',') === 'enemy-winds-up,target-elite,target-low', 'the called shot: winding up, elite, lowest HP');
   assert(SLINGER_SYSTEM.validate(trick, ctx).length === 0, 'the Trickshot default is valid');
   assert(SLINGER_SYSTEM.defaults(ctxAfter(lessonsTo('slinger-breaching'), 3, 'slinger-gunslinger')).calledShot === undefined, 'no called shot outside Trickshot');
+  assert(trick.deadeyeHold === undefined, 'no held-round rule before Deadeye');
+  const deadeyeCtx = { ...ctx, specializationId: 'slinger-deadeye' };
+  const deadeye = SLINGER_SYSTEM.defaults(deadeyeCtx);
+  assert(deadeye.deadeyeHold?.map((ref) => ref.id).join(',') === 'enemy-winds-up,target-low', 'Deadeye waits for a moment, not for "an elite"');
+  assert(SLINGER_SYSTEM.validate(deadeye, deadeyeCtx).length === 0, 'the Deadeye default is valid');
 }
 
 console.log('slinger.test.ts: ok');
