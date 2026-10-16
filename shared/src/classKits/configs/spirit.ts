@@ -20,10 +20,25 @@ const TOP_BAND_PCT = 80;
 const MIDDLE_BAND_PCT = 50;
 const MAX_FLOOR_PCT = 95;
 
-function defaultBand(piece: SpiritPiece, floorPct: number): number {
+/**
+ * Each discipline's default (§11.13): Overflow puts the floor at the brim (the highest floor the
+ * gauge allows) and hovers, spending only what spills past it; Tide keeps a 20% floor (the tide
+ * sets the phase); Reservoir keeps a 40% floor and holds Cloudburst at the top mark, released
+ * early by the "enough" rule. PLACEHOLDER numbers.
+ */
+const DISCIPLINE_DEFAULTS: Readonly<Record<string, { floorPct: number; phase: 'gather' | 'hover' }>> = {
+  'spirit-overflow': { floorPct: MAX_FLOOR_PCT, phase: 'hover' },
+  'spirit-tide': { floorPct: 20, phase: 'gather' },
+  'spirit-reservoir': { floorPct: 40, phase: 'gather' },
+};
+const RESERVOIR_MARK_PCT = 100;
+
+function defaultBand(piece: SpiritPiece, floorPct: number, disciplineId: string | null): number {
   if (piece.atFloor || piece.id === 'spirit-bolt') return floorPct;
-  if (piece.family === 'strike') return TOP_BAND_PCT;
-  return MIDDLE_BAND_PCT;
+  if (disciplineId === 'spirit-overflow') return floorPct;
+  if (piece.id === 'spirit-cloudburst') return RESERVOIR_MARK_PCT;
+  if (piece.family === 'strike') return Math.max(floorPct, TOP_BAND_PCT);
+  return Math.max(floorPct, MIDDLE_BAND_PCT);
 }
 
 export const SPIRIT_SYSTEM: ClassSystemSpec<ThresholdsConfig> = {
@@ -43,11 +58,12 @@ export const SPIRIT_SYSTEM: ClassSystemSpec<ThresholdsConfig> = {
   },
 
   defaults(ctx) {
+    const shape = (ctx.disciplineId ? DISCIPLINE_DEFAULTS[ctx.disciplineId] : undefined) ?? { floorPct: DEFAULT_FLOOR_PCT, phase: 'gather' as const };
     const bands = ownedPieces(SPIRIT_KIT, ctx).map((piece) => ({
       pieceId: piece.id,
-      atLeastPct: defaultBand(piece, DEFAULT_FLOOR_PCT),
+      atLeastPct: defaultBand(piece, shape.floorPct, ctx.disciplineId),
     }));
-    return { kind: 'thresholds', floorPct: DEFAULT_FLOOR_PCT, bands, phase: 'gather' };
+    return { kind: 'thresholds', floorPct: shape.floorPct, bands, phase: shape.phase };
   },
 
   validate(config, ctx) {

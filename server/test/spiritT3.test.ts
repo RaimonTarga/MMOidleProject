@@ -265,7 +265,8 @@ function release(spec: string | undefined, heldMs = 0): { rig: Rig; tank: Monste
   // Deep Well: each release keeps a third of the bank back as shield.
   const well = release('spirit-deep-well');
   const plain = release(undefined);
-  const floor = 0.3 * maxOf(well.rig.player);
+  const system = well.rig.player.configuresClass!.config.system;
+  const floor = (system.kind === 'thresholds' ? system.floorPct / 100 : 0.3) * maxOf(well.rig.player);
   const bank = maxOf(well.rig.player) - floor;
   assert.ok(well.rig.player.usesEnergy!.energy > floor + bank * 0.3, 'Deep Well: about a third of the bank stays as shield');
   assert.ok(plain.rig.player.usesEnergy!.energy < floor + bank * 0.1, 'without it the release leaves you bare');

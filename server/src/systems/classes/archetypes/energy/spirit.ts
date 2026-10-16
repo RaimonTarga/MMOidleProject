@@ -774,9 +774,11 @@ export function updateSpirit(world: World, player: PlayerEntity, dt: number, now
     if (variable ? spentAll < minSpend : (piece.params['costPips'] ?? 0) <= 0) continue;
     const cost = variable ? spentAll : (firstFree ? 0 : costOf(player, t, piece, now));
     if (energy.energy - cost < floorAbs) continue;
-    affordable = true;
     if (energy.energy < (band.atLeastPct / 100) * max) continue;
     if (piece.waitsFor && !conditionsHold(world, player, [{ id: piece.waitsFor }], now)) continue;
+    // Something can fire now, so the break (or the surge) goes on. Counted only once a piece is in its band:
+    // a surge (no flow) that fell between the floor and the lowest band used to wait there forever.
+    affordable = true;
     if (!commit(world, player, t, piece, now, cost, variable ? spentAll : 0, firstFree)) continue;
     return;
   }
