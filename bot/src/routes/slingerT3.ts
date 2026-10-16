@@ -4,7 +4,7 @@ import {
   SLINGER_KIT,
 } from "@mmo-idle/shared";
 import { allOf, type Condition, type NodeRef, type Route, type RouteStep } from "../route/types";
-import { SLINGER_CLASS_ROOT, zoneGearSteps, type DisciplineGun } from "./slingerT1";
+import { SLINGER_CLASS_ROOT, wearAsUnlocked, zoneGearSteps, type DisciplineGun } from "./slingerT1";
 import { slingerT2Route } from "./slingerT2";
 
 /**
@@ -43,18 +43,26 @@ function zone(biomeGroup: string): NodeRef {
 }
 
 /**
- * Each T3 zone's vest, charm and boots, worn as they unlock. The Jungle's are its second
+ * The tier's vest: the Jungle's second base, which carries the Forest's moved Quickdraw (walk at
+ * half speed while reloading), made on a detour into the Jungle in front of the tier's first
+ * boss and kept for the whole tier, as at T2 (the Forest vest). PLACEHOLDER pick.
+ */
+export const SLINGER_T3_VEST = "jungle-vest-t3-b";
+
+/**
+ * Each T3 zone's charm and boots, worn as they unlock; the one vest is the Jungle's second
+ * base (Quickdraw, `SLINGER_T3_VEST`), made first. The Jungle's are its second
  * bases, which carry the Forest's moved lines (Quickdraw, Fleet): walking while you reload
  * and Recovery while you move suit a kiting Slinger better than its own (PLACEHOLDER pick).
  */
 export const SLINGER_T3_ZONE_KIT: Readonly<Record<string, readonly string[]>> = {
-  mountain: ["mountain-vest-t3", "mountain-charm-t3", "mountain-boots-t3"],
-  cave: ["cave-vest-t3", "cave-charm-t3", "cave-boots-t3"],
-  swamp: ["swamp-vest-t3", "swamp-charm-t3", "swamp-boots-t3"],
+  mountain: ["mountain-charm-t3", "mountain-boots-t3"],
+  cave: ["cave-charm-t3", "cave-boots-t3"],
+  swamp: ["swamp-charm-t3", "swamp-boots-t3"],
   jungle: ["jungle-vest-t3-b", "jungle-charm-t3-b", "jungle-boots-t3"],
-  desert: ["desert-vest-t3", "desert-charm-t3", "desert-boots-t3"],
-  tundra: ["tundra-vest-t3", "tundra-charm-t3", "tundra-boots-t3"],
-  volcanic: ["volcanic-vest-t3", "volcanic-charm-t3", "volcanic-boots-t3"],
+  desert: ["desert-charm-t3", "desert-boots-t3"],
+  tundra: ["tundra-charm-t3", "tundra-boots-t3"],
+  volcanic: ["volcanic-charm-t3", "volcanic-boots-t3"],
 };
 
 /**
@@ -101,6 +109,9 @@ export function slingerT3Route(): Route {
       choice: { id: "slinger-specialization", option: optionOf(spec.id), defaultOption: DEFAULT_SLINGER_SPECIALIZATION },
     });
   }
+
+  // The tier's vest first (a detour into the Jungle), for every discipline.
+  steps.push(...wearAsUnlocked(zone("jungle"), [SLINGER_T3_VEST]));
 
   for (const biomeGroup of T3_ZONE_ORDER) {
     const at = zone(biomeGroup);

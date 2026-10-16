@@ -4,7 +4,7 @@ import {
   SLINGER_KIT,
 } from "@mmo-idle/shared";
 import { allOf, type Condition, type NodeRef, type Route, type RouteStep } from "../route/types";
-import { SLINGER_CLASS_ROOT, zoneGearSteps, type DisciplineGun } from "./slingerT1";
+import { SLINGER_CLASS_ROOT, wearAsUnlocked, zoneGearSteps, type DisciplineGun } from "./slingerT1";
 import { slingerT3Route } from "./slingerT3";
 
 /**
@@ -58,18 +58,26 @@ export function slingerT4LessonLevel(biomeGroup: string): number {
 
 /** The choice option for a leaf id: `slinger-light-hands` is `light-hands`. */
 /**
- * Each T4 zone's vest, charm and boots, worn as they unlock. The Jungle's are its second
+ * The tier's vest: the Jungle's second base, which carries the Forest's moved Quickdraw (walk at
+ * half speed while reloading), made on a detour into the Jungle in front of the tier's first
+ * boss and kept for the whole tier, as at T2 (the Forest vest). PLACEHOLDER pick.
+ */
+export const SLINGER_T4_VEST = "jungle-vest-t4-b";
+
+/**
+ * Each T4 zone's charm and boots, worn as they unlock; the one vest is the Jungle's second
+ * base (Quickdraw, `SLINGER_T4_VEST`), made first. The Jungle's are its second
  * bases (the Forest's moved Quickdraw and Fleet, as at T3); the Trench's boots are the
  * Stalkers (the faster pair). PLACEHOLDER picks.
  */
 export const SLINGER_T4_ZONE_KIT: Readonly<Record<string, readonly string[]>> = {
-  mountain: ["mountain-vest-t4", "mountain-charm-t4", "mountain-boots-t4"],
-  tundra: ["tundra-vest-t4", "tundra-charm-t4", "tundra-boots-t4"],
+  mountain: ["mountain-charm-t4", "mountain-boots-t4"],
+  tundra: ["tundra-charm-t4", "tundra-boots-t4"],
   jungle: ["jungle-vest-t4-b", "jungle-charm-t4-b", "jungle-boots-t4"],
-  desert: ["desert-vest-t4", "desert-charm-t4", "desert-boots-t4"],
-  volcanic: ["volcanic-vest-t4", "volcanic-charm-t4", "volcanic-boots-t4"],
-  graveyard: ["graveyard-vest-t4", "graveyard-charm-t4", "graveyard-boots-t4"],
-  trench: ["trench-vest-t4", "trench-charm-t4", "trench-boots-t4-stalkers"],
+  desert: ["desert-charm-t4", "desert-boots-t4"],
+  volcanic: ["volcanic-charm-t4", "volcanic-boots-t4"],
+  graveyard: ["graveyard-charm-t4", "graveyard-boots-t4"],
+  trench: ["trench-charm-t4", "trench-boots-t4-stalkers"],
 };
 
 /**
@@ -99,6 +107,9 @@ export function slingerT4Route(): Route {
       choice: { id: "slinger-leaf", option: optionOf(leaf.id), defaultOption: DEFAULT_SLINGER_LEAF },
     });
   }
+
+  // The tier's vest first (a detour into the Jungle), for every discipline.
+  steps.push(...wearAsUnlocked(zone("jungle"), [SLINGER_T4_VEST]));
 
   for (const biomeGroup of T4_ZONE_ORDER) {
     const at = zone(biomeGroup);

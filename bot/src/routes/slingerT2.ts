@@ -39,11 +39,23 @@ function zone(biomeGroup: string): NodeRef {
 }
 
 /**
- * Each T2 zone's vest, charm and boots, worn as they unlock (a carried-over zone opens
- * them at 8, 9 and 10; the Jungle and the Desert at 2, 3 and 4).
+ * The vests the route wears at T2: the Plains', then the Forest's, kept from there on.
+ * The Forest vest's line is Quickdraw (walk at half speed while reloading): it covers the
+ * stationary reload, the Slinger's risk window, better than any later T2 vest (sim, the
+ * Gunslinger's T2 bosses in the Forest vest against each zone's own: Mountain 100% HP left
+ * against 30-51%, Desert 100% against 57-100%, and the Cave boss that walled the clean chain
+ * six times (boss 39-42% left) won at 84%). PLACEHOLDER pick.
+ */
+const T2_VESTS = new Set(["plains", "forest"]);
+
+/**
+ * Each T2 zone's charm and boots (and the vest where `T2_VESTS` says), worn as they unlock
+ * (a carried-over zone opens them at 8, 9 and 10; the Jungle and the Desert at 2, 3 and 4).
  */
 export const SLINGER_T2_ZONE_KIT: Readonly<Record<string, readonly string[]>> = Object.fromEntries(
-  T2_ZONE_ORDER.map((biome) => [biome, [`${biome}-vest-t2`, `${biome}-charm-t2`, `${biome}-boots-t2`]]),
+  T2_ZONE_ORDER.map((biome) => [biome, [
+    ...(T2_VESTS.has(biome) ? [`${biome}-vest-t2`] : []), `${biome}-charm-t2`, `${biome}-boots-t2`,
+  ]]),
 );
 
 /**
