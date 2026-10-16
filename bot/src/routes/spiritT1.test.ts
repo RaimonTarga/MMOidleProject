@@ -4,6 +4,7 @@ import {
   bossClearKey,
   classConfigContext,
   globalMastery,
+  RECIPE_DATABASE,
   resolveClassConfig,
   SKILL_TREE,
   SPIRIT_KIT,
@@ -16,7 +17,7 @@ import {
 } from "@mmo-idle/shared";
 import type { RouteStep } from "../route/types";
 import { isClassAgnosticRouteId, isControlledRouteId, requireRoute, ROUTES } from "./index";
-import { SPIRIT_CLASS_ROOT, SPIRIT_T1_ID, spiritFarmLevel, spiritT1Route } from "./spiritT1";
+import { SPIRIT_CLASS_ROOT, SPIRIT_CLEARING_GEAR, SPIRIT_T1_GEAR, SPIRIT_T1_ID, spiritFarmLevel, spiritT1Route } from "./spiritT1";
 
 function gates(condition: TutorialCondition): TutorialCondition[] {
   if (condition.type === "allOf" || condition.type === "anyOf") return condition.of.flatMap(gates);
@@ -46,13 +47,41 @@ assert.equal(isClassAgnosticRouteId(SPIRIT_T1_ID), false);
 assert.equal(isControlledRouteId(SPIRIT_T1_ID), true, "Spirit is admitted to controlled batches");
 assert.throws(() => requireRoute(SPIRIT_T1_ID, "cadence"), /authored for energy-root/);
 
-assert.deepEqual(route.steps.map((step) => step.type), [
+// Gear steps are wrapped in `ifPossible` (checked below); the rest is the guide's walk.
+assert.deepEqual(route.steps.filter((step) => step.type !== "ifPossible").map((step) => step.type), [
   "travel", "farm", "chooseClass", "classConfig",
   "travel", "farm", "attemptBoss",
   ...walks.flatMap(() => ["travel", "farm"]),
   "travel", "farm", "attemptBoss", "farm",
 ]);
 const [travel, quest, choose, config] = route.steps;
+
+// The Clearing set right after the class pick, then each zone's pieces before its farm,
+// each crafted in that zone and worn at once, and only while the character is still T1.
+const gearBlocks = route.steps.filter((step): step is Extract<RouteStep, { type: "ifPossible" }> => step.type === "ifPossible");
+assert.equal(route.steps[4]?.type, "ifPossible", "the Clearing set follows the class pick");
+const worn: string[] = [];
+for (const block of gearBlocks) {
+  assert.deepEqual(block.when, { type: "not", of: { type: "playerTierAtLeast", tier: 2 } });
+  for (let i = 0; i < block.steps.length; i += 2) {
+    const [craft, equip] = [block.steps[i], block.steps[i + 1]];
+    assert(craft.type === "craft" && craft.recipeIds.length === 1 && craft.farmAt);
+    assert(equip.type === "equip" && equip.definitionIds[0] === craft.recipeIds[0]);
+    const recipe = RECIPE_DATABASE.get(craft.recipeIds[0]);
+    assert(recipe, `${craft.recipeIds[0]} is a recipe`);
+    const farmAt = craft.farmAt;
+    const group = farmAt.kind === "node" ? "clearing" : farmAt.kind === "biome" ? farmAt.biomeGroup : "";
+    assert.equal(recipe.recipeGroup, group, `${recipe.id} is crafted where it is farmed`);
+    if (recipe.slot === "weapon") assert(recipe.id.startsWith("spirit-"), "weapons are the Spirit's own");
+    worn.push(recipe.id);
+  }
+}
+assert.deepEqual(worn.slice(0, 4), [...SPIRIT_CLEARING_GEAR]);
+assert.deepEqual(worn.slice(4), zoneOrder.flatMap((biome) => [...SPIRIT_T1_GEAR[biome]]));
+for (const biome of zoneOrder) {
+  const at = route.steps.findIndex((step) => step.type === "travel" && step.to.kind === "biome" && step.to.biomeGroup === biome);
+  if (SPIRIT_T1_GEAR[biome].length > 0) assert.equal(route.steps[at + 1]?.type, "ifPossible", `${biome}: gear right after arriving`);
+}
 assert(travel.type === "travel" && travel.to.kind === "node");
 assert(quest.type === "farm" && quest.until.type === "playerTierAtLeast" && quest.until.tier === 1,
   "the tier-0 quest precedes the class pick");

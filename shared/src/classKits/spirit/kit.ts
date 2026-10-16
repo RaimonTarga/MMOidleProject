@@ -64,7 +64,7 @@ function spiritLeaf(entry: Omit<LeafDef, 'classId' | 'params' | 'tier'> & { para
 const PIECES: readonly SpiritPiece[] = [
   spiritPiece({
     id: 'spirit-bolt',
-    params: { costPips: 0.5, mult: 1 },
+    params: { costPips: 0.75, mult: 2 },
     name: 'Bolt',
     family: 'strike',
     text: 'Spends part of your storm on one bolt of lightning at the target.',

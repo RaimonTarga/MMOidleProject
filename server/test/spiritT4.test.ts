@@ -176,7 +176,7 @@ const aggro = (w: World, p: PlayerEntity, m: MonsterEntity): void => setAggroTar
   const leftOf = (leaf: boolean, over: boolean): number => {
     const s = setup({ discipline: 'spirit-overflow', picks: leaf ? ['spirit-burn-off'] : [], edit: noBands });
     run(s.world, s.player, 100);
-    s.player.usesEnergy!.energy = maxOf(s.player) * (over ? 1.3 : 0.5);
+    s.player.usesEnergy!.energy = maxOf(s.player) * (over ? 1.3 : 0.1);
     debuff(s.player, 'monster-dot:poison', 10_000, { isDot: 1, damagePerStack: 1, nextTickIn: 1000, tickIntervalMs: 1000 });
     run(s.world, s.player, 1_000);
     return getStatusEffect(s.player.tracksCombat, 'monster-dot:poison')!.remainingMs;
@@ -218,6 +218,8 @@ const aggro = (w: World, p: PlayerEntity, m: MonsterEntity): void => setAggroTar
   // Cleansing Tide: every turn of the tide washes a debuff off you.
   const rig = (leaf: boolean): PlayerEntity => {
     const s = setup({ discipline: 'spirit-tide', picks: leaf ? ['spirit-cleansing-tide'] : [], edit: noBands });
+    // The surge breaks over an enemy in reach: without one the full ebb waits.
+    setAttackTarget(s.world, s.player, s.spawn(430, 400).isMonster.id);
     run(s.world, s.player, 100);
     debuff(s.player, 'monster-dot:poison', 9_000, { isDot: 1, damagePerStack: 1, nextTickIn: 1000, tickIntervalMs: 1000 });
     s.player.usesEnergy!.energy = maxOf(s.player);
@@ -308,6 +310,9 @@ const aggro = (w: World, p: PlayerEntity, m: MonsterEntity): void => setAggroTar
   const burst = (cleared: string[]): number => {
     const s = setup({ relic: ['spirit-relic-volcanic'], bossesCleared: cleared, edit: noBands });
     const mon = s.spawn(460, 400);
+    // Start full: the flow no longer grows with the pips, so a deep bottle takes longer than the window to fill.
+    run(s.world, s.player, 100);
+    s.player.usesEnergy!.energy = maxOf(s.player);
     run(s.world, s.player, 6_000);
     return lost(mon);
   };
@@ -434,6 +439,8 @@ const aggro = (w: World, p: PlayerEntity, m: MonsterEntity): void => setAggroTar
   const { world, player, spawn } = setup({ bands: ['spirit-maelstrom'] });
   const diver = spawn(700, 400);
   setAttackTarget(world, player, diver.isMonster.id);
+  run(world, player, 100);
+  player.usesEnergy!.energy = maxOf(player); // a full storm: gather is breaking, so only the moment is missing
   run(world, player, 12_000);
   assert.ok(diver.hasPosition.current.x > 650, 'Maelstrom waits for a dive');
   attachComponent(world, diver, 'isConcealed', { marker: 'burrow', endsAtMs: clock + 60_000 });

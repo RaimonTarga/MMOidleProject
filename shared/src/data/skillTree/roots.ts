@@ -134,7 +134,7 @@ export const rootEntries = [
     parent: null, children: [],
     description: 'Class mechanic — the storm: one bar that is both your damage and your shield. A steady flow fills it, enemy hits drain it before your HP, and your Thresholds decide when to let it loose.',
     cost: 1, statEffects: {"attackPct": 0.15, "maxHpPct": 0.03, "attackSpeedPct": 0.12, "moveSpeedPct": 0.12, "attackRange": 130},
-    mechanicEffects: {"defense.barrier-pct": 0.3},
+    mechanicEffects: {},
   }],
 
 

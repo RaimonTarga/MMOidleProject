@@ -4,6 +4,7 @@ import {
   bossClearKey,
   classConfigContext,
   globalMastery,
+  RECIPE_DATABASE,
   resolveClassConfig,
   SKILL_TREE,
   SPIRIT_KIT,
@@ -11,11 +12,13 @@ import {
   validateClassConfig,
   type TutorialCondition,
 } from "@mmo-idle/shared";
+import type { RouteStep } from "../route/types";
 import { isControlledRouteId, requireRoute, ROUTES } from "./index";
 import { SPIRIT_CLASS_ROOT } from "./spiritT1";
 import { SPIRIT_T2_DISCIPLINE, SPIRIT_T2_ZONES, spiritT2FarmLevel } from "./spiritT2";
 import { SPIRIT_T3_SPECIALIZATION, SPIRIT_T3_ZONES, spiritT3FarmLevel, spiritT3Route } from "./spiritT3";
 import {
+  SPIRIT_T4_GEAR,
   SPIRIT_T4_ID,
   SPIRIT_T4_LEAF,
   SPIRIT_T4_ZONES,
@@ -58,7 +61,7 @@ const node = SKILL_TREE.get(SPIRIT_T4_LEAF);
 assert(node && node.classId === SPIRIT_CLASS_ROOT && node.disciplineId === SPIRIT_T2_DISCIPLINE, "the pick is a leaf of the route's discipline");
 
 // Each T4 zone: travel, farm to the guide's level, then its T4 boss.
-const t4 = route.steps.slice(t3.steps.length + 2);
+const t4 = route.steps.slice(t3.steps.length + 2).filter((step) => step.type !== "ifPossible");
 assert.equal(t4.length, SPIRIT_T4_ZONES.length * 3);
 for (const [index, { biome, pieceId }] of SPIRIT_T4_ZONES.entries()) {
   const [travel, farm, boss] = t4.slice(index * 3, index * 3 + 3);
@@ -71,6 +74,26 @@ for (const [index, { biome, pieceId }] of SPIRIT_T4_ZONES.entries()) {
   assert(spiritT4LessonLevel(biome, pieceId) <= level, `${biome}: the lesson lands before the cap`);
   assert.deepEqual(boss, { type: "attemptBoss", biomeGroup: biome, tier: 4 });
 }
+
+
+// Gear: each zone's pieces (from SPIRIT_T4_GEAR) are crafted there and worn, only while the character is still T4;
+// the first zone hands over a full set of this tier: the class weapon, an armor, a charm and boots.
+const gearBlocks4 = route.steps.slice(t3.steps.length + 2).filter((step): step is Extract<RouteStep, { type: "ifPossible" }> => step.type === "ifPossible");
+const worn4: string[] = [];
+for (const block of gearBlocks4) {
+  assert.deepEqual(block.when, { type: "not", of: { type: "playerTierAtLeast", tier: 5 } });
+  for (let i = 0; i < block.steps.length; i += 2) {
+    const [craft, equip] = [block.steps[i], block.steps[i + 1]];
+    assert(craft.type === "craft" && craft.farmAt?.kind === "biome" && craft.farmAt.tier === 4);
+    assert(equip.type === "equip" && equip.definitionIds[0] === craft.recipeIds[0]);
+    const recipe = RECIPE_DATABASE.get(craft.recipeIds[0]);
+    assert(recipe && recipe.recipeGroup === craft.farmAt.biomeGroup && recipe.tier === 4, craft.recipeIds[0] + " is a T4 recipe of its zone");
+    worn4.push(recipe.id);
+  }
+}
+assert.deepEqual(worn4, SPIRIT_T4_ZONES.flatMap(({ biome }) => [...(SPIRIT_T4_GEAR[biome] ?? [])]));
+const firstSet4 = (SPIRIT_T4_GEAR[SPIRIT_T4_ZONES[0].biome] ?? []).map((id) => RECIPE_DATABASE.get(id)?.slot).sort();
+assert.deepEqual(firstSet4, ["armor", "mobility", "recovery", "weapon"], "the first T4 boss is met in a full set of the tier");
 
 // The auto config stays valid through the leaf and every T4 lesson and rank-up.
 const levels: Record<string, number> = {};

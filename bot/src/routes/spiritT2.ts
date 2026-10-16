@@ -5,7 +5,7 @@ import {
   type KitBiome,
 } from "@mmo-idle/shared";
 import { allOf, type Condition, type NodeRef, type Route, type RouteStep } from "../route/types";
-import { SPIRIT_CLASS_ROOT, spiritT1Route } from "./spiritT1";
+import { SPIRIT_CLASS_ROOT, spiritT1Route, wearZoneGear } from "./spiritT1";
 
 /**
  * The Spirit's T2 route (T2-W2): the T1 route through promotion, a discipline from
@@ -28,6 +28,22 @@ export const SPIRIT_T2_ZONES: ReadonlyArray<{ biome: KitBiome; pieceId: string }
   { biome: "jungle", pieceId: "spirit-flare" },
   { biome: "desert", pieceId: "spirit-dust-devil" },
 ];
+
+/**
+ * What the Spirit wears from each T2 zone, in unlock order. PLACEHOLDER picks, each an upgrade
+ * for this class: the Plains set meets the first T2 boss; the Forest's evasion vest, Clear Sky
+ * charm and boots replace it; the Summit Staff is the boss weapon from the Mountain on; the Jungle's
+ * vest and boots and the Desert's boots are the later upgrades.
+ */
+export const SPIRIT_T2_GEAR: Readonly<Record<string, readonly string[]>> = {
+  plains: ["spirit-forked-rod-t2", "plains-vest-t2", "plains-charm-t2", "plains-boots-t2"],
+  forest: ["forest-vest-t2", "forest-charm-t2", "forest-boots-t2"],
+  mountain: ["spirit-summit-staff-t2"],
+  swamp: [],
+  cave: [],
+  jungle: ["jungle-vest-t2", "jungle-boots-t2"],
+  desert: ["desert-boots-t2"],
+};
 
 /** The biome level where a zone's T2 lesson lands (levels run across tiers). */
 export function spiritT2LessonLevel(biome: KitBiome, pieceId: string): number {
@@ -71,6 +87,7 @@ export function spiritT2Route(): Route {
     const level = spiritT2FarmLevel(biome);
     steps.push(
       { type: "travel", to: at },
+      ...wearZoneGear(at, 2, SPIRIT_T2_GEAR[biome] ?? [], "T2 " + biome),
       { type: "farm", at, until: { type: "biomeLevelAtLeast", biomeGroup: biome, level } },
       { type: "attemptBoss", biomeGroup: biome, tier: 2 },
     );
