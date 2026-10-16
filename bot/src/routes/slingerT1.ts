@@ -120,10 +120,16 @@ export function zoneGearSteps(biomeGroup: string, tier: number, guns: readonly D
  * order (bible §3, decided in the Slinger dive: "it decides where the Slinger
  * stands for its stationary reload"); without it the Slinger trades shots at
  * melee distance (the Plains boss sim: ~60 px from the boss, a loss every time;
- * with it ~100 px and a win).
+ * with it ~100 px and a win). Step Back out of a telegraph goes first (the same
+ * movement channel; the first rule that holds moves you): without it the Slinger
+ * stood in the T2 Mountain boss's charge lane and died in 9 s (sim); with it,
+ * it dodged the charges. PLACEHOLDER: the bible's free-order list (§3) is
+ * Proposed and names Avoid Hazards, not Step Back.
  */
-export const SLINGER_STANDING_ORDERS: readonly EquippedRule[] = DEFAULT_RUNE_LOADOUT.map((rule) =>
-  rule.conditionId === "in-combat" && rule.actionId === "chase-enemy" ? { conditionId: "in-combat", actionId: "orbit" } : { ...rule });
+export const SLINGER_STANDING_ORDERS: readonly EquippedRule[] = DEFAULT_RUNE_LOADOUT.flatMap((rule): EquippedRule[] =>
+  rule.conditionId === "in-combat" && rule.actionId === "chase-enemy"
+    ? [{ conditionId: "inside-telegraph", actionId: "step-back" }, { conditionId: "in-combat", actionId: "orbit" }]
+    : [{ ...rule }]);
 
 /** The Clearing set, made right after the class pick (the pistol is class gear). */
 export const SLINGER_CLEARING_GEAR: readonly string[] = [

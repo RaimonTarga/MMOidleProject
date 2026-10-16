@@ -89,7 +89,10 @@ const orders = route.steps.find((step): step is Extract<RouteStep, { type: "conf
 assert(orders, "the route sets the standing orders");
 assert(orders.rules.some((rule) => rule.conditionId === "in-combat" && rule.actionId === "orbit"), "Keep Distance while fighting");
 assert(!orders.rules.some((rule) => rule.actionId === "chase-enemy"), "no chase in place of the kite");
-assert.equal(orders.rules.length, DEFAULT_RUNE_LOADOUT.length, "otherwise the default standing orders");
+const step = orders.rules.findIndex((rule) => rule.conditionId === "inside-telegraph" && rule.actionId === "step-back");
+const kite = orders.rules.findIndex((rule) => rule.actionId === "orbit");
+assert(step >= 0 && step < kite, "Step Back out of a telegraph first, then Keep Distance");
+assert.equal(orders.rules.length, DEFAULT_RUNE_LOADOUT.length + 1, "otherwise the default standing orders");
 
 // ── Gear: the Clearing set, then each zone's pieces as they unlock ───────────
 const crafts = route.steps.filter((step): step is Extract<RouteStep, { type: "craft" }> => step.type === "craft");
