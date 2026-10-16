@@ -96,6 +96,7 @@ import {
   SWAP_CARRY,
   weakenRisen,
 } from '../../slinger/t4';
+import { countRound, flushSlingerTally, slingerTally } from '../../slinger/telemetry';
 import { isTracedBy, lookoutAmbusher, revealTraced, shadeTick, traceTarget } from '../../slinger/tracer';
 import {
   BUNKER,
@@ -383,12 +384,23 @@ export function updateSlinger(world: World, player: PlayerEntity, dt: number, no
       if (leafPicked(player, QUICK_SWAP)) setResource(cs, SWAP_CARRY, reload.ammo);
       startReloadTimer(world, player, resolveReloadTimeMs(player));
       emitReloadStart(world, player);
+      const tally = slingerTally(player, now);
+      if (tally) tally.switchReloads += 1;
     }
   }
   // Reload early when nothing threatens you (a free rule, on by default).
-  if (idle && loadout.config.reloadEarlyWhenSafe && !inCombat && reload.ammo < reload.ammoMax) {
+  if (idle && reload.reloadingMs <= 0 && loadout.config.reloadEarlyWhenSafe && !inCombat && reload.ammo < reload.ammoMax) {
     startReloadTimer(world, player, resolveReloadTimeMs(player));
     emitReloadStart(world, player);
+    const tally = slingerTally(player, now);
+    if (tally) tally.earlyReloads += 1;
+  }
+  // Telemetry (dev only): time reloading against time firing in a fight.
+  const tally = slingerTally(player, now);
+  if (tally) {
+    if (reload.reloadingMs > 0 && inCombat) tally.reloadMs += dt;
+    else if (inCombat) tally.firingMs += dt;
+    flushSlingerTally(player, now);
   }
 
   // Siege: a reload that started without a round of ours (early, switch) fires the shell here.
@@ -759,8 +771,13 @@ function calledShotExtras(world: World, player: PlayerEntity, loadout: Loadout, 
 
 export function registerSlinger(): void {
   registerReloadLifecycleHook({
-    onStart(_world, player) {
+    onStart(world, player) {
       if (!loadoutOf(player)) return;
+      const tally = slingerTally(player);
+      if (tally) {
+        tally.reloads += 1;
+        if (momentActive(world, player, 'inside-telegraph', undefined, Date.now())) tally.reloadsInTelegraph += 1;
+      }
       // Siege: the shell fires with the reload (once the round that started it has banked). Rolling Fire carries none.
       if (disciplineOf(player) === SIEGE && specializationOf(player) !== ROLLING_FIRE) markShellPending(player);
       endFan(player);
@@ -808,6 +825,7 @@ export function registerSlinger(): void {
       // (the same exemption a completed cast's hit gets). PLACEHOLDER: any target, not only a fleeing one.
       if (loadout.trophy?.id === 'slinger-relic-jungle') ctx.metadata['castDelivered'] = true;
     }
+    countRound(player, clip, last, loadout.trophy?.id, ctx.metadata['slingerCalled'] === true);
   });
 
   // Damage: typed rounds trade raw damage for their effect; the gun's lines and the last round shape it.
@@ -986,6 +1004,11 @@ export function registerSlinger(): void {
   registerCombatListener('afterHit', (ctx) => {
     if (ctx.attackerType !== 'monster' || ctx.defenderType !== 'player' || ctx.damage <= 0) return;
     const player = ctx.defender as PlayerEntity;
+    const tally = player.usesReload ? slingerTally(player) : null;
+    if (tally) {
+      if (player.usesReload!.reloadingMs > 0) tally.takenReloading += ctx.damage;
+      else tally.takenFiring += ctx.damage;
+    }
     if ((player.usesSkills.passives['slinger.regroup-speed-pct'] ?? 0) <= 0) return;
     if (ctx.damage >= player.hasHealth.maxHp * BIG_HIT_SHARE) setResource(player.tracksCombat, REGROUP_UNTIL, attackNow(ctx) + REGROUP_MS);
   });
