@@ -55,7 +55,9 @@ export const SQUIRE_T2_ZONE_GEAR: Record<SquireT2Biome, readonly string[]> = {
  */
 export const SQUIRE_T2_WEAPONS: Readonly<Record<string, Partial<Record<SquireT2Biome, string>>>> = {
   "squire-avenger": { plains: "squire-flanged-mace-t2", forest: "squire-arming-sword-t2", cave: "squire-tower-shield-t2" },
-  "squire-bulwark": { plains: "squire-flanged-mace-t2", cave: "squire-tower-shield-t2" },
+  // The Bulwark takes the Warhammer into the plated Mountain boss (sim: 16% -> 42% HP left; live lost
+  // twice in the mace, boss at 19% and 2%), then its own Tower Shield from the Cave on.
+  "squire-bulwark": { plains: "squire-flanged-mace-t2", mountain: "squire-warhammer-t2", cave: "squire-tower-shield-t2" },
   "squire-juggernaut": { plains: "squire-flanged-mace-t2", mountain: "squire-warhammer-t2" },
 };
 
