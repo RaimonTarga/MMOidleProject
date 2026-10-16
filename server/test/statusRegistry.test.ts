@@ -85,6 +85,13 @@ function assert(condition: unknown, message: string): void {
   }
   const stunned = audit.rows.find((row) => row.id === 'stunned');
   assert(stunned?.tiles.includes('debuff-stunned'), 'a stun on a player projects the debuff-stunned tile');
+  // The summon carrier rule: a status a summon carries reads as the summon's, owes the target
+  // frame's copy, badge and icon, and no player tile; one on you and on summons owes both.
+  const bark = audit.rows.find((row) => row.id === 'conduit-bark');
+  assert(bark?.side === 'minion' && bark.summon && !bark.playerSide && bark.targetSide, 'Barkward reads as a summon status');
+  assert(bark?.targetCopy && bark.badge && bark.icons.length > 0, 'and its copy, badge and icon are credited');
+  const seal = audit.rows.find((row) => row.id === 'conduit-seal');
+  assert(seal?.summon && seal.playerSide, 'Pressure Seal sits on you and on your summons (its callers say so)');
   console.log(`  audit: ${audit.rows.length} ids, 0 open gaps, ${audit.accepted.length} accepted`);
 }
 

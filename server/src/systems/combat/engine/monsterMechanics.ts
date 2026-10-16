@@ -596,6 +596,48 @@ export function cancelLowHealthWard(monster: MonsterEntity): void {
   setCounter(monster.tracksCombat, LOW_HEALTH_WARD_CAST_ENDS_KEY, 0);
 }
 
+// ── Wind-up slow ──────────────────────────────────────────────────────────────
+//
+// A status-data key that makes a monster's wind-ups take longer (the Apprentice's
+// Numb II, bible §9.16). While a live status on the monster carries it, every
+// wind-up clock the monster is in the middle of runs at `1 - pct` speed: a 2 s cast
+// under 0.5 takes 4 s. It acts on the clock as it runs, so a wind-up already under
+// way when it lands is held back too. The strongest carrier wins. Like any slow it
+// lands on a boss that accepts no control. The pattern runtime drives it each tick
+// (`stretchWindups` in `ai/bossPatterns.ts`), moving the telegraphs with the clocks.
+
+/** Status-data key: the fraction a monster's wind-up clocks are slowed by. */
+export const WINDUP_SLOW_PCT_KEY = "windupSlowPct";
+/** Ceiling on the wind-up slow, so a wind-up always ends. PLACEHOLDER. */
+const WINDUP_SLOW_CAP = 0.8;
+
+/** The strongest live wind-up slow on this monster (0 when none). */
+export function monsterWindupSlowPct(monster: MonsterEntity): number {
+  let pct = 0;
+  for (const effect of monster.tracksCombat.statusEffects) {
+    if (effect.remainingMs === 0) continue;
+    pct = Math.max(pct, effect.data[WINDUP_SLOW_PCT_KEY] ?? 0);
+  }
+  return Math.min(WINDUP_SLOW_CAP, Math.max(0, pct));
+}
+
+/**
+ * Push every ordinary wind-up the monster is in the middle of (charged attack, buff
+ * cast, ability cast, ward) `delayMs` later. True when one was running: the caller
+ * moves the telegraphs it painted by the same amount.
+ */
+export function delayMonsterCasts(monster: MonsterEntity, delayMs: number, now: number): boolean {
+  const cs = monster.tracksCombat;
+  let delayed = false;
+  for (const key of [CHARGE_CAST_ENDS_KEY, BUFF_CAST_ENDS_KEY, MONSTER_ABILITY_CAST_ENDS_KEY, LOW_HEALTH_WARD_CAST_ENDS_KEY]) {
+    const endsAt = getCounter(cs, key);
+    if (endsAt <= now) continue;
+    setCounter(cs, key, endsAt + delayMs);
+    delayed = true;
+  }
+  return delayed;
+}
+
 /** Drain a temporary casted ward before any periodic enemy shield. */
 function applyCastedMonsterWard(
   monster: MonsterEntity,
