@@ -88,9 +88,10 @@ for (const s of events.filter((e) => e.kind === 'stall')) {
 if (showDeaths) {
   console.log('deaths:');
   for (const d of deaths) {
-    const kb = d.killingBlow;
-    const killer = kb?.sourceName ?? kb?.source ?? d.dominantSource?.name ?? '?';
-    console.log(`  ${min(d.atMs).padStart(6)} ${zoneOf(d.nodeId)} [${d.routeStepLabel}] cause ${d.cause} killer ${killer}` +
-      ` largest ${d.largestHit?.amount ?? d.largestHit?.damage ?? '?'} maxHp ${d.maxHp} attackers ${d.maxConcurrentAttackers}`);
+    const killer = d.cause?.killer?.monsterName ?? d.killingBlow?.attacker ?? d.dominantSource?.name ?? '?';
+    const boss = d.cause?.killer?.isBoss ? ' (boss)' : '';
+    console.log(`  ${min(d.atMs).padStart(6)} ${zoneOf(d.nodeId)} [${d.routeStepLabel}] ${d.cause?.kind ?? '?'} by ${killer}${boss}` +
+      ` top ${d.dominantSource?.name ?? '?'} largest ${d.largestHit?.amount ?? '?'} maxHp ${Math.round(d.maxHp)}` +
+      ` attackers ${d.maxConcurrentAttackers} weapon ${d.loadout?.weapon ?? 'none'}`);
   }
 }
