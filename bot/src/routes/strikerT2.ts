@@ -58,9 +58,17 @@ function autoOrder(disciplineId: string): ClassConfig {
  * at T3 and T4. PLACEHOLDER (OV-STRIKER): in classBossSim the Swamp's set won the Mire-Gorged
  * Behemoth for every discipline (Light 51%, Balanced 87%, Heavy 25% HP left) where the Forest's
  * vest and boots lost it (Light at boss 5-26% left, Heavy at 3%).
+ *
+ * The Jungle keeps the charm already worn (the Plains' Grit): its own (Chase, Recovery while
+ * closing) left the Striker no sustain against the dungeon's nine-guard poison pack, which the
+ * boss sim never meets (it strips guards). Final run 2026-10-16: four deaths in 15 minutes and
+ * all nine guards still standing, where the earlier runs without that charm cleared it. PLACEHOLDER.
  */
+const T2_KEEP_CHARM_ZONES: readonly string[] = ["jungle"];
+
 export function strikerT2ZoneSet(biomeGroup: string): string[] {
-  return ["vest", "charm", "boots"].map((slot) => `${biomeGroup}-${slot}-t${TIER}`).filter((id) => RECIPE_DATABASE.has(id));
+  const slots = T2_KEEP_CHARM_ZONES.includes(biomeGroup) ? ["vest", "boots"] : ["vest", "charm", "boots"];
+  return slots.map((slot) => `${biomeGroup}-${slot}-t${TIER}`).filter((id) => RECIPE_DATABASE.has(id));
 }
 
 /**
