@@ -106,7 +106,7 @@ export function ThresholdsEditor({ view }: { view: ClassScreenView }) {
                 <span className="class-panel__family">{piece.family}</span>
               </div>
               <p className="class-panel__line">{piece.text}</p>
-              {piece.waitsFor && <p className="class-panel__line">{`Waits for ${piece.waitsFor}`}</p>}
+              {piece.waitsFor && <p className="class-panel__line">{`Waits until ${piece.waitsFor}`}</p>}
               {piece.atFloor ? (
                 <p className="class-panel__line">{`At the floor (${thresholds.floorPct}%)`}</p>
               ) : piece.automatic ? (

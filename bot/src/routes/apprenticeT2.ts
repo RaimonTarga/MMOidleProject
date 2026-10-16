@@ -1,16 +1,19 @@
 import { biomeLevelCap, type ClassConfig } from "@mmo-idle/shared";
 import { allOf, type NodeRef, type Route, type RouteStep } from "../route/types";
-import { APPRENTICE_CLASS_ROOT, apprenticeT1Route } from "./apprenticeT1";
+import { APPRENTICE_CLASS_ROOT, apprenticeT1Route, wear } from "./apprenticeT1";
 
 /**
  * The Apprentice's T2 route (T2-W2, bible §9.5, §9.16): the whole T1 route, then the T2 zones
- * in the guide's order, the Payoff rules with the T2 payoffs placed, and the seven T2 bosses.
+ * in the guide's order (wearing each zone's gear as it unlocks), the auto Payoff rules, and the
+ * seven T2 bosses.
  *
- * The school pick is an `unlockSkill` on the discipline node (the Passive Tree carries it again).
- * `apprentice-t2` itself still fights T2 with no school (`disciplineId: null`); the T3 route
- * passes one so its specialization has a discipline to sit under.
+ * The school pick is an `unlockSkill` on the discipline node (the Passive Tree carries it again),
+ * right after the T1 route. OV-APPRENTICE: `apprentice-t2` picks the Fire school, as the T3 and
+ * T4 routes always did, so every tier's route plays the same character (PLACEHOLDER pick).
  */
 export const APPRENTICE_T2_ID = "apprentice-t2";
+/** The school every Apprentice route picks at T2. */
+export const APPRENTICE_T2_DISCIPLINE = "apprentice-fire";
 
 /** The T2 zones with the lesson each teaches, in the tutorial's order (`shared/.../scripts/apprentice.ts`). */
 export const APPRENTICE_T2_ZONES: readonly { biomeGroup: string; lesson: string }[] = [
@@ -28,32 +31,29 @@ function zone(biomeGroup: string): NodeRef {
 }
 
 /**
- * The T1 defaults the server builds (Spread with company, Detonate, Seize, Siphon) plus each
- * T2 payoff on its own moment. The auto default does not place the T2 pieces, so the route
- * sets the rules itself once every lesson is learned. The relic is the first boss's Outbreak.
+ * The T2 pieces worn as each zone unlocks them (PLACEHOLDER picks, OV-APPRENTICE, chosen in the
+ * class boss sim): the Plains and Forest sets first, then the Fire school's Runestone Staff (three
+ * sigils a hit fill the bar for the chain), the Jungle's evasion vest and the Desert's fast boots.
+ * The Forest charm (the most Recovery) stays on.
+ */
+export const APPRENTICE_T2_GEAR: Readonly<Record<string, readonly string[]>> = {
+  plains: ["apprentice-branching-wand-t2", "plains-vest-t2", "plains-charm-t2", "plains-boots-t2"],
+  forest: ["apprentice-thornwood-rod-t2", "forest-vest-t2", "forest-charm-t2", "forest-boots-t2"],
+  mountain: ["apprentice-runestone-staff-t2"],
+  jungle: ["jungle-vest-t2"],
+  desert: ["desert-boots-t2"],
+};
+
+/**
+ * The rules the T2 bosses are fought with: the class's own auto default (the pass bar plays
+ * auto). The server places every owned payoff on its moment (`configs/apprentice.ts`) and
+ * equips the newest trophy, so the route only restates auto once every lesson is learned.
  */
 export function apprenticeT2Payoffs(): ClassConfig {
-  return {
-    mode: "custom",
-    relic: ["apprentice-relic-plains"],
-    system: {
-      kind: "payoffs",
-      placements: [
-        { moment: "target-full", pieceId: "apprentice-spread", conditions: [{ id: "enemies-near", param: 2 }] },
-        { moment: "target-full", pieceId: "apprentice-detonate", conditions: [] },
-        { moment: "enemy-winds-up", pieceId: "apprentice-seize", conditions: [] },
-        { moment: "hp-low", pieceId: "apprentice-siphon", conditions: [] },
-        { moment: "charging-at-me", pieceId: "apprentice-blast-back", conditions: [] },
-        { moment: "target-shielded", pieceId: "apprentice-sear", conditions: [] },
-        { moment: "target-out-of-reach", pieceId: "apprentice-seep", conditions: [] },
-        { moment: "target-flees", pieceId: "apprentice-snag", conditions: [] },
-        { moment: "debuff-landed", pieceId: "apprentice-recoil", conditions: [] },
-      ],
-    },
-  };
+  return { mode: "auto", relic: [], system: { kind: "payoffs", placements: [] } };
 }
 
-export function apprenticeT2Route(disciplineId: string | null = null): Route {
+export function apprenticeT2Route(disciplineId: string | null = APPRENTICE_T2_DISCIPLINE): Route {
   const t1 = apprenticeT1Route();
   const steps: RouteStep[] = [...t1.steps];
   if (disciplineId) steps.push({ type: "unlockSkill", skillId: disciplineId, label: "pick the school" });
@@ -62,13 +62,14 @@ export function apprenticeT2Route(disciplineId: string | null = null): Route {
   for (const { biomeGroup } of APPRENTICE_T2_ZONES) {
     const at = zone(biomeGroup);
     steps.push({ type: "travel", to: at });
+    steps.push(...wear(at, APPRENTICE_T2_GEAR[biomeGroup] ?? []));
     steps.push({
       type: "farm",
       at,
       until: { type: "biomeLevelAtLeast", biomeGroup, level: biomeLevelCap(2, biomeGroup) },
     });
   }
-  // Every T2 lesson is learned now, so the rules can place the T2 payoffs.
+  // Every T2 lesson is learned now; auto places them all.
   steps.push({ type: "classConfig", config: apprenticeT2Payoffs() });
   for (const { biomeGroup } of APPRENTICE_T2_ZONES) {
     steps.push({ type: "attemptBoss", biomeGroup, tier: 2 });
@@ -89,8 +90,8 @@ export function apprenticeT2Route(disciplineId: string | null = null): Route {
     version: "1.0.0",
     classRoot: APPRENTICE_CLASS_ROOT,
     description:
-      "Apprentice T2: the T1 route, then the seven T2 zones to their cap, Payoff rules with the " +
-      "T2 payoffs placed, and the seven T2 bosses. No school is picked (no harness path yet).",
+      "Apprentice T2: the T1 route, the Fire school, the seven T2 zones to their cap (wearing " +
+      "each zone's gear), auto Payoff rules, and the seven T2 bosses.",
     steps,
     completion: allOf(
       t1.completion,
