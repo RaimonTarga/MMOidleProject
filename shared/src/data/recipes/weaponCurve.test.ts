@@ -106,7 +106,11 @@ for (const id of WEAPON_ATTACK.keys()) {
 
 // 3. Class weapons (class-first build plan §3.6) copy a generic weapon of their biome until
 // the class tracks retune them, so each one's Attack is a pinned full-power Attack from its
-// own biome.
+// own biome, or the retuned Attack listed here (PLACEHOLDER numbers, each with its reason).
+const CLASS_RETUNED = new Map<string, number>([
+  // OV-STRIKER (2026-10-16): the base kit must win the Plains seal (bible §12), 19 -> 23.
+  ['striker-broadblade-t1', 23],
+]);
 const pinnedByGroup = new Map<string, Set<number>>();
 for (const recipe of generic) {
   const attack = WEAPON_ATTACK.get(recipe.id);
@@ -117,6 +121,11 @@ for (const recipe of generic) {
 }
 for (const recipe of weapons.filter((r) => r.classes)) {
   const attack = recipe.stats?.attack ?? 0;
+  const retuned = CLASS_RETUNED.get(recipe.id);
+  if (retuned !== undefined) {
+    if (attack !== retuned) problems.push(`${recipe.id}: Attack ${attack}, retuned to ${retuned}`);
+    continue;
+  }
   if (!pinnedByGroup.get(recipe.recipeGroup)?.has(attack)) {
     problems.push(`${recipe.id}: Attack ${attack} is no ${recipe.recipeGroup} generic weapon's full-power Attack`);
   }

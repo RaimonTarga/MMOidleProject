@@ -8,6 +8,7 @@ import {
   STARTER_RUNE_IDS,
   bossClearKey,
   isRuneRuleCompatibleForArchetype,
+  runeIdsForArchetype,
   type CombatArchetype,
   type DeltaSnapshot,
 } from "@mmo-idle/shared";
@@ -461,7 +462,9 @@ function validateRoute(route: Route): void {
   // inventory and Rune catalogue are validated by that snapshot contract at run
   // time, not by this fresh-character walk.
   const sealedEntry = route.progressionEntry !== undefined;
-  const ownedRunes = new Set<string>(sealedEntry ? ALL_RUNE_IDS : STARTER_RUNE_IDS);
+  // Runes are free standing orders: a character owns every rune its class may run
+  // (`runeIdsForArchetype`, as the server hydrates `runesOwned`).
+  const ownedRunes = new Set<string>(sealedEntry ? ALL_RUNE_IDS : runeIdsForArchetype(archetype));
   const crafted = new Set<string>([
     ...(sealedEntry ? RECIPE_DATABASE.keys() : []),
     ...(route.entryItems ?? []),

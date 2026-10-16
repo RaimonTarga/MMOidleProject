@@ -236,7 +236,10 @@ function hit(world: World, player: PlayerEntity, monster: MonsterEntity, damage:
   player.mitigatesDamage.plating = 20;
   player.usesEnergy!.energy = 0;
   const plain = hit(world, player, mon, 100);
-  assert.ok(plain < 100 - 20, 'Ironbound: with the storm empty, plating doubles');
+  // The doubled plating is a second plating's worth, paying DR as plating does. (This passed on
+  // a looser bound only while the root's old recharging barrier absorbed part of the hit.)
+  const doubled = Math.round(100 - 20 * (1 - player.mitigatesDamage.damageReduction));
+  assert.equal(plain, doubled, 'Ironbound: with the storm empty, plating doubles');
 }
 void getResource;
 console.log('spiritStorm: ok');

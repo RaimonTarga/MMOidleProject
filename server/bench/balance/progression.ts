@@ -213,6 +213,9 @@ function bestGearForSlot(
     if (recipe.slot !== slot) continue;
     if (recipe.tier !== gearTier) continue;
     if (!isBenchEquippable(recipe, playerTier)) continue;
+    // The legacy enumerator builds pre-rework packages: class-first class gear (smart loot,
+    // `classes`) is another class's kit, and a retuned class weapon must not leak into them.
+    if (recipe.classes) continue;
 
     if (!anyBest || gearScore(recipe, slot) > gearScore(anyBest, slot)) {
       anyBest = recipe;
