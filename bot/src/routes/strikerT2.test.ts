@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import {
+  ITEM_DATABASE,
+  RECIPE_DATABASE,
   SKILL_TREE,
   strikerComboLength,
   tutorialScriptFor,
@@ -9,11 +11,14 @@ import type { Condition, RouteStep } from "../route/types";
 import { CONTROLLED_ROUTE_IDS, isClassAgnosticRouteId, requireRoute, ROUTES } from "./index";
 import { STRIKER_CLASS_ROOT, strikerT1Route } from "./strikerT1";
 import {
+  STRIKER_T2_BOSS_ORDER,
+  STRIKER_T2_LATE_SEALS,
   STRIKER_T2_LIGHT_ID,
   STRIKER_T2_ROUTE_IDS,
   STRIKER_T2_ZONES,
   strikerT2FarmLevel,
   strikerT2Route,
+  strikerT2ZoneGear,
 } from "./strikerT2";
 
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -51,13 +56,45 @@ for (const [disciplineId, id] of Object.entries(STRIKER_T2_ROUTE_IDS)) {
   assert.equal(isClassAgnosticRouteId(id), false, "the route is not rebuilt for another class");
   assert(CONTROLLED_ROUTE_IDS.includes(id), `${id} joins the controlled batch list`);
 
-  // It is the T1 route, then the pick, the Order, and three steps per T2 zone.
-  assert.deepEqual(route.steps.slice(0, t1.steps.length), t1.steps, "the T1 route comes first, unchanged");
-  const rest = route.steps.slice(t1.steps.length);
+  // It is the T1 route, then the pick, the Order, each T2 zone (travel, its gear, the farm, its
+  // boss unless that seal is a late one), then the late seals.
+  // The T1 route comes first, unchanged, run only while it is not done (a resume skips the walk).
+  const [replay] = route.steps;
+  assert(replay.type === "ifPossible" && replay.when.type === "not", "the T1 route is wrapped in an unless-done");
+  if (replay.type === "ifPossible" && replay.when.type === "not") {
+    assert.deepEqual(replay.steps, t1.steps, "the T1 route comes first, unchanged");
+    assert.deepEqual(replay.when.of, t1.completion, "it is skipped once the T1 route is complete");
+  }
+  const rest = route.steps.slice(1);
   assert.deepEqual(
     rest.map((step) => step.type),
-    ["unlockSkill", "classConfig", ...STRIKER_T2_ZONES.flatMap(() => ["travel", "farm", "attemptBoss"])],
+    [
+      "unlockSkill", "classConfig",
+      ...STRIKER_T2_ZONES.flatMap((biomeGroup) => [
+        "travel",
+        ...strikerT2ZoneGear(disciplineId, biomeGroup).flatMap(() => ["craft", "equip"]),
+        "farm",
+        ...(STRIKER_T2_LATE_SEALS.includes(biomeGroup) ? [] : ["attemptBoss"]),
+      ]),
+      ...STRIKER_T2_LATE_SEALS.flatMap(() => ["equip", "attemptBoss"]),
+    ],
   );
+
+  // Gear: T2 recipes from the zone the route is farming, in unlock order, and before the zone's farm ends.
+  for (const biomeGroup of STRIKER_T2_ZONES) {
+    const ids = strikerT2ZoneGear(disciplineId, biomeGroup);
+    let last = 0;
+    for (const itemId of ids) {
+      const recipe = RECIPE_DATABASE.get(itemId);
+      assert(recipe && recipe.recipeGroup === biomeGroup, `${itemId} is a ${biomeGroup} recipe`);
+      assert(ITEM_DATABASE.get(itemId)?.tier === 2, `${itemId} is tier-2 gear`);
+      assert(recipe.requiredBiomeLevel >= last && recipe.requiredBiomeLevel <= strikerT2FarmLevel(biomeGroup),
+        `${itemId} unlocks in order, inside ${biomeGroup}'s T2 farm`);
+      last = recipe.requiredBiomeLevel;
+    }
+  }
+  const first = strikerT2ZoneGear(disciplineId, STRIKER_T2_BOSS_ORDER[0]).map((itemId) => RECIPE_DATABASE.get(itemId)?.slot);
+  assert.deepEqual(first, ["weapon", "armor", "recovery", "mobility"], "the first T2 seal meets a full set of T2 gear");
 
   const [pick, config] = rest;
   assert(pick.type === "unlockSkill" && pick.skillId === disciplineId, "the route picks its discipline");
@@ -69,7 +106,8 @@ for (const [disciplineId, id] of Object.entries(STRIKER_T2_ROUTE_IDS)) {
 
   const farms = rest.filter((step): step is Extract<RouteStep, { type: "farm" }> => step.type === "farm");
   const bosses = rest.filter((step): step is Extract<RouteStep, { type: "attemptBoss" }> => step.type === "attemptBoss");
-  assert.deepEqual(bosses.map((step) => step.biomeGroup), [...STRIKER_T2_ZONES], "every T2 boss, in guide order");
+  assert.deepEqual(bosses.map((step) => step.biomeGroup), [...STRIKER_T2_BOSS_ORDER], "every T2 boss, the late seals last");
+  assert.deepEqual([...STRIKER_T2_BOSS_ORDER].sort(), [...STRIKER_T2_ZONES].sort(), "every T2 zone's boss, once");
   assert(bosses.every((step) => step.tier === 2), "the bosses are tier 2");
   STRIKER_T2_ZONES.forEach((biomeGroup, index) => {
     const farm = farms[index];

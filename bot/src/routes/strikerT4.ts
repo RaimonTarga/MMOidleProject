@@ -1,7 +1,8 @@
-import { biomeLevelCap, STRIKER_KIT } from "@mmo-idle/shared";
+import { biomeLevelCap, RECIPE_DATABASE, STRIKER_KIT } from "@mmo-idle/shared";
 import { allOf, type NodeRef, type Route, type RouteStep } from "../route/types";
-import { STRIKER_CLASS_ROOT } from "./strikerT1";
+import { STRIKER_CLASS_ROOT, wearInOrder } from "./strikerT1";
 import { STRIKER_T3_ROUTE_IDS, strikerT3Route } from "./strikerT3";
+import { unlessDone } from "./strikerT2";
 
 /**
  * The Striker's T4 route (T4-W2, bible §12.7 and §12.16).
@@ -35,6 +36,29 @@ export function strikerT4FarmLevel(biomeGroup: string): number {
   return biomeLevelCap(TIER, biomeGroup);
 }
 
+/**
+ * The weapon each discipline takes as a T4 zone opens it (§12.5 "Wants", §12.9 jobs, §12.16 moved
+ * jobs). PLACEHOLDER (OV-STRIKER): every arm meets the first T4 seal (the Mountain) in the tier's
+ * Maul; Balanced then takes the Wasteland's Reaper's Scythe (its army fight: every beat splashes) and
+ * the Bastard Sword in the Trench (the Cave's job moved there), Light the
+ * Jungle's Twin Fangs.
+ */
+const T4_WEAPONS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  "striker-light": { mountain: "striker-maul-t4", jungle: "striker-twin-fangs-t4" },
+  "striker-balanced": { mountain: "striker-maul-t4", graveyard: "striker-reapers-scythe-t4", trench: "striker-bastard-sword-t4" },
+  "striker-heavy": { mountain: "striker-maul-t4" },
+};
+
+/**
+ * What the arm wears from a T4 zone, in unlock order: its weapon, then the zone's own vest, charm
+ * and boots, the answer to that zone's threat, worn at its boss (as at T3). PLACEHOLDER.
+ */
+export function strikerT4ZoneGear(disciplineId: string, biomeGroup: string): string[] {
+  const weapon = T4_WEAPONS[disciplineId]?.[biomeGroup];
+  const set = ["vest", "charm", "boots"].map((slot) => `${biomeGroup}-${slot}-t${TIER}`).filter((id) => RECIPE_DATABASE.has(id));
+  return [...(weapon ? [weapon] : []), ...set];
+}
+
 export function strikerT4Route(leafId = "striker-ghoststep"): Route {
   const id = STRIKER_T4_ROUTE_IDS[leafId];
   const leaf = STRIKER_KIT.leaves.find((entry) => entry.id === leafId);
@@ -46,7 +70,7 @@ export function strikerT4Route(leafId = "striker-ghoststep"): Route {
   const t3 = strikerT3Route(specialization.id);
 
   const steps: RouteStep[] = [
-    ...t3.steps,
+    unlessDone(t3, "the T3 route"),
     {
       type: "farm",
       at: { kind: "biome", biomeGroup: "volcanic", tier: 3, pick: "uncleared" },
@@ -58,6 +82,7 @@ export function strikerT4Route(leafId = "striker-ghoststep"): Route {
   for (const biomeGroup of STRIKER_T4_ZONES) {
     const at = zone(biomeGroup);
     steps.push({ type: "travel", to: at });
+    steps.push(...wearInOrder(strikerT4ZoneGear(leaf.disciplineId, biomeGroup), at, `${biomeGroup} T4`));
     steps.push({
       type: "farm",
       at,

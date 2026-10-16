@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
   biomeLevelCap,
+  RECIPE_DATABASE,
   SKILL_TREE,
   strikerComboLength,
   T1_BIOME_ORDER,
@@ -10,7 +11,14 @@ import {
 } from "@mmo-idle/shared";
 import type { Condition, RouteStep } from "../route/types";
 import { isClassAgnosticRouteId, requireRoute, ROUTES } from "./index";
-import { STRIKER_CLASS_ROOT, STRIKER_T1_ID, strikerFarmLevel, strikerT1Route } from "./strikerT1";
+import {
+  STRIKER_CLASS_ROOT,
+  STRIKER_CLEARING_GEAR,
+  STRIKER_T1_ID,
+  STRIKER_T1_ZONE_GEAR,
+  strikerFarmLevel,
+  strikerT1Route,
+} from "./strikerT1";
 
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const [FIRST_SEAL, SECOND_SEAL] = TUTORIAL_SEALS;
@@ -61,13 +69,41 @@ assert(rejected, "naming another class is rejected");
 // ── Steps: the quest, the class, the auto Order, the guide's zones ───────────
 const kinds = route.steps.map((step) => step.type);
 const walks = T1_BIOME_ORDER.filter((biome) => biome !== FIRST_SEAL && biome !== SECOND_SEAL);
+const wear = (ids: readonly string[]) => ids.flatMap(() => ["craft", "equip"]);
+const gearOf = (biomeGroup: string) => STRIKER_T1_ZONE_GEAR[biomeGroup] ?? [];
 assert.deepEqual(kinds, [
-  "travel", "farm", "chooseClass", "classConfig",
-  "travel", "farm", "craft", "equip", "attemptBoss",
-  ...walks.flatMap(() => ["travel", "farm"]),
-  "travel", "farm", "craft", "equip", "attemptBoss",
+  "travel", "farm", "chooseClass", "classConfig", "configureRunes", ...wear(STRIKER_CLEARING_GEAR),
+  "travel", ...wear(gearOf(FIRST_SEAL)), "farm", "attemptBoss",
+  ...walks.flatMap((biome) => ["travel", ...wear(gearOf(biome)), "farm"]),
+  "travel", ...wear(gearOf(SECOND_SEAL)), "farm", "attemptBoss",
   "farm",
 ]);
+
+const runes = route.steps.find((step) => step.type === "configureRunes");
+assert(runes?.type === "configureRunes" && runes.rules[0]?.actionId === "step-back",
+  "Avoid Hazards (Read The Ground) leads the standing orders");
+
+// ── Gear: the Clearing set, then each zone's pieces as the zone unlocks them ──
+assert.equal(STRIKER_CLEARING_GEAR.length, 4, "the Clearing set is a weapon, a vest, a charm and boots");
+const gearSlots = ["weapon", "armor", "recovery", "mobility"];
+const gearLists: [string, readonly string[]][] = [["clearing", STRIKER_CLEARING_GEAR], ...Object.entries(STRIKER_T1_ZONE_GEAR)];
+for (const [where, ids] of gearLists) {
+  let lastLevel = 0;
+  for (const id of ids) {
+    const recipe = RECIPE_DATABASE.get(id);
+    assert(recipe, `${id} is a recipe`);
+    assert.equal(recipe.recipeGroup, where, `${id} is made in ${where}`);
+    assert(gearSlots.includes(recipe.slot), `${id} fills a gear slot`);
+    assert(recipe.requiredBiomeLevel >= lastLevel, `${where}'s pieces come in unlock order`);
+    if (where !== "clearing") {
+      assert(recipe.requiredBiomeLevel <= strikerFarmLevel(where), `${id} unlocks before ${where}'s farm ends`);
+    }
+    lastLevel = recipe.requiredBiomeLevel;
+  }
+}
+for (const step of route.steps) {
+  if (step.type === "craft") assert(step.farmAt, "every craft farms for its unlock and its cost");
+}
 
 const [toClearing, quest, choose, config] = route.steps;
 assert(toClearing.type === "travel" && toClearing.to.kind === "node", "the quest starts in the Clearing");

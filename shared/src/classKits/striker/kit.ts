@@ -88,7 +88,7 @@ const PIECES: readonly StrikerPiece[] = [
     family: 'finisher-setup',
     cast: 'windup',
     text: 'You wind up before the finisher, and the finisher hits much harder.',
-    params: { castMs: 900, finisherBonusPct: 0.6 },
+    params: { castMs: 900, finisherBonusPct: 1 },
   }),
   technique({
     id: 'striker-focus',
@@ -97,7 +97,7 @@ const PIECES: readonly StrikerPiece[] = [
     cast: 'opener',
     text: 'You open the combo with a breath of focus, and every beat after it swings faster.',
     // Lasts until the finisher; `maxMs` only ends one a broken combo left behind.
-    params: { castMs: 700, attackSpeedPct: 0.25, maxMs: 15000 },
+    params: { castMs: 400, attackSpeedPct: 0.4, maxMs: 15000 },
   }),
   // ── T2 (§12.16) ──
   technique({

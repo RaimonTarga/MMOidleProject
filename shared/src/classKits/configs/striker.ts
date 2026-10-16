@@ -49,13 +49,54 @@ export function strikerMasteredBeats(beats: readonly (string | null)[], mastered
   return out;
 }
 
-/** Which techniques a default Order fields first when there are more than open beats. */
-function defaultPriority(piece: StrikerPiece): number {
-  if (piece.cast === 'windup') return 0;
-  if (piece.cast === 'opener') return 1;
-  if (piece.family === 'damage') return 2;
-  if (piece.family === 'attack-setup') return 3;
-  return 4;
+/**
+ * The default's preference inside a family, best first; an unlisted piece comes after, in kit
+ * order. PLACEHOLDER (OV-STRIKER, from classBossSim at the T2 bosses): a stun or root that stops a
+ * boss's sequence beats a pure attack setup (Concuss won the Stoneplate Juggernaut and the
+ * Dune-Stalker Emperor with 53% / 73% HP left where Armor Break and Feint lost both), and
+ * single-target damage beats area damage on a boss (Sweep and Whirlwind skip the target).
+ */
+const DEFAULT_RANK: readonly string[] = [
+  // finisher setups and control
+  'striker-concuss', 'striker-upheaval', 'striker-pin', 'striker-frostbind', 'striker-pressure-point',
+  // attack setups
+  'striker-armor-break', 'striker-feint', 'striker-hamstring', 'striker-bloodrush',
+  // damage
+  'striker-hemorrhage', 'striker-rend', 'striker-triple-cut', 'striker-icebreaker', 'striker-coup-de-grace',
+  'striker-reaping-arc', 'striker-whirlwind', 'striker-sweep',
+];
+
+function byRank(a: StrikerPiece, b: StrikerPiece): number {
+  const ra = DEFAULT_RANK.indexOf(a.id);
+  const rb = DEFAULT_RANK.indexOf(b.id);
+  return (ra < 0 ? DEFAULT_RANK.length : ra) - (rb < 0 ? DEFAULT_RANK.length : rb);
+}
+
+/**
+ * Which techniques a default Order fields, first first, when there are more than open beats
+ * (§12.13): T1 and Balanced, Coil and the opener, one setup early, damage late; Light, the opener
+ * (Focus), a stop and an attack setup, then damage; Heavy, Coil, control and setups, then damage. At most one
+ * cast of each kind: a second opener or wind-up has no beat to sit on.
+ */
+function defaultChoice(owned: readonly StrikerPiece[], disciplineId: string | null): StrikerPiece[] {
+  const opener = owned.find((piece) => piece.cast === 'opener');
+  const windup = owned.find((piece) => piece.cast === 'windup');
+  const plain = owned.filter((piece) => !piece.cast && !piece.finisher);
+  const setups = plain.filter((piece) => piece.family !== 'damage').sort(byRank);
+  const damage = plain.filter((piece) => piece.family === 'damage').sort(byRank);
+  const casts = (first: StrikerPiece | undefined, second: StrikerPiece | undefined) =>
+    [first, second].filter((piece): piece is StrikerPiece => piece !== undefined);
+  if (disciplineId === 'striker-light') {
+    // One stop (a stun or root) first, then one attack setup, then damage: with attack setups
+    // only, Light lost the Stoneplate Juggernaut and the Dune-Stalker Emperor in classBossSim
+    // (boss 50% / 45% left); with Concuss it won both (50% / 65% HP left). PLACEHOLDER.
+    const attack = setups.filter((piece) => piece.family === 'attack-setup');
+    const control = setups.filter((piece) => piece.family !== 'attack-setup');
+    const first = [...control.slice(0, 1), ...attack.slice(0, 1)];
+    return [...casts(opener, windup), ...first, ...damage, ...setups.filter((piece) => !first.includes(piece))];
+  }
+  if (disciplineId === 'striker-heavy') return [...casts(windup, opener), ...setups, ...damage];
+  return [...casts(windup, opener), ...setups.slice(0, 1), ...damage, ...setups.slice(1)];
 }
 
 export const STRIKER_SYSTEM: ClassSystemSpec<OrderConfig> = {
@@ -71,10 +112,7 @@ export const STRIKER_SYSTEM: ClassSystemSpec<OrderConfig> = {
   defaults(ctx) {
     const beats: (string | null)[] = new Array(strikerComboLength(ctx.disciplineId) - 1).fill(null);
     const { open } = strikerSlots(ctx.budget, beats.length);
-    const chosen = ownedPieces(STRIKER_KIT, ctx)
-      .filter((piece) => !piece.finisher)
-      .sort((a, b) => defaultPriority(a) - defaultPriority(b))
-      .slice(0, open);
+    const chosen = defaultChoice(ownedPieces(STRIKER_KIT, ctx), ctx.disciplineId).slice(0, open);
     // Casts on their own positions; then setups early and damage late (§12.13).
     const opener = chosen.find((piece) => piece.cast === 'opener');
     const windup = chosen.find((piece) => piece.cast === 'windup');

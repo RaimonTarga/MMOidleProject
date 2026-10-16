@@ -1,7 +1,7 @@
-import { biomeLevelCap, STRIKER_KIT } from "@mmo-idle/shared";
+import { biomeLevelCap, RECIPE_DATABASE, STRIKER_KIT } from "@mmo-idle/shared";
 import { allOf, type NodeRef, type Route, type RouteStep } from "../route/types";
-import { STRIKER_CLASS_ROOT } from "./strikerT1";
-import { STRIKER_T2_ROUTE_IDS, strikerT2Route } from "./strikerT2";
+import { STRIKER_CLASS_ROOT, wearInOrder } from "./strikerT1";
+import { STRIKER_T2_ROUTE_IDS, strikerT2Route, unlessDone } from "./strikerT2";
 
 /**
  * The Striker's T3 route (T3-W2, bible §12.6 and §12.16).
@@ -12,8 +12,8 @@ import { STRIKER_T2_ROUTE_IDS, strikerT2Route } from "./strikerT2";
  * each farmed to its cap and then its tier-3 boss. A specialization is a skill node
  * (`unlockSkill`), the same pick the Passive Tree makes; one route per specialization, so a batch
  * can run all nine arms. The Order stays on the T2 route's auto setting, which the server rebuilds
- * as the T3 lessons and trophies arrive. No T3 gear is crafted yet (the Tundra and Volcanic jobs'
- * recipes are not in the route's reach).
+ * as the T3 lessons and trophies arrive. Each zone's T3 gear is crafted and worn as the zone opens
+ * it (`strikerT3ZoneGear`).
  *
  * Registered, but left out of `CONTROLLED_ROUTE_IDS` until it has run live.
  */
@@ -37,6 +37,31 @@ export function strikerT3FarmLevel(biomeGroup: string): number {
   return biomeLevelCap(TIER, biomeGroup);
 }
 
+/**
+ * The weapon each discipline takes as a T3 zone opens it (§12.5 "Wants", §12.9 jobs).
+ * PLACEHOLDER (OV-STRIKER): every arm meets the first T3 seal (the Mountain) in the tier's Maul;
+ * Balanced then takes the Cave's Bastard Sword; Light takes it too (it won the Cave T3 boss in
+ * classBossSim at 43% HP where the Maul lost at 13% boss left), then the Jungle's Twin Fangs (the Forest's job
+ * moved there).
+ */
+const T3_WEAPONS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  "striker-light": { mountain: "striker-maul-t3", cave: "striker-bastard-sword-t3", jungle: "striker-twin-fangs-t3" },
+  "striker-balanced": { mountain: "striker-maul-t3", cave: "striker-bastard-sword-t3" },
+  "striker-heavy": { mountain: "striker-maul-t3" },
+};
+
+/**
+ * What the arm wears from a T3 zone, in unlock order: its weapon, then the zone's own vest, charm
+ * and boots, each the answer to that zone's threat, worn at its boss (the Swamp's vest and charm
+ * won the Rot-Spore Croc-Behemoth with 85% HP left in classBossSim where the Mountain's lost at
+ * 51%). PLACEHOLDER (OV-STRIKER).
+ */
+export function strikerT3ZoneGear(disciplineId: string, biomeGroup: string): string[] {
+  const weapon = T3_WEAPONS[disciplineId]?.[biomeGroup];
+  const set = ["vest", "charm", "boots"].map((slot) => `${biomeGroup}-${slot}-t${TIER}`).filter((id) => RECIPE_DATABASE.has(id));
+  return [...(weapon ? [weapon] : []), ...set];
+}
+
 export function strikerT3Route(specializationId = "striker-thousand-cuts"): Route {
   const id = STRIKER_T3_ROUTE_IDS[specializationId];
   const spec = STRIKER_KIT.specializations.find((entry) => entry.id === specializationId);
@@ -47,7 +72,7 @@ export function strikerT3Route(specializationId = "striker-thousand-cuts"): Rout
   const t2 = strikerT2Route(spec.disciplineId);
 
   const steps: RouteStep[] = [
-    ...t2.steps,
+    unlessDone(t2, "the T2 route"),
     {
       type: "farm",
       at: { kind: "biome", biomeGroup: "desert", tier: 2, pick: "uncleared" },
@@ -59,6 +84,7 @@ export function strikerT3Route(specializationId = "striker-thousand-cuts"): Rout
   for (const biomeGroup of STRIKER_T3_ZONES) {
     const at = zone(biomeGroup);
     steps.push({ type: "travel", to: at });
+    steps.push(...wearInOrder(strikerT3ZoneGear(spec.disciplineId, biomeGroup), at, `${biomeGroup} T3`));
     steps.push({
       type: "farm",
       at,

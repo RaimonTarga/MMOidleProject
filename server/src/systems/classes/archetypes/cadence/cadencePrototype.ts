@@ -6,7 +6,9 @@ import { initStrikerGear } from './strikerGear';
 import { initStrikerT4 } from './strikerT4';
 
 const CADENCE_THRESHOLD_DEFAULT   = 5;   // cycle length: (N-1) normal hits + 1 empowered
-const CADENCE_DAMAGE_MULT_DEFAULT = 2.0;
+// The plain finisher's blow. PLACEHOLDER (OV-STRIKER, 2026-10-16: 2.0 -> 3.0): at 2.0 the base kit
+// lost the Plains boss with the Plains set (boss left 16-26%, classBossSim), and §12.4 says it must win.
+const CADENCE_DAMAGE_MULT_DEFAULT = 3.0;
 
 export function initCadenceArchetype(): void {
   // Register the empowered multiplier before the Order's onHit hooks so the finisher

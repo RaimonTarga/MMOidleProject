@@ -1,10 +1,12 @@
 import {
   biomeLevelCap,
   CLEARING_NODE_ID,
+  DEFAULT_RUNE_LOADOUT,
   strikerComboLength,
   T1_BIOME_ORDER,
   TUTORIAL_SEALS,
   type ClassConfig,
+  type EquippedRule,
 } from "@mmo-idle/shared";
 import { allOf, type NodeRef, type Route, type RouteStep } from "../route/types";
 
@@ -63,19 +65,58 @@ function autoOrder(): ClassConfig {
   };
 }
 
-/** The seal zones' gear: the Striker's weapon job there and the zone's shared vest. */
-const SEAL_GEAR: Readonly<Record<string, readonly string[]>> = {
-  plains: ["striker-broadblade-t1", "plains-vest-t1"],
-  mountain: ["striker-maul-t1", "mountain-vest-t1"],
+/**
+ * The universal standing orders (bible §3: free for every class): the default loadout plus
+ * Avoid Hazards, "Read The Ground" (step out of a visible attack telegraph). PLACEHOLDER
+ * (OV-STRIKER): without it the auto-fighter stands in every boss charge lane; classBossSim had
+ * the Mountain seal at 29% HP left with it against 21% without, and the T2 Stoneplate
+ * Juggernaut's 2x charge one-shots a T2 Striker that stays in the lane.
+ */
+export const STRIKER_STANDING_ORDERS: readonly EquippedRule[] = [
+  { conditionId: "inside-telegraph", actionId: "step-back" },
+  ...DEFAULT_RUNE_LOADOUT,
+];
+
+/**
+ * The Clearing set, as the guide makes it (`shared/src/tutorial/scripts/opening.ts`): the
+ * Striker's start weapon, then the shared vest, charm and boots, in unlock order (Clearing
+ * levels 1-4).
+ */
+export const STRIKER_CLEARING_GEAR: readonly string[] = [
+  "striker-plain-sword-t1",
+  "clearing-vest-t1",
+  "clearing-charm-t1",
+  "clearing-boots-t1",
+];
+
+/**
+ * What a player wears from each T1 zone, in unlock order (weapon at the zone's level 1, vest
+ * 2, charm 3, boots 4), crafted as soon as the zone opens it. PLACEHOLDER picks (OV-STRIKER):
+ * only a piece that beats what the Striker already wears is made. The Plains set over the
+ * Clearing's; the Forest's Twin Fangs (12 x 1.6/s, plus its extra strike) over the Broadblade
+ * (23 x 0.9/s), its evasion vest and its 32-speed boots over the Plains' (the Plains charm's Grit
+ * stays: it won the Mountain seal in classBossSim where the Forest's Rhythm charm lost); the
+ * Swamp makes nothing (the Hooked Sickle is 18 x 0.9/s, the rest is weaker than what it wears);
+ * the Cave's Bastard Sword (29 x 1.1/s) is the best T1 weapon by far; the Mountain is farmed only
+ * to its lesson level before its seal.
+ */
+export const STRIKER_T1_ZONE_GEAR: Readonly<Record<string, readonly string[]>> = {
+  plains: ["striker-broadblade-t1", "plains-vest-t1", "plains-charm-t1", "plains-boots-t1"],
+  forest: ["striker-twin-fangs-t1", "forest-vest-t1", "forest-boots-t1"],
+  swamp: [],
+  cave: ["striker-bastard-sword-t1"],
+  mountain: [],
 };
 
-function gearUp(biomeGroup: string): RouteStep[] {
-  const ids = SEAL_GEAR[biomeGroup];
-  if (!ids) return [];
-  return [
-    { type: "craft", recipeIds: [...ids], farmAt: zone(biomeGroup), label: `craft the ${biomeGroup} gear` },
-    { type: "equip", definitionIds: [...ids], label: `wear the ${biomeGroup} gear` },
-  ];
+/**
+ * Craft and wear each piece in order. A craft farms `at` until its recipe is unlocked (the
+ * zone's level) and paid for, so each piece lands the moment the zone opens it.
+ */
+export function wearInOrder(ids: readonly string[], at: NodeRef, where: string): RouteStep[] {
+  return ids.flatMap((id): RouteStep[] => [
+    { type: "craft", recipeIds: [id], farmAt: at, label: `craft ${id} (${where})` },
+    { type: "equip", definitionIds: [id], label: `wear ${id}` },
+  ]);
 }
 
 export function strikerT1Route(): Route {
@@ -89,19 +130,21 @@ export function strikerT1Route(): Route {
     },
     { type: "chooseClass", skillId: STRIKER_CLASS_ROOT },
     { type: "classConfig", config: autoOrder() },
+    { type: "configureRunes", rules: [...STRIKER_STANDING_ORDERS], label: "avoid hazards (Read The Ground)" },
+    // The guide's Clearing set (the Clearing caps at level 4).
+    ...wearInOrder(STRIKER_CLEARING_GEAR, CLEARING, "the Clearing"),
   ];
 
   for (const biomeGroup of ZONE_ORDER) {
     const at = zone(biomeGroup);
     steps.push({ type: "travel", to: at });
+    steps.push(...wearInOrder(STRIKER_T1_ZONE_GEAR[biomeGroup] ?? [], at, biomeGroup));
     steps.push({
       type: "farm",
       at,
       until: { type: "biomeLevelAtLeast", biomeGroup, level: strikerFarmLevel(biomeGroup) },
     });
     if (biomeGroup === FIRST_SEAL || biomeGroup === SECOND_SEAL) {
-      // The guided player wears the zone's gear (a class weapon and the shared vest) before its seal.
-      steps.push(...gearUp(biomeGroup));
       steps.push({ type: "attemptBoss", biomeGroup, tier: 1 });
     }
   }

@@ -8,6 +8,7 @@ import { updateStrikerT2 } from './strikerT2';
 import { updateStrikerT3 } from './strikerT3';
 import { updateStrikerT4 } from './strikerT4';
 import { updateStrikerGear } from './strikerGear';
+import { flushStrikerCounts } from './strikerTelemetry';
 
 const cadenceModule = defineMechanic({
   id: 'cadence',
@@ -24,6 +25,7 @@ const cadenceModule = defineMechanic({
     updateStrikerT3(world, dt, now);
     updateStrikerT4(world, dt, now);
     updateStrikerLeaps(world, now);
+    flushStrikerCounts(now);
   },
   buffs: [...STRIKER_ORDER_BUFFS],
 });
