@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+  RECIPE_DATABASE,
   biomeLevelCap,
   SKILL_TREE,
   tutorialScriptFor,
@@ -16,6 +17,7 @@ import {
   conduitT3FarmLevel,
   conduitT3LessonLevel,
   conduitT3Route,
+  CONDUIT_T3_GEAR,
 } from "./conduitT3";
 
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -68,7 +70,24 @@ for (const id of ["conduit-burn-bright", "conduit-legion", "conduit-infestation"
 }
 
 // ── The T3 zones: travel, farm to the cap, the T3 boss ───────────────────────
-const zoneSteps = tail.slice(3);
+const zoneSteps = tail.slice(3).filter((step) => step.type !== "ifPossible");
+
+// ── Gear: each zone's pieces as its levels unlock them, skipped from tier 4 ──
+const wears = tail.filter((step): step is Extract<RouteStep, { type: "ifPossible" }> => step.type === "ifPossible");
+assert.equal(wears.length, Object.values(CONDUIT_T3_GEAR).flat().length, "one wear step per piece");
+for (const step of wears) {
+  assert.deepEqual(step.when, { type: "not", of: { type: "playerTierAtLeast", tier: 4 } });
+  const [farm, craft, equip] = step.steps;
+  assert(farm.type === "farm" && craft.type === "craft" && equip.type === "equip", "farm, craft, equip");
+  const recipe = RECIPE_DATABASE.get(craft.recipeIds[0]);
+  assert(recipe && recipe.tier === 3, `${craft.recipeIds[0]} is a tier-3 recipe`);
+  assert.deepEqual(equip.definitionIds, craft.recipeIds);
+  assert(farm.at.kind === "biome" && farm.at.biomeGroup === recipe.recipeGroup && farm.at.tier === 3, `${recipe.id} is farmed in its own zone`);
+  assert(recipe.requiredBiomeLevel <= biomeLevelCap(3, recipe.recipeGroup), `${recipe.id} unlocks within the zone's farm`);
+}
+const firstZone = CONDUIT_T3_ZONES[0];
+assert(CONDUIT_T3_GEAR[firstZone]?.some((id) => RECIPE_DATABASE.get(id)?.slot === "weapon"),
+  "the tier's first boss is met in this tier's Conduit weapon");
 assert.equal(zoneSteps.length, CONDUIT_T3_ZONES.length * 3);
 CONDUIT_T3_ZONES.forEach((biomeGroup, index) => {
   const [travel, farm, boss] = zoneSteps.slice(index * 3, index * 3 + 3) as [RouteStep, RouteStep, RouteStep];

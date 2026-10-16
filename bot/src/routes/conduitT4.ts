@@ -1,6 +1,6 @@
 import { absoluteZoneLevel, biomeLevelCap, type KitBiome } from "@mmo-idle/shared";
 import { allOf, type NodeRef, type Route, type RouteStep } from "../route/types";
-import { CONDUIT_CLASS_ROOT } from "./conduitT1";
+import { CONDUIT_CLASS_ROOT, wearAsUnlocked } from "./conduitT1";
 import { CONDUIT_T3_SPECIALIZATION, CONDUIT_T3_ZONES, conduitT3Route } from "./conduitT3";
 
 /**
@@ -26,6 +26,19 @@ export const CONDUIT_T4_LEAF = "conduit-avenge";
 export const CONDUIT_T4_ZONES: readonly KitBiome[] = ["mountain", "tundra", "jungle", "desert", "volcanic", "graveyard", "trench"];
 
 const TIER = 4;
+
+/**
+ * The tier-4 gear the route wears, per zone, as each zone level unlocks it (OV-CONDUIT, PLACEHOLDER
+ * picks): the Mountain set (its weapon meets the first T4 boss), the Tundra charm, the Jungle Swift
+ * Staff, the Desert boots, the Trench Heavy Staff and vest.
+ */
+export const CONDUIT_T4_GEAR: Readonly<Record<string, readonly string[]>> = {
+  mountain: ["conduit-ability-staff-t4", "mountain-vest-t4", "mountain-charm-t4", "mountain-boots-t4"],
+  tundra: ["tundra-charm-t4"],
+  jungle: ["conduit-swift-staff-t4"],
+  desert: ["desert-boots-t4"],
+  trench: ["conduit-heavy-staff-t4", "trench-vest-t4"],
+};
 
 function zone(biomeGroup: string): NodeRef {
   return { kind: "biome", biomeGroup, tier: TIER, pick: "uncleared" };
@@ -60,6 +73,7 @@ export function conduitT4Route(leafId: string = CONDUIT_T4_LEAF, specializationI
   for (const biomeGroup of CONDUIT_T4_ZONES) {
     const at = zone(biomeGroup);
     steps.push({ type: "travel", to: at });
+    steps.push(...wearAsUnlocked(CONDUIT_T4_GEAR[biomeGroup] ?? [], at, TIER + 1));
     steps.push({
       type: "farm",
       at,
