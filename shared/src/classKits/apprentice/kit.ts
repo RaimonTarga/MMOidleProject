@@ -57,6 +57,20 @@ function leaf(entry: Omit<LeafDef, 'classId' | 'params' | 'tier' | 'column'> & {
   return { classId: 'dot', tier: 4, ...entry, params: entry.params ?? {} };
 }
 
+/**
+ * The sigil cap by Global Mastery (§9.2: 4 at the start, 5 at Mastery 15, 6 at 30; bots tune it).
+ * PLACEHOLDER (OV-APPRENTICE): after T1 it grows one step per tier, not the standard three. On the
+ * standard steps the cap reached 12-13 at T3 and no weapon filled it inside a boss fight, so
+ * Detonate (and Fire's whole chain) never fired; a payoff's size per sigil already grows with the
+ * weapon's tier.
+ */
+const APPRENTICE_SIGIL_STEPS = [
+  ...standardBudgetSteps(4).slice(0, 3),
+  { mastery: 72, value: 7 },
+  { mastery: 114, value: 8 },
+  { mastery: 156, value: 9 },
+];
+
 const POISON = 'apprentice-poison';
 const FIRE = 'apprentice-fire';
 const FROST = 'apprentice-frost';
@@ -64,7 +78,7 @@ const FROST = 'apprentice-frost';
 const PIECES: readonly ApprenticePiece[] = [
   payoff({
     id: 'apprentice-detonate',
-    params: { payoffPct: 0.8, cooldownMs: 1500 },
+    params: { payoffPct: 1, cooldownMs: 1500 },
     name: 'Detonate',
     family: 'fire',
     text: "Sets off every sigil on the target at once, dealing what they still had to deal in one blast.",
@@ -594,8 +608,7 @@ export const APPRENTICE_KIT: ClassKit<ApprenticePiece, ApprenticeTrophy> = {
   className: 'apprentice',
   displayName: 'Apprentice',
   systemName: 'Payoff rules',
-  /** Illustrative: 4 sigils at the start, 5 at Mastery 15, 6 at 30 (§9.2). */
-  budget: { label: 'Sigils', steps: standardBudgetSteps(4) },
+  budget: { label: 'Sigils', steps: APPRENTICE_SIGIL_STEPS },
   pieces: PIECES,
   lessons: LESSONS,
   trophies: TROPHIES,

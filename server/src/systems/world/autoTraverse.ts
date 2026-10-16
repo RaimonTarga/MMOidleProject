@@ -82,7 +82,7 @@ export function startManualNavigation(
     return;
   }
 
-  const path = findShortestNodePath(fromNodeId, destNodeId);
+  const path = findShortestNodePath(fromNodeId, destNodeId, player.tracksProgression.playerTier);
   if (!path || path.length < 2) {
     clearAutoTraversePath(world, player);
     return;
@@ -388,7 +388,7 @@ export function updateAutoTraverse(world: World, now = Date.now()): void {
       !player.hasAutoTraversePath ||
       player.hasAutoTraversePath.targetNodeId !== desiredNodeId
     ) {
-      const path = findShortestNodePath(nodeId, desiredNodeId);
+      const path = findShortestNodePath(nodeId, desiredNodeId, player.tracksProgression.playerTier);
       if (!path || path.length < 2) continue;
       attachComponent(world, player, "hasAutoTraversePath", {
         targetNodeId: desiredNodeId,
