@@ -71,7 +71,10 @@ export function runFormationAttack(
     ownerId: owner.isPlayer.id,
     physicalEntityId: minion.isMinion.id,
     slotId: slot.slotId,
-    directDamageWeight: profile.formationOffenseMult * slot.offenseWeight,
+    // The body's own damage multiplier (its piece, the weapon's `conduit.damage-pct`, Elite, Colossus,
+    // Legion, Longshot, the Soul's rank), as the minion's displayed attack already carries it (`spawn.ts`).
+    // OV2-CONDUIT: it was missing here, so every one of those damage steps did nothing to a hit.
+    directDamageWeight: profile.formationOffenseMult * slot.offenseWeight * (slot.damageMult ?? 1),
     onHitMagnitudeWeight:
       slot.procWeight * profile.secondaryEffectMult * profile.relicPotencyMult,
     secondaryEffectMult: profile.secondaryEffectMult,

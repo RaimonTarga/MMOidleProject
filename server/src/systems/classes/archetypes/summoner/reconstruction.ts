@@ -124,7 +124,7 @@ export function tickSummonReconstruction(
   owner.hasHealth.hp = Math.max(floor, owner.hasHealth.hp - cost);
   emitSummonObservation(owner, { kind: 'replacement-paid', id: minion.entityId, hp: cost });
   pushDamageEvent(world, owner, cost);
-  countConduitMechanic(owner, 'rebuild', now);
+  countConduitMechanic(owner, cost > 0 ? 'rebuild' : 'rebuild-free', now);
   if (owner.controlsSummons) {
     owner.controlsSummons.pendingDeadSlotIds = owner.controlsSummons.pendingDeadSlotIds
       .filter((slotId) => slotId !== active.slotId);

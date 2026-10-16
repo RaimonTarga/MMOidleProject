@@ -1,7 +1,7 @@
 import { absoluteZoneLevel, biomeLevelCap, type KitBiome } from "@mmo-idle/shared";
 import { allOf, type NodeRef, type Route, type RouteStep } from "../route/types";
 import { CONDUIT_CLASS_ROOT, wearAsUnlocked } from "./conduitT1";
-import { CONDUIT_T2_DISCIPLINE, CONDUIT_T2_ZONES, conduitT2Route } from "./conduitT2";
+import { CONDUIT_T2_DISCIPLINE, CONDUIT_T2_ZONES, conduitRouteId, conduitT2Route } from "./conduitT2";
 
 /**
  * The Conduit's T3 route (T3-W2, bible §7.6, §7.16).
@@ -59,8 +59,8 @@ export function conduitT3LessonLevel(biome: KitBiome): number {
   return absoluteZoneLevel({ kind: "zone", biome, tier: TIER, level: 2 });
 }
 
-export function conduitT3Route(specializationId: string = CONDUIT_T3_SPECIALIZATION): Route {
-  const t2 = conduitT2Route(CONDUIT_T2_DISCIPLINE);
+export function conduitT3Route(specializationId: string = CONDUIT_T3_SPECIALIZATION, disciplineId: string = CONDUIT_T2_DISCIPLINE): Route {
+  const t2 = conduitT2Route(disciplineId);
   const lastT2 = CONDUIT_T2_ZONES[CONDUIT_T2_ZONES.length - 1];
   const steps: RouteStep[] = [
     ...t2.steps,
@@ -104,7 +104,7 @@ export function conduitT3Route(specializationId: string = CONDUIT_T3_SPECIALIZAT
   }
 
   return {
-    id: CONDUIT_T3_ID,
+    id: conduitRouteId(TIER, disciplineId),
     version: "1.0.0",
     classRoot: CONDUIT_CLASS_ROOT,
     description:

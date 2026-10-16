@@ -35,6 +35,7 @@ import { applyStun } from '../../../combat/status/stun';
 import { applyHealToMinion } from '../../../defense/regen/healing';
 import { disciplineOf } from './disciplines';
 import { runFormationAttack } from './formationAttack';
+import { countConduitMechanic } from './mechanicLog';
 import { swing } from './summonPieces';
 import { livingMinions, pieceOfSlot } from './summonPiecesT2';
 import { BORN_AT, fireSupportAbility } from './summonPiecesT3';
@@ -157,6 +158,7 @@ export function lastStandSaves(world: World, owner: PlayerEntity, minion: Minion
   });
   minion.hasHealth.hp = 1;
   markSliceDirty(world, minion, 'hasHealth');
+  countConduitMechanic(owner, 'last-stand', now);
   return true;
 }
 
@@ -202,6 +204,7 @@ export function registerLeavesT4(): void {
     const born = getResource(hit.minion.tracksCombat, BORN_AT);
     if (born <= 0 || attackNow(ctx) - born < LEAF.devourAfterMs) return;
     applyHealToMinion(hit.minion, hit.owner.isPlayer.id, ctx.damage * LEAF.devourShare, world);
+    countConduitMechanic(hit.owner, 'devour', attackNow(ctx));
   });
 }
 
