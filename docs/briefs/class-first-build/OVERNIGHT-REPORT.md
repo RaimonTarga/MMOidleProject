@@ -32,7 +32,7 @@ the route, run minutes.
 | Class (route, discipline chain) | T1 | T2 | T3 | T4 | Deaths | Minutes | Bar |
 |---|---|---|---|---|---|---|---|
 | Striker (`striker-t4-read-the-blow`: Balanced, Iaido, Read the Blow) | 2/2 | 7/7 | 7/7 | 7/7 | 0 | 128 | pass (after the Jungle fix below) |
-| Squire (`squire-t4`: Bulwark, Measure for Measure, Last Word) | 2/2 | 7/7 | 7/7 | 7/7 | 0 | 132 | pass |
+| Squire (`squire-t4`: Bulwark, Reverb, Second Line) | 2/2 | 7/7 | 7/7 | 7/7 | 0 | 132 | pass |
 | Conduit (`conduit-t4`: Pack, The Hunt, Avenge) | 2/2 | 7/7 | 7/7 | 7/10 (Volcanic won on the 4th try) | 3 (all at the Volcanic boss) | 89 | pass, Volcanic thin |
 | Slinger (`slinger-t4`: Gunslinger, Fan the Hammer, Light Hands) | 2/2 | 7/7 | 7/7 | 7/7 | 0 | 115 | pass |
 | Spirit (`spirit-t4`: Tide, Spring Tide, Wading) | 2/2 | 7/7 | 7/7 | 7/7 | 0 | 79 | pass (fights 8-47 s, never in danger) |
