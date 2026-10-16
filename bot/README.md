@@ -23,14 +23,20 @@ development and legacy shared-world experiments.
 The dev server must be up with `AUTH_DEV_BYPASS=1` (it is in `.env`).
 
 ```bash
-# one bot, canonical 1x economy: the smoke route, played as the Squire
+# one bot, canonical 1x economy: the Squire's T1 route
+pnpm bot:run --route=squire-t1 --policy=intended
+
+# the class-agnostic smoke route, played as the Squire (only smoke-t1 takes --class)
 pnpm bot:run --route=smoke-t1 --class=cooldown --policy=intended
 
 # ...with the live dashboard on http://localhost:4500
-pnpm bot:run --route=smoke-t1 --policy=intended --ui
+pnpm bot:run --route=striker-t1 --policy=intended --ui
 
 # pipeline test (NOT an evaluation): 25x rewards, auto-tagged non-canonical
-pnpm bot:run --route=smoke-t1 --policy=intended --ui --rewardMultiplier=25
+pnpm bot:run --route=striker-t1 --policy=intended --ui --rewardMultiplier=25
+
+# resume the same character on the next tier's route (after a server restart, say)
+pnpm bot:run --route=striker-t2-heavy --policy=intended --account=my-striker --fresh=false
 
 # clean controlled batch: the controlled routes, 25x, sequential, one bot at a time
 pnpm bot:batch
@@ -52,7 +58,10 @@ pnpm bot:cleanup --routes=smoke-t1 --policies=intended,rusher,generic --count=2
 ```
 
 Flags: `--route` `--policy` `--index` `--server` `--out` `--maxRunMs`
-`--class=<archetype>` (the class a class-agnostic route plays, e.g. `cadence`; part of the bot account id),
+`--class=<archetype>` (the class a class-agnostic route plays, e.g. `cadence`; part of the bot account id;
+an error on a class route), `--account=<id>` (the dev account; default `bot-<route>-<policy>-<nn>`, and
+only `bot-` accounts are deleted by `bot:cleanup`), `--choices='{"<choice>":"<option>"}'` (a route's
+authored choices, e.g. the Slinger's `slinger-discipline`),
 `--fresh=false` (keep the existing character instead of starting from zero),
 `--ui[=port]` (dashboard, default 4500), `--rewardMultiplier=N` (dev-only, 1-1000),
 `--fastBossRetry=true` (dev-only, always noncanonical), and
@@ -162,9 +171,76 @@ only when that player disconnects.
 
 ## Class routes
 
-Class routes are rebuilt per class in the class-first build
-([plan §5](../docs/briefs/class-first-build-plan-2026-10-14.md)); `smoke-t1` is the
-only route until then.
+Every class has a route per tier, rebuilt in the class-first build (as of 2026-10-16;
+the registry is `src/routes/index.ts`). Each route starts from a fresh character and
+replays the earlier tiers' steps first (`-t3` runs the whole `-t2` route), and every
+step is idempotent: a farm whose level is reached, a craft already held or a boss
+already cleared passes at once. So the next tier's route resumes a character where the
+last one stopped (`--account=<same> --fresh=false`).
+
+| Class (root) | Routes | In `CONTROLLED_ROUTE_IDS` | Tier picks (the constants at the top of each file) |
+|---|---|---|---|
+| any (`--class`) | `smoke-t1` | yes | none; Clearing and Plains only |
+| Striker (`cadence-root`) | `striker-t1`; `striker-t2-light`, `-balanced`, `-heavy`; `striker-t3-<specialization>` (9); `striker-t4-<leaf>` (9) | `striker-t1` and the three `-t2` | one route per discipline, per specialization and per leaf |
+| Squire (`cooldown-root`) | `squire-t1` to `squire-t4` | `-t1`, `-t2` | Avenger, Measure for Measure, Last Word |
+| Conduit (`summoner-root`) | `conduit-t1` to `conduit-t4` | `-t1` | Pack, The Hunt, Avenge |
+| Slinger (`reload-root`) | `slinger-t1` to `slinger-t4` | `-t1` | route choices `slinger-discipline` (Gunslinger), `slinger-specialization` (Fan the Hammer), `slinger-leaf` (Light Hands) |
+| Spirit (`energy-root`) | `spirit-t1` to `spirit-t4` | `-t1` | Tide, Spring Tide, Wading |
+| Apprentice (`dot-root`) | `apprentice-t1` to `apprentice-t4` | `-t1` | `-t2` fights with no school; `-t3` picks Fire and Afterburn; `-t4` Tinderbox |
+
+A route joins `CONTROLLED_ROUTE_IDS` once it has run live; the others need
+`--controlled=false` in a batch (`bot:run` runs any registered route).
+
+What a class route does:
+
+- **The class:** the tier-0 quest, `chooseClass` (an `unlockSkill` of the class root), then a
+  `classConfig` step in `mode: "auto"`, so the server rebuilds the class default as lessons,
+  trophies and budget steps arrive (the Striker's T2 routes size that auto Order to the
+  discipline's combo). The Apprentice's T2 to T4 routes set a `custom` config instead, placing
+  each tier's payoffs.
+- **The zones** are the guide's (`T1_BIOME_ORDER`, `TUTORIAL_SEALS` from `shared/src/tutorial/`):
+  each zone farmed to its tier cap, then its boss (`attemptBoss`, up to `maxAttempts`, 6 by
+  default). T1 fights the two seals (Plains, then Mountain); T2 to T4 fight all seven of the
+  tier's bosses.
+- **The tier picks** are `unlockSkill` steps on the discipline, specialization and leaf nodes.
+- **Gear** (as merged on 2026-10-16, before the overnight tuning): `striker-t1` and
+  `squire-t1` craft and wear each seal zone's weapon job and vest (Plains, then Mountain)
+  before its boss; the Conduit, Slinger, Spirit and Apprentice routes craft nothing; no route
+  crafts the Clearing set (the guide does) and no T2 to T4 step crafts anything, so the
+  routes met T3/T4 bosses in T1 gear or none. The overnight class tuning (OV-*) adds each
+  tier's weapon, armor, charm and boots; check the route file.
+- **Milestones and conditions** use the class vocabulary: `pieceLearned` (a lesson, with its
+  rank) and `trophyHeld`, besides the zone, boss and tier conditions.
+
+Every route has a static test next to it (`src/routes/<class>T<n>.test.ts`). Only the T1
+routes and the 2026-10-15/16 smoke runs have run live; see
+`docs/briefs/class-first-build/STATUS.md` for what those runs found.
+
+## Isolated lanes (one server per bot)
+
+Bots in one world crowd each other and corrupt the numbers, so per-class work uses a
+**lane**: a private dev server from the checkout the script sits in, with its own game
+database. From the worktree root:
+
+```bash
+node tools/lane/lane.mjs start <n>    # server on :431<n> (4310+n), database gamedb_ov<n>, background
+node tools/lane/lane.mjs stop <n>     # kill it (the whole process tree); restart after any server/shared edit
+node tools/lane/lane.mjs reset <n>    # stop, then drop and recreate the lane's database
+node tools/lane/lane.mjs status [<n>] # which lanes answer on /healthz
+
+pnpm bot:run --route=<route> --policy=intended --server=http://localhost:431<n> \
+  --account=<lane>-<class> --out=<lane runs dir> [--rewardMultiplier=N] [--fresh=false]
+node tools/lane/runSummary.mjs <runs dir | run dir> [--deaths]   # newest run on one screen
+```
+
+Lanes 0–6 exist. Each uses `NODE_ENV=development`, `AUTH_DEV_BYPASS=1`, Redis database 8+n
+and the shared log database `logdb_rework` (which must already exist in the `mmo-logdb`
+container); `reset` needs Docker (`mmo-gamedb`). The server log and pid live outside the repo,
+in `../lanes/lane<n>/`. There is no watcher. `runSummary.mjs` reads `events.jsonl` and
+`deaths.jsonl` as they stream: the current step, kills and deaths by zone, every boss attempt
+with the boss HP left, milestones with their times, stalls, and with `--deaths` one line per
+death (killer, hit). Lane runs are pipeline evidence: one bot per world, but on a dev server
+with whatever reward multiplier the run set.
 
 ## Canonical vs non-canonical
 
@@ -198,9 +274,13 @@ and was raised to 40x underneath it is still reported non-canonical.
 ## Build controls and preflight
 
 Run `pnpm bot:preflight` before launching a long batch: it typechecks the bot and
-runs the harness, loadout, choice, executor, smoke-route and snapshot tests.
-`configureRunes` is the only build control: rules must be owned and fit the
-class, nothing is priced, and a rejected or drifted loadout fails explicitly.
+server and runs the harness, loadout, choice, executor, smoke-route and snapshot tests
+(not the class route tests: run `pnpm test -- <class>T` for those).
+The build controls are `chooseClass` and `unlockSkill` (the class and its tier picks),
+`classConfig` (the class system and the relic slot, checked by the server's
+`class:setConfig`; a rejected config fails the step) and `configureRunes` (standing
+orders: rules must be owned and fit the class, nothing is priced, and a rejected or
+drifted loadout fails explicitly). No class route sets Runes today.
 These tests are harness evidence, not balance evidence.
 
 ## Architecture
@@ -233,8 +313,9 @@ WorldMirror ──► Observation ──► RouteExecutor ──► Intents ─�
 - **No hidden state in decisions.** Structural, not a convention: the reducer
   physically cannot see monster AI, exact DPS, private cooldowns, or drop rolls.
 - **No bot-only tactics.** No manual boss dodging, no hazard avoidance, no
-  superhuman movement. Tactical reaction comes from equipped **Runes** only —
-  and requested unowned or invalid Rune configurations fail explicitly.
+  superhuman movement. Tactical reaction comes from the class system (the config
+  the route sets, run by the server like a player's) and equipped **Runes** only —
+  and requested unowned or invalid configurations fail explicitly.
 - **Entry provenance is explicit.** Fresh-character routes earn progression.
   Checkpoint continuations start from sealed named checkpoints; dev
   fixtures are never reported as fresh canonical progression.
@@ -289,24 +370,21 @@ runs are solo economy baselines.
 A run that fails before its own telemetry can start still receives a
 coordinator-written `failed-harness` artifact and a terminal manifest entry.
 
-## Adding a class route (Stage C)
+## Adding a class route
 
-**See [ROUTE-AUTHORING.md](ROUTE-AUTHORING.md)** — the full step/condition
-vocabulary, the gating you have to route around, and the generated T1 recipe
-catalogue (ids, gate levels, costs, stats, mechanics) so you can pick gear
-without opening `shared/src/data/recipes/`.
-
-For a self-contained packet aimed at someone (or some model) with no repo
-access — classes, the map, every T1 monster's stat block, gear,
-runes, the DSL and a worked example — generate
-[`reports/bot-route-reference.md`](../reports/bot-route-reference.md) with
-`pnpm bot:reference`. It is built from live game data, so regenerate it after
-any balance or content change rather than editing it.
-
-Add a file to `routes/` and register it in `routes/index.ts`. It should be
+Copy the class's nearest route: `src/routes/<class>T<n>.ts` builds on the tier
+below it (`squireT3Route()` starts from `squireT2Route()`), and its test sits next
+to it. Add the file to `routes/` and register it in `routes/index.ts`. It should be
 data. `harness.test.ts` verifies that every recipe, item, rune fragment
 and dungeon a route names actually exists — a typo there would otherwise run for
-hours and never finish.
+hours and never finish. Add the id to `CONTROLLED_ROUTE_IDS` once it has run live.
+
+[ROUTE-AUTHORING.md](ROUTE-AUTHORING.md) has the step/condition vocabulary and the
+generated T1 recipe catalogue, but it predates the class routes (it still says
+`smoke-t1` is the only route and lacks `classConfig`, `pieceLearned` and
+`trophyHeld`). The generated
+[`reports/bot-route-reference.md`](../reports/bot-route-reference.md)
+(`pnpm bot:reference`) is stale since D5; regenerate it before relying on it.
 
 Note: `summoner-root` (Conduit) is enabled by default in the current client and
 server. Development tooling and authentication bypasses remain separate flags;

@@ -2,6 +2,9 @@
 
 **Last audited:** 2026-10-01
 **Lifecycle refreshed:** 2026-10-05 (tutorial fold and shipped-plan review)
+**Class-first docs pass:** 2026-10-16 (OV-DOCS: tutorial, bot runner and README, the rework
+scoreboard, `CLAUDE.md`; the living docs still describing removed systems are listed in
+[the OV-DOCS report](briefs/class-first-build/reports/OV-DOCS.md))
 
 This is the navigation page for documentation that is useful in the current
 repository. It is deliberately not a dump of every dated report. Source code
@@ -30,6 +33,9 @@ because it is detailed.
   common commands, and the current world/progression summary.
 - [Architecture](../design_docs/architecture.md) — source ownership,
   authoritative boundaries, tick schedule, persistence, and system seams.
+- [Class-first bible](../design_docs/class-first-bible.md) and the
+  [class-first build board](briefs/class-first-build/STATUS.md) — the six classes'
+  design authority and the rework's live status, stand-ins and follow-ups.
 - [Playtest command center](briefs/playtest-followup-command-center-2026-09-25.md)
   — active release/playtest scope and evidence rules.
 - [Release flow](release-flow.md) — local, Docker, and Railway-shaped delivery.
@@ -55,7 +61,7 @@ because it is detailed.
 | Monster combat rework | [monster-combat-rework-current-state.md](monster-combat-rework-current-state.md) |
 | Monster targeting | [monster-targeting-current-state.md](monster-targeting-current-state.md) |
 | Node variants (family blends) | [variants-current-state.md](variants-current-state.md) |
-| Frame loops and range mechanics | [frames-current-state.md](frames-current-state.md) |
+| Frame loops and range mechanics (stale: frames and range rows were removed by the class-first rework) | [frames-current-state.md](frames-current-state.md) |
 | Area banners and danger previews | [area-information-current-state.md](area-information-current-state.md) |
 | Map, Crafting, Upgrade, Inventory and Passive Tree panels | [map-crafting-panels-current-state.md](map-crafting-panels-current-state.md) |
 | Player movement | [player-movement-current-state.md](player-movement-current-state.md) |
@@ -78,7 +84,7 @@ because it is detailed.
 | --- | --- |
 | Authentication and characters | [auth-and-characters-current-state.md](auth-and-characters-current-state.md) |
 | Audio | [audio-current-state.md](audio-current-state.md) |
-| Guided T1 tutorial | [guided-tutorial-current-state.md](guided-tutorial-current-state.md) |
+| Guided tutorial (Clearing to Tier 4, per class) | [guided-tutorial-current-state.md](guided-tutorial-current-state.md) |
 | Combat animation (mobs and players) | [combat-animation-current-state.md](combat-animation-current-state.md) |
 | Landing cinematic | [landing-cinematic-current-state.md](landing-cinematic-current-state.md) |
 | Player sprites | [player-sprites-current-state.md](player-sprites-current-state.md) |
@@ -154,9 +160,10 @@ behavior.
   presentation work and review history, not a fully shipped plan.
 - [Named progression checkpoints](named-progression-checkpoints.md) —
   command-center acceptance procedure and implementation record.
-- [System rework roadmap](system-rework-roadmap.md) and [system rework
-  status](system-rework-status.md) — current follow-up queue and implementation
-  scoreboard after the authored T1–T4 construction pass.
+- [System rework status](system-rework-status.md) — the short scoreboard: what the
+  class-first rework built and removed, and the older rows that still stand.
+  [System rework roadmap](system-rework-roadmap.md) — the 2026-09-27 follow-up queue,
+  from before the class-first rework.
 ## Reference and authoring pages
 
 - [Map regions atlas](map-variety-regions-atlas.md) — human-readable map view;
@@ -177,7 +184,7 @@ The flat files in design_docs/ are the design and architecture source set:
   status. Once a section locks, it wins over every older design doc listed in its §14.
   **§7 Conduit LOCKED 2026-10-13** (it superseded the archived summoner-overhaul design
   source); **§12 Striker LOCKED 2026-10-14**; **§8 Squire LOCKED 2026-10-14**; **§10 Slinger
-  LOCKED 2026-10-14**.
+  LOCKED 2026-10-14**; **§11 Spirit LOCKED 2026-10-14**; **§9 Apprentice LOCKED 2026-10-14**.
 - [design-bible.md](../design_docs/design-bible.md)
 - [Progression rework design](../design_docs/progression-rework-design.md) — design authority;
   the worn-form band gate, delegated monster pass and Consort loop decisions are §18.11–§18.13.
@@ -196,8 +203,12 @@ Use the current-state table above and the source when they conflict.
 
 ## Historical material and archive lifecycle
 
-- [Guided T1 tutorial plan](archive/guided-tutorial-plan.md) — implemented; live behavior and
-  validation records are in [guided-tutorial-current-state.md](guided-tutorial-current-state.md).
+- [Guided T1 tutorial plan](archive/guided-tutorial-plan.md) — implemented; live behavior is in
+  [guided-tutorial-current-state.md](guided-tutorial-current-state.md).
+- [Guided tutorial, pre-rework state](archive/guided-tutorial-pre-rework-state.md) — ARCHIVED
+  2026-10-16: the per-class T1 route before the class-first rework (weapon page, shards, Runes,
+  abilities), the first-hour checklist's origin, and every validation sweep from 2026-09-29 to
+  2026-10-06, including why the second seal is the Mountain.
 - [Docs fold report](briefs/docs-fold-report-2026-10-05.md) — tutorial fold, verbatim
   progression amendments, conditional duplicate proof and retained-plan inventory.
 - [Status registry audit (2026-10-05)](briefs/status-registry-audit-2026-10-05.md) — raw player/monster ids, HUD projections, presentation gaps, slow/root clocks, and the rerunnable source extractor.
