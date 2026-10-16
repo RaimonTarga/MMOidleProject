@@ -3,10 +3,13 @@ import { SKILL_TREE, buildSquireBeats, SQUIRE_KIT, type TutorialBeat } from "@mm
 import { ROUTES, isControlledRouteId, requireRoute } from "./index";
 import { SQUIRE_CLASS_ROOT } from "./squireT1";
 import { squireT3Route } from "./squireT3";
+import { SQUIRE_T2_DISCIPLINE } from "./squireT2";
+import { checkFirstBossKit, checkZoneSegments } from "./squireGearChecks";
 import {
   SQUIRE_T4_BIOMES,
   SQUIRE_T4_ID,
   SQUIRE_T4_LEAF,
+  SQUIRE_T4_ZONE_GEAR,
   squireT4LessonLevel,
   squireT4Route,
   squireT4TutorialFarmLevel,
@@ -48,7 +51,7 @@ assert.deepEqual(route.steps.slice(0, t3.steps.length), t3.steps, "T3 steps come
 const pick = route.steps[t3.steps.length];
 assert(pick.type === "unlockSkill" && pick.skillId === SQUIRE_T4_LEAF, "the leaf is picked after tier 4");
 const node = SKILL_TREE.get(SQUIRE_T4_LEAF);
-assert(node && node.classId === SQUIRE_CLASS_ROOT && node.disciplineId === "squire-avenger", "the pick is a Squire leaf under Avenger");
+assert(node && node.classId === SQUIRE_CLASS_ROOT && node.disciplineId === SQUIRE_T2_DISCIPLINE, "the pick is a Squire leaf under the default discipline");
 for (const leaf of SQUIRE_KIT.leaves) {
   const other = squireT4Route(leaf.id);
   const disciplines = other.steps.filter((step) => step.type === "unlockSkill").map((step) => step.skillId);
@@ -58,19 +61,20 @@ for (const leaf of SQUIRE_KIT.leaves) {
 }
 assert.throws(() => squireT4Route("squire-nope"), /unknown leaf/);
 
-// Then each T4 zone: a farm to the tutorial's level, then its boss.
+// Then each T4 zone: farmed to the tutorial's level, wearing its gear as it unlocks, then its boss.
 const rest = route.steps.slice(t3.steps.length + 1);
-assert.equal(rest.length, SQUIRE_T4_BIOMES.length * 2, "a farm and a boss per T4 zone");
-SQUIRE_T4_BIOMES.forEach((biome, index) => {
-  const farm = rest[index * 2];
-  const boss = rest[index * 2 + 1];
+SQUIRE_T4_BIOMES.forEach((biome) => {
   const level = squireT4TutorialFarmLevel(biome);
   assert.equal(level, tutorialFarmLevel(biome), `${biome}: the route farms to the tutorial's level`);
   assert(level >= squireT4LessonLevel(biome), `${biome}: the lesson is learned before the boss`);
-  assert(farm.type === "farm" && farm.at.kind === "biome" && farm.at.biomeGroup === biome && farm.at.tier === 4,
-    `${biome}: farms the tier-4 zone`);
-  assert(boss.type === "attemptBoss" && boss.biomeGroup === biome && boss.tier === 4, `${biome}: the tier-4 boss`);
 });
+checkZoneSegments(rest, 4, SQUIRE_T4_BIOMES.map((biome) => ({
+  biome,
+  level: squireT4TutorialFarmLevel(biome),
+  gear: SQUIRE_T4_ZONE_GEAR[biome],
+})));
+// The first T4 boss is met in a tier-4 weapon, armor, charm and boots.
+checkFirstBossKit(SQUIRE_T4_ZONE_GEAR[SQUIRE_T4_BIOMES[0]], 4);
 assert(route.completion.type === "allOf" && route.completion.of.length === SQUIRE_T4_BIOMES.length,
   "done when every T4 boss has fallen");
 

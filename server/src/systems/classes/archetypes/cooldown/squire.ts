@@ -87,6 +87,7 @@ import { CADENCE_BLEED_ID } from '../../../combat/damage/bleedIds';
 import { applyHealToPlayer } from '../../../defense/regen/healing';
 import { activateRecoveryBoost } from '../../../defense/regen/recovery';
 import { EXECUTION_MULTIPLIER } from './cooldownPrototype';
+import { flushSquireTelemetry, squireCount } from './squireTelemetry';
 
 /** The brace a Guard puts up, until the blow it was raised for lands. */
 export const SQUIRE_GUARD_EFFECT_ID = 'squire-guard';
@@ -196,7 +197,9 @@ function specParams(player: PlayerEntity, id: string): Readonly<Record<string, n
 
 /** A landed answer's fill: the Avenger's answers fill much more (§8.5). */
 function answerFill(world: World, player: PlayerEntity, r: Rules, pips: number): void {
-  addResolve(world, player, pips * (disciplineOf(r)?.p['answerFillMult'] ?? 1));
+  const fill = pips * (disciplineOf(r)?.p['answerFillMult'] ?? 1);
+  squireCount(player, 'fill.answer', fill);
+  addResolve(world, player, fill);
 }
 
 /** The enemies fighting this player right now. */
@@ -335,6 +338,7 @@ function settleAnswer(player: PlayerEntity, ...pieceIds: string[]): void {
 /** An answer that hit nothing: its cost is lost (already paid) and the Resolve leaves act on it. */
 function answerWasted(world: World, player: PlayerEntity, family: SquireFamily, cost: number): void {
   if (cost <= 0) return;
+  squireCount(player, 'wasted.' + family);
   const cs = player.tracksCombat;
   // Read Again: half the cost comes back, and the next answer of this family costs less.
   const again = leafParams(player, 'squire-read-again');
@@ -473,7 +477,11 @@ function trickle(world: World, player: PlayerEntity, r: Rules, dt: number): void
   }
   // Bulwark: every enemy on you counts more, by its trickle as well as its hits.
   const mult = disciplineOf(r)?.p['trickleMult'] ?? 1;
-  if (enemies > 0) addResolve(world, player, enemies * SQUIRE_RESOLVE.trickleEnemyPipsPerSec * mult * (dt / 1000));
+  if (enemies > 0) {
+    const fill = enemies * SQUIRE_RESOLVE.trickleEnemyPipsPerSec * mult * (dt / 1000);
+    squireCount(player, 'fill.trickle', fill);
+    addResolve(world, player, fill);
+  }
 }
 
 /** Juggernaut: a steady fill from your armor and max HP, hit or not (§8.5). */
@@ -487,6 +495,7 @@ function steadyFill(world: World, player: PlayerEntity, r: Rules, dt: number, no
   if (inexorable && (momentActive(world, player, 'out-of-combat', undefined, now) || momentActive(world, player, 'moving', undefined, now))) {
     perSec *= inexorable.fillMult;
   }
+  squireCount(player, 'fill.steady', perSec * (dt / 1000));
   addResolve(world, player, perSec * (dt / 1000));
 }
 
@@ -508,8 +517,13 @@ function emptyBarLeaf(pieceId: string): { leaf: string; clock: string } | undefi
   return undefined;
 }
 
-/** Rules that go first when they share a moment: Parry is the stronger form of Guard. PLACEHOLDER. */
-const RESPONSE_PRIORITY: Readonly<Record<string, number>> = { 'squire-parry': -1 };
+/**
+ * Rules that go first when they share a moment. PLACEHOLDER. Shield Bash first: a wind-up it
+ * interrupts never lands, so nothing else pays for it (§8.13: "Shield Bash on an interruptible
+ * cast, Guard otherwise"; OV-SQUIRE: the Guard used to brace for the blow the Bash had stopped
+ * and lose its pip). Then Parry, the stronger form of Guard.
+ */
+const RESPONSE_PRIORITY: Readonly<Record<string, number>> = { 'squire-shield-bash': -2, 'squire-parry': -1 };
 
 const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
   // Three or more enemies on you: shove them all back a step. Lands if it moves enough.
@@ -518,9 +532,14 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
     const passives = player.usesSkills.passives;
     const weaken = passives['squire.shove-weaken-pct'] ?? 0;
     const weakenTicks = ((passives['squire.shove-weaken-ms'] ?? 0) / 1000) * TICKS_PER_SEC;
+    // A boss or a rooted enemy can't be moved, so it doesn't count toward the three: with
+    // fewer movable enemies on you the shove isn't thrown (OV-SQUIRE fix: a boss and two adds
+    // used to fire it every lockout and waste its cost).
+    const unmovable = (m: MonsterEntity): boolean => !!m.isRooted || m.isMonster.isBoss;
+    if (engagedWith(world, player).filter((m) => !unmovable(m)).length < p.minMoved) return 'none';
     let moved = 0;
     for (const monster of playerAoeTargets(world, player, at, p.radius)) {
-      if (monster.isRooted || monster.isMonster.isBoss) continue;
+      if (unmovable(monster)) continue;
       applyKnockback(world, monster.isMonster.id, at, p.distance);
       // Rampart: the shoved enemy deals this Squire less damage for a few seconds.
       if (weaken > 0) {
@@ -587,6 +606,8 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
         if (threat.targetId === player.isPlayer.id) endsAt = Math.max(endsAt, threat.completesAtMs);
       }
     }
+    // Nothing is coming any more (a Shield Bash just interrupted it): no brace, no cost.
+    if (endsAt <= now) return 'none';
     const windowMs = Math.min(p.maxWindowMs, Math.max(0, endsAt - now) + 500);
     // Planted: while braced, knockback and stuns don't move you. An Anchor already holding
     // you in place keeps doing so under the new brace.
@@ -617,13 +638,16 @@ const RESPONSES: Readonly<Record<string, ResponseHandler>> = {
     return 'braced';
   },
   // The enemy you fight winds up: bash it; the stun interrupts the cast. A boss pattern's
-  // step can't be interrupted, and the bash is wasted on it.
+  // step can't be interrupted and a control-immune enemy can't be stunned: the default rule
+  // bashes only what it can interrupt (§8.13), so those are left to the Guard (OV-SQUIRE: it
+  // used to bash them anyway and waste a pip on every such wind-up).
   'squire-shield-bash': (world, player, p, now) => {
     for (const monster of world.aggroedMonsters) {
       if (monster.hasAggroTarget.targetKind !== 'player' || monster.hasAggroTarget.targetId !== player.isPlayer.id) continue;
       const threats = guardableThreatsFor(world, monster, now);
       if (threats.length === 0) continue;
-      if (threats.some((t) => t.source === 'boss-pattern')) return 'wasted';
+      if (threats.some((t) => t.source === 'boss-pattern')) continue;
+      if (MONSTER_DATABASE.get(monster.isMonster.monsterTypeId)?.controlImmune) continue;
       const stunMs = p.stunMs * (1 + (player.usesSkills.passives['squire.bash-stun-pct'] ?? 0));
       if (!applyStun(monster.tracksCombat, stunMs, player.isPlayer.id)) return 'wasted';
       abortMonsterCast(world, monster);
@@ -905,6 +929,7 @@ function runResponses(world: World, player: PlayerEntity, r: Rules, now: number)
     const outcome = handler(world, player, p, now, rank);
     if (eventTick !== undefined) setCounter(cs, HANDLED_PREFIX + piece.id, eventTick + 1);
     if (outcome === 'none') continue;
+    squireCount(player, `resp.${piece.id.replace('squire-', '')}.${outcome}`);
     if (emptyFree && freeLeaf) setCounter(cs, freeLeaf.clock, now + (leafParams(player, freeLeaf.leaf)?.everyMs ?? 0));
     if (p.lockoutMs !== undefined) setCounter(cs, LOCKOUT_PREFIX + piece.id, now + p.lockoutMs);
     addResolve(world, player, -cost);
@@ -1158,6 +1183,8 @@ function onSquireSlam(ctx: CombatContext, world: World): void {
     setString(cs, LIE_TARGET, '');
   }
   ctx.damage = Math.max(1, Math.round(ctx.damage * mult));
+  squireCount(player, 'slam');
+  squireCount(player, 'slam.damage', ctx.damage);
 
   let struck: MonsterEntity[];
   if (r.trophy?.id === 'squire-relic-mountain') {
@@ -1468,6 +1495,9 @@ export function initSquire(): void {
     const r = player.usesCooldown ? squireRulesOf(world, player) : null;
     if (!r) return;
     noteAttacked(player, ctx.attacker.isMonster.id, attackNow(ctx));
+    const by = typeof ctx.metadata['abilityName'] === 'string' ? ctx.metadata['abilityName']
+      : ctx.metadata['empoweredAttack'] === true ? 'charged' : ctx.attacker.isMonster.isBoss ? 'boss-swing' : 'add-swing';
+    squireCount(player, `taken.${by}`, ctx.damage);
     // A full dodge fills nothing, unless Turn Aside says it fills as if it had landed.
     if (ctx.metadata['evadeFull'] === true && !((player.usesSkills.passives['squire.dodge-fills'] ?? 0) > 0)) return;
     const raw = Number(ctx.metadata['incomingGross'] ?? ctx.damage);
@@ -1485,6 +1515,7 @@ export function initSquire(): void {
       const extra = statusDamageAmplifierPct(heat, DAMAGE_TAKEN_PCT_KEY);
       pips *= 1 + (extra / (1 + extra)) * stoked;
     }
+    squireCount(player, 'fill.hit', pips);
     addResolve(world, player, pips);
   });
 
@@ -1517,6 +1548,7 @@ export function initSquire(): void {
     const before = ctx.damage;
     ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - p.cut)));
     ctx.metadata['squireGuarded'] = true;
+    squireCount(player, 'catch.watchful');
     // Watchman's Ease: the hit it stopped heals you.
     const heal = (before - ctx.damage) * (player.usesSkills.passives['squire.watchful-heal-pct'] ?? 0);
     if (heal > 0) applyHealToPlayer(player, cs, heal, world);
@@ -1538,6 +1570,7 @@ export function initSquire(): void {
     if (!r) return;
     removeStatusEffect(cs, SQUIRE_PARRY_EFFECT_ID);
     settleAnswer(player, 'squire-parry');
+    squireCount(player, 'catch.parry');
     const before = ctx.damage;
     ctx.damage = Math.round(ctx.damage * (1 - (parry.data['cut'] ?? 1)));
     ctx.metadata['squireGuarded'] = true;
@@ -1560,6 +1593,8 @@ export function initSquire(): void {
     ctx.damage = Math.max(1, Math.round(ctx.damage * (1 - (brace.data['cut'] ?? 0))));
     ctx.metadata['squireGuarded'] = true;
     settleAnswer(player, 'squire-guard', 'squire-anchor', 'squire-intercept');
+    squireCount(player, 'catch.guard');
+    squireCount(player, 'catch.guard-prevented', before - ctx.damage);
     // Guard III: a caught blow staggers its attacker.
     const staggerMs = brace.data['staggerMs'] ?? 0;
     if (staggerMs > 0) applyStun(ctx.attacker.tracksCombat, staggerMs, player.isPlayer.id);
@@ -1613,6 +1648,7 @@ export function initSquire(): void {
     const before = ctx.damage;
     ctx.damage = Math.max(1, Math.round(ctx.damage - player.mitigatesDamage.plating * (p.platingMult - 1)));
     ctx.metadata['squireGuarded'] = true;
+    squireCount(player, 'catch.unbowed');
     answerFill(world, player, r, p.refund);
     avengerCounter(world, player, r, now, before - ctx.damage);
   });
@@ -1636,6 +1672,7 @@ export function initSquire(): void {
     addResolve(world, player, -cost);
     if (cost > 0) setCounter(cs, READ_AGAIN_PREFIX + piece.family, 0);
     counterStrike(world, player, ctx.attacker, p.damagePct, now);
+    squireCount(player, 'resp.backdraft.landed');
     // Cooling Breath: each Backdraft that lands heals a little.
     const heal = player.hasHealth.maxHp * (player.usesSkills.passives['squire.backdraft-heal-pct'] ?? 0);
     if (heal > 0) applyHealToPlayer(player, cs, heal, world);
@@ -1666,6 +1703,7 @@ export function initSquire(): void {
     ctx.metadata['squireGuarded'] = true;
     setCounter(monsterCs, DISARM_UNTIL + id, 0);
     settleAnswer(player, 'squire-disarm');
+    squireCount(player, 'catch.disarm');
     const piece = PIECES.get('squire-disarm')!;
     answerFill(world, player, r, pieceParams(r, piece).refund);
     avengerCounter(world, player, r, now, before - ctx.damage);
@@ -1804,7 +1842,9 @@ export function updateSquire(world: World, dt: number, now: number): boolean {
         const tp = trophyParams(r, r.trophy);
         const joiners = Math.max(1, momentValue(player, 'enemy-joins'));
         // Muster II: a whole wave rallying at once fills double.
-        addResolve(world, player, tp.fillPerEnemy * joiners * (joiners >= tp.waveMin ? tp.waveMult : 1));
+        const fill = tp.fillPerEnemy * joiners * (joiners >= tp.waveMin ? tp.waveMult : 1);
+        squireCount(player, 'fill.muster', fill);
+        addResolve(world, player, fill);
       }
     }
     // Rot-Eater II: every debuff that lands on you also fills, once per landing.
@@ -1834,6 +1874,7 @@ export function updateSquire(world: World, dt: number, now: number): boolean {
     runResponses(world, player, r, now);
     armSlam(world, player, r, now);
     updateDestroyer(world, player);
+    flushSquireTelemetry(world, player);
   }
   return any;
 }
