@@ -51,6 +51,7 @@ import {
   updateApprenticeT3,
 } from './sigilsT3';
 import { cancelDelayedAttacks, hidersInReach, leafOf, registerApprenticeT4, tidalDraw, updateApprenticeT4, washOffDebuffs } from './sigilsT4';
+import { flushApprentice, noteApprentice } from './telemetry';
 
 /** A sigil's tick damage, as a share of the weapon's attack (potency), per tick. PLACEHOLDER. */
 const SIGIL_TICK_PCT = 0.12;
@@ -185,6 +186,7 @@ export function laySigils(world: World, player: PlayerEntity, target: MonsterEnt
   effect.data['baseTickMs'] = tickMs;
   effect.remainingMs = lifeMs;
   attachMarker(world, target, 'hasDot');
+  noteApprentice(player, 'sigils-laid', effect.stacks - before);
   if (payoffsOf(world, player)?.specialization === SPEC_RIPENING) noteSigilsLaid(effect, effect.stacks - before, age);
   // `mechanic-fired`: a full bar is the class's moment, once per target per fill.
   if (cap > 0 && effect.stacks >= cap) {
@@ -252,6 +254,7 @@ export function seize(world: World, player: PlayerEntity, p: Payoffs, target: Mo
   if ((p.ranks.get('apprentice-seize') ?? 1) >= 3) cancelDelayedAttacks(world, target);
   setResource(target.tracksCombat, SEIZED_UNTIL, now + hold);
   noteSeize(world, player, p, target, Math.round(hold), now);
+  if (wasCasting) noteApprentice(player, 'seize-broke-windup');
   // Still Mind: after a Seize breaks a wind-up, Recovery triples for a few seconds.
   if (wasCasting) activateRecoveryBoost(cs, passives['apprentice.still-mind'] ?? 0);
   return true;
@@ -285,6 +288,7 @@ function firePayoff(world: World, player: PlayerEntity, p: Payoffs, piece: Appre
       if (n <= 0) return false;
       const heal = (n * (params['healPerSigil'] ?? 0.02) * player.hasHealth.maxHp) * (1 + (passives['apprentice.siphon-pct'] ?? 0)) * payoffMult(player);
       applyHealToPlayer(player, cs, heal, world);
+      noteApprentice(player, 'siphon-heal', Math.round(heal));
       // Siphon II: it also washes a poison, bleed or Corrosion off you.
       if ((p.ranks.get('apprentice-siphon') ?? 1) >= 2) tidalDraw(world, player, washOffDebuffs(player));
       // Glut: the Siphon also drains every enemy near the target.
@@ -346,6 +350,7 @@ export function updateApprentice(world: World, player: PlayerEntity, dt: number,
       // Under the Poison discipline the plague spreads on its own, so the moment is free.
       if (piece.id === 'apprentice-spread') { if (p.discipline !== POISON_DISCIPLINE) done.add(placement.moment); continue; }
       if (!firePayoff(world, player, p, piece, target, now)) continue;
+      noteApprentice(player, piece.id.replace(/^apprentice-/, ''));
       done.add(placement.moment);
       let cd = piece.params['cooldownMs'] ?? 0;
       if (piece.id === 'apprentice-siphon') cd *= 1 - (passives['apprentice.siphon-cd-pct'] ?? 0);
@@ -372,6 +377,7 @@ export function updateApprentice(world: World, player: PlayerEntity, dt: number,
       .slice(0, neighbours);
     if (others.length > 0) {
       for (const other of others) laySigils(world, player, other, 1, p.cap);
+      noteApprentice(player, 'spread-pass', others.length);
       setResource(cs, SPREAD_AT, now + (PIECES.get('apprentice-spread')!.params['everyMs'] ?? 1000));
     }
   }
@@ -427,6 +433,7 @@ export function updateApprentice(world: World, player: PlayerEntity, dt: number,
   if (getResource(cs, APPRENTICE_RECOVERY_X) !== recovery) setResource(cs, APPRENTICE_RECOVERY_X, recovery);
   const move = touching && (passives['apprentice.give-ground'] ?? 0) > 0 ? 1 + passives['apprentice.give-ground']! : 1;
   if (getResource(cs, APPRENTICE_MOVE_X) !== move) setResource(cs, APPRENTICE_MOVE_X, move);
+  flushApprentice(player, now, p.cap);
   void dt;
 }
 
