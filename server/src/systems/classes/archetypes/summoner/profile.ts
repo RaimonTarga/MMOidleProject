@@ -79,14 +79,37 @@ export function slotAttackRange(owner: PlayerEntity, slot: SummonerSlotProfile, 
   return slot.mode === 'ranged' && longshot > 0 ? Math.round(range * (1 + 2 * longshot)) : range;
 }
 
+/**
+ * How a body's share of the Conduit's HP and attack follows Command. OV-CONDUIT (PLACEHOLDER,
+ * for review): the shared profile splits ONE pie by Command over the whole roster, so every
+ * Command step (§7.2) only cut the formation into more, smaller bodies: no power, more plating
+ * lost per hit, and a T2 boss slam wiped eight 22-73 HP bodies at once. Here a body's share is
+ * its Command over `reference * (total / reference) ^ exponent`: at the starting Command (4)
+ * nothing changes; exponent 1 is the old pie, 0 a fixed size per Command (power ∝ Command),
+ * 0.5 power ∝ √Command, so "the cost buys power" (§7.2) with diminishing returns. The roster's
+ * body cap bounds it. The proc weight stays a share of the whole (techniques).
+ */
+export const CONDUIT_COMMAND_SCALING = { reference: 4, exponent: 0.5 };
+
 export function summonerProfileFor(owner: PlayerEntity): SummonerProfile {
-  return resolveSummonerProfile({
+  const profile = resolveSummonerProfile({
     roster: rosterOf(owner),
     selectedSubVariant: owner.usesSkills.selectedSubVariant,
     selectedRange: owner.usesSkills.selectedRange,
     unlockedSkills: owner.usesSkills.unlockedSkills,
     passives: owner.usesSkills.passives,
   });
+  const commandOf = (pieceId: string | undefined) => (pieceId ? (CONDUIT_KIT.pieces.find((piece) => piece.id === pieceId)?.command ?? 0) : 0);
+  const total = profile.slots.reduce((sum, slot) => sum + commandOf(slot.pieceId), 0);
+  const { reference, exponent } = CONDUIT_COMMAND_SCALING;
+  const pie = total > 0 ? reference * (total / reference) ** exponent : reference;
+  for (const slot of profile.slots) {
+    const command = commandOf(slot.pieceId);
+    const weight = (command > 0 ? command : 1) / pie;
+    slot.offenseWeight = weight;
+    slot.defenseWeight = weight;
+  }
+  return profile;
 }
 
 /** Every Conduit with summons delivers Techniques through the formation. None fights directly. */

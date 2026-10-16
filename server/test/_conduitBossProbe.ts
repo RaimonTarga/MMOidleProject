@@ -128,6 +128,9 @@ async function applySets(): Promise<void> {
       const t = shared.CONDUIT_KIT.trophies.find((x) => x.id === parts[1]);
       if (!t) throw new Error(`no trophy ${parts[1]}`);
       (t.params as Record<string, number>)[parts[2]] = v;
+    } else if (parts[0] === 'scaling') {
+      const { CONDUIT_COMMAND_SCALING } = await import('../src/systems/classes/archetypes/summoner/profile');
+      (CONDUIT_COMMAND_SCALING as Record<string, number>)[parts[1]] = v;
     } else throw new Error(`bad --set ${entry}`);
   }
 }

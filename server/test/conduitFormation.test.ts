@@ -204,7 +204,8 @@ const piece = (id: string) => CONDUIT_KIT.pieces.find((p) => p.id === id)!;
   assert.equal(profile.slots.length, 4, 'the Soul adds a body');
   assert.equal(profile.slots[3]!.slotId, 'conduit-relic-plains#0');
   assert.equal(profile.slots[3]!.body, 'conduit-summon-champion', 'the Soul wears its own body');
-  assert.ok(Math.abs(profile.slots[0]!.offenseWeight - 1 / 3) < 1e-9, 'a free Soul dilutes no paid body');
+  const bare = summonerProfileFor(setup(roster).player);
+  assert.ok(Math.abs(profile.slots[0]!.offenseWeight - bare.slots[0]!.offenseWeight) < 1e-9, 'a free Soul dilutes no paid body');
 
   const mk = (x: number) => {
     const m = world.createMonster('node-5-5', 'bone-crawler', { x, y: 400 })!;
