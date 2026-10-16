@@ -34,6 +34,44 @@ export function spiritFarmLevel(biomeGroup: T1Biome): number {
 }
 
 /**
+ * Craft and wear a zone's pieces as each one unlocks (weapon at the zone's first level,
+ * armor the next, then charm and boots), as the guided player does. The craft step farms
+ * `at` until the recipe opens and is affordable. Wrapped so a character that has
+ * outgrown `tier` (a later tier's route resuming it) never puts the old pieces back on.
+ */
+export function wearZoneGear(at: NodeRef, tier: number, ids: readonly string[], label: string): RouteStep[] {
+  if (ids.length === 0) return [];
+  return [{
+    type: "ifPossible",
+    when: { type: "not", of: { type: "playerTierAtLeast", tier: tier + 1 } },
+    label: `wear the ${label} gear`,
+    steps: ids.flatMap((id): RouteStep[] => [
+      { type: "craft", recipeIds: [id], farmAt: at, label: `craft ${id}` },
+      { type: "equip", definitionIds: [id], label: `wear ${id}` },
+    ]),
+  }];
+}
+
+/** The Clearing set: the class's starter rod, then the shared vest, charm and boots (levels 1-4). */
+export const SPIRIT_CLEARING_GEAR: readonly string[] = [
+  "spirit-plain-rod-t1", "clearing-vest-t1", "clearing-charm-t1", "clearing-boots-t1",
+];
+
+/**
+ * What the Spirit wears from each T1 zone, in unlock order. PLACEHOLDER picks, each an
+ * upgrade for this class: the Forest's evasion vest, Clear Sky charm and fast boots
+ * replace the Plains set; the Quickening Wand (spends hit less) and the Swamp's pieces
+ * are skipped; the Lodestone Orb and the Summit Staff are the boss weapons.
+ */
+export const SPIRIT_T1_GEAR: Readonly<Record<T1Biome, readonly string[]>> = {
+  plains: ["spirit-forked-rod-t1", "plains-vest-t1", "plains-charm-t1", "plains-boots-t1"],
+  forest: ["forest-vest-t1", "forest-charm-t1", "forest-boots-t1"],
+  swamp: [],
+  cave: ["spirit-lodestone-orb-t1"],
+  mountain: ["spirit-summit-staff-t1"],
+};
+
+/**
  * Valid before the first lesson: only Bolt, a 30% floor and gather, no trophy.
  * Auto lets the server rebuild the bands and relic as lessons and seals arrive.
  */
@@ -61,6 +99,8 @@ export function spiritT1Route(): Route {
     },
     { type: "chooseClass", skillId: SPIRIT_CLASS_ROOT },
     { type: "classConfig", config: autoThresholds() },
+    // The guide's Clearing set (the class rod needs the class, so it comes after the pick).
+    ...wearZoneGear(CLEARING, 1, SPIRIT_CLEARING_GEAR, "Clearing"),
   ];
   const milestones: Route["milestones"] = [
     { id: "tier-1-reached", when: { type: "playerTierAtLeast", tier: 1 } },
@@ -72,6 +112,7 @@ export function spiritT1Route(): Route {
     const level = spiritFarmLevel(biomeGroup);
     steps.push(
       { type: "travel", to: at },
+      ...wearZoneGear(at, 1, SPIRIT_T1_GEAR[biomeGroup], biomeGroup),
       { type: "farm", at, until: { type: "biomeLevelAtLeast", biomeGroup, level } },
     );
     milestones.push({

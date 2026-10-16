@@ -6,7 +6,7 @@ import {
 } from "@mmo-idle/shared";
 import { allOf, type Condition, type NodeRef, type Route, type RouteStep } from "../route/types";
 import { spiritT2Route, SPIRIT_T2_DISCIPLINE, SPIRIT_T2_ZONES } from "./spiritT2";
-import { SPIRIT_CLASS_ROOT } from "./spiritT1";
+import { SPIRIT_CLASS_ROOT, wearZoneGear } from "./spiritT1";
 
 /**
  * The Spirit's T3 route (T3-W2): the T2 route, the tier-3 promotion, a specialization from the
@@ -29,6 +29,21 @@ export const SPIRIT_T3_ZONES: ReadonlyArray<{ biome: KitBiome; pieceId: string }
   { biome: "tundra", pieceId: "spirit-foehn" },
   { biome: "volcanic", pieceId: "spirit-ash-lightning" },
 ];
+
+/**
+ * What the Spirit wears from each T3 zone, in unlock order. PLACEHOLDER picks, each an upgrade
+ * for this class: the Mountain set meets the first T3 boss; the Cave's damage-cap vest, charm and
+ * boots, the Jungle's charm and boots and the Desert's boots follow.
+ */
+export const SPIRIT_T3_GEAR: Readonly<Record<string, readonly string[]>> = {
+  mountain: ["spirit-summit-staff-t3", "mountain-vest-t3", "mountain-charm-t3", "mountain-boots-t3"],
+  cave: ["cave-vest-t3", "cave-charm-t3", "cave-boots-t3"],
+  swamp: [],
+  jungle: ["jungle-charm-t3", "jungle-boots-t3"],
+  desert: ["desert-boots-t3"],
+  tundra: [],
+  volcanic: [],
+};
 
 /** The biome level where a zone's T3 lesson lands (levels run across tiers). */
 export function spiritT3LessonLevel(biome: KitBiome, pieceId: string): number {
@@ -79,6 +94,7 @@ export function spiritT3Route(): Route {
     const level = spiritT3FarmLevel(biome);
     steps.push(
       { type: "travel", to: at },
+      ...wearZoneGear(at, 3, SPIRIT_T3_GEAR[biome] ?? [], "T3 " + biome),
       { type: "farm", at, until: { type: "biomeLevelAtLeast", biomeGroup: biome, level } },
       { type: "attemptBoss", biomeGroup: biome, tier: 3 },
     );

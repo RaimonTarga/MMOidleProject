@@ -7,7 +7,7 @@ import {
 import { allOf, type Condition, type NodeRef, type Route, type RouteStep } from "../route/types";
 import { SPIRIT_T2_DISCIPLINE } from "./spiritT2";
 import { SPIRIT_T3_ZONES, spiritT3Route } from "./spiritT3";
-import { SPIRIT_CLASS_ROOT } from "./spiritT1";
+import { SPIRIT_CLASS_ROOT, wearZoneGear } from "./spiritT1";
 
 /**
  * The Spirit's T4 route (T4-W2): the T3 route, the tier-4 promotion, a leaf from the Passive Tree
@@ -31,6 +31,21 @@ export const SPIRIT_T4_ZONES: ReadonlyArray<{ biome: KitBiome; pieceId: string }
   { biome: "graveyard", pieceId: "spirit-thunderstorm" },
   { biome: "trench", pieceId: "spirit-maelstrom" },
 ];
+
+/**
+ * What the Spirit wears from each T4 zone, in unlock order. PLACEHOLDER picks, each an upgrade
+ * for this class: the Mountain set meets the first T4 boss; the Tundra's charm and the Desert's
+ * boots follow.
+ */
+export const SPIRIT_T4_GEAR: Readonly<Record<string, readonly string[]>> = {
+  mountain: ["spirit-summit-staff-t4", "mountain-vest-t4", "mountain-charm-t4", "mountain-boots-t4"],
+  tundra: ["tundra-charm-t4"],
+  jungle: [],
+  desert: ["desert-boots-t4"],
+  volcanic: [],
+  graveyard: [],
+  trench: [],
+};
 
 /** The biome level where a zone's T4 lesson lands (levels run across tiers). */
 export function spiritT4LessonLevel(biome: KitBiome, pieceId: string): number {
@@ -81,6 +96,7 @@ export function spiritT4Route(): Route {
     const level = spiritT4FarmLevel(biome);
     steps.push(
       { type: "travel", to: at },
+      ...wearZoneGear(at, 4, SPIRIT_T4_GEAR[biome] ?? [], "T4 " + biome),
       { type: "farm", at, until: { type: "biomeLevelAtLeast", biomeGroup: biome, level } },
       { type: "attemptBoss", biomeGroup: biome, tier: 4 },
     );

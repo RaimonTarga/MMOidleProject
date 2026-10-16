@@ -4,6 +4,7 @@ import {
   bossClearKey,
   classConfigContext,
   globalMastery,
+  RECIPE_DATABASE,
   resolveClassConfig,
   SKILL_TREE,
   SPIRIT_KIT,
@@ -11,10 +12,12 @@ import {
   validateClassConfig,
   type TutorialCondition,
 } from "@mmo-idle/shared";
+import type { RouteStep } from "../route/types";
 import { isControlledRouteId, requireRoute, ROUTES } from "./index";
 import { SPIRIT_CLASS_ROOT } from "./spiritT1";
 import { SPIRIT_T2_DISCIPLINE, SPIRIT_T2_ZONES, spiritT2FarmLevel, spiritT2Route } from "./spiritT2";
 import {
+  SPIRIT_T3_GEAR,
   SPIRIT_T3_ID,
   SPIRIT_T3_SPECIALIZATION,
   SPIRIT_T3_ZONES,
@@ -58,7 +61,7 @@ assert(node && node.classId === SPIRIT_CLASS_ROOT && node.disciplineId === SPIRI
 assert(SPIRIT_KIT.specializations.some((spec) => spec.id === SPIRIT_T3_SPECIALIZATION && spec.disciplineId === SPIRIT_T2_DISCIPLINE));
 
 // Each T3 zone: travel, farm to the guide's level, then its T3 boss.
-const t3 = route.steps.slice(t2.steps.length + 2);
+const t3 = route.steps.slice(t2.steps.length + 2).filter((step) => step.type !== "ifPossible");
 assert.equal(t3.length, SPIRIT_T3_ZONES.length * 3);
 for (const [index, { biome, pieceId }] of SPIRIT_T3_ZONES.entries()) {
   const [travel, farm, boss] = t3.slice(index * 3, index * 3 + 3);
@@ -71,6 +74,26 @@ for (const [index, { biome, pieceId }] of SPIRIT_T3_ZONES.entries()) {
   assert(spiritT3LessonLevel(biome, pieceId) <= level, `${biome}: the lesson lands before the cap`);
   assert.deepEqual(boss, { type: "attemptBoss", biomeGroup: biome, tier: 3 });
 }
+
+
+// Gear: each zone's pieces (from SPIRIT_T3_GEAR) are crafted there and worn, only while the character is still T3;
+// the first zone hands over a full set of this tier: the class weapon, an armor, a charm and boots.
+const gearBlocks3 = route.steps.slice(t2.steps.length + 2).filter((step): step is Extract<RouteStep, { type: "ifPossible" }> => step.type === "ifPossible");
+const worn3: string[] = [];
+for (const block of gearBlocks3) {
+  assert.deepEqual(block.when, { type: "not", of: { type: "playerTierAtLeast", tier: 4 } });
+  for (let i = 0; i < block.steps.length; i += 2) {
+    const [craft, equip] = [block.steps[i], block.steps[i + 1]];
+    assert(craft.type === "craft" && craft.farmAt?.kind === "biome" && craft.farmAt.tier === 3);
+    assert(equip.type === "equip" && equip.definitionIds[0] === craft.recipeIds[0]);
+    const recipe = RECIPE_DATABASE.get(craft.recipeIds[0]);
+    assert(recipe && recipe.recipeGroup === craft.farmAt.biomeGroup && recipe.tier === 3, craft.recipeIds[0] + " is a T3 recipe of its zone");
+    worn3.push(recipe.id);
+  }
+}
+assert.deepEqual(worn3, SPIRIT_T3_ZONES.flatMap(({ biome }) => [...(SPIRIT_T3_GEAR[biome] ?? [])]));
+const firstSet3 = (SPIRIT_T3_GEAR[SPIRIT_T3_ZONES[0].biome] ?? []).map((id) => RECIPE_DATABASE.get(id)?.slot).sort();
+assert.deepEqual(firstSet3, ["armor", "mobility", "recovery", "weapon"], "the first T3 boss is met in a full set of the tier");
 
 // The auto config stays valid through the specialization and every T3 lesson and rank-up.
 const levels: Record<string, number> = {};

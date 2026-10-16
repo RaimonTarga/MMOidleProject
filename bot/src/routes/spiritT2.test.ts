@@ -4,6 +4,7 @@ import {
   bossClearKey,
   classConfigContext,
   globalMastery,
+  RECIPE_DATABASE,
   resolveClassConfig,
   SKILL_TREE,
   SPIRIT_KIT,
@@ -11,10 +12,12 @@ import {
   validateClassConfig,
   type TutorialCondition,
 } from "@mmo-idle/shared";
+import type { RouteStep } from "../route/types";
 import { isControlledRouteId, requireRoute, ROUTES } from "./index";
 import { SPIRIT_CLASS_ROOT, spiritT1Route } from "./spiritT1";
 import {
   SPIRIT_T2_DISCIPLINE,
+  SPIRIT_T2_GEAR,
   SPIRIT_T2_ID,
   SPIRIT_T2_ZONES,
   spiritT2FarmLevel,
@@ -56,7 +59,7 @@ assert(node && node.classId === SPIRIT_CLASS_ROOT && node.disciplineId === SPIRI
 assert(SPIRIT_KIT.disciplines.some((discipline) => discipline.id === SPIRIT_T2_DISCIPLINE));
 
 // Each T2 zone: travel, farm to the guide's level, then its T2 boss.
-const t2 = route.steps.slice(t1.steps.length + 1);
+const t2 = route.steps.slice(t1.steps.length + 1).filter((step) => step.type !== "ifPossible");
 assert.equal(t2.length, SPIRIT_T2_ZONES.length * 3);
 for (const [index, { biome, pieceId }] of SPIRIT_T2_ZONES.entries()) {
   const [travel, farm, boss] = t2.slice(index * 3, index * 3 + 3);
@@ -69,6 +72,26 @@ for (const [index, { biome, pieceId }] of SPIRIT_T2_ZONES.entries()) {
   assert(spiritT2LessonLevel(biome, pieceId) <= level, `${biome}: the lesson lands before the cap`);
   assert.deepEqual(boss, { type: "attemptBoss", biomeGroup: biome, tier: 2 });
 }
+
+
+// Gear: each zone's pieces (from SPIRIT_T2_GEAR) are crafted there and worn, only while the character is still T2;
+// the first zone hands over a full set of this tier: the class weapon, an armor, a charm and boots.
+const gearBlocks2 = route.steps.slice(t1.steps.length + 1).filter((step): step is Extract<RouteStep, { type: "ifPossible" }> => step.type === "ifPossible");
+const worn2: string[] = [];
+for (const block of gearBlocks2) {
+  assert.deepEqual(block.when, { type: "not", of: { type: "playerTierAtLeast", tier: 3 } });
+  for (let i = 0; i < block.steps.length; i += 2) {
+    const [craft, equip] = [block.steps[i], block.steps[i + 1]];
+    assert(craft.type === "craft" && craft.farmAt?.kind === "biome" && craft.farmAt.tier === 2);
+    assert(equip.type === "equip" && equip.definitionIds[0] === craft.recipeIds[0]);
+    const recipe = RECIPE_DATABASE.get(craft.recipeIds[0]);
+    assert(recipe && recipe.recipeGroup === craft.farmAt.biomeGroup && recipe.tier === 2, craft.recipeIds[0] + " is a T2 recipe of its zone");
+    worn2.push(recipe.id);
+  }
+}
+assert.deepEqual(worn2, SPIRIT_T2_ZONES.flatMap(({ biome }) => [...(SPIRIT_T2_GEAR[biome] ?? [])]));
+const firstSet2 = (SPIRIT_T2_GEAR[SPIRIT_T2_ZONES[0].biome] ?? []).map((id) => RECIPE_DATABASE.get(id)?.slot).sort();
+assert.deepEqual(firstSet2, ["armor", "mobility", "recovery", "weapon"], "the first T2 boss is met in a full set of the tier");
 
 // The T1 route's auto config stays valid through the discipline pick and every T2 lesson and rank-up.
 const levels: Record<string, number> = {};
