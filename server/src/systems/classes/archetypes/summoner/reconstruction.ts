@@ -10,6 +10,7 @@ import { emitSummonObservation } from './observation';
 import { rebuildRank } from './formationOrders';
 import { rebuildCostMult } from './disciplines';
 import { onSummonRebuilt } from './leavesT4';
+import { countConduitMechanic } from './mechanicLog';
 
 type SummonerOwner = PlayerEntity & {
   summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
@@ -123,6 +124,7 @@ export function tickSummonReconstruction(
   owner.hasHealth.hp = Math.max(floor, owner.hasHealth.hp - cost);
   emitSummonObservation(owner, { kind: 'replacement-paid', id: minion.entityId, hp: cost });
   pushDamageEvent(world, owner, cost);
+  countConduitMechanic(owner, 'rebuild', now);
   if (owner.controlsSummons) {
     owner.controlsSummons.pendingDeadSlotIds = owner.controlsSummons.pendingDeadSlotIds
       .filter((slotId) => slotId !== active.slotId);

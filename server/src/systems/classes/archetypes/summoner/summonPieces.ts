@@ -15,6 +15,7 @@ import { applyFramePlatingShred } from '../../shared/frameLoop';
 import { onTankTaunt } from './souls';
 import { CONDUIT_POISON_ID } from '../../../combat/damage/bleedIds';
 import { applyTickDot } from '../../shared/tickDot';
+import { countConduitMechanic } from './mechanicLog';
 
 export const PIECES = new Map<string, ConduitPiece>(CONDUIT_KIT.pieces.map((piece) => [piece.id, piece]));
 
@@ -56,6 +57,7 @@ export function registerSummonPieces(): void {
     if (mult <= 1 || ctx.metadata['empoweredMultiplier'] !== undefined) return;
     ctx.damage = Math.round(ctx.damage * mult);
     ctx.metadata['empoweredMultiplier'] = mult;
+    countConduitMechanic(hit.owner, 'power-shot', attackNow(ctx));
   });
 
   registerCombatListener('afterHit', (ctx, world) => {
@@ -67,6 +69,7 @@ export function registerSummonPieces(): void {
     const shred = piece.params.shredFraction ?? 0;
     if (shred > 0 && !evadeBlocksDebuffs(ctx) && target.hasHealth.hp > 0) {
       applyFramePlatingShred(owner, target, shred * (1 + (owner.usesSkills.passives['conduit.ability-pct'] ?? 0)), piece.params.shredMs ?? 4000);
+      countConduitMechanic(owner, 'acid', attackNow(ctx));
     }
 
     // Poison Staff: every summon hit adds ticks to a poison on the target (back-loaded damage).
@@ -86,7 +89,8 @@ export function registerSummonPieces(): void {
       const around = [target, ...playerAoeTargets(world, owner, target.hasPosition.current, piece.params.tauntRadius ?? 100, target.isMonster.id)];
       for (const monster of around) {
         if (monster.hasHealth.hp <= 0) continue;
-        applyTaunt(world, monster, { id: minion.isMinion.id, kind: 'minion' }, piece.params.tauntMs ?? 3000, now);
+        const took = applyTaunt(world, monster, { id: minion.isMinion.id, kind: 'minion' }, piece.params.tauntMs ?? 3000, now);
+        if (took) countConduitMechanic(owner, monster.isMonster.isBoss ? 'taunt-boss' : 'taunt', now);
       }
       onTankTaunt(world, owner, minion);
     }
