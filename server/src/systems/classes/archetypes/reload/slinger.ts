@@ -145,7 +145,7 @@ import {
   STEADY_NERVE,
   TRICKSHOT,
 } from '../../slinger/tuning';
-import { emitReloadStart, registerReloadLifecycleHook, startReloadTimer, resolveReloadTimeMs } from './reloadLifecycle';
+import { emitReloadStart, registerReloadLifecycleHook, RELOAD_HELD_AT, startReloadTimer, resolveReloadTimeMs } from './reloadLifecycle';
 
 const PLAIN = 'slinger-plain-clip';
 /** Reaper's Repeater: the splash reaches enemies this close to the target (px). PLACEHOLDER. */
@@ -262,6 +262,38 @@ export function deadeyeWaits(world: World, player: PlayerEntity, now: number): b
   return deadeyeHolds(player, calledMomentHolds(world, player, loadout.config.calledShot, DEADEYE_LOW_HP, now), DEADEYE_HOLD_MS, now);
 }
 
+/** How long an empty clip may wait on a telegraph before it reloads anyway (ms). PLACEHOLDER. */
+const TELEGRAPH_HOLD_MAX_MS = 3_000;
+
+/**
+ * The free rule "never start a reload inside a telegraph" (bible §10.3, on by default): while the
+ * Slinger stands in a ground telegraph, an empty clip waits instead of starting the stationary
+ * reload, so the Slinger can walk out first. It waits at most a few seconds.
+ */
+export function reloadWaitsOnTelegraph(world: World, player: PlayerEntity, now: number): boolean {
+  const loadout = loadoutOf(player);
+  if (!loadout?.config.neverReloadInTelegraph) return false;
+  const heldAt = getResource(player.tracksCombat, RELOAD_HELD_AT);
+  if (heldAt > 0 && now - heldAt >= TELEGRAPH_HOLD_MAX_MS) return false;
+  return momentActive(world, player, 'inside-telegraph', undefined, now);
+}
+
+/** The empty clip starts waiting on the telegraph (the reload gate, on the round that emptied it). */
+export function holdReload(player: PlayerEntity, now: number): void {
+  if (getResource(player.tracksCombat, RELOAD_HELD_AT) <= 0) setResource(player.tracksCombat, RELOAD_HELD_AT, now);
+  const tally = slingerTally(player, now);
+  if (tally) tally.deferredReloads += 1;
+}
+
+/** Whether an empty clip is waiting on a telegraph; `release` ends the wait. */
+export function reloadHeld(player: PlayerEntity): boolean {
+  return getResource(player.tracksCombat, RELOAD_HELD_AT) > 0;
+}
+
+export function releaseReload(player: PlayerEntity): void {
+  setResource(player.tracksCombat, RELOAD_HELD_AT, 0);
+}
+
 /** The clip the Loadout's rules load now: the first rule that holds, else the plain clip. */
 export function chooseClip(world: World, player: PlayerEntity, loadout: Loadout, now: number): string {
   const racked = new Set(loadout.config.rack);
@@ -375,7 +407,8 @@ export function updateSlinger(world: World, player: PlayerEntity, dt: number, no
   const idle = reload.reloadingMs <= 0 && reload.ammo > 0;
 
   // A switch reload: a rule that wants another clip dumps this one (rounds lost, a stationary reload).
-  if (idle) {
+  // Never one that would start inside a telegraph.
+  if (idle && !reloadWaitsOnTelegraph(world, player, now)) {
     const switchTo = loadout.config.clipRules.find((rule) =>
       rule.switchEarly && rule.clip !== reload.clipId && (rule.clip === PLAIN || loadout.config.rack.includes(rule.clip))
       && conditionsHold(world, player, rule.conditions, now));
