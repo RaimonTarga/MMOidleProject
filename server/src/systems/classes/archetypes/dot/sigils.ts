@@ -283,9 +283,11 @@ function firePayoff(world: World, player: PlayerEntity, p: Payoffs, piece: Appre
       const ms = (params['msBase'] ?? 2000) + n * (params['msPerSigil'] ?? 400);
       applyMonsterSlow(world, target, slow, ms, player.isPlayer.id);
       setResource(target.tracksCombat, NUMBED_UNTIL, now + ms);
+      const numbed = getStatusEffect(target.tracksCombat, ABILITY_SLOW_EFFECT_ID);
+      // Numb slows its attacks too, not only its movement (OV-APPRENTICE fix: it wrote no attack slow).
+      if (numbed) numbed.data['attackSlowPct'] = Math.max(numbed.data['attackSlowPct'] ?? 0, slow);
       // Numb II: its wind-ups also take longer, slowed as much as the rest of it (the core reads the key).
-      const numbed = (p.ranks.get('apprentice-numb') ?? 1) >= 2 ? getStatusEffect(target.tracksCombat, ABILITY_SLOW_EFFECT_ID) : undefined;
-      if (numbed) numbed.data[WINDUP_SLOW_PCT_KEY] = Math.max(numbed.data[WINDUP_SLOW_PCT_KEY] ?? 0, slow);
+      if (numbed && (p.ranks.get('apprentice-numb') ?? 1) >= 2) numbed.data[WINDUP_SLOW_PCT_KEY] = Math.max(numbed.data[WINDUP_SLOW_PCT_KEY] ?? 0, slow);
       return true;
     }
     case 'apprentice-siphon': {
