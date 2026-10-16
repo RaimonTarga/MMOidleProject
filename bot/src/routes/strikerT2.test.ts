@@ -4,7 +4,7 @@ import {
   RECIPE_DATABASE,
   SKILL_TREE,
   strikerComboLength,
-  tutorialScriptFor,
+  tutorialScriptWithoutGear,
   type TutorialCondition,
 } from "@mmo-idle/shared";
 import type { Condition, RouteStep } from "../route/types";
@@ -33,7 +33,7 @@ function gates(condition: Condition | TutorialCondition): (Condition | TutorialC
 /** The tier-2 level the Striker guide farms this zone to. */
 function tutorialT2Level(biomeGroup: string): number {
   let level = 0;
-  for (const beat of tutorialScriptFor(STRIKER_CLASS_ROOT).beats) {
+  for (const beat of tutorialScriptWithoutGear(STRIKER_CLASS_ROOT).beats) {
     if (!beat.id.startsWith("striker2:")) continue;
     for (const step of beat.steps) {
       if (step.type !== "farm") continue;

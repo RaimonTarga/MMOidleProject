@@ -4,7 +4,7 @@ import {
   RECIPE_DATABASE,
   SKILL_TREE,
   SLINGER_KIT,
-  tutorialScriptFor,
+  tutorialScriptWithoutGear,
   type TutorialCondition,
 } from "@mmo-idle/shared";
 import { resolveChoices } from "../policy/choices";
@@ -35,7 +35,7 @@ function gates(condition: Condition | TutorialCondition): (Condition | TutorialC
 /** The highest tier-3 biome level the Slinger guide waits on in this zone. */
 function tutorialT3Level(biomeGroup: string): number {
   let level = 0;
-  for (const beat of tutorialScriptFor(SLINGER_CLASS_ROOT).beats) {
+  for (const beat of tutorialScriptWithoutGear(SLINGER_CLASS_ROOT).beats) {
     for (const step of beat.steps) {
       if (step.type !== "farm" || step.at.kind !== "biome" || step.at.tier !== 3) continue;
       for (const gate of gates(step.until)) {

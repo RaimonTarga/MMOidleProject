@@ -10,7 +10,7 @@ import {
   globalMastery,
   resolveBeatIndex,
   resolveClassConfig,
-  tutorialScriptFor,
+  tutorialScriptWithoutGear,
   validateClassConfig,
   type TutorialCondition,
   type TutorialView,
@@ -23,7 +23,7 @@ import { APPRENTICE_T2_ID, APPRENTICE_T2_ZONES, apprenticeT2Payoffs, apprenticeT
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const t1 = apprenticeT1Route();
 const route = apprenticeT2Route();
-const script = tutorialScriptFor(APPRENTICE_CLASS_ROOT);
+const script = tutorialScriptWithoutGear(APPRENTICE_CLASS_ROOT);
 
 assert.equal(route.id, "apprentice-t2");
 assert(KEBAB.test(route.id));

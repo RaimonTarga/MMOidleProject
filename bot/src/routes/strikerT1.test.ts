@@ -6,7 +6,7 @@ import {
   strikerComboLength,
   T1_BIOME_ORDER,
   TUTORIAL_SEALS,
-  tutorialScriptFor,
+  tutorialScriptWithoutGear,
   type TutorialCondition,
 } from "@mmo-idle/shared";
 import type { Condition, RouteStep } from "../route/types";
@@ -32,7 +32,7 @@ function gates(condition: Condition | TutorialCondition): (Condition | TutorialC
 /** The highest biome level the Striker guide waits on in this zone. */
 function tutorialLevel(biomeGroup: string): number {
   let level = 0;
-  for (const beat of tutorialScriptFor(STRIKER_CLASS_ROOT).beats) {
+  for (const beat of tutorialScriptWithoutGear(STRIKER_CLASS_ROOT).beats) {
     if (beat.id.startsWith("striker2:") || beat.id.startsWith("striker3:") || beat.id.startsWith("striker4:")) continue; // the later stretches are strikerT2/T3/T4.test.ts
     for (const step of beat.steps) {
       if (step.type !== "farm") continue;

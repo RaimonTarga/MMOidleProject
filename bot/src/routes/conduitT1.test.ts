@@ -9,7 +9,7 @@ import {
   SKILL_TREE,
   T1_BIOME_ORDER,
   TUTORIAL_SEALS,
-  tutorialScriptFor,
+  tutorialScriptWithoutGear,
   validateClassConfig,
   type TutorialCondition,
 } from "@mmo-idle/shared";
@@ -29,7 +29,7 @@ function gates(condition: Condition | TutorialCondition): (Condition | TutorialC
 /** The highest biome level the Conduit guide waits on in this zone. */
 function tutorialLevel(biomeGroup: string): number {
   let level = 0;
-  for (const beat of tutorialScriptFor(CONDUIT_CLASS_ROOT).beats) {
+  for (const beat of tutorialScriptWithoutGear(CONDUIT_CLASS_ROOT).beats) {
     for (const step of beat.steps) {
       // Tier 1 only: the Tier 2 stretch farms the same biome groups to higher levels.
       if (step.type !== "farm" || (step.at.kind === "biome" && step.at.tier !== 1)) continue;

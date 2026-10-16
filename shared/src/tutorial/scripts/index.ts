@@ -67,3 +67,15 @@ export function tutorialScriptFor(classRoot: string | null): TutorialScript {
   }
   return script;
 }
+
+/**
+ * The class's script as its builders lay it, without the gear beats: what each class's bot
+ * routes mirror zone by zone and level by level (the routes carry their own gear steps, and the
+ * guide's gear plan is a copy of them). The panel always plays {@link tutorialScriptFor}.
+ */
+export function tutorialScriptWithoutGear(classRoot: string): TutorialScript {
+  const build = TUTORIAL_CLASS_BEATS[classRoot];
+  const tail = build ? build() : buildSealRouteBeats();
+  const className = SKILL_TREE.get(classRoot)?.name.toLowerCase() ?? classRoot;
+  return { id: `tutorial-${className}`, classRoot, beats: [...TUTORIAL_OPENING.beats, ...tail] };
+}

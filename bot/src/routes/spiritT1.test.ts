@@ -10,7 +10,7 @@ import {
   SPIRIT_KIT,
   T1_BIOME_ORDER,
   TUTORIAL_SEALS,
-  tutorialScriptFor,
+  tutorialScriptWithoutGear,
   validateClassConfig,
   type T1Biome,
   type TutorialCondition,
@@ -26,7 +26,7 @@ function gates(condition: TutorialCondition): TutorialCondition[] {
 }
 
 function tutorialLevel(biome: T1Biome): number {
-  return Math.max(...tutorialScriptFor(SPIRIT_CLASS_ROOT).beats.flatMap((beat) =>
+  return Math.max(...tutorialScriptWithoutGear(SPIRIT_CLASS_ROOT).beats.flatMap((beat) =>
     beat.steps.flatMap((step) => step.type === "farm" && step.at.kind === "biome" && step.at.tier === 1 ? gates(step.until).flatMap((gate) =>
       gate.type === "biomeLevelAtLeast" && gate.biomeGroup === biome ? [gate.level] : []) : [])));
 }

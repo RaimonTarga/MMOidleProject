@@ -3,7 +3,7 @@ import {
   RECIPE_DATABASE,
   biomeLevelCap,
   SKILL_TREE,
-  tutorialScriptFor,
+  tutorialScriptWithoutGear,
   type TutorialCondition,
 } from "@mmo-idle/shared";
 import type { Condition, RouteStep } from "../route/types";
@@ -31,7 +31,7 @@ function gates(condition: Condition | TutorialCondition): (Condition | TutorialC
 /** The highest tier-3 biome level the Conduit guide waits on in this zone. */
 function tutorialT3Level(biomeGroup: string): number {
   let level = 0;
-  for (const beat of tutorialScriptFor(CONDUIT_CLASS_ROOT).beats) {
+  for (const beat of tutorialScriptWithoutGear(CONDUIT_CLASS_ROOT).beats) {
     for (const step of beat.steps) {
       if (step.type !== "farm" || step.at.kind !== "biome" || step.at.tier !== 3) continue;
       for (const gate of gates(step.until)) {

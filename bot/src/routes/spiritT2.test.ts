@@ -8,7 +8,7 @@ import {
   resolveClassConfig,
   SKILL_TREE,
   SPIRIT_KIT,
-  tutorialScriptFor,
+  tutorialScriptWithoutGear,
   validateClassConfig,
   type TutorialCondition,
 } from "@mmo-idle/shared";
@@ -33,7 +33,7 @@ function gates(condition: TutorialCondition): TutorialCondition[] {
 
 /** The deepest level the guide's Tier-2 farms ask of a biome. */
 function tutorialT2Level(biome: string): number {
-  return Math.max(...tutorialScriptFor(SPIRIT_CLASS_ROOT).beats.flatMap((beat) =>
+  return Math.max(...tutorialScriptWithoutGear(SPIRIT_CLASS_ROOT).beats.flatMap((beat) =>
     beat.steps.flatMap((step) => step.type === "farm" && step.at.kind === "biome" && step.at.tier === 2
       ? gates(step.until).flatMap((gate) =>
         gate.type === "biomeLevelAtLeast" && gate.biomeGroup === biome ? [gate.level] : [])

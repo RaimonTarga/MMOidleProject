@@ -12,7 +12,7 @@ import {
   resolveBeatIndex,
   resolveClassConfig,
   SKILL_TREE,
-  tutorialScriptFor,
+  tutorialScriptWithoutGear,
   validateClassConfig,
   type TutorialView,
 } from "@mmo-idle/shared";
@@ -31,7 +31,7 @@ import {
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const route = apprenticeT3Route();
 const t2 = apprenticeT2Route(APPRENTICE_T3_DISCIPLINE);
-const script = tutorialScriptFor(APPRENTICE_CLASS_ROOT);
+const script = tutorialScriptWithoutGear(APPRENTICE_CLASS_ROOT);
 
 assert.equal(route.id, "apprentice-t3");
 assert(KEBAB.test(route.id));

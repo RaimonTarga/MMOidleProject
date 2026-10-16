@@ -15,7 +15,7 @@ import {
   TUTORIAL_CLASS_BEATS,
   TUTORIAL_OPENING,
   TUTORIAL_SEALS,
-  tutorialScriptFor,
+  tutorialScriptWithoutGear,
   validateClassConfig,
   type ClassConfig,
   type TutorialCondition,
@@ -30,7 +30,7 @@ const [FIRST_SEAL, SECOND_SEAL] = TUTORIAL_SEALS;
 const WALKS = T1_BIOME_ORDER.filter((biome) => biome !== FIRST_SEAL && biome !== SECOND_SEAL);
 const ZONE_ORDER = [FIRST_SEAL, ...WALKS, SECOND_SEAL];
 const route = apprenticeT1Route();
-const script = tutorialScriptFor(APPRENTICE_CLASS_ROOT);
+const script = tutorialScriptWithoutGear(APPRENTICE_CLASS_ROOT);
 
 assert.equal(route.id, "apprentice-t1");
 assert(KEBAB.test(route.id));
