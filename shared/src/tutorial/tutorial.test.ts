@@ -1030,6 +1030,19 @@ for (const root of CLASS_ROOTS) {
   assert(resolveBeatIndex(script, jungle('gear:plains-charm-t2:again')) === beatIndex(script, 'gear:plains-charm-t2:again'),
     `the Jungle puts the Plains charm back on (at ${script.beats[resolveBeatIndex(script, jungle('gear:plains-charm-t2:again'))]?.id})`);
   assert(resolveBeatIndex(script, jungle('striker2:jungle-lesson')) === beatIndex(script, 'striker2:jungle-lesson'), 'wearing it again does not undo the Cave charm beat');
+  // The road levels the zones it crosses: a new Tier 2 Striker who fought its way to the Plains
+  // through the Forest (live, OV2-GUIDESMOKE) still makes its Plains set before the Plains boss.
+  const t1Levels: Record<string, number> = { clearing: 4 };
+  for (const zone of ['plains', 'forest', 'swamp', 'mountain', 'cave']) t1Levels[zone] = biomeLevelCap(1, zone);
+  const road = view({
+    playerTier: 2, selectedClass: 'cadence-root',
+    biomeLevel: { ...t1Levels, plains: biomeLevelCap(2, 'plains'), forest: biomeLevelCap(1, 'forest') + 3 },
+    bossesCleared: [bossClearKey('plains', 1), bossClearKey('mountain', 1)],
+    ...gearBefore(script, 'gear:striker-broadblade-t2', { ...set, weapon: 'primordial-club', armor: 'clearing-vest-t1' }),
+  });
+  const roadAt = resolveBeatIndex(script, road);
+  assert(roadAt >= beatIndex(script, 'striker2:plains') && roadAt <= beatIndex(script, 'gear:striker-broadblade-t2'),
+    `the Forest levelled on the road does not make the Tier 2 Plains set moot (at ${script.beats[roadAt]?.id})`);
 }
 
 // ── The first-hour checklist ─────────────────────────────────────────────────

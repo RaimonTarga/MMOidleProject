@@ -24,8 +24,9 @@ import { TUTORIAL_GEAR_PLANS, type TutorialGearPlan } from './gearPlans';
  * farm, before its boss.
  *
  * Every craft and equip carries an `unless`: the piece is moot once the player is past its
- * stretch (the next zone in the guide's order has been fought in, the zone's boss for that tier
- * is down, or the tier is two promotions on, one for Tier 1: three to five seals promote before a
+ * stretch (the next zone in the guide's order has been fought in, and where the guide fights the
+ * stretch's boss, the tier is behind the player too; the zone's boss for that tier
+ * is down; or the tier is two promotions on, one for Tier 1: three to five seals promote before a
  * tier's last bosses), or already wears a later piece of the plan for that slot. A hand-played
  * or older character is never sent back for gear it has outgrown.
  */
@@ -205,10 +206,16 @@ export function buildGearBeats(classRoot: string, beats: readonly TutorialBeat[]
     ];
     const at = piece === start ? -1 : stretches.findIndex((s) => s.tier === piece.tier && s.zone === piece.zone);
     const next = stretches[at + 1];
+    const hasBoss = bosses.has(stretchKey(piece.tier, piece.zone));
     if (next) {
-      guards.push({ type: 'biomeLevelAtLeast', biomeGroup: next.zone, level: biomeLevelCap(next.tier - 1, next.zone) + 1 });
+      const fought: TutorialCondition = { type: 'biomeLevelAtLeast', biomeGroup: next.zone, level: biomeLevelCap(next.tier - 1, next.zone) + 1 };
+      // Fighting back on the road levels the zones it crosses (with a reward multiplier, by
+      // several levels): a new Tier 2 Striker walked to the Plains past the Forest and skipped
+      // its whole Plains set. Where the guide fights this stretch's boss, the next zone counts
+      // only once the player is also past the piece's tier.
+      guards.push(hasBoss ? { type: 'allOf', of: [fought, { type: 'playerTierAtLeast', tier: piece.tier + 1 }] } : fought);
     }
-    if (bosses.has(stretchKey(piece.tier, piece.zone))) {
+    if (hasBoss) {
       guards.push({ type: 'bossCleared', biomeGroup: piece.zone, tier: piece.tier });
     }
     const madeSoFar = new Set(ordered.slice(0, index + 1).map((p) => p.id));
