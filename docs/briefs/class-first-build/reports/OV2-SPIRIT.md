@@ -1,8 +1,8 @@
 # OV2-SPIRIT report
-**Agent:** Claude (OV2-SPIRIT, 2026-10-16 evening)   **Branch:** rw/ov2-spirit   **Last commit:** LASTCOMMIT
+**Agent:** Claude (OV2-SPIRIT, 2026-10-16 evening)   **Branch:** rw/ov2-spirit   **Last commit:** this report (last code commit 557342d8)
 
-Lanes 3 (:4313, `gamedb_ov3`, account `ov3-spirit-overflow`) and 4 (:4314, `gamedb_ov4`, account
-`ov4-spirit-reservoir`), `--policy=intended`, `--rewardMultiplier=100`, auto Thresholds, fresh characters.
+Lanes 3 (:4313, `gamedb_ov3`, accounts `ov3-spirit-overflow`, then `ov3-spirit-overflow-clean`) and 4 (:4314,
+`gamedb_ov4`, accounts `ov4-spirit-reservoir`, then `ov4-spirit-reservoir-clean`), `--policy=intended`, `--rewardMultiplier=100`, auto Thresholds, fresh characters.
 The storm's rule is untouched (hits drain the storm before HP, constant flow): every change is a discipline
 default, a discipline piece or a discipline number.
 
@@ -41,11 +41,21 @@ Boss fight lengths, first runs:
 
 **Clean runs** (reset lanes, fresh characters, the final code, no restart):
 
-CLEAN
+| Chain | T1 | T2 | T3 | T4 | Deaths | Minutes (T1 / T2 / T3 / T4) | Bar |
+|---|---|---|---|---|---|---|---|
+| Reservoir (`spirit-t4-reservoir`, 20:42-22:00) | 2/2 | 7/7 | 7/7 | 7/7 | 0 | 11 / 18 / 25 / 25 (79 in all) | **pass** |
+| Overflow (`spirit-t4-overflow`, 20:47-22:15) | 2/2 | 7/7 | 7/7 | 5/5 (stopped at the timebox on the way to the Wasteland) | 0 | 11 / 23 / 29 / 25 for five bosses (88 in all) | pass T1-T3 clean; T4 passed in the first run, 5/7 clean |
+
+Boss fight lengths, clean runs:
+- Reservoir: T1 36 / 14 s; T2 32, 31, 8, 6, 6, 7, 9 s; T3 3, 1, 1, 8, 5, 4, 6 s; T4 6, 4, 37, 14, 18, 29, 16 s.
+  Guards: every pack under 90 s but the T3 Mountain (127 s) and the T4 Mountain (170 s, reformed).
+- Overflow: T1 43 / 14 s; T2 65, 65, 25, 6, 17, 27, 22 s; T3 29, 16, 31, 44, 21, 32, 27 s; T4 30, 10, 49, 31,
+  27 s (Wasteland and Trench not reached; both won in the first run, 61 and 59 s). Guards: the T2 Jungle 100 s,
+  T4 Mountain 158 s (reformed), T4 Jungle 163 s; the rest under 90 s.
 
 Guard packs (the sim never meets them; `dungeon-guard` events): no `gave-up` anywhere. Most packs fall in
-15-90 s; the slow ones all **reformed** (the 90-s pre-clear timer ran out and the pack came back) before falling:
-Overflow T2 Mountain 242 s, T4 Mountain 388 s, T4 Jungle 147 s; Reservoir T4 Mountain 580 s, T4 Desert 171 s,
+15-90 s; the slow ones (first runs) mostly **reformed** (the 90-s pre-clear timer ran out and the pack came back)
+before falling: Overflow T2 Mountain 242 s, T4 Mountain 388 s, T4 Jungle 147 s (cleared); Reservoir T4 Mountain 580 s, T4 Desert 171 s,
 T4 Trench 640 s (the executor gives up at 15 minutes). See "still broken".
 
 ## Sim (server/bench/classBossSim.ts, the chain's gear and clears, 2 runs a boss)
@@ -95,7 +105,10 @@ The dev-only `spirit-storm` line (once a minute per Spirit in combat) on each la
 
 ## Checks
 
-CHECKS
+- `pnpm typecheck`: clean (before every commit).
+- `pnpm test -- spirit`: 9/9 passed (bot/src/routes/spiritT1-T4, server/test/spiritT2/T3/T4 and the kit test).
+- `pnpm test -- classKits config`: 16/16 passed; `pnpm test -- thresholds`: 1/1 passed.
+- `git diff --numstat` checked before each commit: no line-ending conversions (all edited files are LF).
 
 ## What is still broken or unsure
 
@@ -112,11 +125,12 @@ CHECKS
   the bible's own weak spot). It never comes close to dying.
 - **Reservoir one-shots most bosses live.** It meets each boss with a full deep bank held on the walk in
   (Gathering Dark doubles a bank held full, in or out of combat), and the "enough" rule fires it at once: T3 boss
-  fights of 1 s in the first run. The sim starts the storm unfilled, so it shows 11-25 s. Not touched (the bar
+  fights of 1 s in the first run, 1-8 s in the clean run (after the cost-line fix). The sim starts the storm unfilled, so it shows 11-25 s. Not touched (the bar
   passes; a pure numbers call): the levers are Cloudburst's `multPerPip` 2.25, `RESERVOIR_DEPTH_X` 2, Gathering
   Dark's ramp (`DARK_RAMP_MS`, and whether it ramps out of combat).
-- **Slow guard packs, both disciplines, the T4 Mountain worst** (4 Stone Wardens: 388 s Overflow, 580 s Reservoir;
-  Reservoir's T4 Trench pair 640 s, 11 of the executor's 15 minutes). Live samples in those windows: the Spirit is
+- **Slow guard packs, both disciplines, the T4 Mountain worst** (4 Stone Wardens, first runs: 388 s Overflow, 580 s
+  Reservoir; Reservoir's T4 Trench pair 640 s, 11 of the executor's 15 minutes; the clean Reservoir run: 170 s and
+  under 90 s). Live samples in those windows: the Spirit is
   in combat 0-4 s a minute, the auto intent reads "No worthy target nearby" most of the time, and the storm sits
   full, so each break spends on squalls that fire on any enemy near (Reservoir: Dust Wall 8-16 and Gale up to 55
   a minute, Ground Charge 10) and push the pack away before it engages; the pack then reforms. Two parts: the
