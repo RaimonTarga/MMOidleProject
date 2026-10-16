@@ -17,9 +17,8 @@
  * Tier 3 (T3-SQUIRE, §8.6, §8.16): Anchor, Chain Hook, Frostward and Backdraft; Guard II's
  * second catch; the nine specializations (read from `usesSkills.specializationId`); Deep
  * Winter and Kindling; and the Tundra and Volcanic gear jobs. The three T3 moments the
- * registry has the real `chill-threshold` and `fire-attack`; two reads stay local, in
- * `LOCAL_MOMENTS`: `drag-or-push` (the registry's event fires as the push happens, too late to
- * plant, so Anchor looks ahead at the wind-up) and ordinary kiters for `target-flees`.
+ * registry has the real `chill-threshold`, `fire-attack` and `drag-or-push` (foreseen at the
+ * wind-up, so Anchor plants in time); ordinary kiters for `target-flees` stay local (`LOCAL_MOMENTS`).
  *
  * Tier 4 (T4-SQUIRE, §8.7, §8.16): Disarm, Lay to Rest and Lie in Wait; Guard III's stagger;
  * Faultline's aftershocks, Charnel Ring and Undertow; the nine leaves (read from
@@ -65,7 +64,7 @@ import { attachMarker, detachComponent } from '../../../../ecs/markerHelpers';
 import type { World } from '../../../../world/World';
 import { applyPlayerAoe, applyPlayerAoeTo, playerAoeTargets } from '../../../combat/damage/aoeDamage';
 import { applyKnockback, repositionPlayer } from '../../../combat/damage/knockback';
-import { bossPatternEscaping, runningBossPatternDef, staggerBoss } from '../../../combat/ai/bossPatterns';
+import { bossPatternEscaping, lockMonsterEscape, runningBossPatternDef, staggerBoss } from '../../../combat/ai/bossPatterns';
 import { guardableThreatsFor } from '../../../combat/ai/guardableThreats';
 import { setAggroTarget } from '../../../combat/ai/targeting';
 import { telegraphsContainingPlayer } from '../../../combat/ai/telegraphEvasion';
@@ -937,7 +936,7 @@ function fleesOrKites(monster: MonsterEntity): boolean {
 /**
  * When the next push or drag aimed at this player completes, if one is coming: a charged attack
  * or ability hit that carries knockback, or a boss pattern's `pull` step (Mire Lash, Magma
- * Shove, Undertow). STAND-IN for the `drag-or-push` moment, read before the move happens.
+ * Shove, Undertow): Anchor's brace window. The registry's `dragOrPushLandsAt` reads the same.
  */
 function pushOrPullEndsAt(world: World, player: PlayerEntity, now: number): number | undefined {
   let endsAt: number | undefined;
@@ -968,7 +967,6 @@ function pushOrPullEndsAt(world: World, player: PlayerEntity, now: number): numb
  * piece's numbers.
  */
 const LOCAL_MOMENTS: Partial<Record<MomentId, (world: World, player: PlayerEntity, now: number, p: Record<string, number>) => boolean>> = {
-  'drag-or-push': (world, player, now) => pushOrPullEndsAt(world, player, now) !== undefined,
   // The registry does not record `risen` (T4); a fresh risen enemy near you, not yet struck, is it.
   'risen': (world, player, now, p) => freshRisen(world, player, p.radius ?? RISEN_DEFAULT_RADIUS, p.freshMs ?? RISEN_DEFAULT_FRESH_MS, now).length > 0,
   // The registry's `target-flees` only knows a boss getting away.
@@ -1283,6 +1281,7 @@ function onSquireSlam(ctx: CombatContext, world: World): void {
     held.set(ctx.defender.isMonster.id, { until: now + tp.holdMs, staggerMs: tp.staggerMs });
     undertows.set(player, held);
     applyMonsterRoot(world, ctx.defender, tp.holdMs, player.isPlayer.id);
+    lockMonsterEscape(ctx.defender, 'escape', tp.holdMs, now, tp.staggerMs);
   }
 }
 

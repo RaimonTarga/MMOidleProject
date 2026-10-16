@@ -12,7 +12,7 @@ import {
 } from '@mmo-idle/shared';
 import type { MonsterEntity, PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
-import { bossPatternEscaping } from '../../combat/ai/bossPatterns';
+import { bossPatternEscaping, lockMonsterEscape } from '../../combat/ai/bossPatterns';
 import { ATTACK_HASTE_PCT_KEY } from '../../combat/engine/attackCadence';
 import { applyMonsterRoot, applyMonsterSlow } from '../../combat/status/monsterControl';
 import { isTracedBy } from './tracer';
@@ -74,13 +74,19 @@ export function tetherHit(player: PlayerEntity, target: MonsterEntity, rounds: n
   const inRow = now - getResource(cs, tetherAtKey(pid)) <= windowMs ? getResource(cs, tetherHitsKey(pid)) + 1 : 1;
   setResource(cs, tetherHitsKey(pid), inRow);
   setResource(cs, tetherAtKey(pid), now);
-  if (inRow >= rounds) setResource(cs, tetherUntilKey(pid), now + holdMs);
+  if (inRow >= rounds) {
+    setResource(cs, tetherUntilKey(pid), now + holdMs);
+    // It can't dash or teleport away: a boss pattern's dash-escape is refused while it holds.
+    lockMonsterEscape(target, 'dash', holdMs, now);
+  }
 }
 
 /** Hold a target as Tether would, for `holdMs` (Harpoon Round). */
 export function tetherFor(player: PlayerEntity, target: MonsterEntity, holdMs: number, now: number): void {
   const key = tetherUntilKey(player.isPlayer.id);
   setResource(target.tracksCombat, key, Math.max(getResource(target.tracksCombat, key), now + holdMs));
+  // Harpoon: it can't dive, burrow or flee either; a boss pattern that would is refused.
+  lockMonsterEscape(target, 'escape', holdMs, now);
 }
 
 export function isTethered(player: PlayerEntity, monster: MonsterEntity, now: number): boolean {

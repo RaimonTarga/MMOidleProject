@@ -13,8 +13,14 @@
  * fired when the snapshot refreshes at the top of the tick, and the combat pipeline
  * (`initMomentListeners`). Moments the content doesn't need yet are not implemented and
  * read false (`momentImplemented` says which).
+ *
+ * An event the fight shows coming is FORESEEN (`foreseeMoment`): it fires as the wind-up
+ * starts, so an answer that has to be in place before it lands (Anchor's plant before a
+ * push) has the time to act, and the event itself, landing, is the same event and does not
+ * fire again. Today: `drag-or-push`, foreseen from a push or drag winding up at you.
  */
 import {
+  GAME_CONFIG,
   getCounter,
   getString,
   isMomentId,
@@ -28,6 +34,11 @@ import type { PlayerEntity } from '../../../ecs/entity';
 import type { World } from '../../../world/World';
 import { registerCombatListener } from '../engine/combatPipeline';
 import { fightSnapshotFor, monsterGone, refreshFightSnapshot, type FightSnapshot } from './fightSnapshot';
+
+/** One logic tick, in ms. */
+const TICK_MS = 1000 / GAME_CONFIG.LOGIC_TICK_RATE;
+/** Ticks past a foreseen event's landing during which it still counts as that event. PLACEHOLDER. */
+const FORESIGHT_GRACE_TICKS = 2;
 
 type StatePredicate = (snapshot: FightSnapshot, param: number) => boolean;
 
@@ -60,6 +71,8 @@ const STATES: Partial<Record<MomentId, StatePredicate>> = {
   // Tier 3
   'chill-threshold': (s) => s.chillAtThreshold,
   'fire-attack': (s) => s.fireAttackAtMe,
+  // Crescendo's release (bible §12.6): the target staggered.
+  'target-staggered': (s) => s.targetStaggered,
   // Tier 4
   'risen': (s) => s.risenNearMe,
 };
@@ -88,9 +101,31 @@ export function momentImplemented(id: MomentId): boolean {
 
 const tickKey = (id: MomentId) => `moment.${id}.tick`;
 const valueKey = (id: MomentId) => `moment.${id}.value`;
+/** The last tick (stored one up) a foreseen event still covers. */
+const foreseenKey = (id: MomentId) => `moment.${id}.foreseenUntil`;
 
-/** Record an event on the player for this tick; the largest value of the tick is kept. */
+/**
+ * Record an event on the player for this tick; the largest value of the tick is kept. An event
+ * already fired ahead of time (`foreseeMoment`) is not fired again when it lands.
+ */
 export function recordMoment(world: World, player: PlayerEntity, id: MomentId, value = 1): void {
+  if (world.tickCounter < getCounter(player.tracksCombat, foreseenKey(id))) return;
+  stampMoment(world, player, id, value);
+}
+
+/**
+ * Fire an event AHEAD of time, because the fight shows it coming in `landsInMs`. Until it
+ * lands (and a grace tick or two after) the real event is this one, so readers still see one
+ * event per push, only sooner.
+ */
+function foreseeMoment(world: World, player: PlayerEntity, id: MomentId, landsInMs: number): void {
+  stampMoment(world, player, id, 1);
+  const cs = player.tracksCombat;
+  const until = world.tickCounter + Math.ceil(Math.max(0, landsInMs) / TICK_MS) + FORESIGHT_GRACE_TICKS + 1;
+  setCounter(cs, foreseenKey(id), Math.max(getCounter(cs, foreseenKey(id)), until));
+}
+
+function stampMoment(world: World, player: PlayerEntity, id: MomentId, value: number): void {
   const cs = player.tracksCombat;
   // Stored one up, so a missing counter (0) never reads as tick 0.
   const stamp = world.tickCounter + 1;
@@ -161,6 +196,10 @@ export function updatePlayerMoments(world: World, player: PlayerEntity, now: num
   if (snapshot.enemyCharging && !previous?.enemyCharging) recordMoment(world, player, 'enemy-winds-up');
   if (snapshot.enemyCasting && !previous?.enemyCasting) recordMoment(world, player, 'enemy-casts');
   if (snapshot.windupAtMe && !previous?.windupAtMe) recordMoment(world, player, 'telegraph-at-me');
+  // A push or drag starts winding up at you: foreseen, so a plant can go down before it lands.
+  if (snapshot.dragOrPushLandsAt !== undefined && previous?.dragOrPushLandsAt === undefined) {
+    foreseeMoment(world, player, 'drag-or-push', snapshot.dragOrPushLandsAt - now);
+  }
   if (snapshot.controlled && !previous?.controlled) recordMoment(world, player, 'control-on-me');
   if (snapshot.debuffCount > (previous?.debuffCount ?? 0)) recordMoment(world, player, 'debuff-landed');
   if (snapshot.dotStacks > (previous?.dotStacks ?? 0)) recordMoment(world, player, 'dot-landed');
