@@ -167,7 +167,7 @@ function stepPassed(script: TutorialScript, beat: TutorialBeat, step: TutorialSt
 async function travelTo(nodeId: string, beat: TutorialBeat, signal: AbortSignal): Promise<void> {
   const view = requireView();
   if (view.nodeId === nodeId) return;
-  const path = bfsPath(view.nodeId, nodeId);
+  const path = bfsPath(view.nodeId, nodeId, view.playerTier);
   if (!path) throw new TutorialStop('The guide cannot find a way there from here.', 'error');
   report(beat, 'working', 'Heading there first.');
   // Travel is the one thing auto-combat must not hijack.

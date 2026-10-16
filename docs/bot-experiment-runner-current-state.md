@@ -93,13 +93,9 @@ continuation still reads one `--tierEntrySnapshot` file when the route
 declares `progressionEntry`; no registered route declares one, so a snapshot
 passed to any route fails at bot start.
 
-**Known conflict:** `scripts/experiment/lib.mjs` still requires a snapshot in
-canonical mode for any route id containing `-t2` (a rule from the removed
-snapshot-entry T2 routes). So `experiment:create` refuses the class T2 routes
-(`striker-t2-*`, `squire-t2`, `conduit-t2`, `slinger-t2`, `spirit-t2`,
-`apprentice-t2`) without a snapshot, and the bot refuses the snapshot. Until
-that check goes, run them in `smoke-isolated` mode or on a lane. The `-t3` and
-`-t4` routes pass the check.
+The canonical `-t2` snapshot requirement (a rule from the removed snapshot-entry
+T2 routes) was dropped on 2026-10-16: the class `-t2`..`-t4` routes run canonical
+from a fresh character like the `-t1` ones.
 
 `smoke-isolated` allows accelerated rewards and `next-tier` completion for
 pipeline and resource qualification. Its results are non-canonical whenever
@@ -112,8 +108,8 @@ Examples:
 # The six T1 class routes at 1x (hours each).
 pnpm experiment:create --revision=<full-sha> --routes="striker-t1,squire-t1,conduit-t1,slinger-t1,spirit-t1,apprentice-t1" --workers=2
 
-# A class T2 route: smoke mode only, until the -t2 snapshot check is removed.
-pnpm experiment:create --revision=<full-sha> --routes="squire-t2" --mode=smoke-isolated --rewardMultiplier=25 --workers=1
+# A class T2 route, canonical (it replays T1 first).
+pnpm experiment:create --revision=<full-sha> --routes="squire-t2" --workers=1
 
 # Short resource/pipeline qualification, never balance evidence.
 pnpm experiment:create --revision=<full-sha> --routes="smoke-t1" --mode=smoke-isolated --completion=next-tier --rewardMultiplier=1000 --workers=2

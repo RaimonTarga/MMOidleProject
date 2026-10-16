@@ -218,9 +218,8 @@ export function normalizeCreateOptions(args) {
     if (completionMode !== "full-gauntlet") throw new Error("canonical-isolated requires full-gauntlet completion");
     if (args.fastBossRetry === "true") throw new Error("canonical-isolated forbids fast boss retry");
     if (args.tierEntry) throw new Error("canonical-isolated forbids synthetic --tierEntry profiles");
-    if (routes.some((route) => route.includes("-t2")) && !args.tierEntrySnapshot && !args.tierEntrySnapshotDir) {
-      throw new Error("canonical Tier-2 routes require a real --tierEntrySnapshot or --tierEntrySnapshotDir");
-    }
+    // The class routes' `-t2`..`-t4` replay every earlier tier from a fresh character and
+    // declare no `progressionEntry`, so they need no snapshot (the bot refuses one they don't declare).
   }
 
   return {

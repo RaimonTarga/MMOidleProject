@@ -146,6 +146,7 @@ function step(world: World, player: PlayerEntity): void {
   step(world, player);
   assert.equal(sigils(target), 0, 'Numb spends the sigils');
   assert.ok(getStatusEffect(target.tracksCombat, 'ability-slowed'), 'and slows the target');
+  assert.ok((getStatusEffect(target.tracksCombat, 'ability-slowed')?.data['attackSlowPct'] ?? 0) > 0, 'its attacks as well as its movement');
 
   for (let i = 0; i < 4; i++) hit(world, player, target);
   player.hasHealth.hp = Math.round(player.hasHealth.maxHp * 0.1);

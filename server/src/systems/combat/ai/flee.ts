@@ -135,7 +135,7 @@ export function stepFlee(world: World, player: PlayerEntity, now = Date.now()): 
         return;
       }
 
-      const path = findShortestNodePath(player.hasPosition.nodeId, state.returnNodeId);
+      const path = findShortestNodePath(player.hasPosition.nodeId, state.returnNodeId, player.tracksProgression.playerTier);
       const nextHop = path && path.length >= 2 ? path[1] : null;
       const dir = nextHop ? directionFromTo(player.hasPosition.nodeId, nextHop) : null;
       if (!dir) {
