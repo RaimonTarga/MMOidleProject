@@ -80,14 +80,15 @@ export const STRIKER_CLEARING_GEAR: readonly string[] = [
  * 2, charm 3, boots 4), crafted as soon as the zone opens it. PLACEHOLDER picks (OV-STRIKER):
  * only a piece that beats what the Striker already wears is made. The Plains set over the
  * Clearing's; the Forest's Twin Fangs (12 x 1.6/s, plus its extra strike) over the Broadblade
- * (19 x 0.9/s), its evasion vest, its 9.2 Recovery charm and its 32-speed boots over the
- * Plains'; the Swamp makes nothing (the Hooked Sickle is 18 x 0.9/s, the rest is weaker than
- * the Forest's); the Cave's Bastard Sword (29 x 1.1/s) is the best T1 weapon by far; the
- * Mountain is farmed only to its lesson level before its seal.
+ * (23 x 0.9/s), its evasion vest and its 32-speed boots over the Plains' (the Plains charm's Grit
+ * stays: it won the Mountain seal in classBossSim where the Forest's Rhythm charm lost); the
+ * Swamp makes nothing (the Hooked Sickle is 18 x 0.9/s, the rest is weaker than what it wears);
+ * the Cave's Bastard Sword (29 x 1.1/s) is the best T1 weapon by far; the Mountain is farmed only
+ * to its lesson level before its seal.
  */
 export const STRIKER_T1_ZONE_GEAR: Readonly<Record<string, readonly string[]>> = {
   plains: ["striker-broadblade-t1", "plains-vest-t1", "plains-charm-t1", "plains-boots-t1"],
-  forest: ["striker-twin-fangs-t1", "forest-vest-t1", "forest-charm-t1", "forest-boots-t1"],
+  forest: ["striker-twin-fangs-t1", "forest-vest-t1", "forest-boots-t1"],
   swamp: [],
   cave: ["striker-bastard-sword-t1"],
   mountain: [],
