@@ -20,7 +20,7 @@ const reloadModule = defineMechanic({
     registerSlinger();
   },
   tick: (world, dt, now) => {
-    updateReloadArchetype(world, dt);
+    updateReloadArchetype(world, dt, now);
     for (const entity of world.reloadPlayers) updateSlinger(world, entity, dt, now);
   },
   buffs: [...SLINGER_BUFFS],

@@ -5,7 +5,7 @@ import { getFlag } from '@mmo-idle/shared';
 import { clipShiftFor } from '../../slinger/tuning';
 import { isPlayerActivelyInCombat } from '../../../combat/ai/engagement';
 import { RUNE_TACTICAL_RELOAD_FLAG } from '../../../combat/ai/runeConfig';
-import { deadeyeWaits } from './slinger';
+import { deadeyeWaits, holdReload, releaseReload, reloadHeld, reloadWaitsOnTelegraph } from './slinger';
 import {
   completeReload,
   emitReloadStart,
@@ -23,7 +23,7 @@ const RELOAD_MAX_AMMO = 10;
  */
 const RELOAD_PROXY_MULT = 3.5;
 
-export function updateReloadArchetype(world: World, dt: number): void {
+export function updateReloadArchetype(world: World, dt: number, now = Date.now()): void {
   for (const entity of world.reloadPlayers) {
     const reload = entity.usesReload;
     // The gun sets the clip; the discipline shifts it by a flat amount (bible §10.2).
@@ -53,7 +53,17 @@ export function updateReloadArchetype(world: World, dt: number): void {
       reload.reloadingMs = Math.max(0, reload.reloadingMs - tickMs);
     }
 
-    if (reload.reloadingMs <= 0 && reload.ammo === 0) completeReload(world, entity);
+    if (reload.reloadingMs <= 0 && reload.ammo === 0) {
+      // An empty clip waiting on a telegraph (the Slinger's free rule) starts its reload once out of it.
+      if (reloadHeld(entity)) {
+        if (reloadWaitsOnTelegraph(world, entity, now)) continue;
+        releaseReload(entity);
+        startReloadTimer(world, entity, resolveReloadTimeMs(entity));
+        emitReloadStart(world, entity);
+        continue;
+      }
+      completeReload(world, entity);
+    }
   }
 }
 
@@ -105,9 +115,12 @@ export function initReloadArchetype(): void {
     ctx.metadata['reloadClipIndex'] = Math.max(1, reload.ammoMax - reload.ammo);
 
     if (reload.ammo === 0) {
-      const reloadTimeMs = resolveReloadTimeMs(entity);
-      startReloadTimer(world, entity, reloadTimeMs);
+      // The round that empties the clip is the last round (`pendingReloadStart`), even when the
+      // reload waits on a telegraph; the reload's start hooks then run when it does start.
       ctx.metadata['pendingReloadStart'] = true;
+      const now = attackNow(ctx);
+      if (reloadWaitsOnTelegraph(world, entity, now)) holdReload(entity, now);
+      else startReloadTimer(world, entity, resolveReloadTimeMs(entity));
     }
   });
 }

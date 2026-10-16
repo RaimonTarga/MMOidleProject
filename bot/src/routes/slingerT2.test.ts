@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
   biomeLevelCap,
+  RECIPE_DATABASE,
   SKILL_TREE,
   SLINGER_KIT,
   tutorialScriptFor,
@@ -13,7 +14,9 @@ import { SLINGER_CLASS_ROOT, slingerT1Route } from "./slingerT1";
 import {
   DEFAULT_SLINGER_DISCIPLINE,
   SLINGER_DISCIPLINES,
+  SLINGER_T2_GUNS,
   SLINGER_T2_ID,
+  SLINGER_T2_ZONE_KIT,
   slingerT2FarmLevel,
   slingerT2LessonLevel,
   slingerT2Route,
@@ -87,9 +90,32 @@ for (const discipline of SLINGER_DISCIPLINES) {
 }
 assert.equal(resolveChoices(route, {}).selected["slinger-discipline"], "gunslinger");
 
-// ── The T2 zones: travel, farm to the tutorial's level, boss at tier 2 ───────
-const zoneSteps = tail.slice(SLINGER_DISCIPLINES.length);
+// ── The T2 zones: travel, gear up, farm to the tutorial's level, boss at tier 2 ──
+const isGear = (step: RouteStep) => step.type === "craft" || step.type === "equip";
+const zoneSteps = tail.slice(SLINGER_DISCIPLINES.length).filter((step) => !isGear(step));
 assert.deepEqual(zoneSteps.map((step) => step.type), T2_ZONE_ORDER.flatMap(() => ["travel", "farm", "attemptBoss"]));
+for (const discipline of SLINGER_DISCIPLINES) {
+  const resolved = resolveChoices(route, { "slinger-discipline": discipline }).route.steps.slice(t1.steps.length);
+  // Every piece is worn as soon as it is made, and only a recipe of the zone (and tier) it is made in.
+  const crafts = resolved.filter((step): step is Extract<RouteStep, { type: "craft" }> => step.type === "craft");
+  const equips = resolved.filter((step): step is Extract<RouteStep, { type: "equip" }> => step.type === "equip");
+  assert.deepEqual(crafts.map((step) => step.recipeIds), equips.map((step) => step.definitionIds), `${discipline}: worn as made`);
+  for (const step of crafts) {
+    const recipe = RECIPE_DATABASE.get(step.recipeIds[0]);
+    assert(recipe && recipe.tier === 2, `${step.recipeIds[0]} is a tier-2 recipe`);
+    assert(step.farmAt?.kind === "biome" && step.farmAt.biomeGroup === recipe.recipeGroup && step.farmAt.tier === 2, `${recipe.id} is made in its own tier-2 zone`);
+    assert(recipe.requiredBiomeLevel <= slingerT2FarmLevel(recipe.recipeGroup), `${recipe.id} unlocks within the route's farm`);
+    if (recipe.slot === "weapon") assert(recipe.id.startsWith("slinger-"), `${recipe.id} is a Slinger gun`);
+  }
+  for (const biomeGroup of T2_ZONE_ORDER) {
+    for (const id of SLINGER_T2_ZONE_KIT[biomeGroup]) assert(crafts.some((step) => step.recipeIds[0] === id), `${discipline}: ${id} is worn`);
+  }
+  // The first T2 boss is met in a T2 class gun the discipline fits.
+  const firstBoss = resolved.findIndex((step) => step.type === "attemptBoss");
+  const gun = resolved.slice(0, firstBoss).find((step) => step.type === "equip" && RECIPE_DATABASE.get(step.definitionIds[0])?.slot === "weapon");
+  assert(gun?.type === "equip", `${discipline}: a T2 gun before the first T2 boss`);
+  assert(SLINGER_T2_GUNS.some((entry) => entry.discipline === discipline && entry.id === gun.definitionIds[0]), `${discipline}: the gun fits the discipline`);
+}
 T2_ZONE_ORDER.forEach((biomeGroup, index) => {
   const [travel, farm, boss] = zoneSteps.slice(index * 3, index * 3 + 3) as [
     Extract<RouteStep, { type: "travel" }>,

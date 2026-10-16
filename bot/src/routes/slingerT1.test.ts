@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import {
   biomeLevelCap,
   classConfigContext,
+  DEFAULT_RUNE_LOADOUT,
   defaultClassConfig,
+  RECIPE_DATABASE,
   resolveClassConfig,
   SKILL_TREE,
   T1_BIOME_ORDER,
@@ -13,7 +15,14 @@ import {
 } from "@mmo-idle/shared";
 import type { Condition, RouteStep } from "../route/types";
 import { isClassAgnosticRouteId, isControlledRouteId, requireRoute, ROUTES } from "./index";
-import { SLINGER_CLASS_ROOT, SLINGER_T1_ID, slingerFarmLevel, slingerT1Route } from "./slingerT1";
+import {
+  SLINGER_CLASS_ROOT,
+  SLINGER_CLEARING_GEAR,
+  SLINGER_T1_ID,
+  SLINGER_T1_ZONE_GEAR,
+  slingerFarmLevel,
+  slingerT1Route,
+} from "./slingerT1";
 
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const [FIRST_SEAL, SECOND_SEAL] = TUTORIAL_SEALS;
@@ -65,13 +74,48 @@ assert(rejected, "naming another class is rejected");
 // ── Steps: the quest, the class, the auto Loadout, the guide's zones ─────────
 const kinds = route.steps.map((step) => step.type);
 const walks = T1_BIOME_ORDER.filter((biome) => biome !== FIRST_SEAL && biome !== SECOND_SEAL);
+const wear = (ids: readonly string[]) => ids.flatMap(() => ["craft", "equip"]);
+const zoneGear = (biome: string) => SLINGER_T1_ZONE_GEAR[biome] ?? [];
 assert.deepEqual(kinds, [
-  "travel", "farm", "chooseClass", "classConfig",
-  "travel", "farm", "attemptBoss",
-  ...walks.flatMap(() => ["travel", "farm"]),
-  "travel", "farm", "attemptBoss",
+  "travel", "farm", "chooseClass", "classConfig", "configureRunes", ...wear(SLINGER_CLEARING_GEAR),
+  "travel", ...wear(zoneGear(FIRST_SEAL)), "farm", "attemptBoss",
+  ...walks.flatMap((biome) => ["travel", ...wear(zoneGear(biome)), "farm"]),
+  "travel", ...wear(zoneGear(SECOND_SEAL)), "farm", "attemptBoss",
   "farm",
 ]);
+
+// ── Standing orders: Keep Distance while fighting (bible §3) ─────────────────
+const orders = route.steps.find((step): step is Extract<RouteStep, { type: "configureRunes" }> => step.type === "configureRunes");
+assert(orders, "the route sets the standing orders");
+assert(orders.rules.some((rule) => rule.conditionId === "in-combat" && rule.actionId === "orbit"), "Keep Distance while fighting");
+assert(!orders.rules.some((rule) => rule.actionId === "chase-enemy"), "no chase in place of the kite");
+const step = orders.rules.findIndex((rule) => rule.conditionId === "inside-telegraph" && rule.actionId === "step-back");
+const kite = orders.rules.findIndex((rule) => rule.actionId === "orbit");
+assert(step >= 0 && step < kite, "Step Back out of a telegraph first, then Keep Distance");
+assert.equal(orders.rules.length, DEFAULT_RUNE_LOADOUT.length + 1, "otherwise the default standing orders");
+
+// ── Gear: the Clearing set, then each zone's pieces as they unlock ───────────
+const crafts = route.steps.filter((step): step is Extract<RouteStep, { type: "craft" }> => step.type === "craft");
+const equips = route.steps.filter((step): step is Extract<RouteStep, { type: "equip" }> => step.type === "equip");
+assert.deepEqual(crafts.map((step) => step.recipeIds), equips.map((step) => step.definitionIds), "every piece is worn as soon as it is made");
+const gearOrder: [string, readonly string[]][] = [
+  ["clearing", SLINGER_CLEARING_GEAR],
+  ...[FIRST_SEAL, ...walks, SECOND_SEAL].map((biome): [string, readonly string[]] => [biome, zoneGear(biome)]),
+];
+for (const [biome, ids] of gearOrder) {
+  let level = 0;
+  for (const id of ids) {
+    const recipe = RECIPE_DATABASE.get(id);
+    assert(recipe, `${id} is a recipe`);
+    assert.equal(recipe.recipeGroup, biome, `${id} is made in ${biome}`);
+    assert(recipe.requiredBiomeLevel >= level, `${biome}'s pieces come in the order they unlock`);
+    level = recipe.requiredBiomeLevel;
+    if (biome !== "clearing") assert(level <= slingerFarmLevel(biome), `${id} unlocks before the route leaves ${biome}`);
+  }
+}
+const weapons = gearOrder.flatMap(([, ids]) => ids).filter((id) => RECIPE_DATABASE.get(id)?.slot === "weapon");
+assert(weapons.every((id) => id.startsWith("slinger-")), "every gun is the Slinger's own");
+assert.equal(weapons[0], "slinger-plain-pistol-t1", "the Clearing gun is the Slinger's starter");
 
 const [toClearing, quest, choose, config] = route.steps;
 assert(toClearing.type === "travel" && toClearing.to.kind === "node", "the quest starts in the Clearing");

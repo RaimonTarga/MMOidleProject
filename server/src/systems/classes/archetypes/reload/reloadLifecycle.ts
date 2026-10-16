@@ -4,9 +4,11 @@ import { reloadShiftMsFor } from '../../slinger/tuning';
 import { markSliceDirty } from '../../../../ecs/dirtyHelpers';
 import { registerCombatListener } from '../../../combat/engine/combatPipeline';
 import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
-import type { CombatControlResult } from '@mmo-idle/shared';
+import { setResource, type CombatControlResult } from '@mmo-idle/shared';
 
 const RELOAD_TIME_MS = 1600;
+/** When an empty clip began waiting on a telegraph (0: it is not waiting). Any reload start ends the wait. */
+export const RELOAD_HELD_AT = 'slinger.reloadHeldAt';
 
 /** What an `onComplete` hook learns about the reload that just completed. */
 export interface ReloadCompletion {
@@ -49,6 +51,7 @@ export function startReloadTimer(
   reload.ammo = 0;
   reload.reloadingMs = reloadMs;
   reload.reloadDurationMs = reloadMs;
+  setResource(player.tracksCombat, RELOAD_HELD_AT, 0);
   _reloadStartEmitted.delete(player);
   markSliceDirty(world, player, 'usesReload');
 }

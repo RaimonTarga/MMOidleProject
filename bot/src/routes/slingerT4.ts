@@ -4,7 +4,7 @@ import {
   SLINGER_KIT,
 } from "@mmo-idle/shared";
 import { allOf, type Condition, type NodeRef, type Route, type RouteStep } from "../route/types";
-import { SLINGER_CLASS_ROOT } from "./slingerT1";
+import { SLINGER_CLASS_ROOT, wearAsUnlocked, zoneGearSteps, type DisciplineGun } from "./slingerT1";
 import { slingerT3Route } from "./slingerT3";
 
 /**
@@ -57,6 +57,40 @@ export function slingerT4LessonLevel(biomeGroup: string): number {
 }
 
 /** The choice option for a leaf id: `slinger-light-hands` is `light-hands`. */
+/**
+ * The tier's vest: the Jungle's second base, which carries the Forest's moved Quickdraw (walk at
+ * half speed while reloading), made on a detour into the Jungle in front of the tier's first
+ * boss and kept for the whole tier, as at T2 (the Forest vest). PLACEHOLDER pick.
+ */
+export const SLINGER_T4_VEST = "jungle-vest-t4-b";
+
+/**
+ * Each T4 zone's charm and boots, worn as they unlock; the one vest is the Jungle's second
+ * base (Quickdraw, `SLINGER_T4_VEST`), made first. The Jungle's are its second
+ * bases (the Forest's moved Quickdraw and Fleet, as at T3); the Trench's boots are the
+ * Stalkers (the faster pair). PLACEHOLDER picks.
+ */
+export const SLINGER_T4_ZONE_KIT: Readonly<Record<string, readonly string[]>> = {
+  mountain: ["mountain-charm-t4", "mountain-boots-t4"],
+  tundra: ["tundra-charm-t4", "tundra-boots-t4"],
+  jungle: ["jungle-vest-t4-b", "jungle-charm-t4-b", "jungle-boots-t4"],
+  desert: ["desert-charm-t4", "desert-boots-t4"],
+  volcanic: ["volcanic-charm-t4", "volcanic-boots-t4"],
+  graveyard: ["graveyard-charm-t4", "graveyard-boots-t4"],
+  trench: ["trench-charm-t4", "trench-boots-t4-stalkers"],
+};
+
+/**
+ * The T4 guns each discipline fits, so the first T4 boss (the Mountain) is met in one:
+ * Gunslinger's Carbine (the Jungle's, a detour), Siege's Drum Gun (moved to the Trench,
+ * a detour), Trickshot's Hand Cannon (the Mountain's own).
+ */
+export const SLINGER_T4_GUNS: readonly DisciplineGun[] = [
+  { discipline: "gunslinger", zone: "jungle", id: "slinger-carbine-t4", before: "mountain" },
+  { discipline: "siege", zone: "trench", id: "slinger-drum-gun-t4", before: "mountain" },
+  { discipline: "trickshot", zone: "mountain", id: "slinger-hand-cannon-t4" },
+];
+
 function optionOf(leafId: string): string {
   return leafId.replace(/^slinger-/, "");
 }
@@ -74,9 +108,15 @@ export function slingerT4Route(): Route {
     });
   }
 
+  // The tier's vest first (a detour into the Jungle), for every discipline.
+  steps.push(...wearAsUnlocked(zone("jungle"), [SLINGER_T4_VEST]));
+
   for (const biomeGroup of T4_ZONE_ORDER) {
     const at = zone(biomeGroup);
+    const gear = zoneGearSteps(biomeGroup, 4, SLINGER_T4_GUNS, SLINGER_T4_ZONE_KIT[biomeGroup] ?? []);
+    steps.push(...gear.before);
     steps.push({ type: "travel", to: at });
+    steps.push(...gear.inZone);
     steps.push({
       type: "farm",
       at,

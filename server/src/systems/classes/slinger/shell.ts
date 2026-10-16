@@ -14,6 +14,7 @@ import { applyKnockback } from '../../combat/damage/knockback';
 import { applyMonsterSlow } from '../../combat/status/monsterControl';
 import { applyFramePlatingShred } from '../shared/frameLoop';
 import { applyTickDot } from '../shared/tickDot';
+import { slingerTally } from './telemetry';
 import { entrenchFraction } from './t3';
 import {
   DEATHMARK,
@@ -109,6 +110,8 @@ export function fireShell(world: World, player: PlayerEntity, asClip?: string): 
   const victims = marked.length > 0 ? marked : playerAoeTargets(world, player, center, SHELL_RADIUS * (cluster ? SHELL_CLUSTER_MULT : 1));
   if (spec === DEATHMARK) for (const monster of marked) monster.tracksCombat.statusEffects = monster.tracksCombat.statusEffects.filter((effect) => effect.id !== DEATHMARK_EFFECT_ID);
   if (victims.length === 0) return [];
+  const tally = slingerTally(player);
+  if (tally) tally.shells += 1;
   if (dominant === 'slinger-breaching') {
     for (const victim of victims) applyFramePlatingShred(player, victim, SHELL_BUSTER_FRACTION, SHELL_BUSTER_MS);
   }

@@ -4,7 +4,7 @@ import {
   SLINGER_KIT,
 } from "@mmo-idle/shared";
 import { allOf, type Condition, type NodeRef, type Route, type RouteStep } from "../route/types";
-import { SLINGER_CLASS_ROOT, slingerT1Route } from "./slingerT1";
+import { SLINGER_CLASS_ROOT, slingerT1Route, zoneGearSteps, type DisciplineGun } from "./slingerT1";
 
 /**
  * The Slinger's T2 route (T2-W2, bible §10.5 and §10.16).
@@ -38,6 +38,41 @@ function zone(biomeGroup: string): NodeRef {
   return { kind: "biome", biomeGroup, tier: 2, pick: "uncleared" };
 }
 
+/**
+ * The vests the route wears at T2: the Plains', then the Forest's, kept from there on.
+ * The Forest vest's line is Quickdraw (walk at half speed while reloading): it covers the
+ * stationary reload, the Slinger's risk window, better than any later T2 vest (sim, the
+ * Gunslinger's T2 bosses in the Forest vest against each zone's own: Mountain 100% HP left
+ * against 30-51%, Desert 100% against 57-100%, and the Cave boss that walled the clean chain
+ * six times (boss 39-42% left) won at 84%). PLACEHOLDER pick.
+ */
+const T2_VESTS = new Set(["plains", "forest"]);
+
+/**
+ * Each T2 zone's charm and boots (and the vest where `T2_VESTS` says), worn as they unlock
+ * (a carried-over zone opens them at 8, 9 and 10; the Jungle and the Desert at 2, 3 and 4).
+ */
+export const SLINGER_T2_ZONE_KIT: Readonly<Record<string, readonly string[]>> = Object.fromEntries(
+  T2_ZONE_ORDER.map((biome) => [biome, [
+    ...(T2_VESTS.has(biome) ? [`${biome}-vest-t2`] : []), `${biome}-charm-t2`, `${biome}-boots-t2`,
+  ]]),
+);
+
+/**
+ * The T2 guns each discipline fits (bible §10.4), so the first T2 boss (the Plains) is
+ * met in a T2 class weapon. Gunslinger: the Pepperbox, then the Carbine. Siege: the
+ * Pepperbox, then the Drum Gun. Trickshot: the Hand Cannon, made in the Mountain before
+ * the Plains boss (a detour), then the Snakebite Pistol stays on the bench (below the
+ * Hand Cannon). The Jungle's Hunting Rifle and the Desert's Long Rifle fit no discipline.
+ */
+export const SLINGER_T2_GUNS: readonly DisciplineGun[] = [
+  { discipline: "gunslinger", zone: "plains", id: "slinger-pepperbox-t2" },
+  { discipline: "gunslinger", zone: "forest", id: "slinger-carbine-t2" },
+  { discipline: "siege", zone: "plains", id: "slinger-pepperbox-t2" },
+  { discipline: "siege", zone: "cave", id: "slinger-drum-gun-t2" },
+  { discipline: "trickshot", zone: "mountain", id: "slinger-hand-cannon-t2", before: "plains" },
+];
+
 /** How far the route farms a T2 zone: the tier-2 cap, as the guide does. */
 export function slingerT2FarmLevel(biomeGroup: string): number {
   return biomeLevelCap(2, biomeGroup);
@@ -67,7 +102,10 @@ export function slingerT2Route(): Route {
 
   for (const biomeGroup of T2_ZONE_ORDER) {
     const at = zone(biomeGroup);
+    const gear = zoneGearSteps(biomeGroup, 2, SLINGER_T2_GUNS, SLINGER_T2_ZONE_KIT[biomeGroup] ?? []);
+    steps.push(...gear.before);
     steps.push({ type: "travel", to: at });
+    steps.push(...gear.inZone);
     steps.push({
       type: "farm",
       at,

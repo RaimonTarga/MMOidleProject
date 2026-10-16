@@ -4,7 +4,7 @@ import {
   SLINGER_KIT,
 } from "@mmo-idle/shared";
 import { allOf, type Condition, type NodeRef, type Route, type RouteStep } from "../route/types";
-import { SLINGER_CLASS_ROOT } from "./slingerT1";
+import { SLINGER_CLASS_ROOT, wearAsUnlocked, zoneGearSteps, type DisciplineGun } from "./slingerT1";
 import { slingerT2Route } from "./slingerT2";
 
 /**
@@ -42,6 +42,42 @@ function zone(biomeGroup: string): NodeRef {
   return { kind: "biome", biomeGroup, tier: 3, pick: "uncleared" };
 }
 
+/**
+ * The tier's vest: the Jungle's second base, which carries the Forest's moved Quickdraw (walk at
+ * half speed while reloading), made on a detour into the Jungle in front of the tier's first
+ * boss and kept for the whole tier, as at T2 (the Forest vest). PLACEHOLDER pick.
+ */
+export const SLINGER_T3_VEST = "jungle-vest-t3-b";
+
+/**
+ * Each T3 zone's charm and boots, worn as they unlock; the one vest is the Jungle's second
+ * base (Quickdraw, `SLINGER_T3_VEST`), made first. The Jungle's are its second
+ * bases, which carry the Forest's moved lines (Quickdraw, Fleet): walking while you reload
+ * and Recovery while you move suit a kiting Slinger better than its own (PLACEHOLDER pick).
+ */
+export const SLINGER_T3_ZONE_KIT: Readonly<Record<string, readonly string[]>> = {
+  mountain: ["mountain-charm-t3", "mountain-boots-t3"],
+  cave: ["cave-charm-t3", "cave-boots-t3"],
+  swamp: ["swamp-charm-t3", "swamp-boots-t3"],
+  jungle: ["jungle-vest-t3-b", "jungle-charm-t3-b", "jungle-boots-t3"],
+  desert: ["desert-charm-t3", "desert-boots-t3"],
+  tundra: ["tundra-charm-t3", "tundra-boots-t3"],
+  volcanic: ["volcanic-charm-t3", "volcanic-boots-t3"],
+};
+
+/**
+ * The T3 guns each discipline fits, so the first T3 boss (the Mountain) is met in one.
+ * Gunslinger's Carbine has moved to the Jungle and Siege's Drum Gun is the Cave's, both
+ * zones the route reaches after the Mountain: each is a detour in front of it (the Jungle
+ * at its first T3 level, the Cave at its first). Trickshot's Hand Cannon is the Mountain's.
+ * The Pepperbox (Volcanic) is below the Carbine and the Drum Gun, so it stays on the bench.
+ */
+export const SLINGER_T3_GUNS: readonly DisciplineGun[] = [
+  { discipline: "gunslinger", zone: "jungle", id: "slinger-carbine-t3", before: "mountain" },
+  { discipline: "siege", zone: "cave", id: "slinger-drum-gun-t3", before: "mountain" },
+  { discipline: "trickshot", zone: "mountain", id: "slinger-hand-cannon-t3" },
+];
+
 /** How far the route farms a T3 zone: the tier-3 cap, as the guide does. */
 export function slingerT3FarmLevel(biomeGroup: string): number {
   return biomeLevelCap(3, biomeGroup);
@@ -74,9 +110,15 @@ export function slingerT3Route(): Route {
     });
   }
 
+  // The tier's vest first (a detour into the Jungle), for every discipline.
+  steps.push(...wearAsUnlocked(zone("jungle"), [SLINGER_T3_VEST]));
+
   for (const biomeGroup of T3_ZONE_ORDER) {
     const at = zone(biomeGroup);
+    const gear = zoneGearSteps(biomeGroup, 3, SLINGER_T3_GUNS, SLINGER_T3_ZONE_KIT[biomeGroup] ?? []);
+    steps.push(...gear.before);
     steps.push({ type: "travel", to: at });
+    steps.push(...gear.inZone);
     steps.push({
       type: "farm",
       at,
