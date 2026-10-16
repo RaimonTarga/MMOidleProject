@@ -17,10 +17,12 @@ import {
 } from './common';
 
 /**
- * Bodies a roster may field. Today's summon cap is 9 (`hardEntityCap`) and the Soul takes one;
- * a tuning number raised in measured steps, never a design cap (§7.2).
+ * Bodies a roster may field, Souls not counted; a tuning number raised in measured steps, never a
+ * design cap (§7.2). OV-CONDUIT: 8 -> 10, so more of the Command steps through T4 (up to 15) can be spent:
+ * at 8 a Pack roster left 3-6 Command pips it could not use from mid-T3 on. The bandwidth budget
+ * allows 20 bodies (STATUS.md, 2026-10-15). PLACEHOLDER.
  */
-export const CONDUIT_ROSTER_BODY_CAP = 8;
+export const CONDUIT_ROSTER_BODY_CAP = 10;
 
 const ATTACK_FIRST = ['attacking-me', 'closest', 'weakest', 'elites'] as const;
 const TANKS_GUARD = ['conduit', 'back-row'] as const;
