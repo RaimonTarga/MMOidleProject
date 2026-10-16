@@ -1,8 +1,11 @@
 # Frozen Bot Experiment Runner — Current State
 
-> Class-first rework (2026-10-15): the class and campaign routes were removed (D5); class routes return per class.
-
-Last updated: 2026-10-15. The isolation runner below is still the code in `scripts/experiment/`. The only registered route is `smoke-t1`.
+Last updated: 2026-10-16 (OV-DOCS, `rework/class-first`). The isolation runner below is the
+code in `scripts/experiment/`. The routes it launches are the bot registry's
+(`bot/src/routes/index.ts`): `smoke-t1` plus every class's `<class>-t1` to `-t4` routes,
+listed in [bot/README.md](../bot/README.md#class-routes). For quick per-class runs without
+containers, the lane tools (`tools/lane/`, same section) give each bot its own dev server and
+game database instead.
 
 ## Purpose
 
@@ -44,7 +47,7 @@ From the repository root:
 
 ```powershell
 # Freeze an exact committed revision. Quote comma-separated routes in PowerShell.
-pnpm experiment:create --revision=HEAD --routes="smoke-t1" --workers=2
+pnpm experiment:create --revision=HEAD --routes="striker-t1,squire-t1" --workers=2
 
 # The create command prints the experiment id. "latest" is also accepted.
 pnpm experiment:launch --id=latest
@@ -79,17 +82,24 @@ the frozen image.
 ## Canonical and smoke modes
 
 `canonical-isolated` is the default. It enforces 1x rewards and no fast boss
-retry. Class routes, campaign routes, and synthetic tier-entry starts are gone
-(D5). The bot ignores unknown flags the runner can still forward
+retry. Campaign routes and synthetic tier-entry starts are gone (D5); the
+class routes came back per class in the class-first build. Every class route
+starts from a fresh character and replays the earlier tiers' steps itself
+(`striker-t2-light` runs all of `striker-t1` first), so none needs a snapshot.
+The bot ignores unknown flags the runner can still forward
 (`--tierEntrySnapshotDir`, `--entryEconomy`, `--requireTierEntrySnapshot`).
 Canonical mode still refuses a synthetic `--tierEntry` profile. A named
 continuation still reads one `--tierEntrySnapshot` file when the route
-declares `progressionEntry`. `smoke-t1` does not declare one, so a snapshot
-passed to it fails. `scripts/experiment/lib.mjs` still requires a snapshot
-when a route id contains `-t2`, and no such route is registered. `smoke-t1`
-is the only route the registry accepts; it plays whichever class `--class`
-names on a direct `bot:run`, and the experiment runner launches the route id
-you pass.
+declares `progressionEntry`; no registered route declares one, so a snapshot
+passed to any route fails at bot start.
+
+**Known conflict:** `scripts/experiment/lib.mjs` still requires a snapshot in
+canonical mode for any route id containing `-t2` (a rule from the removed
+snapshot-entry T2 routes). So `experiment:create` refuses the class T2 routes
+(`striker-t2-*`, `squire-t2`, `conduit-t2`, `slinger-t2`, `spirit-t2`,
+`apprentice-t2`) without a snapshot, and the bot refuses the snapshot. Until
+that check goes, run them in `smoke-isolated` mode or on a lane. The `-t3` and
+`-t4` routes pass the check.
 
 `smoke-isolated` allows accelerated rewards and `next-tier` completion for
 pipeline and resource qualification. Its results are non-canonical whenever
@@ -99,8 +109,11 @@ evidence.
 Examples:
 
 ```powershell
-# The only registered route, at 1x.
-pnpm experiment:create --revision=<full-sha> --routes="smoke-t1" --workers=2
+# The six T1 class routes at 1x (hours each).
+pnpm experiment:create --revision=<full-sha> --routes="striker-t1,squire-t1,conduit-t1,slinger-t1,spirit-t1,apprentice-t1" --workers=2
+
+# A class T2 route: smoke mode only, until the -t2 snapshot check is removed.
+pnpm experiment:create --revision=<full-sha> --routes="squire-t2" --mode=smoke-isolated --rewardMultiplier=25 --workers=1
 
 # Short resource/pipeline qualification, never balance evidence.
 pnpm experiment:create --revision=<full-sha> --routes="smoke-t1" --mode=smoke-isolated --completion=next-tier --rewardMultiplier=1000 --workers=2
@@ -117,9 +130,10 @@ version.
 Qualification is executed from a detached test commit so working-copy edits
 made after image creation are intentionally absent from the frozen image.
 
-The workloads below were the class routes D5 later removed (`striker-t1` and
-its siblings, plus one Striker T2 continuation). The table is a past
-measurement of the runner, not a route you can launch.
+The workloads below were the pre-rework class routes D5 removed (the old
+`striker-t1` and its siblings, plus one Striker T2 snapshot continuation; the
+same ids now name the class-first routes, which are different data). The
+table is a past measurement of the runner, not a route you can launch.
 
 Qualification revision: `405411607ddc1cf6e69d798e5739d4dadaa60bf2`
 (detached local test commit; no project branch was moved). The resource routes

@@ -5,9 +5,9 @@ For deeper architecture rules, read `design_docs/architecture.md`.
 
 ## Product
 
-MMO Idle is an automatic-combat idle RPG. Players build characters, choose skills,
-gear, runes, parties, and traversal strategy; the server decides all gameplay
-outcomes.
+MMO Idle is an automatic-combat idle RPG. Players pick one of six classes, set up
+its class system, and choose gear, parties, and traversal strategy; the server
+decides all gameplay outcomes.
 
 Hard axioms:
 - Server authoritative: damage, HP, progression, rewards, deaths, persistence.
@@ -23,7 +23,8 @@ client/   Phaser + React player app, Vite on :3000
 admin/    React ops dashboard, Vite on :3001, served at /admin in prod
 server/   Express + Socket.IO + authoritative ECS simulation
 shared/   Cross-boundary types, protocol, components, formulas, static data
-tools/    Balance TUI and supporting tools
+bot/      Headless socket bot harness: authored routes per class (bot/README.md)
+tools/    Balance TUI, isolated bot lanes (tools/lane/), supporting tools
 ```
 
 Important entrypoints:
@@ -91,7 +92,8 @@ Tests are plain tsx scripts, not a test framework (no vitest/jest). Each file
 constructs real `World`/component state and throws via a hand-rolled `assert`
 on failure; a trailing `console.log("<name>: ok")` marks completion.
 
-- Locations: `server/test/*.test.ts` and `shared/src/**/*.test.ts`.
+- Locations: `server/test/*.test.ts`, `shared/src/**/*.test.ts` and `bot/src/**/*.test.ts`
+  (each class route has one next to it).
 - Run everything: `pnpm test` (runs `scripts/run-tests.mjs`, which discovers
   every file and runs them in parallel — `TEST_JOBS`, default half the cores —
   as `node --conditions=development --import tsx <file>`, prints per-file
@@ -173,20 +175,15 @@ Component naming uses verb phrases: `HasHealth`, `UsesSkills`, `TracksCombat`,
 - Status effect `data` is `Record<string, number>` only.
 - DoT ticks and player procs skip plating and pay `GAME_CONFIG.DOT_DR_SHARE` (half) of the
   target's DR, both directions; monster `dotResistance` stacks on top (`mitigatePlayerTickOnMonster`).
-- One multiplier per hit: a Technique rider landing on an empowered hit scales the hit as it
-  was before the empowered multiplier (mechanics that apply their own record it in
-  `ctx.metadata.empoweredMultiplier`).
+- One multiplier per hit: a mechanic that multiplies a hit records it in
+  `ctx.metadata.empoweredMultiplier` (helpers in `server/src/systems/classes/shared/frameLoop.ts`),
+  so a rider reading it sees the hit as it was before the multiplier.
 - Archetype runtime state lives on archetype slices, not in `TracksCombat`.
-
-Current class roots include cadence, cooldown, dot, reload, energy, and summoner.
-Summoner owns minions through `SummonsMinions`/minion systems; command intent is
-`player:commandSummons`.
+- Summons pay half plating (`ctx.formation`). The Slinger pays full plating; its Breaching
+  rounds set `ctx.platingMult`.
 
 Important formula conventions:
 - Attack speed skill stat is `attackSpeedPct`; sum additively, then apply once.
-- Reload's half-damage/double-speed multiplier is a final stat layer.
-- Reload plating compensation belongs in the reload listener via `ctx.platingMult`.
-- DoT damage-per-stack is derived from attack, conversion percent, and max stacks.
 - `biomeXpForLevel` is the only biome XP threshold function.
 - `biomeLevelCap(playerTier, biomeGroup)` takes exactly two args.
 - Evasion is a fraction from 0 to 1, not old `1/N` notation.
@@ -194,8 +191,48 @@ Important formula conventions:
   (respects monster `appliesThroughEvade` / player `shared.applies-through-evade`). It is
   true when a monster evades a player hit, but on the PLAYER side only for a full dodge
   (evade mitigation >= 1): a graze still applies the monster's ailments. Unlike a
-  chaotic-axe miss, which always applies them.
-- Use shared melee/ranged helpers from `shared/src/data/skillTree/rootsAndFrames.ts`.
+  chaotic miss (`ctx.metadata.chaoticMiss`), which always applies them.
+- Use the shared melee/ranged helpers (`isMeleeArchetype`, `isRangedCombatant`) from
+  `shared/src/data/skillTree/roots.ts`.
+
+## Classes (class-first rework)
+
+Design authority: `design_docs/class-first-bible.md` (§1–§6 shared rules, §7–§12 one Locked
+section per class). The archetype id is the persisted key; content ids use the class name
+(`striker-sweep`, trophies `<class>-relic-<biome>`).
+
+| Class | Archetype · slice | Class system · budget | Core loop | T2 disciplines |
+|---|---|---|---|---|
+| Striker | `cadence` · `usesCadence` | the Order · Techniques | a combo of beats (plain swings, techniques, casts on the opener and wind-up); the finisher is the empowered hit | Light, Balanced, Heavy |
+| Squire | `cooldown` · `usesCooldown` | Response rules · Resolve | hits taken and pressure fill Resolve pips; responses answer enemy moments and refund when they land; a full bar arms the slam | Avenger, Bulwark, Juggernaut |
+| Apprentice | `dot` · `appliesDots` | Payoff rules · Sigils | hits lay sigils (stacks of the class DoT, linear ticks, damage from the weapon's potency, not the hit); payoffs spend them at moments on the enemy | Poison, Fire, Frost |
+| Slinger | `reload` · `usesReload` | the Loadout · Rack | clips at the gun's own fire rate (never attack speed); rules pick the clip type at each reload; the reload is stationary | Gunslinger, Siege, Trickshot |
+| Spirit | `energy` · `usesEnergy` | Thresholds · Storm | the storm is one bar, damage and shield: a constant flow fills it, hits drain it before HP; spends fire in bands above a floor | Overflow, Tide, Reservoir |
+| Conduit | `summoner` · `summonsMinions`, `controlsSummons` | Formation · Command | never strikes; fields a roster of summons within Command, with orders and Recall; rebuilds cost HP | Swarm, Pack, Elite |
+
+- Kits: `shared/src/classKits/<class>/kit.ts` (pieces, lessons, trophies, budget,
+  disciplines, specializations, leaves). Every number in kit `params`,
+  `shared/src/classKits/configs/<class>.ts` and class gear is a placeholder.
+- Progress is derived, never stored: lessons from biome levels (`LESSON_ZONE_LEVEL`),
+  trophies from boss clears (ranked by the lineage's next-tier boss), the budget from
+  Global Mastery (`classBudget`). The relic slot holds one trophy (the finisher, the slam's
+  twist, the last round, a Soul...).
+- Passive Tree nodes are built from the kits (`shared/src/data/skillTree/classFirst.ts`):
+  class (T1), discipline (T2), specialization (T3), leaves (T4+), all `player:unlockSkill`;
+  runtimes read `usesSkills.disciplineId` / `specializationId` / `unlockedSkills`. Nodes carry
+  no stats.
+- The config is the `configuresClass` slice (`ClassConfig`: `auto` | `custom`, the relic
+  slot, the system), set by `class:setConfig` and checked by `validateClassConfig`. `auto`
+  rebuilds `defaultClassConfig` whenever a lesson, trophy or budget step arrives
+  (`refreshClassConfig`).
+- Moments are the one trigger vocabulary (`shared/src/classKits/moments.ts`, server registry
+  `server/src/systems/combat/moments/`). Add a new trigger there before a class reads it.
+- Runtimes: `server/src/systems/classes/archetypes/<archetype>/` (per-tier files, the
+  Slinger also `classes/slinger/`), ticked in `classes/registry.ts` order. Class gear:
+  `shared/src/data/classGear/<class>.ts` (smart loot). Class screens use the shared
+  `compose*View` composers in `shared/src/classKits/`.
+- Rules cost nothing; power comes from owned pieces and the budget. No abilities outside
+  the class system. Runes remain only as standing orders (movement, targeting, hazards).
 
 ## World, Progression, And Persistence
 
@@ -255,11 +292,12 @@ Player server-to-client highlights:
 Player client-to-server highlights:
 - Lobby: `character:create`, `character:select`, `character:delete`
 - Movement/AI: `player:move`, `player:navigateTo`, `player:setAuto`,
-  `player:setAutoTraverse`, `player:setAutocombatConfig`, `player:commandSummons`
+  `player:setAutoTraverse`, `player:setAutocombatConfig`, `player:recallSummons` (Conduit),
+  `player:manualReload` (Slinger); `player:commandSummons` is a no-op left in the protocol
 - Sync/session: `player:requestSync`, `player:setActive`, `player:ackDeath`
-- Progression/economy: `player:unlockSkill`, `player:resetClass`, `rune:setLoadout`,
-  `class:setConfig`, `inventory:equipItem`, `inventory:unequip`, `inventory:upgradeItem`,
-  `crafting:craftRecipe`
+- Progression/economy: `player:unlockSkill` (class, discipline, specialization, leaf),
+  `player:resetClass`, `class:setConfig`, `rune:setLoadout` (standing orders),
+  `inventory:equipItem`, `inventory:unequip`, `inventory:upgradeItem`, `crafting:craftRecipe`
 - Social/flavor: `party:join`, `party:leave`, `player:emote`
 - Dev-only debug events are guarded server-side and ignored in production.
 
@@ -301,5 +339,6 @@ Player client-to-server highlights:
 Keep this short; check source/issues before acting.
 - Finish/verify Railway-style deployment with game DB, log DB, and Redis.
 - Configure `ADMIN_TOKEN` and logdb backups before production use.
-- Continue balance/playtest passes.
-- Some late-tier mechanics and T3+ monster balance may still be placeholders.
+- The class-first rework is built T1–T4 on `rework/class-first` and not yet playtested;
+  board and stand-ins: `docs/briefs/class-first-build/STATUS.md`.
+- Continue balance/playtest passes; class numbers and T3+ monster balance are placeholders.

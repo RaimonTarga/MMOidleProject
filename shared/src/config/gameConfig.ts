@@ -145,6 +145,18 @@ export const GAME_CONFIG = {
   /** Attack multiplier applied to non-boss monsters in regular dungeon nodes. */
   DUNGEON_ATK_MULT: 1.6,
 
+  // ── Monster tier scaling (class-first rework) ──────────────────────────────
+  // PLACEHOLDER (overnight 2026-10-16). The T3/T4 monsters were priced against the old
+  // character's stacked power (frames, paths, abilities, stances, cores, runes); the
+  // class-first character follows the authored weapon curve, and in the class boss sim
+  // every class met T3/T4 bosses about four times further short than T1 ones. One factor
+  // per node tier (index = the node's biome tier) on the HP and attack of every monster
+  // spawned there: bosses, adds, guards and normals. Shared by the spawner and the bestiary.
+  /** HP multiplier for every monster spawned in a node of that biome tier. */
+  MONSTER_HP_MULT_BY_TIER: [1, 1, 0.9, 0.5, 0.45] as readonly number[],
+  /** Attack multiplier for every monster spawned in a node of that biome tier. */
+  MONSTER_ATK_MULT_BY_TIER: [1, 1, 0.9, 0.5, 0.45] as readonly number[],
+
   // ── Barrier (permanent, self-recharging absorb pool) ──────────────────────────
   // Sized by `defense.barrier-pct` × maxHp. It never expires; instead it refills
   // once the player has gone BARRIER_DELAY_MS without taking damage. Direct hits
@@ -495,6 +507,15 @@ export function biomeLevelCap(playerTier: number, biomeGroup: string): number {
     0,
     (effectiveTier - startTier + 1) * BIOME_LEVELS_PER_TIER,
   );
+}
+
+/** The HP and attack factors every monster in a node of `biomeTier` spawns with. */
+export function monsterTierStatMults(biomeTier: number | undefined): { hp: number; attack: number } {
+  const tier = Math.max(0, Math.floor(biomeTier ?? 0));
+  return {
+    hp: GAME_CONFIG.MONSTER_HP_MULT_BY_TIER[tier] ?? 1,
+    attack: GAME_CONFIG.MONSTER_ATK_MULT_BY_TIER[tier] ?? 1,
+  };
 }
 
 /**

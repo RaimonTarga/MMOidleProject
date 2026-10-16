@@ -5,6 +5,7 @@ import {
   MONSTER_DATABASE,
   BIOME_DATABASE,
   monsterIsRanged,
+  monsterTierStatMults,
   mountainLedgeHoldPointsForNode,
   mountainLedgePatrolForPost,
   mountainLedgeFeatureIdsForNode,
@@ -208,10 +209,10 @@ export function createMonster(
 
   // Node modifiers no longer reshape monster stats (progression rework Phase 2b) —
   // a T2-T4 node's modifier is authoring identity only now (node count, display
-  // name), so every monster spawns at its dungeon-adjusted base with nothing
-  // further applied.
-  const hp = hpBase;
-  const attack = atkBase;
+  // name). The node's tier scales HP and attack (`MONSTER_*_MULT_BY_TIER`).
+  const tierMults = monsterTierStatMults(NODE_BIOMES[nodeId]?.biomeTier);
+  const hp = Math.max(1, Math.round(hpBase * tierMults.hp));
+  const attack = Math.round(atkBase * tierMults.attack);
   const attackCooldown = def.stats.attackCooldown;
   const speed = def.stats.speed;
   const plating = def.stats.plating;
