@@ -1,12 +1,12 @@
 import { biomeLevelCap, type ClassConfig } from "@mmo-idle/shared";
 import { allOf, type NodeRef, type Route, type RouteStep } from "../route/types";
-import { APPRENTICE_CLASS_ROOT } from "./apprenticeT1";
+import { APPRENTICE_CLASS_ROOT, wear } from "./apprenticeT1";
 import { apprenticeT3Payoffs, apprenticeT3Route, APPRENTICE_T3_ZONES } from "./apprenticeT3";
 
 /**
  * The Apprentice's T4 route (T4-W2, bible §9.7, §9.16): the T3 route, the tier-4 promotion, the
  * leaf pick (an `unlockSkill` on its node under the school), the seven T4 zones to their tier-4
- * cap, Payoff rules with the T4 payoffs placed, and the seven T4 bosses. Registered but not in
+ * cap (wearing each zone's gear), the auto Payoff rules, and the seven T4 bosses. Registered but not in
  * the controlled batch list until it has run live.
  *
  * Fire, Afterburn, then Tinderbox: the T3 route already picks Fire and Afterburn, and
@@ -31,24 +31,21 @@ function zone(biomeGroup: string): NodeRef {
 }
 
 /**
- * The T3 rules plus each T4 payoff on its moment: Frostcrack ahead of Sear on a shielded target,
- * Pyre on a risen enemy, Transference after Recoil when a debuff lands on you.
+ * The T4 pieces worn as each zone unlocks them (PLACEHOLDER picks, OV-APPRENTICE, chosen in the
+ * class boss sim): the Mountain set (the T4 Runestone Staff), then the Desert's charm and boots.
+ */
+export const APPRENTICE_T4_GEAR: Readonly<Record<string, readonly string[]>> = {
+  mountain: ["apprentice-runestone-staff-t4", "mountain-vest-t4", "mountain-charm-t4", "mountain-boots-t4"],
+  desert: ["desert-charm-t4", "desert-boots-t4"],
+};
+
+/**
+ * The rules the T4 bosses are fought with: auto, whose default also places the T4 payoffs
+ * (Frostcrack ahead of Sear on a shielded target, Pyre on a risen enemy, Transference after
+ * Recoil when a debuff lands on you).
  */
 export function apprenticeT4Payoffs(): ClassConfig {
-  const t3 = apprenticeT3Payoffs();
-  if (t3.system.kind !== "payoffs") throw new Error("apprentice T3 rules are not Payoff rules");
-  return {
-    ...t3,
-    system: {
-      kind: "payoffs",
-      placements: [
-        { moment: "target-shielded", pieceId: "apprentice-frostcrack", conditions: [] },
-        ...t3.system.placements,
-        { moment: "risen", pieceId: "apprentice-pyre", conditions: [] },
-        { moment: "debuff-landed", pieceId: "apprentice-transference", conditions: [] },
-      ],
-    },
-  };
+  return apprenticeT3Payoffs();
 }
 
 export function apprenticeT4Route(): Route {
@@ -69,9 +66,10 @@ export function apprenticeT4Route(): Route {
   for (const { biomeGroup } of APPRENTICE_T4_ZONES) {
     const at = zone(biomeGroup);
     steps.push({ type: "travel", to: at });
+    steps.push(...wear(at, APPRENTICE_T4_GEAR[biomeGroup] ?? []));
     steps.push({ type: "farm", at, until: { type: "biomeLevelAtLeast", biomeGroup, level: biomeLevelCap(4, biomeGroup) } });
   }
-  // Every T4 lesson is learned now, so the rules can place the T4 payoffs.
+  // Every T4 lesson is learned now; auto places them all.
   steps.push({ type: "classConfig", config: apprenticeT4Payoffs() });
   for (const { biomeGroup } of APPRENTICE_T4_ZONES) {
     steps.push({ type: "attemptBoss", biomeGroup, tier: 4 });
@@ -90,7 +88,7 @@ export function apprenticeT4Route(): Route {
     classRoot: APPRENTICE_CLASS_ROOT,
     description:
       "Apprentice T4: the T3 route, the tier-4 promotion, the Tinderbox leaf, the seven T4 zones " +
-      "(the Wasteland and the Trench new) to their cap, Payoff rules with the T4 payoffs placed, " +
+      "(the Wasteland and the Trench new) to their cap, wearing each zone's gear, auto Payoff rules, " +
       "and the seven T4 bosses.",
     steps,
     completion: allOf(
