@@ -59,16 +59,17 @@ function autoOrder(disciplineId: string): ClassConfig {
  * Behemoth for every discipline (Light 51%, Balanced 87%, Heavy 25% HP left) where the Forest's
  * vest and boots lost it (Light at boss 5-26% left, Heavy at 3%).
  *
- * The Jungle keeps the charm already worn (the Plains' Grit): its own (Chase, Recovery while
- * closing) left the Striker no sustain against the dungeon's nine-guard poison pack, which the
- * boss sim never meets (it strips guards). Final run 2026-10-16: four deaths in 15 minutes and
- * all nine guards still standing, where the earlier runs without that charm cleared it. PLACEHOLDER.
+ * The Jungle puts the Plains' Grit back on instead of its own charm (Chase, Recovery while
+ * closing), which left the Striker no sustain against the dungeon's nine-guard poison pack; the
+ * boss sim never meets that pack (it strips guards). Final runs 2026-10-16: four deaths in 15
+ * minutes with Chase and three more with the Cave charm, all nine guards still standing, where the
+ * earlier runs that reached the Jungle in Grit cleared it. PLACEHOLDER.
  */
-const T2_KEEP_CHARM_ZONES: readonly string[] = ["jungle"];
+export const STRIKER_T2_ZONE_CHARM: Readonly<Record<string, string>> = { jungle: "plains-charm-t2" };
 
 export function strikerT2ZoneSet(biomeGroup: string): string[] {
-  const slots = T2_KEEP_CHARM_ZONES.includes(biomeGroup) ? ["vest", "boots"] : ["vest", "charm", "boots"];
-  return slots.map((slot) => `${biomeGroup}-${slot}-t${TIER}`).filter((id) => RECIPE_DATABASE.has(id));
+  const charm = STRIKER_T2_ZONE_CHARM[biomeGroup] ?? `${biomeGroup}-charm-t${TIER}`;
+  return [`${biomeGroup}-vest-t${TIER}`, charm, `${biomeGroup}-boots-t${TIER}`].filter((id) => RECIPE_DATABASE.has(id));
 }
 
 /**

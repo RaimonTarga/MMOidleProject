@@ -15,6 +15,7 @@ import {
   STRIKER_T2_LATE_SEALS,
   STRIKER_T2_LIGHT_ID,
   STRIKER_T2_ROUTE_IDS,
+  STRIKER_T2_ZONE_CHARM,
   STRIKER_T2_ZONES,
   strikerT2FarmLevel,
   strikerT2Route,
@@ -81,10 +82,17 @@ for (const [disciplineId, id] of Object.entries(STRIKER_T2_ROUTE_IDS)) {
   );
 
   // Gear: T2 recipes from the zone the route is farming, in unlock order, and before the zone's farm ends.
+  const wornBefore = new Set<string>();
   for (const biomeGroup of STRIKER_T2_ZONES) {
     const ids = strikerT2ZoneGear(disciplineId, biomeGroup);
     let last = 0;
     for (const itemId of ids) {
+      // A charm put back on (STRIKER_T2_ZONE_CHARM) was crafted in an earlier zone of the route.
+      if (STRIKER_T2_ZONE_CHARM[biomeGroup] === itemId) {
+        assert(wornBefore.has(itemId), `${itemId}, put back on in ${biomeGroup}, was crafted earlier`);
+        continue;
+      }
+      wornBefore.add(itemId);
       const recipe = RECIPE_DATABASE.get(itemId);
       assert(recipe && recipe.recipeGroup === biomeGroup, `${itemId} is a ${biomeGroup} recipe`);
       assert(ITEM_DATABASE.get(itemId)?.tier === 2, `${itemId} is tier-2 gear`);
