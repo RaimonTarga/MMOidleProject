@@ -1,6 +1,6 @@
 import { absoluteZoneLevel, biomeLevelCap, type KitBiome } from "@mmo-idle/shared";
 import { allOf, type NodeRef, type Route, type RouteStep } from "../route/types";
-import { CONDUIT_CLASS_ROOT } from "./conduitT1";
+import { CONDUIT_CLASS_ROOT, wearAsUnlocked } from "./conduitT1";
 import { CONDUIT_T2_DISCIPLINE, CONDUIT_T2_ZONES, conduitT2Route } from "./conduitT2";
 
 /**
@@ -31,6 +31,19 @@ export const CONDUIT_T3_SPECIALIZATION = "conduit-the-hunt";
 export const CONDUIT_T3_ZONES: readonly KitBiome[] = ["mountain", "cave", "swamp", "jungle", "desert", "tundra", "volcanic"];
 
 const TIER = 3;
+
+/**
+ * The tier-3 gear the route wears, per zone, as each zone level unlocks it (OV-CONDUIT, PLACEHOLDER
+ * picks): the Mountain set (its weapon meets the first T3 boss), the Cave Heavy Staff and charm, the
+ * Swamp, Jungle and Desert boots as each is faster, and the Jungle charm.
+ */
+export const CONDUIT_T3_GEAR: Readonly<Record<string, readonly string[]>> = {
+  mountain: ["conduit-ability-staff-t3", "mountain-vest-t3", "mountain-charm-t3", "mountain-boots-t3"],
+  cave: ["conduit-heavy-staff-t3", "cave-charm-t3"],
+  swamp: ["swamp-boots-t3"],
+  jungle: ["jungle-charm-t3", "jungle-boots-t3"],
+  desert: ["desert-boots-t3"],
+};
 
 function zone(biomeGroup: string): NodeRef {
   return { kind: "biome", biomeGroup, tier: TIER, pick: "uncleared" };
@@ -65,6 +78,7 @@ export function conduitT3Route(specializationId: string = CONDUIT_T3_SPECIALIZAT
   for (const biomeGroup of CONDUIT_T3_ZONES) {
     const at = zone(biomeGroup);
     steps.push({ type: "travel", to: at });
+    steps.push(...wearAsUnlocked(CONDUIT_T3_GEAR[biomeGroup] ?? [], at, TIER + 2));
     steps.push({
       type: "farm",
       at,

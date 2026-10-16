@@ -40,6 +40,7 @@ import { markStackBonus } from './souls';
 import { PIECES, swing } from './summonPieces';
 import { HIBERNATE_EFFECT_ID, specializationOf } from './t3Shared';
 import { hasLeaf } from './t4Shared';
+import { countConduitMechanic } from './mechanicLog';
 
 /** The Executioner's mark on an enemy; `typeMask` has one bit per kind of summon that has hit it (Dune-Stalker's stacks). */
 export const MARK_EFFECT_ID = 'conduit-mark';
@@ -312,6 +313,7 @@ export function firePackStrike(world: World, owner: PlayerEntity, now: number): 
     runFormationAttack(world, owner, minion, target, now, { packStrike: true });
     struck++;
   }
+  if (struck > 0) countConduitMechanic(owner, 'pack-strike', now);
   // Rally (T4 leaf): the blow also mends the whole formation.
   if (struck > 0 && hasLeaf(owner, 'conduit-rally')) {
     for (const ally of livingMinions(world, owner)) {

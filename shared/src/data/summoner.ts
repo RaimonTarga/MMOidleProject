@@ -44,7 +44,9 @@ export const SUMMONER_CORE_TUNING = {
   // of six roots (35.9 dps vs 35.7-41.0); 1.2 measures 43.1, and one dead body
   // drops it back to ~32. Per-summon attack rounds to an integer, so at low
   // attack this moves in steps (1.2 and 1.25 land on the same T1 value).
-  formationOffenseMult: 1.2,
+  // OV-CONDUIT 2026-10-16: 1.2 -> 1.4. The class-first rework removed the abilities, runes, stances
+  // and cores that used to add to it; at 1.2 the formation lost the Plains boss at 64% (class boss sim).
+  formationOffenseMult: 1.4,
   // DESIGNER BUFF, 2026-08-25: Conduit's own bot playtesting hadn't reached a
   // boss fight yet when this was flagged, but the structural problem is
   // visible directly in the formula (`reconstruction.ts`): every fallen

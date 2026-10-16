@@ -420,7 +420,8 @@ function removeBark(minion: { tracksCombat: { statusEffects: { id: string }[] } 
   assert.equal(taken(melee), 100, 'a melee hit is not');
   // A summon is covered too.
   const m = minions[0]!;
-  const lost = (from: typeof archer) => { const full = m.hasHealth.maxHp; m.hasHealth.hp = full; runMonsterAttackOnMinion(world, from, m, 9_000); return full - m.hasHealth.hp; };
+  // A deep pool, so neither hit kills it (a one-body formation is small since OV-CONDUIT's Command scaling).
+  const lost = (from: typeof archer) => { m.hasHealth.maxHp = 10_000; const full = m.hasHealth.maxHp; m.hasHealth.hp = full; runMonsterAttackOnMinion(world, from, m, 9_000); return full - m.hasHealth.hp; };
   const veiled = lost(archer);
   player.usesSkills.passives['conduit.sandveil-pct'] = 0;
   assert.ok(veiled < lost(archer), 'Sandveil softens a ranged hit on a summon');

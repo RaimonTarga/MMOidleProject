@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import {
+  RECIPE_DATABASE,
   biomeLevelCap,
   SKILL_TREE,
   tutorialScriptFor,
@@ -17,6 +18,7 @@ import {
   conduitT4FarmLevel,
   conduitT4LessonLevel,
   conduitT4Route,
+  CONDUIT_T4_GEAR,
 } from "./conduitT4";
 
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -70,7 +72,24 @@ for (const id of ["conduit-avenge", "conduit-fall-back", "conduit-rally"]) {
 }
 
 // The T4 zones: travel, farm to the cap, the T4 boss.
-const zoneSteps = tail.slice(3);
+const zoneSteps = tail.slice(3).filter((step) => step.type !== "ifPossible");
+
+// ── Gear: each zone's pieces as its levels unlock them, skipped from tier 6 ──
+const wears = tail.filter((step): step is Extract<RouteStep, { type: "ifPossible" }> => step.type === "ifPossible");
+assert.equal(wears.length, Object.values(CONDUIT_T4_GEAR).flat().length, "one wear step per piece");
+for (const step of wears) {
+  assert.deepEqual(step.when, { type: "not", of: { type: "playerTierAtLeast", tier: 6 } }, "T4 gear is kept until tier 6: five T4 seals already make the character tier 5");
+  const [farm, craft, equip] = step.steps;
+  assert(farm.type === "farm" && craft.type === "craft" && equip.type === "equip", "farm, craft, equip");
+  const recipe = RECIPE_DATABASE.get(craft.recipeIds[0]);
+  assert(recipe && recipe.tier === 4, `${craft.recipeIds[0]} is a tier-4 recipe`);
+  assert.deepEqual(equip.definitionIds, craft.recipeIds);
+  assert(farm.at.kind === "biome" && farm.at.biomeGroup === recipe.recipeGroup && farm.at.tier === 4, `${recipe.id} is farmed in its own zone`);
+  assert(recipe.requiredBiomeLevel <= biomeLevelCap(4, recipe.recipeGroup), `${recipe.id} unlocks within the zone's farm`);
+}
+const firstZone = CONDUIT_T4_ZONES[0];
+assert(CONDUIT_T4_GEAR[firstZone]?.some((id) => RECIPE_DATABASE.get(id)?.slot === "weapon"),
+  "the tier's first boss is met in this tier's Conduit weapon");
 assert.equal(zoneSteps.length, CONDUIT_T4_ZONES.length * 3);
 CONDUIT_T4_ZONES.forEach((biomeGroup, index) => {
   const [travel, farm, boss] = zoneSteps.slice(index * 3, index * 3 + 3) as [RouteStep, RouteStep, RouteStep];

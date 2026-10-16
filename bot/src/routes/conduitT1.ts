@@ -3,6 +3,7 @@ import {
   classConfigContext,
   CLEARING_NODE_ID,
   defaultClassConfig,
+  RECIPE_DATABASE,
   T1_BIOME_ORDER,
   TUTORIAL_SEALS,
   type ClassConfig,
@@ -45,6 +46,55 @@ function zone(biomeGroup: string): NodeRef {
   return { kind: "biome", biomeGroup, tier: 1, pick: "uncleared" };
 }
 
+/**
+ * The gear the route wears, per zone, in the order the zone's levels unlock it (weapon at the
+ * zone's first level, armor +1, charm +2, boots +3). The Conduit's picks (OV-CONDUIT,
+ * PLACEHOLDER): the Clearing set; the Plains set (more summons for the swarms); the Forest set
+ * (faster attacks, the best T1 charm and boots); the Swamp vest (poison moves to a summon); the
+ * Cave weapon (fewer, stronger summons: the most T1 formation damage); the Mountain vest (the
+ * big-hit intercept) before the second seal. Skipped: the Poison and Ability staves (less
+ * formation damage than the Swift and Heavy staves), the Cave vest (You Tank cuts summon HP),
+ * and the charms and boots that are worse than the Forest's.
+ */
+export const CONDUIT_T1_GEAR: Readonly<Record<string, readonly string[]>> = {
+  clearing: ["conduit-plain-staff-t1", "clearing-vest-t1", "clearing-charm-t1", "clearing-boots-t1"],
+  plains: ["conduit-swarm-staff-t1", "plains-vest-t1", "plains-charm-t1", "plains-boots-t1"],
+  forest: ["conduit-swift-staff-t1", "forest-vest-t1", "forest-charm-t1", "forest-boots-t1"],
+  swamp: ["swamp-vest-t1"],
+  cave: ["conduit-heavy-staff-t1"],
+  mountain: ["mountain-vest-t1"],
+};
+
+/**
+ * Wear `recipeIds` from the zone at `at`, each as soon as the zone's level unlocks it: farm to
+ * the recipe's level, craft it (farming its essence there), equip it. Skipped once the character
+ * has reached `beforeTier`, so a later tier's route replaying this tier does not swap back to
+ * this tier's gear for long. T1 passes 2 (its last boss promotes); T2-T4 pass their tier + 2,
+ * since 3 / 4 / 5 seals promote before a tier's last bosses are fought (`SEALS_REQUIRED_BY_TIER`):
+ * a replay may wear the older piece again until the later tier's own steps put the newer one back.
+ */
+export function wearAsUnlocked(recipeIds: readonly string[], at: NodeRef, beforeTier: number): RouteStep[] {
+  return recipeIds.map((recipeId): RouteStep => {
+    const recipe = RECIPE_DATABASE.get(recipeId);
+    if (!recipe) throw new Error(`conduit route: unknown recipe ${recipeId}`);
+    return {
+      type: "ifPossible",
+      when: { type: "not", of: { type: "playerTierAtLeast", tier: beforeTier } },
+      label: `wear ${recipeId}`,
+      steps: [
+        {
+          type: "farm",
+          at,
+          until: { type: "biomeLevelAtLeast", biomeGroup: recipe.recipeGroup, level: recipe.requiredBiomeLevel },
+          label: `unlock ${recipeId}`,
+        },
+        { type: "craft", recipeIds: [recipeId], farmAt: at, label: `craft ${recipeId}` },
+        { type: "equip", definitionIds: [recipeId], label: `wear ${recipeId}` },
+      ],
+    };
+  });
+}
+
 /** How far the guided route farms this zone before it moves on. */
 export function conduitFarmLevel(biomeGroup: string): number {
   return biomeGroup === SECOND_SEAL ? LESSON_LEVEL : biomeLevelCap(1, biomeGroup);
@@ -74,11 +124,15 @@ export function conduitT1Route(): Route {
     },
     { type: "chooseClass", skillId: CONDUIT_CLASS_ROOT },
     { type: "classConfig", config: autoFormation() },
+    // The guide's Clearing set (`shared/src/tutorial/scripts/opening.ts`), with the Conduit's own
+    // starter staff in place of the club: nobody walks into the Plains naked.
+    ...wearAsUnlocked(CONDUIT_T1_GEAR.clearing, CLEARING, 2),
   ];
 
   for (const biomeGroup of ZONE_ORDER) {
     const at = zone(biomeGroup);
     steps.push({ type: "travel", to: at });
+    steps.push(...wearAsUnlocked(CONDUIT_T1_GEAR[biomeGroup] ?? [], at, 2));
     steps.push({
       type: "farm",
       at,

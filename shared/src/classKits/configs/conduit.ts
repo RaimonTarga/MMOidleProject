@@ -17,10 +17,12 @@ import {
 } from './common';
 
 /**
- * Bodies a roster may field. Today's summon cap is 9 (`hardEntityCap`) and the Soul takes one;
- * a tuning number raised in measured steps, never a design cap (§7.2).
+ * Bodies a roster may field, Souls not counted; a tuning number raised in measured steps, never a
+ * design cap (§7.2). OV-CONDUIT: 8 -> 10, so more of the Command steps through T4 (up to 15) can be spent:
+ * at 8 a Pack roster left 3-6 Command pips it could not use from mid-T3 on. The bandwidth budget
+ * allows 20 bodies (STATUS.md, 2026-10-15). PLACEHOLDER.
  */
-export const CONDUIT_ROSTER_BODY_CAP = 8;
+export const CONDUIT_ROSTER_BODY_CAP = 10;
 
 const ATTACK_FIRST = ['attacking-me', 'closest', 'weakest', 'elites'] as const;
 const TANKS_GUARD = ['conduit', 'back-row'] as const;
@@ -47,6 +49,23 @@ export function rosterCommand(roster: readonly string[], disciplineId: string | 
   return total;
 }
 
+/**
+ * Pack's default (§7.13, "one of each type"), in the order `defaults` tries to fit them
+ * (PLACEHOLDER order, OV-CONDUIT): the newest tank, the newest heavy (its first copy costs 1
+ * less under Pack), then damage and supports alternating, newest first.
+ */
+function packDefault(light: readonly ConduitPiece[], heavies: readonly ConduitPiece[]): ConduitPiece[] {
+  const newest = (pieces: readonly ConduitPiece[]) => [...pieces].reverse();
+  const damage = newest(light.filter((piece) => piece.family === 'damage'));
+  const supports = newest(light.filter((piece) => piece.family === 'support'));
+  const rest: ConduitPiece[] = [];
+  for (let i = 0; i < Math.max(damage.length, supports.length); i += 1) {
+    if (damage[i]) rest.push(damage[i]);
+    if (supports[i]) rest.push(supports[i]);
+  }
+  return [...newest(light.filter((piece) => piece.family === 'tank')).slice(0, 1), ...newest(heavies).slice(0, 1), ...rest];
+}
+
 export const CONDUIT_SYSTEM: ClassSystemSpec<FormationConfig> = {
   kind: 'formation',
 
@@ -61,13 +80,16 @@ export const CONDUIT_SYSTEM: ClassSystemSpec<FormationConfig> = {
     return { kind: 'formation', roster, orders: { attackFirst, tanksGuard, recallWhen, rebuildFirst } };
   },
 
-  /** §7.13: the bound specialists in role order (tank, damage, damage, support), then a heavy; Thralls fill the rest. */
+  /**
+   * §7.13: the bound specialists in role order (tank, damage, damage, support), then a heavy;
+   * Thralls fill the rest. Under Pack, one of each type instead (`packDefault`).
+   */
   defaults(ctx) {
     const owned = ownedPieces(CONDUIT_KIT, ctx);
     const thrall = owned.find((piece) => piece.family === 'generic');
     const light = owned.filter((piece) => piece.family !== 'generic' && piece.command === 1);
     const heavies = owned.filter((piece) => piece.command > 1);
-    const wanted: ConduitPiece[] = [
+    const wanted: ConduitPiece[] = ctx.disciplineId === 'conduit-pack' ? packDefault(light, heavies) : [
       ...light.filter((piece) => piece.family === 'tank').slice(0, 1),
       ...light.filter((piece) => piece.family === 'damage').slice(0, 2),
       ...light.filter((piece) => piece.family === 'support').slice(0, 1),

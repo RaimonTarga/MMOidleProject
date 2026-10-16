@@ -1,6 +1,6 @@
 import { absoluteZoneLevel, biomeLevelCap, type KitBiome } from "@mmo-idle/shared";
 import { allOf, type NodeRef, type Route, type RouteStep } from "../route/types";
-import { CONDUIT_CLASS_ROOT, conduitT1Route } from "./conduitT1";
+import { CONDUIT_CLASS_ROOT, conduitT1Route, wearAsUnlocked } from "./conduitT1";
 
 /**
  * The Conduit's T2 route (T2-W2, bible §7.5, §7.16).
@@ -25,6 +25,21 @@ export const CONDUIT_T2_DISCIPLINE = "conduit-pack";
 export const CONDUIT_T2_ZONES: readonly KitBiome[] = ["plains", "forest", "swamp", "cave", "mountain", "jungle", "desert"];
 
 const TIER = 2;
+
+/**
+ * The tier-2 gear the route wears, per zone, as each zone level unlocks it (OV-CONDUIT, PLACEHOLDER
+ * picks, the T1 pattern): the Plains set (its weapon meets the first T2 boss), the Forest set, the
+ * Swamp vest, the Cave Heavy Staff, the Mountain vest, the Jungle vest and boots, the Desert boots.
+ */
+export const CONDUIT_T2_GEAR: Readonly<Record<string, readonly string[]>> = {
+  plains: ["conduit-swarm-staff-t2", "plains-vest-t2", "plains-charm-t2", "plains-boots-t2"],
+  forest: ["conduit-swift-staff-t2", "forest-vest-t2", "forest-charm-t2", "forest-boots-t2"],
+  swamp: ["swamp-vest-t2"],
+  cave: ["conduit-heavy-staff-t2"],
+  mountain: ["mountain-vest-t2"],
+  jungle: ["jungle-vest-t2", "jungle-boots-t2"],
+  desert: ["desert-boots-t2"],
+};
 
 function zone(biomeGroup: string): NodeRef {
   return { kind: "biome", biomeGroup, tier: TIER, pick: "uncleared" };
@@ -51,6 +66,7 @@ export function conduitT2Route(disciplineId: string = CONDUIT_T2_DISCIPLINE): Ro
   for (const biomeGroup of CONDUIT_T2_ZONES) {
     const at = zone(biomeGroup);
     steps.push({ type: "travel", to: at });
+    steps.push(...wearAsUnlocked(CONDUIT_T2_GEAR[biomeGroup] ?? [], at, TIER + 2));
     steps.push({
       type: "farm",
       at,

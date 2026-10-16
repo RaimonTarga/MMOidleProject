@@ -36,6 +36,7 @@ import { onSummonFallen, registerLeavesT4, updateLeavesT4 } from './leavesT4';
 import { syncFormationRecall } from './formationOrders';
 import { onSoulSummonDeath, updateSoul } from './souls';
 import { rebuildCostMult } from './disciplines';
+import { countConduitMechanic, flushConduitMechanics } from './mechanicLog';
 
 type SummonerPlayerEntity = PlayerEntity & {
   summonsMinions: NonNullable<PlayerEntity['summonsMinions']>;
@@ -207,6 +208,7 @@ function collectDeaths(world: World, owner: SummonerPlayerEntity, now: number): 
     if (minion) {
       onSoulSummonDeath(world, owner, minion);
       onSummonFallen(world, owner, minion, now);
+      countConduitMechanic(owner, 'summon-died', now);
       // Bloodtithe: part of the HP paid to build it comes back.
       const tithe = owner.usesSkills.passives['conduit.bloodtithe-pct'] ?? 0;
       if (tithe > 0) {
@@ -264,6 +266,7 @@ export function updateSummonerArchetype(world: World, dt: number, now: number): 
     syncSummonerFormationTarget(world, summoner);
     updateSoul(world, summoner, dt, now);
     updateConduitT2(world, summoner, now);
+    flushConduitMechanics(summoner, now);
     updateConduitT3(world, summoner, dt, now);
     updateConduitT4(world, summoner, dt, now);
     updateLeavesT4(world, summoner, dt, now);

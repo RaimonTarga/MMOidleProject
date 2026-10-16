@@ -93,7 +93,9 @@ const PIECES: readonly ConduitPiece[] = [
   // ── T1 specialists (§7.4). Names are the brief's placeholders. ──
   summon({
     id: 'conduit-plains-tank',
-    params: { hpMult: 1.5, damageMult: 0.7, tauntEveryMs: 6000, tauntMs: 3000, tauntRadius: 120 },
+    // OV-CONDUIT: the taunt outlasts its cooldown (a boss stays held while the Warden lives), and the
+    // plating it is named for triples the Conduit's copy. PLACEHOLDERS (were hpMult 1.5, 6000 / 3000).
+    params: { hpMult: 3, platingMult: 3, damageMult: 0.7, tauntEveryMs: 4000, tauntMs: 5000, tauntRadius: 120 },
     name: 'Plains Warden',
     family: 'tank',
     command: 1,
@@ -137,7 +139,8 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-cave-heavy',
-    params: { hpMult: 1.2, damageMult: 0.9, tauntEveryMs: 8000, tauntMs: 3000, tauntRadius: 120 },
+    // OV-CONDUIT: a held taunt, as the Warden's (was 8000 / 3000). PLACEHOLDER.
+    params: { hpMult: 1.2, damageMult: 0.9, tauntEveryMs: 4000, tauntMs: 5000, tauntRadius: 120 },
     name: 'Cave Brute',
     family: 'tank',
     command: 2,
@@ -152,7 +155,7 @@ const PIECES: readonly ConduitPiece[] = [
   summon({
     id: 'conduit-ironhorn',
     // The taunt copies the Plains Warden's (a tank holds enemies, §7.3); the bible gives only the brace.
-    params: { tauntEveryMs: 6000, tauntMs: 3000, tauntRadius: 120, braceStunMs: 1500 },
+    params: { hpMult: 3, tauntEveryMs: 4000, tauntMs: 5000, tauntRadius: 120, braceStunMs: 1500 },
     name: 'Ironhorn',
     family: 'tank',
     command: 1,
@@ -277,7 +280,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-carapace-guard',
-    params: { blockShare: 0.6, tauntEveryMs: 6000, tauntMs: 3000, tauntRadius: 120 },
+    params: { hpMult: 3, blockShare: 0.6, tauntEveryMs: 4000, tauntMs: 5000, tauntRadius: 120 },
     name: 'Carapace Guard',
     family: 'tank',
     command: 1,
@@ -357,7 +360,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-obsidian-tortoise',
-    params: { tauntEveryMs: 6000, tauntMs: 3000, tauntRadius: 120, withdrawEveryMs: 10000, withdrawMs: 3000, withdrawBlock: 0.95 },
+    params: { hpMult: 2, tauntEveryMs: 4000, tauntMs: 5000, tauntRadius: 120, withdrawEveryMs: 10000, withdrawMs: 3000, withdrawBlock: 0.95 },
     name: 'Obsidian Tortoise',
     family: 'tank',
     command: 2,
@@ -379,7 +382,7 @@ const PIECES: readonly ConduitPiece[] = [
   }),
   summon({
     id: 'conduit-abyssal-warden',
-    params: { tauntEveryMs: 6000, tauntMs: 3000, tauntRadius: 120, wardenEveryMs: 4000, wardenRadius: 200 },
+    params: { hpMult: 3, tauntEveryMs: 4000, tauntMs: 5000, tauntRadius: 120, wardenEveryMs: 4000, wardenRadius: 200 },
     name: 'Abyssal Warden',
     family: 'tank',
     command: 1,

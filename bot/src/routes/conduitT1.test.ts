@@ -4,6 +4,7 @@ import {
   classConfigContext,
   DEFAULT_FORMATION_ORDERS,
   defaultClassConfig,
+  RECIPE_DATABASE,
   resolveClassConfig,
   SKILL_TREE,
   T1_BIOME_ORDER,
@@ -14,7 +15,7 @@ import {
 } from "@mmo-idle/shared";
 import type { Condition, RouteStep } from "../route/types";
 import { isClassAgnosticRouteId, isControlledRouteId, requireRoute, ROUTES } from "./index";
-import { CONDUIT_CLASS_ROOT, CONDUIT_T1_ID, conduitFarmLevel, conduitT1Route } from "./conduitT1";
+import { CONDUIT_CLASS_ROOT, CONDUIT_T1_GEAR, CONDUIT_T1_ID, conduitFarmLevel, conduitT1Route } from "./conduitT1";
 
 const KEBAB = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const [FIRST_SEAL, SECOND_SEAL] = TUTORIAL_SEALS;
@@ -60,13 +61,34 @@ assert.throws(() => requireRoute(CONDUIT_T1_ID, "cadence"), /authored for summon
 // ── Steps: the quest, the class, the auto Formation, the guide's zones ───────
 const kinds = route.steps.map((step) => step.type);
 const walks = T1_BIOME_ORDER.filter((biome) => biome !== FIRST_SEAL && biome !== SECOND_SEAL);
+const wears = (biomeGroup: string) => (CONDUIT_T1_GEAR[biomeGroup] ?? []).map(() => "ifPossible");
 assert.deepEqual(kinds, [
-  "travel", "farm", "chooseClass", "classConfig",
-  "travel", "farm", "attemptBoss",
-  ...walks.flatMap(() => ["travel", "farm"]),
-  "travel", "farm", "attemptBoss",
+  "travel", "farm", "chooseClass", "classConfig", ...wears("clearing"),
+  "travel", ...wears(FIRST_SEAL), "farm", "attemptBoss",
+  ...walks.flatMap((biome) => ["travel", ...wears(biome), "farm"]),
+  "travel", ...wears(SECOND_SEAL), "farm", "attemptBoss",
   "farm",
 ]);
+
+// ── Gear: the Clearing set, then each zone's pieces as its levels unlock them ──
+const worn = route.steps.filter((step): step is Extract<RouteStep, { type: "ifPossible" }> => step.type === "ifPossible");
+assert.equal(worn.length, Object.values(CONDUIT_T1_GEAR).flat().length, "one wear step per piece");
+for (const step of worn) {
+  assert.deepEqual(step.when, { type: "not", of: { type: "playerTierAtLeast", tier: 2 } },
+    "T1 gear is skipped once the character is tier 2 (a later route replaying T1 keeps its gear)");
+  assert.deepEqual(step.steps.map((inner) => inner.type), ["farm", "craft", "equip"]);
+  const [farm, craft, equip] = step.steps;
+  assert(craft.type === "craft" && equip.type === "equip" && farm.type === "farm");
+  const recipe = RECIPE_DATABASE.get(craft.recipeIds[0]);
+  assert(recipe, `${craft.recipeIds[0]} is a recipe`);
+  assert.deepEqual(equip.definitionIds, craft.recipeIds, "the crafted piece is worn");
+  assert.deepEqual(farm.until, { type: "biomeLevelAtLeast", biomeGroup: recipe.recipeGroup, level: recipe.requiredBiomeLevel },
+    `${recipe.id} is crafted as soon as its zone level unlocks it`);
+  const reach = recipe.recipeGroup === "clearing" ? biomeLevelCap(1, "clearing") : conduitFarmLevel(recipe.recipeGroup);
+  assert(recipe.requiredBiomeLevel <= reach, `${recipe.id} unlocks within the route's farm of its zone`);
+  if (recipe.slot === "weapon") assert(recipe.id.startsWith("conduit-"), `${recipe.id} is a Conduit weapon`);
+}
+assert.equal(CONDUIT_T1_GEAR.clearing[0], "conduit-plain-staff-t1", "the Clearing weapon is the Conduit's starter staff");
 
 const [toClearing, quest, choose, config] = route.steps;
 assert(toClearing.type === "travel" && toClearing.to.kind === "node", "the quest starts in the Clearing");
