@@ -23,7 +23,8 @@ client/   Phaser + React player app, Vite on :3000
 admin/    React ops dashboard, Vite on :3001, served at /admin in prod
 server/   Express + Socket.IO + authoritative ECS simulation
 shared/   Cross-boundary types, protocol, components, formulas, static data
-tools/    Balance TUI and supporting tools
+bot/      Headless socket bot harness: authored routes per class (bot/README.md)
+tools/    Balance TUI, isolated bot lanes (tools/lane/), supporting tools
 ```
 
 Important entrypoints:
@@ -91,7 +92,8 @@ Tests are plain tsx scripts, not a test framework (no vitest/jest). Each file
 constructs real `World`/component state and throws via a hand-rolled `assert`
 on failure; a trailing `console.log("<name>: ok")` marks completion.
 
-- Locations: `server/test/*.test.ts` and `shared/src/**/*.test.ts`.
+- Locations: `server/test/*.test.ts`, `shared/src/**/*.test.ts` and `bot/src/**/*.test.ts`
+  (each class route has one next to it).
 - Run everything: `pnpm test` (runs `scripts/run-tests.mjs`, which discovers
   every file and runs them in parallel — `TEST_JOBS`, default half the cores —
   as `node --conditions=development --import tsx <file>`, prints per-file
