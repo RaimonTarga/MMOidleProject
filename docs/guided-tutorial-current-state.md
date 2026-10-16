@@ -61,8 +61,10 @@ boss): the relic slot holds it because the class config is in `auto` mode.
 
 - **It crafts no class gear.** After the Clearing set there is no craft or equip step, so a
   guided player meets every T1–T4 boss in the Clearing set unless they craft by hand. The
-  class bot routes do craft each seal zone's weapon job and vest (and the overnight tuning adds
-  T2–T4 gear). The farewell line still says "Two seals, Tier 2, and a tier-2 weapon". *Gap.*
+  `striker-t1` and `squire-t1` bot routes do craft each seal zone's weapon job and vest (their
+  comment says "the guided player wears the zone's gear", which the guide does not do), and the
+  overnight tuning adds T2–T4 gear to the routes. The farewell line still says "Two seals,
+  Tier 2, and a tier-2 weapon". *Gap.*
 - **It never opens or edits the class screen.** The class config stays in `auto`, which the
   server rebuilds whenever a lesson, trophy or budget step arrives; the lines say what auto did
   ("The Order equipped it for you").
@@ -72,8 +74,9 @@ boss): the relic slot holds it because the class config is in `auto` mode.
 - **No bot runs the script.** The `tutorial-<class>-t1` routes and their adapter were removed
   (D5). The class routes (`<class>-t1` to `-t4`, [bot/README.md](../bot/README.md)) follow the
   guide's zone order and seals (`T1_BIOME_ORDER`, `TUTORIAL_SEALS`) but are separate data: they
-  craft gear and set the class config. `tutorial.test.ts` is the guide's only check. (The header
-  of `shared/src/tutorial/types.ts` still names the removed adapter.)
+  skip the Clearing set, some craft zone gear, and they set the class config and the tier picks
+  themselves. `tutorial.test.ts` is the guide's only check. (The header of
+  `shared/src/tutorial/types.ts` still names the removed adapter.)
 
 ## Panel and persistence
 
