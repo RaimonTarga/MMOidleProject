@@ -367,6 +367,29 @@ export function clearGroundZonesByOwner(
 }
 
 /**
+ * Hold back the telegraphs a monster's wind-up painted (its slam circles and charge
+ * lanes) by `delayMs`, so a wind-up that runs slow (Numb II, `monsterWindupSlowPct`)
+ * keeps its marker honest: the circle fills, and the lane locks, when the blow
+ * really comes. Fault lines and pools are a payoff's tail, not a wind-up, and keep
+ * their clocks.
+ */
+export function delayGroundZonesByOwner(
+  world: World,
+  nodeId: string,
+  ownerId: string,
+  delayMs: number,
+  now: number,
+): void {
+  if (delayMs <= 0) return;
+  for (const zone of world.groundZones.get(nodeId) ?? []) {
+    if (zone.kind !== 'slam-telegraph' && zone.kind !== 'charge-corridor') continue;
+    if (zone.ownerId !== ownerId || zone.resolvesAtMs <= now) continue;
+    zone.resolvesAtMs += delayMs;
+    if (zone.kind === 'charge-corridor' && zone.lockedAtMs > now) zone.lockedAtMs += delayMs;
+  }
+}
+
+/**
  * Drop the persistent hazards a monster made when that monster leaves the world.
  *
  * Long-lived pools (the swamp lineage runs 10 minutes) must not outlive the boss
