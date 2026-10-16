@@ -83,6 +83,7 @@ import {
   strikerSpecOf,
 } from './strikerT3';
 import { defineBuff } from '../../../combat/buffs/descriptor';
+import { countStriker } from './strikerTelemetry';
 
 /** Focus's combo haste on the player (self only; one copy). */
 export const STRIKER_FOCUS_EFFECT_ID = 'striker-focus';
@@ -812,6 +813,7 @@ export function runStrikerBeat(world: World, ctx: CombatContext): void {
   const handler = piece ? BEATS[piece.id] : undefined;
   const discipline = o.ctx.disciplineId;
   const t2 = strikerT2(player);
+  countStriker(`beat:${piece?.id ?? 'plain'}`);
 
   // What rides the swing before the technique reads it: Feint's critical hit, Hunter's Blade's
   // first strike on a new target, and the discipline (the shine, the edge).
@@ -887,6 +889,10 @@ function onStrikerFinisher(ctx: CombatContext, world: World): void {
     if (t2.pressure.targetId === ctx.defender.isMonster.id) ctx.damage = Math.round(ctx.damage * (1 + t2.pressure.pct));
     t2.pressure = null;
   }
+  countStriker(`finisher:${o.trophy?.id ?? 'plain'}`);
+  if (t2.edge > 0) countStriker('finisher-edge-steps', t2.edge);
+  if (t2.momentum > 0) countStriker('finisher-momentum-pct', Math.round(t2.momentum * 100));
+  if (t2.lit) countStriker('finisher-lit');
   ctx.damage = Math.round(ctx.damage * disciplineFinisherMult(player, o.ctx.disciplineId));
   if (t2.critMult > 0) { ctx.damage = Math.round(ctx.damage * t2.critMult); t2.critMult = 0; }
   // Maul, Bastard Sword and Hooked Sickle on the finisher; Rimeblade and Bloodfire Axe on every blow.
@@ -944,6 +950,7 @@ export function initStrikerOrder(): void {
         const o = strikerOrderOf(world, player);
         const piece = PIECES.get(id);
         if (!o || !piece) return;
+        countStriker(`cast:${id}`);
         apply(world, player, o, pieceParams(o, piece), now);
         // Charge: the cast was the wind-up; the dash and its strike are the beat, and count
         // through the ordinary hit.
