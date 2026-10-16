@@ -6,6 +6,7 @@
  * Wiring only: every number is a kit `params` placeholder or a constant below.
  */
 import {
+  ABILITY_SLOW_EFFECT_ID,
   APPRENTICE_KIT,
   getResource,
   getStatusEffect,
@@ -24,6 +25,7 @@ import type { World } from '../../../../world/World';
 import { applyPlayerAoeTo, playerAoeTargets } from '../../../combat/damage/aoeDamage';
 import { abortMonsterCast } from '../../../combat/engine/combat';
 import { emitMechanicFired } from '../../../combat/engine/mechanicFired';
+import { WINDUP_SLOW_PCT_KEY } from '../../../combat/engine/monsterMechanics';
 import { attackNow, registerCombatListener } from '../../../combat/engine/combatPipeline';
 import { conditionsHold, momentActive } from '../../../combat/moments/moments';
 import { applyMonsterSlow } from '../../../combat/status/monsterControl';
@@ -281,6 +283,9 @@ function firePayoff(world: World, player: PlayerEntity, p: Payoffs, piece: Appre
       const ms = (params['msBase'] ?? 2000) + n * (params['msPerSigil'] ?? 400);
       applyMonsterSlow(world, target, slow, ms, player.isPlayer.id);
       setResource(target.tracksCombat, NUMBED_UNTIL, now + ms);
+      // Numb II: its wind-ups also take longer, slowed as much as the rest of it (the core reads the key).
+      const numbed = (p.ranks.get('apprentice-numb') ?? 1) >= 2 ? getStatusEffect(target.tracksCombat, ABILITY_SLOW_EFFECT_ID) : undefined;
+      if (numbed) numbed.data[WINDUP_SLOW_PCT_KEY] = Math.max(numbed.data[WINDUP_SLOW_PCT_KEY] ?? 0, slow);
       return true;
     }
     case 'apprentice-siphon': {
