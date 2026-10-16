@@ -32,8 +32,9 @@ export const SPIRIT_T3_ZONES: ReadonlyArray<{ biome: KitBiome; pieceId: string }
 
 /**
  * What the Spirit wears from each T3 zone, in unlock order. PLACEHOLDER picks, each an upgrade
- * for this class: the Mountain set meets the first T3 boss; the Cave's damage-cap vest, charm and
- * boots, the Jungle's charm and boots and the Desert's boots follow.
+ * for this class: the Mountain set meets the first T3 boss; the Cave's heavy vest, charm and
+ * boots, the Jungle's charm and boots, the Desert's boots, and the Volcanic's Flash Steam vest
+ * and Thermal charm for the Heat race (fire hits drain the storm at half cost) follow.
  */
 export const SPIRIT_T3_GEAR: Readonly<Record<string, readonly string[]>> = {
   mountain: ["spirit-summit-staff-t3", "mountain-vest-t3", "mountain-charm-t3", "mountain-boots-t3"],
@@ -42,7 +43,7 @@ export const SPIRIT_T3_GEAR: Readonly<Record<string, readonly string[]>> = {
   jungle: ["jungle-charm-t3", "jungle-boots-t3"],
   desert: ["desert-boots-t3"],
   tundra: [],
-  volcanic: [],
+  volcanic: ["volcanic-vest-t3", "volcanic-charm-t3"],
 };
 
 /** The biome level where a zone's T3 lesson lands (levels run across tiers). */

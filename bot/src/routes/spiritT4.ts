@@ -34,15 +34,15 @@ export const SPIRIT_T4_ZONES: ReadonlyArray<{ biome: KitBiome; pieceId: string }
 
 /**
  * What the Spirit wears from each T4 zone, in unlock order. PLACEHOLDER picks, each an upgrade
- * for this class: the Mountain set meets the first T4 boss; the Tundra's charm and the Desert's
- * boots follow.
+ * for this class: the Mountain set meets the first T4 boss; the Tundra's charm, the Desert's boots,
+ * and the Volcanic's Flash Steam vest and Thermal charm for the Heat race follow.
  */
 export const SPIRIT_T4_GEAR: Readonly<Record<string, readonly string[]>> = {
   mountain: ["spirit-summit-staff-t4", "mountain-vest-t4", "mountain-charm-t4", "mountain-boots-t4"],
   tundra: ["tundra-charm-t4"],
   jungle: [],
   desert: ["desert-boots-t4"],
-  volcanic: [],
+  volcanic: ["volcanic-vest-t4", "volcanic-charm-t4"],
   graveyard: [],
   trench: [],
 };

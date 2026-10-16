@@ -17,7 +17,6 @@ import {
   getResource,
   getString,
   hasStatusEffect,
-  GAME_CONFIG,
   removeStatusEffect,
   setResource,
   setString,
@@ -252,16 +251,18 @@ export function hasThresholds(player: PlayerEntity): boolean {
 }
 
 /**
- * The storm's size by tier follows the game's HP curve (`RECOVERY_REFERENCE_POOL_BY_TIER`, 130 → 200 →
- * 330 → 560), not the piece damage curve: the storm is a shield, and on the damage curve (x2.6 / x5 / x10,
- * compounding with the Mastery pips) it outgrew every boss's pressure by T2 (overnight sims, 2026-10-16).
- * Spends still scale with the tier through attack. Costs share this scale, so a band's share of the bottle
- * is the same at every tier. PLACEHOLDER.
+ * The storm's size by tier (bottle, flow and costs alike), measured against what bosses actually land on
+ * the storm (overnight sims, 2026-10-16, with the per-tier monster factor of 9a2671c8): about 11-14 a second
+ * at T1, 6-18 at T2, 5-33 at T3, 16-45 at T4. On the piece damage curve (x2.6 / x5 / x10, compounding with
+ * the Mastery pips) the flow ran 2.5-5x ahead of that pressure from T2 on and no boss ever reached HP. The
+ * flow keeps about T1's lead at every tier. Spends still scale with the tier through attack; costs share
+ * this scale, so a band's share of the bottle is the same at every tier. PLACEHOLDER.
  */
+const STORM_TIER_SCALE: Readonly<Record<number, number>> = { 1: 1, 2: 1, 3: 1.5, 4: 1.8 };
+
 function tierScale(player: PlayerEntity): number {
-  const pools = GAME_CONFIG.RECOVERY_REFERENCE_POOL_BY_TIER;
-  const tier = Math.min(Math.max(Math.floor(player.tracksProgression.playerTier), 1), pools.length - 1);
-  return pools[tier] / pools[1];
+  const tier = Math.min(Math.max(Math.floor(player.tracksProgression.playerTier), 1), 4);
+  return STORM_TIER_SCALE[tier] ?? 1;
 }
 
 /** The bottle's size now: pips x pip x tier. Gear never changes it. */
