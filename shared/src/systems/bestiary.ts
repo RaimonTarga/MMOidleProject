@@ -6,7 +6,7 @@ import type { MonsterBehavior } from '../data/monsters/behavior';
 import { BESTIARY_TEXT } from '../data/monsters/bestiaryText';
 import { getDungeonDef } from '../dungeons/dungeonDatabase';
 import type { DungeonDef, DungeonMonsterModifiers } from '../dungeons/dungeonTypes';
-import { GAME_CONFIG } from '../config/gameConfig';
+import { GAME_CONFIG, monsterTierStatMults } from '../config/gameConfig';
 
 // ─── Zone bestiary ──────────────────────────────────────────────────────────
 // Pure presentation helper: from the player's current nodeId, resolve which
@@ -138,10 +138,12 @@ export function resolveMonsterDescription(def: MonsterDefinition): string {
 function computeStats(
   def: MonsterDefinition,
   mods?: DungeonMonsterModifiers,
+  tierMults: { hp: number; attack: number } = { hp: 1, attack: 1 },
 ): BestiaryStats {
   const s = def.stats;
-  const hpMult = mods?.hpMult ?? 1;
-  const atkMult = mods?.atkMult ?? 1;
+  // The node tier's factors (`MONSTER_*_MULT_BY_TIER`) are the base every spawn starts from.
+  const hpMult = (mods?.hpMult ?? 1) * tierMults.hp;
+  const atkMult = (mods?.atkMult ?? 1) * tierMults.attack;
   const asMult = mods?.attackSpeedMult ?? 1;
   const moveMult = mods?.moveSpeedMult ?? 1;
   const armorMult = mods?.armorMult ?? 1;
@@ -188,6 +190,7 @@ function makeEntry(
   role: BestiaryRole,
   mods?: DungeonMonsterModifiers,
   guardLabel?: string,
+  tierMults?: { hp: number; attack: number },
 ): BestiaryEntry | null {
   const def = MONSTER_DATABASE.get(id);
   if (!def) return null;
@@ -197,8 +200,8 @@ function makeEntry(
     name: def.name,
     color: def.color,
     role,
-    stats: computeStats(def, mods),
-    baseStats: modified ? computeStats(def) : undefined,
+    stats: computeStats(def, mods, tierMults),
+    baseStats: modified ? computeStats(def, undefined, tierMults) : undefined,
     modified,
     modifiers: modified ? mods : undefined,
     guardLabel,
@@ -250,7 +253,7 @@ export function resolveZoneBestiary(nodeId: string): ZoneBestiary | null {
     // a bestiary is a roster, so it should show each species once.
     const key = `${role}:${id}`;
     if (seen.has(key)) return;
-    const entry = makeEntry(id, role, mods, guardLabel);
+    const entry = makeEntry(id, role, mods, guardLabel, monsterTierStatMults(tier));
     if (!entry) return;
     seen.add(key);
     entries.push(entry);
