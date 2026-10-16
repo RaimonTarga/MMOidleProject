@@ -12,10 +12,10 @@ timeline; the routes' gear and default Formation at each boss).
 
 | Tier | Route | Live: boss kills / attempts, deaths, minutes | Sim (final numbers) | Pass? |
 |---|---|---|---|---|
-| T1 | `conduit-t1` | Before tuning: Plains 0/5 (boss left 59/47/52/55/46%, 30-37 s), 5 deaths. After the T1 numbers: Plains 1/1 (47 s), Mountain 1/1 (27 s), 0 deaths, 9 min (resumed character). Final code, fresh character: Plains 1/1 (41 s), LIVE_FINAL | Plains 2/2 (41-43 s, 54-61% HP left); Mountain 2/2 | **Pass** |
+| T1 | `conduit-t1` | Before tuning: Plains 0/5 (boss left 59/47/52/55/46%, 30-37 s), 5 deaths. After the T1 numbers: Plains 1/1 (47 s), Mountain 1/1 (27 s), 0 deaths, 9 min (resumed character). Final code, fresh character: Plains 1/1 (41 s), (not filled: the agent was cut off by the API usage limit; the final merged-tree runs are in OVERNIGHT-REPORT.md) | Plains 2/2 (41-43 s, 54-61% HP left); Mountain 2/2 | **Pass** |
 | T2 | `conduit-t2` | 7/7 in 7 attempts (17-34 s each), 0 deaths, 37 min including the ~7 min T1 replay (resumed, cap 8) | 7/7 (14-29 s, 43-100% HP) | **Pass** |
-| T3 | `conduit-t3` | LIVE_T3 | 7/7 (10-21 s, 80-100% HP) | Sim pass, live LIVE_T3_PASS |
-| T4 | `conduit-t4` | LIVE_T4 | 7/7 with the Volcanic vest (Caldera 4/4 at 33-34 s, 9-41% HP; 2/4 in the Mountain vest); the rest 23-44 s, 93-100% HP | Sim pass, live LIVE_T4_PASS |
+| T3 | `conduit-t3` | (not filled: the agent was cut off by the API usage limit; the final merged-tree runs are in OVERNIGHT-REPORT.md) | 7/7 (10-21 s, 80-100% HP) | Sim pass, live (not filled: the agent was cut off by the API usage limit; the final merged-tree runs are in OVERNIGHT-REPORT.md) |
+| T4 | `conduit-t4` | (not filled: the agent was cut off by the API usage limit; the final merged-tree runs are in OVERNIGHT-REPORT.md) | 7/7 with the Volcanic vest (Caldera 4/4 at 33-34 s, 9-41% HP; 2/4 in the Mountain vest); the rest 23-44 s, 93-100% HP | Sim pass, live (not filled: the agent was cut off by the API usage limit; the final merged-tree runs are in OVERNIGHT-REPORT.md) |
 
 Slow but not failing: the Mountain T2 guard phase took 320 s live (4 guards, outcome "reformed").
 Each `-t2/-t3/-t4` resume replays the earlier tiers' travel (~7 min per tier replayed).
