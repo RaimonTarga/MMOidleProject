@@ -50,7 +50,7 @@ export interface EmpoweredMultBreakdown {
  * `EXECUTION_MULTIPLIER`. The reload root arms no empowered attack.
  */
 const ROOT_DEFAULT_MULT: Partial<Record<EmpoweredArchetype, number>> = {
-  cadence:  2.0,
+  cadence:  3.0,
   cooldown: 2.0,
 };
 
