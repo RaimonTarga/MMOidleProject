@@ -39,7 +39,7 @@ const DEFAULTS: readonly DefaultPlacement[] = [
   { moment: 'enemy-winds-up', pieceId: 'apprentice-seize', conditions: [] },
   { moment: 'hp-low', pieceId: 'apprentice-siphon', conditions: [] },
   { moment: 'target-low', pieceId: 'apprentice-wither', conditions: [] },
-  { moment: 'target-low', pieceId: 'apprentice-spore-burst', conditions: [] },
+  { moment: 'target-low', pieceId: 'apprentice-spore-burst', conditions: [{ id: 'enemies-near', param: 3 }] },
   // T2 lessons, each on the moment it answers.
   { moment: 'charging-at-me', pieceId: 'apprentice-blast-back', conditions: [] },
   { moment: 'target-shielded', pieceId: 'apprentice-frostcrack', conditions: [] },

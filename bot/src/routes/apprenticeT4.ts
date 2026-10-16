@@ -32,11 +32,14 @@ function zone(biomeGroup: string): NodeRef {
 
 /**
  * The T4 pieces worn as each zone unlocks them (PLACEHOLDER picks, OV-APPRENTICE, chosen in the
- * class boss sim): the Mountain set (the T4 Runestone Staff), then the Desert's charm and boots.
+ * class boss sim): the Mountain set (the T4 Runestone Staff), the Desert's charm and boots, then the
+ * Volcanic's reactive-plating vest (it won the Caldera Sovereign's race, where the Mountain plate
+ * lost one fight in three).
  */
 export const APPRENTICE_T4_GEAR: Readonly<Record<string, readonly string[]>> = {
   mountain: ["apprentice-runestone-staff-t4", "mountain-vest-t4", "mountain-charm-t4", "mountain-boots-t4"],
   desert: ["desert-charm-t4", "desert-boots-t4"],
+  volcanic: ["volcanic-vest-t4"],
 };
 
 /**
