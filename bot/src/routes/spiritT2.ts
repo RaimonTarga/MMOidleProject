@@ -18,6 +18,29 @@ export const SPIRIT_T2_ID = "spirit-t2";
 /** Overflow, Tide or Reservoir. Tide is the balanced middle (bible §11.5); a placeholder pick. */
 export const SPIRIT_T2_DISCIPLINE = "spirit-tide";
 
+/**
+ * One chain per discipline (OV2): Tide, the overnight default, keeps the bare ids; Overflow and
+ * Reservoir run the same zones and gear under their own ids.
+ */
+export const SPIRIT_DISCIPLINE_SUFFIX: Readonly<Record<string, string>> = {
+  "spirit-tide": "",
+  "spirit-overflow": "-overflow",
+  "spirit-reservoir": "-reservoir",
+};
+
+/** The route id of a tier for a discipline: `spirit-t2`, `spirit-t2-overflow`, ... */
+export function spiritRouteId(tier: 2 | 3 | 4, disciplineId: string): string {
+  const suffix = SPIRIT_DISCIPLINE_SUFFIX[disciplineId];
+  if (suffix === undefined) throw new Error(`unknown Spirit discipline "${disciplineId}"`);
+  return `spirit-t${tier}${suffix}`;
+}
+
+export const SPIRIT_DISCIPLINE_NAME: Readonly<Record<string, string>> = {
+  "spirit-tide": "Tide",
+  "spirit-overflow": "Overflow",
+  "spirit-reservoir": "Reservoir",
+};
+
 /** Each zone and the piece its T2 lesson teaches (a rank-up or a new piece). */
 export const SPIRIT_T2_ZONES: ReadonlyArray<{ biome: KitBiome; pieceId: string }> = [
   { biome: "plains", pieceId: "spirit-gale" },
@@ -64,16 +87,17 @@ function zone(biomeGroup: KitBiome): NodeRef {
   return { kind: "biome", biomeGroup, tier: 2, pick: "uncleared" };
 }
 
-export function spiritT2Route(): Route {
+export function spiritT2Route(disciplineId = SPIRIT_T2_DISCIPLINE): Route {
   const t1 = spiritT1Route();
+  const id = spiritRouteId(2, disciplineId);
   const disciplinePiece = SPIRIT_KIT.lessons.find((lesson) =>
-    lesson.source.kind === "discipline" && lesson.source.disciplineId === SPIRIT_T2_DISCIPLINE)?.pieceId;
-  if (!disciplinePiece) throw new Error(`spirit-t2: ${SPIRIT_T2_DISCIPLINE} has no discipline piece`);
+    lesson.source.kind === "discipline" && lesson.source.disciplineId === disciplineId)?.pieceId;
+  if (!disciplinePiece) throw new Error(`${id}: ${disciplineId} has no discipline piece`);
   const picked: Condition = { type: "pieceLearned", pieceId: disciplinePiece };
 
   const steps: RouteStep[] = [
     ...t1.steps,
-    { type: "unlockSkill", skillId: SPIRIT_T2_DISCIPLINE, label: "pick a discipline" },
+    { type: "unlockSkill", skillId: disciplineId, label: "pick a discipline" },
   ];
   const milestones: Route["milestones"] = [
     ...t1.milestones,
@@ -100,11 +124,11 @@ export function spiritT2Route(): Route {
   }
 
   return {
-    id: SPIRIT_T2_ID,
+    id,
     version: "1.0.0",
     classRoot: SPIRIT_CLASS_ROOT,
     description:
-      "Spirit T2: the T1 route, a discipline (Tide), each T2 zone to the guide's level, " +
+      `Spirit T2: the T1 route, a discipline (${SPIRIT_DISCIPLINE_NAME[disciplineId]}), each T2 zone to the guide's level, ` +
       "and the seven T2 bosses.",
     steps,
     completion: allOf(picked, ...bosses),

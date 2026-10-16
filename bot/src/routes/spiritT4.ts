@@ -5,7 +5,7 @@ import {
   type KitBiome,
 } from "@mmo-idle/shared";
 import { allOf, type Condition, type NodeRef, type Route, type RouteStep } from "../route/types";
-import { SPIRIT_T2_DISCIPLINE } from "./spiritT2";
+import { spiritRouteId, SPIRIT_DISCIPLINE_NAME, SPIRIT_T2_DISCIPLINE } from "./spiritT2";
 import { SPIRIT_T3_ZONES, spiritT3Route } from "./spiritT3";
 import { SPIRIT_CLASS_ROOT, wearZoneGear } from "./spiritT1";
 
@@ -20,6 +20,16 @@ export const SPIRIT_T4_ID = "spirit-t4";
 
 /** One of the discipline's leaves. Wading (Tide, swarm) is a placeholder pick. */
 export const SPIRIT_T4_LEAF = "spirit-wading";
+
+/**
+ * Each discipline's T4 leaf (OV2, PLACEHOLDER): the answer to what empties the storm at a boss,
+ * a sustained pressure (Static Field for Overflow, Dam for Reservoir).
+ */
+export const SPIRIT_T4_LEAVES: Readonly<Record<string, string>> = {
+  "spirit-tide": SPIRIT_T4_LEAF,
+  "spirit-overflow": "spirit-static-field",
+  "spirit-reservoir": "spirit-dam",
+};
 
 /** Each T4 zone and the piece its lesson teaches (a rank-up, a sidegrade or a new piece). */
 export const SPIRIT_T4_ZONES: ReadonlyArray<{ biome: KitBiome; pieceId: string }> = [
@@ -66,11 +76,13 @@ function zone(biomeGroup: KitBiome): NodeRef {
   return { kind: "biome", biomeGroup, tier: 4, pick: "uncleared" };
 }
 
-export function spiritT4Route(): Route {
-  const t3 = spiritT3Route();
-  const leaf = SPIRIT_KIT.leaves.find((entry) => entry.id === SPIRIT_T4_LEAF);
-  if (!leaf || leaf.disciplineId !== SPIRIT_T2_DISCIPLINE) {
-    throw new Error(`spirit-t4: ${SPIRIT_T4_LEAF} is not under ${SPIRIT_T2_DISCIPLINE}`);
+export function spiritT4Route(disciplineId = SPIRIT_T2_DISCIPLINE): Route {
+  const t3 = spiritT3Route(disciplineId);
+  const id = spiritRouteId(4, disciplineId);
+  const leafId = SPIRIT_T4_LEAVES[disciplineId];
+  const leaf = SPIRIT_KIT.leaves.find((entry) => entry.id === leafId);
+  if (!leaf || leaf.disciplineId !== disciplineId) {
+    throw new Error(`${id}: ${leafId} is not under ${disciplineId}`);
   }
   // Wait out the tier-4 promotion where the T3 route ended.
   const lastT3 = SPIRIT_T3_ZONES[SPIRIT_T3_ZONES.length - 1].biome;
@@ -82,7 +94,7 @@ export function spiritT4Route(): Route {
       until: { type: "playerTierAtLeast", tier: 4 },
       label: "wait for the tier-4 promotion",
     },
-    { type: "unlockSkill", skillId: SPIRIT_T4_LEAF, label: "pick a leaf" },
+    { type: "unlockSkill", skillId: leaf.id, label: "pick a leaf" },
   ];
   const milestones: Route["milestones"] = [
     ...t3.milestones,
@@ -109,11 +121,11 @@ export function spiritT4Route(): Route {
   }
 
   return {
-    id: SPIRIT_T4_ID,
+    id,
     version: "1.0.0",
     classRoot: SPIRIT_CLASS_ROOT,
     description:
-      "Spirit T4: the T3 route, the tier-4 promotion, a leaf (Wading), each T4 zone " +
+      `Spirit T4: the T3 route, the tier-4 promotion, a leaf (${SPIRIT_DISCIPLINE_NAME[disciplineId]}: ${leaf.name}), each T4 zone ` +
       "to the guide's level, and the seven T4 bosses.",
     steps,
     completion: allOf(t3.completion, ...bosses),
