@@ -1257,7 +1257,13 @@ export class RouteExecutor {
    */
   private async doClassConfig(config: ClassConfig): Promise<void> {
     const { obs, intents, recorder } = this.deps;
-    const ctx = obs.self ? classConfigContextFromState(obs.self) : null;
+    // The Conduit's weapon adds or removes Command, as the server's `classConfigContextOf` reads it:
+    // without it `auto` resolves to a smaller roster than the server stores, and the wait below stalls.
+    const weapon = obs.self?.equipment.weapon;
+    const budgetBonus = obs.self?.combatArchetype === "summoner" && weapon
+      ? (ITEM_DATABASE.get(weapon)?.mechanicEffects?.["conduit.command"] ?? 0)
+      : 0;
+    const ctx = obs.self ? classConfigContextFromState({ ...obs.self, budgetBonus }) : null;
     if (!ctx) throw new BuildError("ROUTE_LOGIC_FAILURE", "class config before a class is picked", { config });
     const checked = validateClassConfig(config, ctx);
     if (!checked.ok) throw new BuildError("ROUTE_LOGIC_FAILURE", checked.reasons.join("; "), { config });
