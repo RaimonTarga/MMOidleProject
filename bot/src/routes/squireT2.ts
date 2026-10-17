@@ -29,6 +29,27 @@ export const SQUIRE_T2_ID = "squire-t2";
  */
 export const SQUIRE_T2_DISCIPLINE = "squire-bulwark";
 
+/**
+ * Each discipline's chain: the T3 specialization and T4 leaf its routes pick. PLACEHOLDER picks
+ * (OV2-SQUIRE): the Bulwark's is the verified overnight default; the Avenger keeps the earlier
+ * placeholder (the old Avenger path, Measure for Measure, then the empty-bar leaf); the Juggernaut
+ * takes the empty-bar leaf too (the T4 melee resilience, bible §8.7) under the specialization the
+ * class boss sim picked.
+ */
+export const SQUIRE_CHAINS: Readonly<Record<string, { specialization: string; leaf: string }>> = {
+  "squire-bulwark": { specialization: "squire-reverb", leaf: "squire-second-line" },
+  "squire-avenger": { specialization: "squire-measure-for-measure", leaf: "squire-last-word" },
+  "squire-juggernaut": { specialization: "squire-inexorable", leaf: "squire-last-rampart" },
+};
+
+/**
+ * A chain's route id at a tier: the default discipline's routes keep their names (`squire-t2`),
+ * the other two carry the discipline (`squire-t2-avenger`, `squire-t4-juggernaut`).
+ */
+export function squireRouteId(tier: 2 | 3 | 4, disciplineId: string): string {
+  return disciplineId === SQUIRE_T2_DISCIPLINE ? `squire-t${tier}` : `squire-t${tier}-${disciplineId.replace(/^squire-/, "")}`;
+}
+
 /** The T2 zones in tutorial order; the Jungle and the Desert first appear at this tier. */
 export const SQUIRE_T2_BIOMES = ["plains", "forest", "mountain", "swamp", "cave", "jungle", "desert"] as const;
 export type SquireT2Biome = (typeof SQUIRE_T2_BIOMES)[number];
@@ -54,7 +75,11 @@ export const SQUIRE_T2_ZONE_GEAR: Record<SquireT2Biome, readonly string[]> = {
  * tier-2 weapon before the first boss). PLACEHOLDER (OV-SQUIRE).
  */
 export const SQUIRE_T2_WEAPONS: Readonly<Record<string, Partial<Record<SquireT2Biome, string>>>> = {
-  "squire-avenger": { plains: "squire-flanged-mace-t2", forest: "squire-arming-sword-t2", cave: "squire-tower-shield-t2" },
+  // The Avenger too takes the Warhammer (one of its weapons) into the Mountain boss (OV2-SQUIRE sim:
+  // the Arming Sword died with the boss at 29%, the Warhammer won at 73% HP), then the Tower Shield.
+  "squire-avenger": {
+    plains: "squire-flanged-mace-t2", forest: "squire-arming-sword-t2", mountain: "squire-warhammer-t2", cave: "squire-tower-shield-t2",
+  },
   // The Bulwark takes the Warhammer into the plated Mountain boss (sim: 16% -> 42% HP left; live lost
   // twice in the mace, boss at 19% and 2%), then its own Tower Shield from the Cave on.
   "squire-bulwark": { plains: "squire-flanged-mace-t2", mountain: "squire-warhammer-t2", cave: "squire-tower-shield-t2" },
@@ -90,7 +115,7 @@ export function squireT2Route(disciplineId: string = SQUIRE_T2_DISCIPLINE): Rout
   const t1 = squireT1Route();
   const bossCleared = (biome: SquireT2Biome): Condition => ({ type: "bossCleared", biomeGroup: biome, tier: 2 });
   return {
-    id: SQUIRE_T2_ID,
+    id: squireRouteId(2, disciplineId),
     version: "1.1.0",
     classRoot: SQUIRE_CLASS_ROOT,
     description:

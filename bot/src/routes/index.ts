@@ -13,7 +13,7 @@ import { apprenticeT2Route } from "./apprenticeT2";
 import { apprenticeT3Route } from "./apprenticeT3";
 import { apprenticeT4Route } from "./apprenticeT4";
 import { SQUIRE_T1_ID, squireT1Route } from "./squireT1";
-import { SQUIRE_T2_ID, squireT2Route } from "./squireT2";
+import { SQUIRE_CHAINS, SQUIRE_T2_ID, squireT2Route } from "./squireT2";
 import { squireT3Route } from "./squireT3";
 import { squireT4Route } from "./squireT4";
 import { DEFAULT_SMOKE_CLASS, SMOKE_T1_ID, smokeT1Route } from "./smokeT1";
@@ -34,6 +34,7 @@ import { spiritT4Route } from "./spiritT4";
  * `conduit-t1`, `slinger-t1`, `slinger-t2`, `spirit-t1`, `apprentice-t1`) registers here as data over the same executor.
  * `squire-t3` continues the Squire past the tier-3 promotion (T3-W2); it stays out of the controlled batch list until it has run live.
  * `squire-t4` continues the Squire past the tier-4 promotion (T4-W2); same status.
+ * `squire-t{2,3,4}-avenger` and `-juggernaut` are the Squire's other two discipline chains (OV2-SQUIRE); same status.
  * `striker-t3-*` (one per specialization, T3-W2) continue the Striker past the tier-3 promotion; they stay out of the controlled batch list until they have run live.
  * `striker-t4-*` (one per leaf, T4-W2) continue it past the tier-4 promotion; same status.
  * `conduit-t2` continues the Conduit past the tier-2 promotion (T2-W2); it is not yet in the controlled batch list.
@@ -60,6 +61,10 @@ const SQUIRE_ROUTE = squireT1Route();
 const SQUIRE_T2_ROUTE = squireT2Route();
 const SQUIRE_T3_ROUTE = squireT3Route();
 const SQUIRE_T4_ROUTE = squireT4Route();
+/** The Squire's other two discipline chains (OV2): `squire-t2..t4-avenger`, `squire-t2..t4-juggernaut`. */
+const SQUIRE_CHAIN_ROUTES = ["squire-avenger", "squire-juggernaut"].flatMap((discipline) => [
+  squireT2Route(discipline), squireT3Route(SQUIRE_CHAINS[discipline]!.specialization), squireT4Route(SQUIRE_CHAINS[discipline]!.leaf),
+]);
 const CONDUIT_ROUTE = conduitT1Route();
 const CONDUIT_T2_ROUTE = conduitT2Route();
 const CONDUIT_T3_ROUTE = conduitT3Route();
@@ -93,6 +98,7 @@ export const ROUTES = new Map<string, Route>([
   [SQUIRE_T2_ROUTE.id, SQUIRE_T2_ROUTE],
   [SQUIRE_T3_ROUTE.id, SQUIRE_T3_ROUTE],
   [SQUIRE_T4_ROUTE.id, SQUIRE_T4_ROUTE],
+  ...SQUIRE_CHAIN_ROUTES.map((route): [string, Route] => [route.id, route]),
   [CONDUIT_ROUTE.id, CONDUIT_ROUTE],
   [CONDUIT_T2_ROUTE.id, CONDUIT_T2_ROUTE],
   [CONDUIT_T3_ROUTE.id, CONDUIT_T3_ROUTE],

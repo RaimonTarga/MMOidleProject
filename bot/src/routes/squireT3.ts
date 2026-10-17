@@ -1,7 +1,7 @@
 import { SQUIRE_KIT, absoluteZoneLevel, biomeLevelCap, type KitBiome } from "@mmo-idle/shared";
 import type { Condition, NodeRef, Route, RouteStep } from "../route/types";
 import { SQUIRE_CLASS_ROOT, SQUIRE_LESSON_LEVEL, farmWearingGear } from "./squireT1";
-import { squireT2Route } from "./squireT2";
+import { squireRouteId, squireT2Route } from "./squireT2";
 
 /**
  * The Squire's T3 balance route (`squire-t3`).
@@ -83,7 +83,7 @@ export function squireT3Route(specializationId: string = SQUIRE_T3_SPECIALIZATIO
   const t2 = squireT2Route(spec.disciplineId);
   const bossCleared = (biome: SquireT3Biome): Condition => ({ type: "bossCleared", biomeGroup: biome, tier: 3 });
   return {
-    id: SQUIRE_T3_ID,
+    id: squireRouteId(3, spec.disciplineId),
     version: "1.1.0",
     classRoot: SQUIRE_CLASS_ROOT,
     description:

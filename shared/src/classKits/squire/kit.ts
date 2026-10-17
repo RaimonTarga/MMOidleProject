@@ -483,7 +483,9 @@ const DISCIPLINES: readonly DisciplineDef[] = [
     pieceId: 'squire-parry',
     // PLACEHOLDERS (§8.5): answers fill answerFillMult times, plain hits hitFillMult; each landed
     // answer is followed by a counter that costs counterCost pips and hits for counterPct of a swing.
-    params: { answerFillMult: 1.5, hitFillMult: 0.6, counterCost: 0.5, counterPct: 0.4 },
+    // OV2-SQUIRE (sim, T2 Mountain boss): 1.5 / 0.6 / 0.4 lost (boss at 29-36%) beside a Bulwark
+    // win; the six-swing slam carries the class, so an Avenger slamming rarer needs its answers to pay.
+    params: { answerFillMult: 3, hitFillMult: 0.8, counterCost: 0.5, counterPct: 1.5 },
   }),
   discipline({
     id: 'squire-bulwark',
