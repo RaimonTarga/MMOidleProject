@@ -77,9 +77,13 @@ for (const [leafId, id] of Object.entries(STRIKER_T4_ROUTE_IDS)) {
     ])],
   );
   // Gear: tier-4 recipes of the zone being farmed, in unlock order, inside its T4 farm; the first seal meets a full set.
+  // A weapon put back on (Light's Maul at the Volcanic) was made in an earlier zone of the route.
+  const madeBefore = new Set<string>();
   for (const biomeGroup of STRIKER_T4_ZONES) {
     let last = 0;
     for (const itemId of strikerT4ZoneGear(leaf.disciplineId, biomeGroup)) {
+      if (madeBefore.has(itemId)) continue;
+      madeBefore.add(itemId);
       const recipe = RECIPE_DATABASE.get(itemId);
       assert(recipe && recipe.recipeGroup === biomeGroup && ITEM_DATABASE.get(itemId)?.tier === 4, `${itemId} is tier-4 ${biomeGroup} gear`);
       assert(recipe.requiredBiomeLevel >= last && recipe.requiredBiomeLevel <= strikerT4FarmLevel(biomeGroup), `${itemId} unlocks in order, inside the farm`);

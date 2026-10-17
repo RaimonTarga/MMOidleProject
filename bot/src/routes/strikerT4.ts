@@ -62,9 +62,15 @@ export function strikerT4FarmLevel(biomeGroup: string): number {
  * Volcanic dungeons: in a slow weapon its combo (two casts, a swing every 1.8 s) death-looped at
  * the T2 Jungle's; in classBossSim the Fangs won the Jungle, Desert and Volcanic bosses with 98-100%
  * HP left (the Volcanic in 35 s, the Maul 74 s). PLACEHOLDER.
+ *
+ * Light puts the Mountain's Maul back on for the Volcanic, then the Fangs again from the Wasteland
+ * (2026-10-17, conductor): the final runs' Light lost the Caldera Sovereign once in each of two runs
+ * (boss 12% and 18% left, 105 s). classBossSim at the live levels: the Fangs won 1 of 2, the Maul 2
+ * of 2 at 96-97% HP; the Fangs stay better at the Wasteland (76-86% against 0-57%) and the Trench
+ * (81-83% against 44%). PLACEHOLDER.
  */
 const T4_WEAPONS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
-  "striker-light": { mountain: "striker-maul-t4", jungle: "striker-twin-fangs-t4" },
+  "striker-light": { mountain: "striker-maul-t4", jungle: "striker-twin-fangs-t4", volcanic: "striker-maul-t4", graveyard: "striker-twin-fangs-t4" },
   "striker-balanced": { mountain: "striker-maul-t4", graveyard: "striker-reapers-scythe-t4", trench: "striker-bastard-sword-t4" },
   "striker-heavy": { mountain: "striker-maul-t4", jungle: "striker-twin-fangs-t4", graveyard: "striker-reapers-scythe-t4" },
 };

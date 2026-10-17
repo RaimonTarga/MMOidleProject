@@ -90,10 +90,13 @@ export const STRIKER_T2_ZONE_CHARM: Readonly<Record<string, string>> = { jungle:
  * - Heavy wears the Swamp's vest (Bloodless: damage over time can't take you below a quarter while you
  *   keep attacking) at the Jungle: the nine-guard pack's Vine Chameleon poison killed it three times
  *   more in the Jungle vest, the Bastard Sword and Grit on (six guards down at best). The Jungle boss in
- *   classBossSim: won with 39% HP left (the Jungle vest 56%).
+ *   classBossSim: won with 39% HP left (the Jungle vest 56%). Light as well (2026-10-17, conductor): its
+ *   last final run died twice to the same pack's poison; `classBossSim --guards` at its live levels
+ *   cleared the pack in 8 of 8 runs in the Swamp vest (15-19% HP at the lowest), 6 of 8 in the Jungle
+ *   vest; the Jungle boss is won in either (lowest 32% against 56%).
  */
 const T2_REWORN: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>> = {
-  "striker-light": { forest: ["plains-charm-t2"], cave: ["plains-charm-t2"], desert: ["plains-charm-t2"] },
+  "striker-light": { forest: ["plains-charm-t2"], cave: ["plains-charm-t2"], jungle: ["swamp-vest-t2"], desert: ["plains-charm-t2"] },
   "striker-balanced": { forest: ["plains-vest-t2", "plains-charm-t2"], desert: ["plains-charm-t2"] },
   "striker-heavy": {
     forest: ["plains-charm-t2"],
