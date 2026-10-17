@@ -58,7 +58,7 @@ import { classConfigContextOf } from '../../../player/progression/classConfig';
 import { applyFramePlatingShred } from '../../shared/frameLoop';
 import { applyTickDot } from '../../shared/tickDot';
 import { applyBurn, tickBurns } from '../../slinger/burn';
-import { calledMomentHolds, isElite, pickCalledTarget } from '../../slinger/calledShot';
+import { calledMomentHolds, pickCalledTarget } from '../../slinger/calledShot';
 import { bankShell, fireShell, markDeathmark, markShellPending, shellBank, shellPending } from '../../slinger/shell';
 import {
   clearEntrench,
@@ -259,10 +259,11 @@ export function deadeyeWaits(world: World, player: PlayerEntity, now: number, ta
   const reload = player.usesReload;
   if (!loadout || !reload || disciplineOf(player) !== TRICKSHOT || specializationOf(player) !== DEADEYE) return false;
   if (reload.reloadingMs > 0 || reload.ammo !== 1) return false;
-  // Only a boss or an elite is worth the wait. PLACEHOLDER (2026-10-16): held against plain foes, the
+  // Only a boss is worth the wait. PLACEHOLDER (2026-10-17): held against guards (plain or elite), the
   // cancelled attack left the auto AI idle between kills (the T4 Mountain's rooted Stone Wardens: one kill in
-  // 15 minutes live, 56% of samples "no worthy target nearby"; 3 kills in 300 s in the sim against 8 for Ricochet).
-  if (!target || !isElite(target)) return false;
+  // 15 minutes live, 56% of samples "no worthy target nearby"; 3 kills in 300 s in the sim against 8 for Ricochet),
+  // and with plain guards excluded it still stalled at the T4 Trench's two Abyssal Guardians (six 15-minute attempts).
+  if (!target?.isMonster.isBoss) return false;
   // The held round's own rule (`deadeyeHold`) when set, else the called shot's.
   const rule = loadout.config.deadeyeHold && loadout.config.deadeyeHold.length > 0 ? loadout.config.deadeyeHold : loadout.config.calledShot;
   return deadeyeHolds(player, calledMomentHolds(world, player, rule, DEADEYE_LOW_HP, now), DEADEYE_HOLD_MS, now);
