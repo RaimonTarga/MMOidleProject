@@ -81,8 +81,20 @@ const T3_REWORN: Readonly<Record<string, Readonly<Record<string, readonly string
   "striker-heavy": { jungle: ["swamp-vest-t3"] },
 };
 
+/**
+ * Every arm keeps the T3 Swamp's charm on at the T3 Jungle, in place of its own (2026-10-17,
+ * conductor): `classBossSim --guards` against that dungeon's nine-guard poison pack, at the final
+ * runs' live levels, cleared it in 8 of 8 runs with the Swamp charm for Light (51-73% HP at the
+ * lowest, against 6 of 8 and 0-26% in the Jungle charm) and Balanced (66-76% against 16-40%). Both
+ * charms win the Jungle boss. PLACEHOLDER.
+ */
+const T3_ZONE_CHARM: Readonly<Record<string, string>> = { jungle: "swamp-charm-t3" };
+
 export function strikerT3Reworn(disciplineId: string, biomeGroup: string): string[] {
-  return [...(T3_REWORN[disciplineId]?.[biomeGroup] ?? [])];
+  const own = T3_REWORN[disciplineId]?.[biomeGroup] ?? [];
+  const charm = T3_ZONE_CHARM[biomeGroup];
+  const slotOf = (id: string) => RECIPE_DATABASE.get(id)?.slot;
+  return [...own, ...(charm && !own.some((id) => slotOf(id) === slotOf(charm)) ? [charm] : [])];
 }
 
 export function strikerT3Route(specializationId = "striker-thousand-cuts"): Route {

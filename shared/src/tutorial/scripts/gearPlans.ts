@@ -58,7 +58,8 @@ const STRIKER: TutorialGearPlan = {
       mountain: ['striker-maul-t3', 'mountain-vest-t3', 'mountain-charm-t3', 'mountain-boots-t3'],
       swamp: ['swamp-vest-t3', 'swamp-charm-t3', 'swamp-boots-t3'],
       cave: ['striker-bastard-sword-t3', 'cave-vest-t3', 'cave-charm-t3', 'cave-boots-t3'],
-      jungle: ['jungle-vest-t3', 'jungle-charm-t3', 'jungle-boots-t3'],
+      // The Swamp's charm goes back on in the Jungle (2026-10-17: the T3 Jungle guard's poison pack).
+      jungle: ['jungle-vest-t3', 'swamp-charm-t3', 'jungle-boots-t3'],
       desert: ['desert-vest-t3', 'desert-charm-t3', 'desert-boots-t3'],
       tundra: ['tundra-vest-t3', 'tundra-charm-t3', 'tundra-boots-t3'],
       volcanic: ['volcanic-vest-t3', 'volcanic-charm-t3', 'volcanic-boots-t3'],
