@@ -21,6 +21,9 @@ type DefaultPlacement = PayoffPlacement & { discipline?: string; except?: string
  * The default (§9.13), in priority order, filtered to the pieces owned:
  * - T1: full → Spread with two or more enemies near, else Detonate; winds up → Seize; your HP low → Siphon.
  * - Poison: full → Detonate (the plague walks on its own; the Spread rule frees the moment), low → Wither.
+ *   "Low" is your HP, after Siphon (PLACEHOLDER, OV2-APPRENTICE): on the target's low moment Wither
+ *   spent the bar every cooldown through a boss's last third, so Detonate stopped and the T4 Caldera
+ *   Sovereign's race was lost 3 times in 4 (sim); on your HP it is the floor when the fight turns.
  * - Fire: full → Detonate (the T1 Spread rule goes, so a full bar always sets the chain off), shell up → Fuse.
  * - Frost: winds up → Seize, frozen → Detonate (the Shatter), three or more near → Cold Snap.
  * - Every later lesson on the moment it answers; Cinderfall (the Detonate sidegrade) takes a full
@@ -38,7 +41,7 @@ const DEFAULTS: readonly DefaultPlacement[] = [
   { moment: 'target-frozen', pieceId: 'apprentice-detonate', conditions: [], discipline: 'apprentice-frost' },
   { moment: 'enemy-winds-up', pieceId: 'apprentice-seize', conditions: [] },
   { moment: 'hp-low', pieceId: 'apprentice-siphon', conditions: [] },
-  { moment: 'target-low', pieceId: 'apprentice-wither', conditions: [] },
+  { moment: 'hp-low', pieceId: 'apprentice-wither', conditions: [] },
   { moment: 'target-low', pieceId: 'apprentice-spore-burst', conditions: [{ id: 'enemies-near', param: 3 }] },
   // T2 lessons, each on the moment it answers.
   { moment: 'charging-at-me', pieceId: 'apprentice-blast-back', conditions: [] },
