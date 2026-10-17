@@ -85,12 +85,16 @@ export const APPRENTICE_T2_FROST_GEAR: Readonly<Record<string, readonly string[]
 };
 
 /**
- * Poison keeps the Forest's Thornwood Rod (OV2-APPRENTICE, PLACEHOLDER, class boss sim): its
- * fast ticks won every T2 boss, where the Bog Censer and the Branching Wand lost the Apex Timberclaw.
+ * Poison takes the Swamp's Bog Censer (OV2-APPRENTICE, PLACEHOLDER), its weapon at T3 and T4 too:
+ * its bigger Siphon with Bitter Tonic is the sustain the Jungle's guard pack asks for, where the
+ * Thornwood Rod died three times in eight minutes (live, in the Plains vest and the Swamp charm).
+ * Class boss sim in that set: every T2 boss won with 35-88% HP left (the Thornwood Rod 32-99%).
  */
 export const APPRENTICE_T2_POISON_GEAR: Readonly<Record<string, readonly string[]>> = {
   ...APPRENTICE_T2_FROST_GEAR,
+  forest: ["forest-vest-t2", "forest-charm-t2", "forest-boots-t2"],
   mountain: [],
+  swamp: ["apprentice-bog-censer-t2", "swamp-charm-t2"],
 };
 
 /** The T2 gear a school's chain wears. */
