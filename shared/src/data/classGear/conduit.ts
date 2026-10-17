@@ -22,7 +22,7 @@ export const CONDUIT_GEAR: ClassGearDef = {
       cost: { yellow: 10 }, stats: { attack: 19 }, attacksPerSecond: 0.90, tier: 1,
       icon: 'items/weapons/iron-broadsword.png',
       description: 'You field more summons.',
-      mechanicEffects: { 'conduit.command': 2, 'conduit.damage-pct': -0.25 },
+      mechanicEffects: { 'conduit.command': 2, 'conduit.damage-pct': -0.15 },
     },
     {
       id: 'conduit-swift-staff-t1', name: 'Swift Staff',
@@ -63,7 +63,7 @@ export const CONDUIT_GEAR: ClassGearDef = {
       cost: { yellow: 45 }, stats: { attack: 51 }, attacksPerSecond: 1.00, tier: 2,
       icon: 'items/weapons/knight-steelsword.png',
       description: 'You field more summons.',
-      mechanicEffects: { 'conduit.command': 2, 'conduit.damage-pct': -0.25 },
+      mechanicEffects: { 'conduit.command': 2, 'conduit.damage-pct': -0.15 },
     },
     {
       id: 'conduit-swift-staff-t2', name: 'Swift Staff',
@@ -186,7 +186,7 @@ export const CONDUIT_GEAR: ClassGearDef = {
       cost: { red: 140 }, stats: { attack: 70 }, attacksPerSecond: 1.65, tier: 3,
       icon: 'items/weapons/cinderlash.png',
       description: 'You field more summons.',
-      mechanicEffects: { 'conduit.command': 2, 'conduit.damage-pct': -0.25 },
+      mechanicEffects: { 'conduit.command': 2, 'conduit.damage-pct': -0.15 },
     },
     // ── T4 ──
     {
@@ -245,7 +245,7 @@ export const CONDUIT_GEAR: ClassGearDef = {
       cost: { red: 308 }, stats: { attack: 119 }, attacksPerSecond: 1.80, tier: 4,
       icon: 'items/weapons/eruption-lash.png',
       description: 'You field more summons.',
-      mechanicEffects: { 'conduit.command': 2, 'conduit.damage-pct': -0.25 },
+      mechanicEffects: { 'conduit.command': 2, 'conduit.damage-pct': -0.15 },
     },
     {
       id: 'conduit-cleave-t4', name: 'Cleave',
