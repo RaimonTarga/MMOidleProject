@@ -106,10 +106,15 @@ export const SLINGER_T2_GUNS: readonly DisciplineGun[] = [
  * merged-tree Trickshot died seven times to the same pack (Vine Chameleon poison) and gave up on its
  * guards twice before a third attempt went through; with the vest its re-run took the T2 Jungle first
  * try with no death. The Gunslinger as well: its final run died four times to the pack and needed three
- * attempts. PLACEHOLDER pick.
+ * attempts. The Siege also takes the Forest's Carbine for the Jungle and the Desert (2026-10-17): its
+ * last final run died three times to the same pack in the Drum Gun and gave up on it. classBossSim
+ * `--guards` (the pack itself, at that run's live levels): the Drum Gun cleared it in 4 of 8 runs, the
+ * Carbine in 8 of 8 (lowest HP 8-29%); the Pepperbox and the Hand Cannon in none. Both guns win the
+ * Jungle and Desert bosses (the Carbine slower: 56 s and 65 s against 40 s and 37 s). PLACEHOLDER pick.
  */
 export const SLINGER_T2_DISCIPLINE_PIECES: readonly DisciplineGun[] = [
   { discipline: "siege", zone: "jungle", id: "jungle-vest-t2" },
+  { discipline: "siege", zone: "forest", id: "slinger-carbine-t2", before: "jungle" },
   { discipline: "trickshot", zone: "jungle", id: "jungle-vest-t2" },
   { discipline: "gunslinger", zone: "jungle", id: "jungle-vest-t2" },
 ];
