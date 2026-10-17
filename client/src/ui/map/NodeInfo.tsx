@@ -40,6 +40,7 @@ import {
   formatWeaponEffects,
 } from '../crafting/itemDisplay';
 import { MAKE_KIND_LABELS } from '../crafting/makeEntries';
+import { ClassLineNote } from '../ClassLineNote';
 import { useAbilityContext } from '../describe/useAbilityContext';
 import { biomeUnlocksByLevel, type BiomeUnlock } from './biomeUnlocks';
 
@@ -170,6 +171,7 @@ function UnlockRow({ unlock, unlocked, open, onToggle, relicPreview }: {
               {effects.map((line, i) => <li key={i} className="map-recipe__effectline">{line}</li>)}
             </ul>
           )}
+          {gear && <ClassLineNote item={gear} />}
           {unlock.description && <p className="map-recipe__desc">{unlock.description}</p>}
         </div>
       )}

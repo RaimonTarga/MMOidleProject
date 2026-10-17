@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import { EquipmentAbilityTags } from '../AbilityTags';
+import { ClassLineNote } from '../ClassLineNote';
 import type { EssenceType } from '@mmo-idle/shared';
 import {
   ESSENCE_COLORS,
@@ -611,6 +612,7 @@ function MakeDetail({
       </div>
 
       {entry.blurb && <p className="make-detail__blurb">{entry.blurb}</p>}
+      {recipe && <ClassLineNote item={recipe} />}
       {recipe && ITEM_DATABASE.has(recipe.id) && <EquipmentAbilityTags item={ITEM_DATABASE.get(recipe.id)!} />}
 
       {statList.length > 0 && (

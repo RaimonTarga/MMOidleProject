@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useAtomValue } from 'jotai';
 import { EquipmentAbilityTags } from '../AbilityTags';
+import { ClassLineNote } from '../ClassLineNote';
 import {
   ITEM_DATABASE, RECIPE_DATABASE, TEST_ROOM_NODE_ID, TUTORIAL_ANCHORS,
   type EquipmentSlot,
@@ -97,6 +98,7 @@ export function StatSheet({ compare }: Props) {
       <Headline sheet={sheet} />
       <SheetRows sheet={sheet} />
       {def && <SheetEffects sheet={sheet} />}
+      {def && <ClassLineNote item={def} />}
       {def && <EquipmentAbilityTags item={def} />}
       {def?.description && <p className="inv-stat-sheet__flavor">{def.description}</p>}
 
