@@ -55,9 +55,15 @@ function zone(biomeGroup: string): NodeRef {
 /**
  * The T3 pieces worn as each zone unlocks them (PLACEHOLDER picks, OV-APPRENTICE, chosen in the
  * class boss sim): the Mountain set (the T3 Runestone Staff), then the Desert's charm and boots.
+ *
+ * The Swamp's vest in place of the Mountain's from the T3 Swamp on (2026-10-17, conductor):
+ * `classBossSim --guards` against the T3 Jungle dungeon's nine-guard pack, at the final run's live
+ * levels, cleared it in 8 of 8 runs with 57-67% HP at the lowest, against 7 of 8 and 17-48% in the
+ * Mountain vest; both vests win all seven T3 bosses in 10-18 s. PLACEHOLDER.
  */
 export const APPRENTICE_T3_GEAR: Readonly<Record<string, readonly string[]>> = {
   mountain: ["apprentice-runestone-staff-t3", "mountain-vest-t3", "mountain-charm-t3", "mountain-boots-t3"],
+  swamp: ["swamp-vest-t3"],
   desert: ["desert-charm-t3", "desert-boots-t3"],
 };
 

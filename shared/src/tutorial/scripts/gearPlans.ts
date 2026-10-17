@@ -139,6 +139,8 @@ const APPRENTICE: TutorialGearPlan = {
     },
     3: {
       mountain: ['apprentice-runestone-staff-t3', 'mountain-vest-t3', 'mountain-charm-t3', 'mountain-boots-t3'],
+      // The Swamp's vest from the T3 Swamp on (2026-10-17: the T3 Jungle guard pack).
+      swamp: ['swamp-vest-t3'],
       desert: ['desert-charm-t3', 'desert-boots-t3'],
     },
     4: {
