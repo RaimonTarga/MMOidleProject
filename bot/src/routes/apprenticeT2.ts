@@ -85,17 +85,11 @@ export const APPRENTICE_T2_FROST_GEAR: Readonly<Record<string, readonly string[]
  * dungeon's guard pack has to fall in one life (the walk back from the sanctuary outlasts the 90 s
  * before the guard reforms), and the one-sigil-a-hit weapons fill Poison's larger bar too slowly:
  * the Thornwood Rod and the Bog Censer each died there again and again (live, lane 5), three guards
- * on it for 7-13 s. Three sigils a hit fill it in three. Class boss sim in this set: every T2 boss
- * won with 51-95% HP left.
+ * on it for 7-13 s. Three sigils a hit fill it in three. The Jungle's own vest stays on (its dot
+ * resistance meets the Jungle Snake, the guard pack's main damage: 150-225 of each death's last
+ * 8 s in the Plains vest, three deaths on a fresh character). Class boss sim: every T2 boss won.
  */
-export const APPRENTICE_T2_POISON_GEAR: Readonly<Record<string, readonly string[]>> = {
-  ...APPRENTICE_T2_FROST_GEAR,
-  // The Plains vest goes back on at the Jungle: its plating answers many light hits and Warding
-  // Sigils every enemy carrying your sigils, which the plague makes every enemy of a pack (the
-  // Poison chain cleared the guard pack in it with no death). Frost lays sigils on one enemy at a
-  // time and keeps the Jungle's vest (more HP, evasion; it died three times in the Plains vest).
-  jungle: ["plains-vest-t2"],
-};
+export const APPRENTICE_T2_POISON_GEAR: Readonly<Record<string, readonly string[]>> = APPRENTICE_T2_FROST_GEAR;
 
 /** The T2 gear a school's chain wears. */
 export function apprenticeT2Gear(disciplineId: string | null): Readonly<Record<string, readonly string[]>> {
