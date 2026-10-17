@@ -30,6 +30,9 @@ export const SQUIRE_RESOLVE = {
   bossCountsAs: 3,
 } as const;
 
+/** The Juggernaut's auto default holds the slam while the target is below this share of its HP. PLACEHOLDER (OV2-SQUIRE). */
+export const JUGGERNAUT_HOLD_SLAM_BELOW = 0.1;
+
 export const SQUIRE_SYSTEM: ClassSystemSpec<ResponsesConfig> = {
   kind: 'responses',
 
@@ -52,7 +55,12 @@ export const SQUIRE_SYSTEM: ClassSystemSpec<ResponsesConfig> = {
     const rules = ownedPieces(SQUIRE_KIT, ctx)
       .filter((piece) => ANSWERS.has(piece.family))
       .map((piece) => ({ pieceId: piece.id, enabled: true, conditions: [] }));
-    return { kind: 'responses', rules, groundTelegraphs: 'step-out', holdSlam: [] };
+    // §8.13: the Juggernaut holds its one huge slam on a nearly dead target. The Avenger's
+    // "Parry the melee telegraphs, Guard the rest, Bash what can be interrupted" is the runtime's
+    // answer order. The Bulwark's "hold the slam for three or more" is not on (OV2-SQUIRE): the
+    // verified Bulwark chain passed without it, and a held slam never fires on a lone boss.
+    const holdSlam = ctx.disciplineId === 'squire-juggernaut' ? [{ id: 'target-low' as const, param: JUGGERNAUT_HOLD_SLAM_BELOW }] : [];
+    return { kind: 'responses', rules, groundTelegraphs: 'step-out', holdSlam };
   },
 
   validate(config, ctx) {
