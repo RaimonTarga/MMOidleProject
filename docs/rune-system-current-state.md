@@ -250,6 +250,13 @@ ledge each looked 20% closer in turn and the player shuttled along the ledge
 such as `let-dots-finish`, `spread-dots`, and party leader focus continue to use
 the weighted scorer. It does not route to other nodes.
 
+Selection skips a monster that is `returning` home, unless it is already within
+28 px of its post or spawn (home, the distance `updatePacks` ends a return at). A
+guard pack that spots a player past its leash returns on the same tick; with every
+returning monster skipped, a Squire in +65% aggro-pull boots standing between two
+T3 Jungle guard packs switched targets each tick and never reached either
+(2026-10-17, `server/test/returningAtHome.test.ts`).
+
 `tactical-reload` claims the resource-maintenance channel independently from
 recovery rules such as `wait-for-regen`. It is read by the reload archetype to
 start a partial-clip reload after active combat ends, accelerate that OOC reload,

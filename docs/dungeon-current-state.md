@@ -176,7 +176,7 @@ standing boss.
 | Boss death | cooldown; leftover guardians despawn; cooldown expiry reforms the guard |
 | Node wipe (no live players) | immediate reset to idle with a fresh guard |
 | Node freeze | runtime discarded; thaw rebuilds a fresh idle guard |
-| Pre-clear timeout (90 s after the last guardian kill, altar untouched) | the guard reforms |
+| Pre-clear timeout (90 s after the last guardian kill, altar untouched) | the guard reforms. The clock waits while a surviving guardian is still fighting a player and restarts when that fight ends (2026-10-17: a slow killer saw the guardian it was halfway through reform at full HP every 90 s) |
 
 ## 6. Client
 
