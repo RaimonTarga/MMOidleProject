@@ -57,8 +57,8 @@ function zone(biomeGroup: string): NodeRef {
  * The T2 pieces worn as each zone unlocks them (PLACEHOLDER picks, OV-APPRENTICE, chosen in the
  * class boss sim): the Plains and Forest sets first, then the Fire school's Runestone Staff (three
  * sigils a hit fill the bar for the chain), the Jungle's evasion vest and the Desert's fast boots.
- * The Forest charm (the most Recovery) stays on. Frost wears the same (the Runestone Staff is a
- * Frost weapon too, §9.5).
+ * The Forest charm (the most Recovery) stays on. Frost takes the same staff (it is a Frost weapon
+ * too, §9.5).
  */
 export const APPRENTICE_T2_GEAR: Readonly<Record<string, readonly string[]>> = {
   plains: ["apprentice-branching-wand-t2", "plains-vest-t2", "plains-charm-t2", "plains-boots-t2"],
@@ -69,17 +69,31 @@ export const APPRENTICE_T2_GEAR: Readonly<Record<string, readonly string[]>> = {
 };
 
 /**
+ * The Poison and Frost chains swap the Forest charm for the Swamp's (Bog Eye's cleansing pulse,
+ * Bitter Tonic's faster, bigger Siphon) (OV2-APPRENTICE, PLACEHOLDER): with the Forest charm both
+ * died at the T2 Jungle dungeon's nine-guard poison pack (Frost three times in seven minutes,
+ * Poison twice, live), which the boss sim never meets; in the sim the Swamp charm also lifts every
+ * T2 boss (Poison 45-99% HP left against 17-70%, Frost 63-100% against 40-91%).
+ */
+export const APPRENTICE_T2_FROST_GEAR: Readonly<Record<string, readonly string[]>> = {
+  ...APPRENTICE_T2_GEAR,
+  swamp: ["swamp-charm-t2"],
+};
+
+/**
  * Poison keeps the Forest's Thornwood Rod (OV2-APPRENTICE, PLACEHOLDER, class boss sim): its
  * fast ticks won every T2 boss, where the Bog Censer and the Branching Wand lost the Apex Timberclaw.
  */
 export const APPRENTICE_T2_POISON_GEAR: Readonly<Record<string, readonly string[]>> = {
-  ...APPRENTICE_T2_GEAR,
+  ...APPRENTICE_T2_FROST_GEAR,
   mountain: [],
 };
 
 /** The T2 gear a school's chain wears. */
 export function apprenticeT2Gear(disciplineId: string | null): Readonly<Record<string, readonly string[]>> {
-  return disciplineId === "apprentice-poison" ? APPRENTICE_T2_POISON_GEAR : APPRENTICE_T2_GEAR;
+  if (disciplineId === "apprentice-poison") return APPRENTICE_T2_POISON_GEAR;
+  if (disciplineId === "apprentice-frost") return APPRENTICE_T2_FROST_GEAR;
+  return APPRENTICE_T2_GEAR;
 }
 
 /**
