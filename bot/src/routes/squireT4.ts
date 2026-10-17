@@ -1,7 +1,8 @@
 import { SQUIRE_KIT, absoluteZoneLevel, biomeLevelCap, type KitBiome } from "@mmo-idle/shared";
 import type { Condition, NodeRef, Route, RouteStep } from "../route/types";
 import { SQUIRE_CLASS_ROOT, SQUIRE_LESSON_LEVEL, farmWearingGear } from "./squireT1";
-import { SQUIRE_T3_SPECIALIZATION, squireT3Route } from "./squireT3";
+import { SQUIRE_CHAINS, squireRouteId } from "./squireT2";
+import { squireT3Route } from "./squireT3";
 
 /**
  * The Squire's T4 balance route (`squire-t4`).
@@ -60,10 +61,10 @@ function farmZone(biome: SquireT4Biome): RouteStep[] {
     `farm the tier 4 ${biome}`);
 }
 
-/** A specialization of the picked leaf's discipline (the T3 default when it fits, else the first the kit lists). */
+/** A specialization of the picked leaf's discipline: its chain's (`SQUIRE_CHAINS`), else the first the kit lists. */
 function specializationFor(disciplineId: string): string {
-  const fallback = SQUIRE_KIT.specializations.find((entry) => entry.id === SQUIRE_T3_SPECIALIZATION);
-  if (fallback?.disciplineId === disciplineId) return fallback.id;
+  const chained = SQUIRE_CHAINS[disciplineId]?.specialization;
+  if (chained) return chained;
   const spec = SQUIRE_KIT.specializations.find((entry) => entry.disciplineId === disciplineId);
   if (!spec) throw new Error(`squire-t4: no specialization under "${disciplineId}"`);
   return spec.id;
@@ -75,7 +76,7 @@ export function squireT4Route(leafId: string = SQUIRE_T4_LEAF): Route {
   const t3 = squireT3Route(specializationFor(leaf.disciplineId));
   const bossCleared = (biome: SquireT4Biome): Condition => ({ type: "bossCleared", biomeGroup: biome, tier: 4 });
   return {
-    id: SQUIRE_T4_ID,
+    id: squireRouteId(4, leaf.disciplineId),
     version: "1.1.0",
     classRoot: SQUIRE_CLASS_ROOT,
     description:

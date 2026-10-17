@@ -5,6 +5,8 @@
 import { MOMENTS } from '../moments';
 import { learnedLessons, lessonId, trophyRanks } from '../registry';
 import { SQUIRE_KIT, type SquireFamily } from './kit';
+import { classConfigContextFromState, defaultClassConfig } from '../config';
+import { JUGGERNAUT_HOLD_SLAM_BELOW } from '../configs/squire';
 
 function assert(condition: boolean, message: string): void {
   if (!condition) throw new Error(message);
@@ -81,5 +83,22 @@ assert(
   `a fresh Bulwark knows the slam, Intercept and Last Breath: ${bulwark.map(lessonId).join()}`,
 );
 assert(trophyRanks('cooldown', ['jungle:2', 'jungle:4']).get('squire-relic-jungle') === 3, 'the T4 Jungle boss gives Strangler Vine III');
+
+// The auto default per discipline (§8.13, OV2-SQUIRE): only the Juggernaut holds its slam, on a nearly dead target.
+for (const disciplineId of ['squire-avenger', 'squire-bulwark', 'squire-juggernaut']) {
+  const ctx = classConfigContextFromState({
+    combatArchetype: 'cooldown', biomeLevel: { plains: 12 }, bossesCleared: ['plains:1', 'mountain:1'], disciplineId,
+  })!;
+  const system = defaultClassConfig(ctx).system;
+  assert(system.kind === 'responses', `${disciplineId}: Response rules`);
+  const hold = system.kind === 'responses' ? system.holdSlam : [];
+  if (disciplineId === 'squire-juggernaut') {
+    assert(hold[0]?.id === 'target-low' && hold[0].param === JUGGERNAUT_HOLD_SLAM_BELOW, 'the Juggernaut holds the slam on a low target');
+    assert(hold.some((c) => c.id === 'enemies-near' && !c.not), 'only while another enemy is on it');
+    assert(hold.some((c) => c.id === 'target-elite' && c.not), 'never on an elite or a boss');
+  } else {
+    assert(hold.length === 0, `${disciplineId}: the slam is never held`);
+  }
+}
 
 console.log('squireKit.test.ts: ok');

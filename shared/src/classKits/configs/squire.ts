@@ -3,7 +3,7 @@
  * trigger, with optional extra conditions; hold or step out of ground telegraphs; hold the
  * slam. Defaults from §8.13 (stand-in until the Squire track, C-squire.2).
  */
-import type { ResponseRule, ResponsesConfig } from '../configTypes';
+import type { ConditionRef, ResponseRule, ResponsesConfig } from '../configTypes';
 import { SQUIRE_KIT } from '../squire/kit';
 import {
   conditionProblems,
@@ -30,6 +30,9 @@ export const SQUIRE_RESOLVE = {
   bossCountsAs: 3,
 } as const;
 
+/** The Juggernaut's auto default holds the slam while the target is below this share of its HP. PLACEHOLDER (OV2-SQUIRE). */
+export const JUGGERNAUT_HOLD_SLAM_BELOW = 0.1;
+
 export const SQUIRE_SYSTEM: ClassSystemSpec<ResponsesConfig> = {
   kind: 'responses',
 
@@ -52,7 +55,17 @@ export const SQUIRE_SYSTEM: ClassSystemSpec<ResponsesConfig> = {
     const rules = ownedPieces(SQUIRE_KIT, ctx)
       .filter((piece) => ANSWERS.has(piece.family))
       .map((piece) => ({ pieceId: piece.id, enabled: true, conditions: [] }));
-    return { kind: 'responses', rules, groundTelegraphs: 'step-out', holdSlam: [] };
+    // §8.13: the Juggernaut holds its one huge slam on a nearly dead target, so the slam goes to
+    // the next enemy: only while another enemy is on you, and never on an elite or a boss
+    // (OV2-SQUIRE: held on any low target, a lone low-HP enemy that kept fleeing out of the
+    // swing held the slam for 17 minutes and the bot never left the zone). The Avenger's
+    // "Parry the melee telegraphs, Guard the rest, Bash what can be interrupted" is the runtime's
+    // answer order. The Bulwark's "hold the slam for three or more" is not on: the verified
+    // Bulwark chain passed without it, and a held slam never fires on a lone boss.
+    const holdSlam: ConditionRef[] = ctx.disciplineId === 'squire-juggernaut'
+      ? [{ id: 'target-low', param: JUGGERNAUT_HOLD_SLAM_BELOW }, { id: 'enemies-near', param: 2 }, { id: 'target-elite', not: true }]
+      : [];
+    return { kind: 'responses', rules, groundTelegraphs: 'step-out', holdSlam };
   },
 
   validate(config, ctx) {

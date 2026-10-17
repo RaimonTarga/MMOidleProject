@@ -3,7 +3,7 @@ import { SKILL_TREE, buildSquireBeats, SQUIRE_KIT, type TutorialBeat } from "@mm
 import { ROUTES, isControlledRouteId, requireRoute } from "./index";
 import { SQUIRE_CLASS_ROOT } from "./squireT1";
 import { squireT3Route } from "./squireT3";
-import { SQUIRE_T2_DISCIPLINE } from "./squireT2";
+import { SQUIRE_CHAINS, SQUIRE_T2_DISCIPLINE, squireRouteId } from "./squireT2";
 import { checkFirstBossKit, checkZoneSegments } from "./squireGearChecks";
 import {
   SQUIRE_T4_BIOMES,
@@ -60,6 +60,20 @@ for (const leaf of SQUIRE_KIT.leaves) {
   assert(spec?.disciplineId === leaf.disciplineId, `${leaf.id}: and a specialization of that discipline`);
 }
 assert.throws(() => squireT4Route("squire-nope"), /unknown leaf/);
+
+// The other two discipline chains (OV2-SQUIRE) are registered at every tier, each picking its chain.
+for (const discipline of ["squire-avenger", "squire-juggernaut"]) {
+  const chain = SQUIRE_CHAINS[discipline]!;
+  const name = discipline.replace(/^squire-/, "");
+  for (const tier of [2, 3, 4] as const) {
+    const id = squireRouteId(tier, discipline);
+    assert.equal(id, `squire-t${tier}-${name}`);
+    const chained = ROUTES.get(id);
+    assert(chained, `${id} is registered`);
+    const picks = chained.steps.filter((step) => step.type === "unlockSkill").map((step) => step.skillId);
+    assert.deepEqual(picks, [discipline, chain.specialization, chain.leaf].slice(0, tier - 1), `${id}: the chain's picks`);
+  }
+}
 
 // Then each T4 zone: farmed to the tutorial's level, wearing its gear as it unlocks, then its boss.
 const rest = route.steps.slice(t3.steps.length + 1);
