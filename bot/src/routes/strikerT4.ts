@@ -57,12 +57,16 @@ export function strikerT4FarmLevel(biomeGroup: string): number {
  * the Bastard Sword in the Trench (the Cave's job moved there), Light the
  * Jungle's Twin Fangs. Heavy takes the Scythe at the Wasteland too and keeps it (OV2-STRIKER: in
  * classBossSim the Maul lost the Charnel-Crown Sovereign at 93% boss left, taking 9% of its HP a
- * second from the risen; the Scythe won it 2/2, and the Trench duel 2/2 at 77% HP).
+ * second from the risen; the Scythe won it 2/2, and the Trench duel 2/2 at 77% HP). Before it,
+ * Heavy takes the Jungle's Twin Fangs as Light does, for the nine-guard packs of the T4 Jungle and
+ * Volcanic dungeons: in a slow weapon its combo (two casts, a swing every 1.8 s) death-looped at
+ * the T2 Jungle's; in classBossSim the Fangs won the Jungle, Desert and Volcanic bosses with 98-100%
+ * HP left (the Volcanic in 35 s, the Maul 74 s). PLACEHOLDER.
  */
 const T4_WEAPONS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   "striker-light": { mountain: "striker-maul-t4", jungle: "striker-twin-fangs-t4" },
   "striker-balanced": { mountain: "striker-maul-t4", graveyard: "striker-reapers-scythe-t4", trench: "striker-bastard-sword-t4" },
-  "striker-heavy": { mountain: "striker-maul-t4", graveyard: "striker-reapers-scythe-t4" },
+  "striker-heavy": { mountain: "striker-maul-t4", jungle: "striker-twin-fangs-t4", graveyard: "striker-reapers-scythe-t4" },
 };
 
 /**
