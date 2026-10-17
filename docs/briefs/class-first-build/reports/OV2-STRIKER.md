@@ -1,9 +1,10 @@
 # OV2-STRIKER report
 **Agent:** Claude (Opus 5.5)   **Branch:** rw/ov2-striker   **Last commit:** see `git log -1 rw/ov2-striker` (this report is the last commit)
 
-Lanes 1 (:4311, `gamedb_ov1`, Light) and 2 (:4312, `gamedb_ov2`, Heavy), 100x rewards, auto config,
-fresh characters (`ov1-striker-light`, `ov2-striker-heavy`), each chain resumed with `--fresh=false`
-after every fix. The two new chains beside the verified Balanced one (`striker-t4-read-the-blow`):
+Lanes 1 (:4311, `gamedb_ov1`, Light) and 2 (:4312, `gamedb_ov2`, Heavy), 100x rewards, auto config.
+First runs on fresh characters (`ov1-striker-light`, `ov2-striker-heavy`), resumed with `--fresh=false`
+after every fix; then a clean run of each on a reset lane and a fresh character (`-b`). The two new
+chains beside the verified Balanced one (`striker-t4-read-the-blow`):
 
 | Chain | Route | Discipline, specialization, leaf (PLACEHOLDER picks) |
 |---|---|---|
@@ -16,7 +17,27 @@ first, so `striker-t4-read-the-blow` still replays Iaido).
 
 ## Per chain, per tier (live)
 
-LIVE_TABLE
+Boss kills / attempts, deaths anywhere in the tier, minutes (the first runs' T2 minutes include the
+restarts to load fixes). Every boss fight length is listed in the second table.
+
+| Chain | Run | T1 | T2 | T3 | T4 | Bar |
+|---|---|---|---|---|---|---|
+| Light | first (fixed on the way) | 2/2, 0 deaths, 10 min | 7/10, 4 deaths (3 at the Forest boss, 1 its pack; all before the Grit and shine fixes), 59 min | 7/7, 0, 30 min | 7/7, 0, 32 min | **pass** after the fixes |
+| Light | clean (final code but one fix) | 2/2, 0, 11 min | 7/7, 0, 34 min | 7/9, 2 deaths (the Volcanic boss twice, boss 1% / 8% left: fixed on the spot, then won in 21 s) | (not run: the agent was cut off by the usage limit; see the final merged-tree runs in OVERNIGHT-REPORT.md) | (not run: the agent was cut off by the usage limit; see the final merged-tree runs in OVERNIGHT-REPORT.md) |
+| Heavy | first (fixed on the way) | 2/2, 0, 11 min | 7/8 (one attempt cut by a restart), 12 deaths (Forest pack 5, Jungle pack and the walk there 7; none to a boss), 107 min | 7/7, 1 death (the T3 Jungle pack, before its fix), 36 min | 7/7, 0, 33 min | **pass** after the fixes |
+| Heavy | clean (final code) | 2/2, 0, 11 min | 7/7, 0, 35 min | (not run: the agent was cut off by the usage limit; see the final merged-tree runs in OVERNIGHT-REPORT.md) | (not run: the agent was cut off by the usage limit; see the final merged-tree runs in OVERNIGHT-REPORT.md) | (not run: the agent was cut off by the usage limit; see the final merged-tree runs in OVERNIGHT-REPORT.md) |
+
+Boss fight lengths, first try unless noted:
+
+| Chain, run | T2 | T3 | T4 |
+|---|---|---|---|
+| Light first | Plains 42, Forest 34 (4th), Swamp 30, Cave 29, Jungle 31, Desert 33, Mountain 35 | Mountain 34, Swamp 27, Cave 19, Jungle 36, Desert 36, Tundra 43, Volcanic 31 | Mountain 72, Tundra 38, Jungle 87, Desert 67, Volcanic 80, Wasteland 36, Trench 82 |
+| Light clean | 42, 32, 32, 30, 31, 33, 35 | 20, 28, 20, 37, 29, 43, Volcanic 21 (3rd) | (not run: the agent was cut off by the usage limit; see the final merged-tree runs in OVERNIGHT-REPORT.md) |
+| Heavy first | Plains 31, Forest 34, Swamp 22, Cave 20, Jungle 22, Desert 17, Mountain 21 | 27, 17, 15, 15, 21, 24, 16 | Mountain 58, Tundra 36, Jungle 49, Desert 50, Volcanic 97, Wasteland 48, Trench 37 |
+| Heavy clean | 38, 29, 25, 20, 21, 17, 22 | (not run: the agent was cut off by the usage limit; see the final merged-tree runs in OVERNIGHT-REPORT.md) | (not run: the agent was cut off by the usage limit; see the final merged-tree runs in OVERNIGHT-REPORT.md) |
+
+No stall, no crash, no `dungeon-guard` give-up in either chain after the pack fixes (the clean runs
+cleared every guard phase first try).
 
 ## What was wrong, and what changed
 
@@ -84,9 +105,12 @@ The re-worn pieces are one table per discipline and zone (`T2_REWORN` / `striker
 | `routes/strikerT3.ts` | Heavy vest at the T3 Jungle | Jungle vest | Swamp vest (Bloodless) | a poison death at the T3 Jungle pack; cleared next try |
 | `routes/strikerT4.ts` | Heavy weapon at the T4 Jungle, Wasteland | Maul | Twin Fangs, then the Reaper's Scythe | T4 nine-guard packs; sim Wasteland 0/1 → 2/2 |
 | `routes/strikerT4.ts` | Light's specialization | Thousand Cuts | Afterglow | sim T3/T4 Volcanic 1/2 each → 14/14 T3/T4 bosses |
+| `routes/strikerT3.ts` | Light's weapon at the T3 Volcanic | Twin Fangs | the Cave's Bastard Sword, put back on | the clean run lost the Magma-Salamander twice (boss 1% / 8% left, 65 s); sim with the Sword 3/3 in 20 s at full HP; live next try 21 s |
 
 No shared class number moved (the Balanced chain is untouched by construction: its Order, relic,
-gear and the edge are as they were). Re-simmed anyway on the final code: BALANCED_RESIM.
+gear and the edge are as they were). Re-simmed anyway on the final code (classBossSim, its route's gear
+at each boss): **21/21**, T2 21-29 s (Forest 39% HP left, the rest 50-97%), T3 17-32 s (36-100%), T4
+28-97 s (86-100%), the same fights and gear as before this round.
 
 ## Rules or mechanics changed (for review)
 
