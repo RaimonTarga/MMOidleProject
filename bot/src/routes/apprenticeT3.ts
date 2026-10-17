@@ -62,16 +62,34 @@ export const APPRENTICE_T3_GEAR: Readonly<Record<string, readonly string[]>> = {
 };
 
 /**
+ * The Poison and Frost chains keep the Swamp's charm, Bitter Tonic, as at T2 (OV2-APPRENTICE,
+ * PLACEHOLDER, class boss sim): with it every T3 boss ends with 73-100% HP left (Poison) and
+ * 90-100% (Frost), against 47-90% and 75-91% in the Desert charm. Frost takes the Fire set's
+ * Runestone Staff (a Frost weapon too).
+ */
+export const APPRENTICE_T3_FROST_GEAR: Readonly<Record<string, readonly string[]>> = {
+  mountain: APPRENTICE_T3_GEAR.mountain,
+  swamp: ["swamp-charm-t3"],
+  desert: ["desert-boots-t3"],
+};
+
+/**
  * Poison wears the Mountain set without its staff and takes the Swamp's Bog Censer (OV2-APPRENTICE,
  * PLACEHOLDER, class boss sim: 14/14 T3 fights with 47-90% HP left; the Thornwood Rod lost the
- * Cinder-Shell Magma-Salamander 1 time in 4 and won it once at 17%). Frost wears the Fire set (the
- * Runestone Staff is a Frost weapon too).
+ * Cinder-Shell Magma-Salamander 1 time in 4 and won it once at 17%).
  */
 export const APPRENTICE_T3_POISON_GEAR: Readonly<Record<string, readonly string[]>> = {
-  mountain: ["mountain-vest-t3", "mountain-charm-t3", "mountain-boots-t3"],
-  swamp: ["apprentice-bog-censer-t3"],
-  desert: ["desert-charm-t3", "desert-boots-t3"],
+  mountain: ["mountain-vest-t3", "mountain-boots-t3"],
+  swamp: ["apprentice-bog-censer-t3", "swamp-charm-t3"],
+  desert: ["desert-boots-t3"],
 };
+
+/** The T3 gear a school's chain wears. */
+function apprenticeT3Gear(disciplineId: string): Readonly<Record<string, readonly string[]>> {
+  if (disciplineId === "apprentice-poison") return APPRENTICE_T3_POISON_GEAR;
+  if (disciplineId === "apprentice-frost") return APPRENTICE_T3_FROST_GEAR;
+  return APPRENTICE_T3_GEAR;
+}
 
 /**
  * The rules the T3 bosses are fought with: auto, whose default also places the T3 payoffs
@@ -86,7 +104,7 @@ export function apprenticeT3Route(disciplineId: string = APPRENTICE_T3_DISCIPLIN
   const t2 = apprenticeT2Route(disciplineId);
   const specId = APPRENTICE_T3_SPECIALIZATIONS[disciplineId];
   if (!specId) throw new Error(`unknown Apprentice school "${disciplineId}"`);
-  const gear = disciplineId === "apprentice-poison" ? APPRENTICE_T3_POISON_GEAR : APPRENTICE_T3_GEAR;
+  const gear = apprenticeT3Gear(disciplineId);
   const steps: RouteStep[] = [...t2.steps];
 
   // Wait out the tier-3 promotion on the last T2 zone, then pick the specialization.

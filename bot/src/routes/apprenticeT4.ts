@@ -59,17 +59,35 @@ export const APPRENTICE_T4_GEAR: Readonly<Record<string, readonly string[]>> = {
 };
 
 /**
- * Poison wears the Mountain set without its staff, the Desert's charm and boots, the Volcanic
- * vest, then the Bog Censer where the Swamp's jobs moved, the Wasteland (OV2-APPRENTICE,
- * PLACEHOLDER, class boss sim: the Thornwood Rod lost the Caldera Sovereign's race 3 times in 4,
- * the Bog Censer won it 3/3). Frost wears the Fire set.
+ * The Poison and Frost chains keep Bitter Tonic, which rides the Wasteland's second charm base once
+ * the Swamp retires (`graveyard-charm-t4-b`) (OV2-APPRENTICE, PLACEHOLDER, class boss sim: every T4
+ * boss ends with 76-100% HP left for Poison, 89-100% for Frost). Frost takes the Fire set's staff.
+ */
+export const APPRENTICE_T4_FROST_GEAR: Readonly<Record<string, readonly string[]>> = {
+  mountain: APPRENTICE_T4_GEAR.mountain,
+  desert: ["desert-boots-t4"],
+  volcanic: ["volcanic-vest-t4"],
+  graveyard: ["graveyard-charm-t4-b"],
+};
+
+/**
+ * Poison wears the Mountain set without its staff, the Desert's boots, the Volcanic vest, then
+ * the Bog Censer where the Swamp's jobs moved, the Wasteland (OV2-APPRENTICE, PLACEHOLDER, class
+ * boss sim: the Thornwood Rod lost the Caldera Sovereign's race 3 times in 4, the Bog Censer won it 3/3).
  */
 export const APPRENTICE_T4_POISON_GEAR: Readonly<Record<string, readonly string[]>> = {
-  mountain: ["mountain-vest-t4", "mountain-charm-t4", "mountain-boots-t4"],
-  desert: ["desert-charm-t4", "desert-boots-t4"],
+  mountain: ["mountain-vest-t4", "mountain-boots-t4"],
+  desert: ["desert-boots-t4"],
   volcanic: ["volcanic-vest-t4"],
-  graveyard: ["apprentice-bog-censer-t4"],
+  graveyard: ["apprentice-bog-censer-t4", "graveyard-charm-t4-b"],
 };
+
+/** The T4 gear a school's chain wears. */
+function apprenticeT4Gear(disciplineId: string): Readonly<Record<string, readonly string[]>> {
+  if (disciplineId === "apprentice-poison") return APPRENTICE_T4_POISON_GEAR;
+  if (disciplineId === "apprentice-frost") return APPRENTICE_T4_FROST_GEAR;
+  return APPRENTICE_T4_GEAR;
+}
 
 /**
  * The rules the T4 bosses are fought with: auto, whose default also places the T4 payoffs
@@ -84,7 +102,7 @@ export function apprenticeT4Route(disciplineId: string = APPRENTICE_T3_DISCIPLIN
   const t3 = apprenticeT3Route(disciplineId);
   const leafId = APPRENTICE_T4_LEAVES[disciplineId];
   if (!leafId) throw new Error(`unknown Apprentice school "${disciplineId}"`);
-  const gear = disciplineId === "apprentice-poison" ? APPRENTICE_T4_POISON_GEAR : APPRENTICE_T4_GEAR;
+  const gear = apprenticeT4Gear(disciplineId);
   const steps: RouteStep[] = [...t3.steps];
 
   // Wait out the tier-4 promotion on the last T3 zone, then pick the leaf.
