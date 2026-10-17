@@ -93,7 +93,9 @@ for (const disciplineId of ['squire-avenger', 'squire-bulwark', 'squire-juggerna
   assert(system.kind === 'responses', `${disciplineId}: Response rules`);
   const hold = system.kind === 'responses' ? system.holdSlam : [];
   if (disciplineId === 'squire-juggernaut') {
-    assert(hold.length === 1 && hold[0].id === 'target-low' && hold[0].param === JUGGERNAUT_HOLD_SLAM_BELOW, 'the Juggernaut holds the slam on a low target');
+    assert(hold[0]?.id === 'target-low' && hold[0].param === JUGGERNAUT_HOLD_SLAM_BELOW, 'the Juggernaut holds the slam on a low target');
+    assert(hold.some((c) => c.id === 'enemies-near' && !c.not), 'only while another enemy is on it');
+    assert(hold.some((c) => c.id === 'target-elite' && c.not), 'never on an elite or a boss');
   } else {
     assert(hold.length === 0, `${disciplineId}: the slam is never held`);
   }
