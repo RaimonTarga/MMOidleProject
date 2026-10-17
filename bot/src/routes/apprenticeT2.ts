@@ -88,8 +88,17 @@ export const APPRENTICE_T2_FROST_GEAR: Readonly<Record<string, readonly string[]
  * on it for 7-13 s. Three sigils a hit fill it in three. The Jungle's own vest stays on (its dot
  * resistance meets the Jungle Snake, the guard pack's main damage: 150-225 of each death's last
  * 8 s in the Plains vest, three deaths on a fresh character). Class boss sim: every T2 boss won.
+ *
+ * Then the Swamp's vest instead (Bitter Blood: poison and bleed tick slower), made in the Swamp, and
+ * no Jungle vest (2026-10-17, conductor): `classBossSim --guards` against that pack at the final
+ * run's live levels cleared it in 8 of 8 runs in the Swamp vest, 4-6 of 8 in the Jungle vest; both
+ * vests win all seven T2 bosses with about the same HP left. PLACEHOLDER.
  */
-export const APPRENTICE_T2_POISON_GEAR: Readonly<Record<string, readonly string[]>> = APPRENTICE_T2_FROST_GEAR;
+export const APPRENTICE_T2_POISON_GEAR: Readonly<Record<string, readonly string[]>> = {
+  ...APPRENTICE_T2_FROST_GEAR,
+  swamp: ["swamp-vest-t2", "swamp-charm-t2"],
+  jungle: [],
+};
 
 /** The T2 gear a school's chain wears. */
 export function apprenticeT2Gear(disciplineId: string | null): Readonly<Record<string, readonly string[]>> {
