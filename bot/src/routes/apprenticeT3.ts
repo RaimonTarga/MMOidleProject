@@ -62,13 +62,14 @@ export const APPRENTICE_T3_GEAR: Readonly<Record<string, readonly string[]>> = {
 };
 
 /**
- * Poison wears the Mountain set without its staff and takes the Thornwood Rod where the Forest's
- * jobs moved, the Jungle (OV2-APPRENTICE, PLACEHOLDER, class boss sim: 7/7 T3 bosses). Frost
- * wears the Fire set (the Runestone Staff is a Frost weapon too).
+ * Poison wears the Mountain set without its staff and takes the Swamp's Bog Censer (OV2-APPRENTICE,
+ * PLACEHOLDER, class boss sim: 14/14 T3 fights with 47-90% HP left; the Thornwood Rod lost the
+ * Cinder-Shell Magma-Salamander 1 time in 4 and won it once at 17%). Frost wears the Fire set (the
+ * Runestone Staff is a Frost weapon too).
  */
 export const APPRENTICE_T3_POISON_GEAR: Readonly<Record<string, readonly string[]>> = {
   mountain: ["mountain-vest-t3", "mountain-charm-t3", "mountain-boots-t3"],
-  jungle: ["apprentice-thornwood-rod-t3"],
+  swamp: ["apprentice-bog-censer-t3"],
   desert: ["desert-charm-t3", "desert-boots-t3"],
 };
 
