@@ -14,8 +14,8 @@ import {
   type ClassSystemSpec,
 } from './common';
 
-/** A default placement, kept only under the discipline it names, or under every discipline but those in `except`. */
-type DefaultPlacement = PayoffPlacement & { discipline?: string; except?: readonly string[] };
+/** A default placement, kept only under the disciplines it names, or under every discipline but those in `except`. */
+type DefaultPlacement = PayoffPlacement & { discipline?: readonly string[]; except?: readonly string[] };
 
 /**
  * The default (§9.13), in priority order, filtered to the pieces owned:
@@ -29,6 +29,9 @@ type DefaultPlacement = PayoffPlacement & { discipline?: string; except?: readon
  *   Spread rule goes here too (PLACEHOLDER, OV2-APPRENTICE): while it held the full bar among two or
  *   more enemies a Frost Apprentice never detonated in a pack, and the T2 Jungle's nine guards killed
  *   it three times in seven minutes (live, lane 6) with its damage down to the ticks.
+ * - Poison and Frost: Siphon also answers an enemy in melee with you once your HP is under half
+ *   (PLACEHOLDER, OV2-APPRENTICE): at a quarter it came too late for the T2 Jungle dungeon's guard
+ *   pack, three guards taking a full bar of HP in about seven seconds (live, both chains).
  * - Every later lesson on the moment it answers; Cinderfall (the Detonate sidegrade) takes a full
  *   bar among three or more enemies, Spore Burst (the Spread sidegrade) a target about to die,
  *   Transference a debuff landing on you once Recoil has answered it. Signal Fire and the
@@ -41,8 +44,9 @@ const DEFAULTS: readonly DefaultPlacement[] = [
   { moment: 'target-full', pieceId: 'apprentice-cold-snap', conditions: [{ id: 'enemies-near', param: 3 }] },
   { moment: 'target-full', pieceId: 'apprentice-spread', conditions: [{ id: 'enemies-near', param: 2 }], except: ['apprentice-fire', 'apprentice-frost'] },
   { moment: 'target-full', pieceId: 'apprentice-detonate', conditions: [] },
-  { moment: 'target-frozen', pieceId: 'apprentice-detonate', conditions: [], discipline: 'apprentice-frost' },
+  { moment: 'target-frozen', pieceId: 'apprentice-detonate', conditions: [], discipline: ['apprentice-frost'] },
   { moment: 'enemy-winds-up', pieceId: 'apprentice-seize', conditions: [] },
+  { moment: 'touched', pieceId: 'apprentice-siphon', conditions: [{ id: 'hp-low', param: 0.5 }], discipline: ['apprentice-poison', 'apprentice-frost'] },
   { moment: 'hp-low', pieceId: 'apprentice-siphon', conditions: [] },
   { moment: 'hp-low', pieceId: 'apprentice-wither', conditions: [] },
   { moment: 'target-low', pieceId: 'apprentice-spore-burst', conditions: [{ id: 'enemies-near', param: 3 }] },
@@ -80,7 +84,7 @@ export const APPRENTICE_SYSTEM: ClassSystemSpec<PayoffsConfig> = {
       kind: 'payoffs',
       placements: DEFAULTS
         .filter((entry) => ctx.pieceRanks.has(entry.pieceId)
-          && (!entry.discipline || entry.discipline === ctx.disciplineId)
+          && (!entry.discipline || (ctx.disciplineId !== null && entry.discipline.includes(ctx.disciplineId)))
           && !(ctx.disciplineId && entry.except?.includes(ctx.disciplineId)))
         .map(({ moment, pieceId, conditions }) => ({ moment, pieceId, conditions: [...conditions] })),
     };
