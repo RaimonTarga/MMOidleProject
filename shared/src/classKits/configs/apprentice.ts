@@ -28,7 +28,9 @@ type DefaultPlacement = PayoffPlacement & { discipline?: readonly string[]; exce
  *   spent the bar every cooldown through a boss's last third, so Detonate stopped and the T4 Caldera
  *   Sovereign's race was lost 3 times in 4 (sim); on your HP it is the floor when the fight turns.
  * - Fire: full → Detonate (the T1 Spread rule goes, so a full bar always sets the chain off), shell up → Fuse.
- * - Frost: winds up → Seize, frozen → Detonate (the Shatter), three or more near → Cold Snap. The T1
+ * - Frost: winds up → Seize, frozen → Detonate (the Shatter), three or more near → Cold Snap (on that
+ *   moment, not on a full bar among three: OV2-APPRENTICE, it fired 0 times a minute in the T2 Jungle
+ *   guard pack, where the full bar rarely met three enemies near). The T1
  *   Spread rule goes here too (PLACEHOLDER, OV2-APPRENTICE): while it held the full bar among two or
  *   more enemies a Frost Apprentice never detonated in a pack, and the T2 Jungle's nine guards killed
  *   it three times in seven minutes (live, lane 6) with its damage down to the ticks.
@@ -44,12 +46,12 @@ type DefaultPlacement = PayoffPlacement & { discipline?: readonly string[]; exce
  */
 const DEFAULTS: readonly DefaultPlacement[] = [
   { moment: 'target-full', pieceId: 'apprentice-cinderfall', conditions: [{ id: 'enemies-near', param: 3 }] },
-  { moment: 'target-full', pieceId: 'apprentice-cold-snap', conditions: [{ id: 'enemies-near', param: 3 }] },
   { moment: 'target-full', pieceId: 'apprentice-spread', conditions: [{ id: 'enemies-near', param: 2 }], except: ['apprentice-fire', 'apprentice-frost'] },
   { moment: 'target-full', pieceId: 'apprentice-detonate', conditions: [{ id: 'enemies-near', param: 2, not: true }], discipline: ['apprentice-poison'] },
   { moment: 'target-full', pieceId: 'apprentice-detonate', conditions: [], except: ['apprentice-poison'] },
   { moment: 'target-frozen', pieceId: 'apprentice-detonate', conditions: [], discipline: ['apprentice-frost'] },
   { moment: 'enemy-winds-up', pieceId: 'apprentice-seize', conditions: [] },
+  { moment: 'enemies-near', pieceId: 'apprentice-cold-snap', conditions: [] },
   { moment: 'touched', pieceId: 'apprentice-siphon', conditions: [{ id: 'hp-low', param: 0.5 }], discipline: ['apprentice-poison', 'apprentice-frost'] },
   { moment: 'hp-low', pieceId: 'apprentice-siphon', conditions: [] },
   { moment: 'hp-low', pieceId: 'apprentice-wither', conditions: [] },
