@@ -95,8 +95,36 @@ function defaultChoice(owned: readonly StrikerPiece[], disciplineId: string | nu
     const first = [...control.slice(0, 1), ...attack.slice(0, 1)];
     return [...casts(opener, windup), ...first, ...damage, ...setups.filter((piece) => !first.includes(piece))];
   }
-  if (disciplineId === 'striker-heavy') return [...casts(windup, opener), ...setups, ...damage];
+  if (disciplineId === 'striker-heavy') {
+    // Heavy leans to the wind-up (§12.5) and fields no opener: soft beats build Momentum and
+    // setups multiply it, so a combo of casts and setups alone (Focus, Concuss, Coil) reached the
+    // finisher with none. Coil, one stop, then a damage technique for the soft beat (laid out
+    // first, `defaults`). PLACEHOLDER (OV2-STRIKER): in classBossSim the old default lost the T2
+    // Forest, Desert and Mountain bosses (boss 17-31% left); Rend, Concuss, Coil won all three.
+    return [...casts(windup, undefined), ...setups.slice(0, 1), ...damage, ...setups.slice(1)];
+  }
   return [...casts(windup, opener), ...setups.slice(0, 1), ...damage, ...setups.slice(1)];
+}
+
+/**
+ * The default relic by discipline, best first (§12.13: Heavy "a weight relic"); an unlisted or
+ * unowned trophy comes after, newest first. Light, Balanced and T1 keep the newest trophy.
+ * PLACEHOLDER (OV2-STRIKER, classBossSim, T2 Heavy): Skyfall's doubled blow won the Desert boss
+ * where Pounce (the newest there; no leap against a boss in reach) lost at 12% boss left, and Wide
+ * Arc (a spark: no second enemy beside a lone boss) lost the Forest boss.
+ */
+const DEFAULT_RELIC_RANK: Readonly<Record<string, readonly string[]>> = {
+  'striker-heavy': [
+    'striker-relic-mountain', 'striker-relic-trench', 'striker-relic-swamp', 'striker-relic-cave',
+    'striker-relic-desert', 'striker-relic-volcanic', 'striker-relic-jungle',
+  ],
+};
+
+function defaultRelics(ctx: ClassConfigContext): string[] {
+  const rank = ctx.disciplineId ? DEFAULT_RELIC_RANK[ctx.disciplineId] : undefined;
+  if (!rank) return [...ctx.trophiesNewestFirst];
+  const first = rank.filter((id) => ctx.trophyRanks.has(id));
+  return [...first, ...ctx.trophiesNewestFirst.filter((id) => !first.includes(id))];
 }
 
 export const STRIKER_SYSTEM: ClassSystemSpec<OrderConfig> = {
@@ -122,10 +150,16 @@ export const STRIKER_SYSTEM: ClassSystemSpec<OrderConfig> = {
     const rest = chosen.filter((piece) => !piece.cast);
     const setups = rest.filter((piece) => piece.family !== 'damage');
     const damage = rest.filter((piece) => piece.family === 'damage');
-    setups.forEach((piece, i) => { beats[free[i]] = piece.id; });
-    damage.forEach((piece, i) => { beats[free[free.length - damage.length + i]] = piece.id; });
+    // Heavy: the soft beats first and the setups after them, so each setup multiplies the
+    // Momentum already built (§12.5); everyone else, setups early and damage late.
+    const early = ctx.disciplineId === 'striker-heavy' ? damage : setups;
+    const late = ctx.disciplineId === 'striker-heavy' ? setups : damage;
+    early.forEach((piece, i) => { beats[free[i]] = piece.id; });
+    late.forEach((piece, i) => { beats[free[free.length - late.length + i]] = piece.id; });
     return { kind: 'order', beats, holdFinisher: [] };
   },
+
+  defaultRelics,
 
   validate(config, ctx: ClassConfigContext) {
     const problems: string[] = [];
