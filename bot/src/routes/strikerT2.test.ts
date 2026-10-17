@@ -15,10 +15,10 @@ import {
   STRIKER_T2_LATE_SEALS,
   STRIKER_T2_LIGHT_ID,
   STRIKER_T2_ROUTE_IDS,
-  STRIKER_T2_ZONE_CHARM,
   STRIKER_T2_ZONES,
   strikerT2FarmLevel,
   strikerT2Route,
+  strikerT2ZoneCharm,
   strikerT2ZoneGear,
 } from "./strikerT2";
 
@@ -87,8 +87,8 @@ for (const [disciplineId, id] of Object.entries(STRIKER_T2_ROUTE_IDS)) {
     const ids = strikerT2ZoneGear(disciplineId, biomeGroup);
     let last = 0;
     for (const itemId of ids) {
-      // A charm put back on (STRIKER_T2_ZONE_CHARM) was crafted in an earlier zone of the route.
-      if (STRIKER_T2_ZONE_CHARM[biomeGroup] === itemId) {
+      // A charm put back on (strikerT2ZoneCharm) was crafted in an earlier zone of the route.
+      if (strikerT2ZoneCharm(biomeGroup, disciplineId) === itemId) {
         assert(wornBefore.has(itemId), `${itemId}, put back on in ${biomeGroup}, was crafted earlier`);
         continue;
       }

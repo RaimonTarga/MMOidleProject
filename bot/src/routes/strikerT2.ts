@@ -67,8 +67,25 @@ function autoOrder(disciplineId: string): ClassConfig {
  */
 export const STRIKER_T2_ZONE_CHARM: Readonly<Record<string, string>> = { jungle: "plains-charm-t2" };
 
-export function strikerT2ZoneSet(biomeGroup: string): string[] {
-  const charm = STRIKER_T2_ZONE_CHARM[biomeGroup] ?? `${biomeGroup}-charm-t${TIER}`;
+/**
+ * Light and Heavy put Grit back on at the Forest as well: both death-looped at the T2 Forest
+ * dungeon's twelve-guard pack in the Forest's own charm (Rhythm), four attackers of 14 at a time,
+ * and the Light lost the Apex Timberclaw after it (boss 23% left). In classBossSim Grit took the
+ * Timberclaw with 61-68% HP left where Rhythm left 37-43%. Balanced keeps Rhythm (it passed live).
+ * PLACEHOLDER (OV2-STRIKER, lanes 1-2, 2026-10-17).
+ */
+const STRIKER_T2_DISCIPLINE_CHARM: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  "striker-light": { forest: "plains-charm-t2" },
+  "striker-heavy": { forest: "plains-charm-t2" },
+};
+
+/** The charm worn at a T2 zone when it is not the zone's own (crafted in an earlier zone), if any. */
+export function strikerT2ZoneCharm(biomeGroup: string, disciplineId?: string): string | undefined {
+  return (disciplineId ? STRIKER_T2_DISCIPLINE_CHARM[disciplineId]?.[biomeGroup] : undefined) ?? STRIKER_T2_ZONE_CHARM[biomeGroup];
+}
+
+export function strikerT2ZoneSet(biomeGroup: string, disciplineId?: string): string[] {
+  const charm = strikerT2ZoneCharm(biomeGroup, disciplineId) ?? `${biomeGroup}-charm-t${TIER}`;
   return [`${biomeGroup}-vest-t${TIER}`, charm, `${biomeGroup}-boots-t${TIER}`].filter((id) => RECIPE_DATABASE.has(id));
 }
 
@@ -97,7 +114,7 @@ export function unlessDone(route: Route, what: string): RouteStep {
 /** What the arm wears from this T2 zone, weapon first (its recipe opens first). */
 export function strikerT2ZoneGear(disciplineId: string, biomeGroup: string): string[] {
   const weapon = T2_WEAPONS[disciplineId]?.[biomeGroup];
-  return [...(weapon ? [weapon] : []), ...strikerT2ZoneSet(biomeGroup)];
+  return [...(weapon ? [weapon] : []), ...strikerT2ZoneSet(biomeGroup, disciplineId)];
 }
 
 /**
@@ -138,7 +155,7 @@ export function strikerT2Route(disciplineId = "striker-light"): Route {
   }
   // A late seal is fought in its own zone's set again (crafted in the zone's turn).
   for (const biomeGroup of STRIKER_T2_LATE_SEALS) {
-    steps.push({ type: "equip", definitionIds: strikerT2ZoneSet(biomeGroup), label: `wear the ${biomeGroup} T2 set` });
+    steps.push({ type: "equip", definitionIds: strikerT2ZoneSet(biomeGroup, disciplineId), label: `wear the ${biomeGroup} T2 set` });
     steps.push({ type: "attemptBoss", biomeGroup, tier: TIER });
   }
 
