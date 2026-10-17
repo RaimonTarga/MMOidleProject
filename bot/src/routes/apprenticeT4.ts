@@ -71,16 +71,11 @@ export const APPRENTICE_T4_FROST_GEAR: Readonly<Record<string, readonly string[]
 };
 
 /**
- * Poison wears the Mountain set without its staff, the Desert's boots, the Volcanic vest, then
- * the Bog Censer where the Swamp's jobs moved, the Wasteland (OV2-APPRENTICE, PLACEHOLDER, class
- * boss sim: the Thornwood Rod lost the Caldera Sovereign's race 3 times in 4, the Bog Censer won it 3/3).
+ * Poison wears the Frost set, Runestone Staff included, as at T2 and T3 (OV2-APPRENTICE,
+ * PLACEHOLDER, class boss sim: every T4 boss won with 74-100% HP left, dps at or above the Bog
+ * Censer's on six of seven; the Thornwood Rod had lost the Caldera Sovereign's race 3 times in 4).
  */
-export const APPRENTICE_T4_POISON_GEAR: Readonly<Record<string, readonly string[]>> = {
-  mountain: ["mountain-vest-t4", "mountain-boots-t4"],
-  desert: ["desert-boots-t4"],
-  volcanic: ["volcanic-vest-t4"],
-  graveyard: ["apprentice-bog-censer-t4", "graveyard-charm-t4-b"],
-};
+export const APPRENTICE_T4_POISON_GEAR: Readonly<Record<string, readonly string[]>> = APPRENTICE_T4_FROST_GEAR;
 
 /** The T4 gear a school's chain wears. */
 function apprenticeT4Gear(disciplineId: string): Readonly<Record<string, readonly string[]>> {

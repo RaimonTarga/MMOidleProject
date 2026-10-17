@@ -74,15 +74,12 @@ export const APPRENTICE_T3_FROST_GEAR: Readonly<Record<string, readonly string[]
 };
 
 /**
- * Poison wears the Mountain set without its staff and takes the Swamp's Bog Censer (OV2-APPRENTICE,
- * PLACEHOLDER, class boss sim: 14/14 T3 fights with 47-90% HP left; the Thornwood Rod lost the
- * Cinder-Shell Magma-Salamander 1 time in 4 and won it once at 17%).
+ * Poison wears the Frost set, Runestone Staff included, as at T2 (OV2-APPRENTICE, PLACEHOLDER): the
+ * Jungle's guard pack must fall in one life, and in the class boss sim the staff out-damages the
+ * Bog Censer at every T3 boss (dps 333-488 against 150-374, all won with 78-100% HP left). The
+ * Thornwood Rod had lost the Cinder-Shell Magma-Salamander 1 time in 4.
  */
-export const APPRENTICE_T3_POISON_GEAR: Readonly<Record<string, readonly string[]>> = {
-  mountain: ["mountain-vest-t3", "mountain-boots-t3"],
-  swamp: ["apprentice-bog-censer-t3", "swamp-charm-t3"],
-  desert: ["desert-boots-t3"],
-};
+export const APPRENTICE_T3_POISON_GEAR: Readonly<Record<string, readonly string[]>> = APPRENTICE_T3_FROST_GEAR;
 
 /** The T3 gear a school's chain wears. */
 function apprenticeT3Gear(disciplineId: string): Readonly<Record<string, readonly string[]>> {

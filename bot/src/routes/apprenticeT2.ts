@@ -85,17 +85,14 @@ export const APPRENTICE_T2_FROST_GEAR: Readonly<Record<string, readonly string[]
 };
 
 /**
- * Poison takes the Swamp's Bog Censer (OV2-APPRENTICE, PLACEHOLDER), its weapon at T3 and T4 too:
- * its bigger Siphon with Bitter Tonic is the sustain the Jungle's guard pack asks for, where the
- * Thornwood Rod died three times in eight minutes (live, in the Plains vest and the Swamp charm).
- * Class boss sim in that set: every T2 boss won with 35-88% HP left (the Thornwood Rod 32-99%).
+ * Poison wears the Frost set, Runestone Staff included (OV2-APPRENTICE, PLACEHOLDER): the Jungle
+ * dungeon's guard pack has to fall in one life (the walk back from the sanctuary outlasts the 90 s
+ * before the guard reforms), and the one-sigil-a-hit weapons fill Poison's larger bar too slowly:
+ * the Thornwood Rod and the Bog Censer each died there again and again (live, lane 5), three guards
+ * on it for 7-13 s. Three sigils a hit fill it in three. Class boss sim in this set: every T2 boss
+ * won with 51-95% HP left.
  */
-export const APPRENTICE_T2_POISON_GEAR: Readonly<Record<string, readonly string[]>> = {
-  ...APPRENTICE_T2_FROST_GEAR,
-  forest: ["forest-vest-t2", "forest-charm-t2", "forest-boots-t2"],
-  mountain: [],
-  swamp: ["apprentice-bog-censer-t2", "swamp-charm-t2"],
-};
+export const APPRENTICE_T2_POISON_GEAR: Readonly<Record<string, readonly string[]>> = APPRENTICE_T2_FROST_GEAR;
 
 /** The T2 gear a school's chain wears. */
 export function apprenticeT2Gear(disciplineId: string | null): Readonly<Record<string, readonly string[]>> {
