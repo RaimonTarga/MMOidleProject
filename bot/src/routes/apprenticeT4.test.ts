@@ -10,6 +10,7 @@ import {
   emptyEquipment,
   globalMastery,
   resolveBeatIndex,
+  RECIPE_DATABASE,
   resolveClassConfig,
   SKILL_TREE,
   tutorialScriptWithoutGear,
@@ -18,6 +19,7 @@ import {
 } from "@mmo-idle/shared";
 import { isClassAgnosticRouteId, isControlledRouteId, requireRoute, ROUTES } from "./index";
 import { APPRENTICE_CLASS_ROOT } from "./apprenticeT1";
+import { apprenticeT2Route } from "./apprenticeT2";
 import { APPRENTICE_T3_DISCIPLINE, APPRENTICE_T3_SPECIALIZATION, APPRENTICE_T3_ZONES, apprenticeT3Route } from "./apprenticeT3";
 import { APPRENTICE_T4_ID, APPRENTICE_T4_LEAF, APPRENTICE_T4_ZONES, apprenticeT4Payoffs, apprenticeT4Route } from "./apprenticeT4";
 
@@ -158,5 +160,32 @@ for (const { biomeGroup, pieceId, rank } of APPRENTICE_T4_ZONES) {
   state.bossesCleared.push(bossClearKey(biomeGroup, 4));
 }
 assert.equal(current(), "done", "the guide is finished after the Trench boss");
+
+// The other two school chains (OV2): each tier's route registered under its suffix, each
+// replaying the tier before, each pick opening under the school, every worn piece a recipe.
+for (const school of ["apprentice-poison", "apprentice-frost"]) {
+  const suffix = school.replace("apprentice-", "-");
+  const chain = [apprenticeT2Route(school), apprenticeT3Route(school), apprenticeT4Route(school)];
+  chain.forEach((tierRoute, index) => {
+    const id = `apprentice-t${index + 2}${suffix}`;
+    assert.equal(tierRoute.id, id);
+    assert.deepEqual(ROUTES.get(id), tierRoute, `${id} is registered`);
+    assert.equal(isControlledRouteId(id), false, `${id}: not controlled until it has run live`);
+    if (index > 0) assert.deepEqual(tierRoute.steps.slice(0, chain[index - 1].steps.length), chain[index - 1].steps, `${id}: the tier before first`);
+  });
+  const picks = chain[2].steps.flatMap((step) => (step.type === "unlockSkill" ? [step.skillId] : []));
+  assert.equal(picks[0], school, `${school}: the school is the first pick`);
+  const [spec, schoolLeaf] = picks.slice(1);
+  assert.equal(APPRENTICE_KIT.specializations.find((s) => s.id === spec)?.disciplineId, school, `${spec} is under ${school}`);
+  assert.equal(APPRENTICE_KIT.leaves.find((l) => l.id === schoolLeaf)?.disciplineId, school, `${schoolLeaf} is under ${school}`);
+  const player = {
+    usesSkills: { unlockedSkills: [APPRENTICE_CLASS_ROOT, school, spec], selectedClass: APPRENTICE_CLASS_ROOT, disciplineId: school },
+    tracksProgression: { skillPoints: 1, currentSkillTier: SKILL_TREE.get(schoolLeaf)?.tier ?? 0 },
+  };
+  assert(canUnlockSkill(player, schoolLeaf).ok, `${schoolLeaf} opens under ${school}`);
+  for (const step of chain[2].steps) {
+    if (step.type === "craft") for (const recipeId of step.recipeIds) assert(RECIPE_DATABASE.has(recipeId), `${school}: ${recipeId} is a recipe`);
+  }
+}
 
 console.log("apprenticeT4: ok");

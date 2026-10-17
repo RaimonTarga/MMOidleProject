@@ -1,7 +1,14 @@
-import { biomeLevelCap, type ClassConfig } from "@mmo-idle/shared";
+import { APPRENTICE_KIT, biomeLevelCap, type ClassConfig } from "@mmo-idle/shared";
 import { allOf, type NodeRef, type Route, type RouteStep } from "../route/types";
 import { APPRENTICE_CLASS_ROOT, wear } from "./apprenticeT1";
-import { APPRENTICE_T2_DISCIPLINE, APPRENTICE_T2_ZONES, apprenticeT2Payoffs, apprenticeT2Route } from "./apprenticeT2";
+import {
+  APPRENTICE_DISCIPLINE_NAME,
+  APPRENTICE_T2_DISCIPLINE,
+  APPRENTICE_T2_ZONES,
+  apprenticeRouteId,
+  apprenticeT2Payoffs,
+  apprenticeT2Route,
+} from "./apprenticeT2";
 
 /**
  * The Apprentice's T3 route (T3-W2, bible §9.6, §9.16): the T2 route with a school picked, the
@@ -15,6 +22,17 @@ export const APPRENTICE_T3_ID = "apprentice-t3";
 export const APPRENTICE_T3_DISCIPLINE = APPRENTICE_T2_DISCIPLINE;
 export const APPRENTICE_T3_SPECIALIZATION = "apprentice-afterburn";
 
+/**
+ * Each school's T3 pick (OV2-APPRENTICE, PLACEHOLDER, class boss sim): Wasting keeps Wither's
+ * weakening on every full enemy, the plague as a defense where Poison is weakest (a boss alone);
+ * Ice Tomb holds a frozen or brittle boss until the shatter (the bible's boss specialization).
+ */
+export const APPRENTICE_T3_SPECIALIZATIONS: Readonly<Record<string, string>> = {
+  "apprentice-fire": APPRENTICE_T3_SPECIALIZATION,
+  "apprentice-poison": "apprentice-wasting",
+  "apprentice-frost": "apprentice-ice-tomb",
+};
+
 /** The T3 zones with the lesson each teaches, in the tutorial's order (`shared/.../scripts/apprentice.ts`). */
 export const APPRENTICE_T3_ZONES: readonly { biomeGroup: string; lesson: string }[] = [
   { biomeGroup: "mountain", lesson: "apprentice-seize-2" },
@@ -25,6 +43,10 @@ export const APPRENTICE_T3_ZONES: readonly { biomeGroup: string; lesson: string 
   { biomeGroup: "tundra", lesson: "apprentice-melt" },
   { biomeGroup: "volcanic", lesson: "apprentice-cinderfall" },
 ];
+
+function specName(specId: string): string {
+  return APPRENTICE_KIT.specializations.find((spec) => spec.id === specId)?.name ?? specId;
+}
 
 function zone(biomeGroup: string): NodeRef {
   return { kind: "biome", biomeGroup, tier: 3, pick: "uncleared" };
@@ -40,6 +62,17 @@ export const APPRENTICE_T3_GEAR: Readonly<Record<string, readonly string[]>> = {
 };
 
 /**
+ * Poison wears the Mountain set without its staff and takes the Thornwood Rod where the Forest's
+ * jobs moved, the Jungle (OV2-APPRENTICE, PLACEHOLDER, class boss sim: 7/7 T3 bosses). Frost
+ * wears the Fire set (the Runestone Staff is a Frost weapon too).
+ */
+export const APPRENTICE_T3_POISON_GEAR: Readonly<Record<string, readonly string[]>> = {
+  mountain: ["mountain-vest-t3", "mountain-charm-t3", "mountain-boots-t3"],
+  jungle: ["apprentice-thornwood-rod-t3"],
+  desert: ["desert-charm-t3", "desert-boots-t3"],
+};
+
+/**
  * The rules the T3 bosses are fought with: auto, whose default also places the T3 payoffs
  * (Cinderfall on a full bar among three or more enemies, Spore Burst on a target about to die,
  * Melt on the Chill; Signal Fire is a rider on Detonate and needs no placement).
@@ -48,8 +81,11 @@ export function apprenticeT3Payoffs(): ClassConfig {
   return apprenticeT2Payoffs();
 }
 
-export function apprenticeT3Route(): Route {
-  const t2 = apprenticeT2Route(APPRENTICE_T3_DISCIPLINE);
+export function apprenticeT3Route(disciplineId: string = APPRENTICE_T3_DISCIPLINE): Route {
+  const t2 = apprenticeT2Route(disciplineId);
+  const specId = APPRENTICE_T3_SPECIALIZATIONS[disciplineId];
+  if (!specId) throw new Error(`unknown Apprentice school "${disciplineId}"`);
+  const gear = disciplineId === "apprentice-poison" ? APPRENTICE_T3_POISON_GEAR : APPRENTICE_T3_GEAR;
   const steps: RouteStep[] = [...t2.steps];
 
   // Wait out the tier-3 promotion on the last T2 zone, then pick the specialization.
@@ -60,13 +96,13 @@ export function apprenticeT3Route(): Route {
     until: { type: "playerTierAtLeast", tier: 3 },
     label: "wait for the tier-3 promotion",
   });
-  steps.push({ type: "unlockSkill", skillId: APPRENTICE_T3_SPECIALIZATION, label: "pick the specialization" });
+  steps.push({ type: "unlockSkill", skillId: specId, label: "pick the specialization" });
   steps.push({ type: "milestone", id: "specialization-picked" });
 
   for (const { biomeGroup } of APPRENTICE_T3_ZONES) {
     const at = zone(biomeGroup);
     steps.push({ type: "travel", to: at });
-    steps.push(...wear(at, APPRENTICE_T3_GEAR[biomeGroup] ?? []));
+    steps.push(...wear(at, gear[biomeGroup] ?? []));
     steps.push({ type: "farm", at, until: { type: "biomeLevelAtLeast", biomeGroup, level: biomeLevelCap(3, biomeGroup) } });
   }
   // Every T3 lesson is learned now; auto places them all.
@@ -83,11 +119,11 @@ export function apprenticeT3Route(): Route {
   }
 
   return {
-    id: APPRENTICE_T3_ID,
+    id: apprenticeRouteId(3, disciplineId),
     version: "1.0.0",
     classRoot: APPRENTICE_CLASS_ROOT,
     description:
-      "Apprentice T3: the T2 route with the Fire school, the tier-3 promotion, the Afterburn " +
+      `Apprentice T3: the T2 route with the ${APPRENTICE_DISCIPLINE_NAME[disciplineId]} school, the tier-3 promotion, the ${specName(specId)} ` +
       "specialization, the seven T3 zones to their cap (wearing each zone's gear), auto Payoff " +
       "rules, and the seven T3 bosses.",
     steps,
