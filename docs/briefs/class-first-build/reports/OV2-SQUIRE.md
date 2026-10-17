@@ -26,7 +26,12 @@ route, minutes (first boss of the tier's farm to its last boss). No `dungeon-gua
 | Avenger (`ov3-squire-avenger`; resumed once at minute 6, before any boss, for the Avenger numbers) | 2/2 (31 s, 45 s), 16 min | 7/7 (22-55 s), 31 min | 7/7 (22-60 s), 33 min | 7/7 (36-86 s), 39 min | 0 | 119 | **pass** |
 | Juggernaut (`ov4-squire-juggernaut`; resumed in T1 twice for the route's spec and the slam hold, then once at the T3 stall) | 2/2 (31 s, 51 s), 19 min | 7/7 (17-78 s), 35 min | 7/8 (33-87 s; the first Mountain attempt "unreachable", the hold stall in §3), ~70 min with the stall and the walk back after the resume | 7/7 (29-145 s; Desert 145 s), 42 min | 0 | ~167 | pass after the fix (§3) |
 
-**Clean runs** (lanes reset, fresh characters, final code, no resume): in progress (see below).
+**Clean runs** (lane reset, fresh character, final code, no resume):
+
+| Chain (account) | T1 | T2 | T3 | T4 | Deaths | Minutes | Bar |
+|---|---|---|---|---|---|---|---|
+| Avenger (`ov3-squire-avenger-clean`) | 2/2 (30 s, 41 s), 16 min | 7/7 (22-52 s), 31 min | 7/7 (26-62 s), 34 min | 7/7 (31-89 s), 37 min | 0 | 119 | **pass**, every boss first try, 23/23 guard phases cleared |
+JG_CLEAN_ROW
 
 ## Class boss sim (`server/bench/classBossSim.ts`, final code)
 
