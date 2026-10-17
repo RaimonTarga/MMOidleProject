@@ -104,11 +104,14 @@ export const SLINGER_T2_GUNS: readonly DisciplineGun[] = [
  * Jungle dungeon's nine guards (poison: 152 of 347 damage in the last death's window), and the sim's
  * Jungle boss went 2/3 -> 3/3 in it (Desert 3/3 either way). Trickshot too (2026-10-17): the final
  * merged-tree Trickshot died seven times to the same pack (Vine Chameleon poison) and gave up on its
- * guards twice before a third attempt went through. PLACEHOLDER pick.
+ * guards twice before a third attempt went through; with the vest its re-run took the T2 Jungle first
+ * try with no death. The Gunslinger as well: its final run died four times to the pack and needed three
+ * attempts. PLACEHOLDER pick.
  */
 export const SLINGER_T2_DISCIPLINE_PIECES: readonly DisciplineGun[] = [
   { discipline: "siege", zone: "jungle", id: "jungle-vest-t2" },
   { discipline: "trickshot", zone: "jungle", id: "jungle-vest-t2" },
+  { discipline: "gunslinger", zone: "jungle", id: "jungle-vest-t2" },
 ];
 
 /** How far the route farms a T2 zone: the tier-2 cap, as the guide does. */
