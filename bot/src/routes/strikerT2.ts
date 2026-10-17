@@ -68,15 +68,17 @@ function autoOrder(disciplineId: string): ClassConfig {
 export const STRIKER_T2_ZONE_CHARM: Readonly<Record<string, string>> = { jungle: "plains-charm-t2" };
 
 /**
- * Light and Heavy put Grit back on at the Forest as well: both death-looped at the T2 Forest
- * dungeon's twelve-guard pack in the Forest's own charm (Rhythm), four attackers of 14 at a time,
- * and the Light lost the Apex Timberclaw after it (boss 23% left). In classBossSim Grit took the
- * Timberclaw with 61-68% HP left where Rhythm left 37-43%. Balanced keeps Rhythm (it passed live).
- * PLACEHOLDER (OV2-STRIKER, lanes 1-2, 2026-10-17).
+ * Light and Heavy put Grit back on at the Forest, the Cave and the Desert as well: both death-looped
+ * at the T2 Forest dungeon's twelve-guard pack in the Forest's own charm (Rhythm), four attackers of
+ * 14 at a time, and the Light lost the Apex Timberclaw after it (boss 23% left). In classBossSim Grit
+ * took the Timberclaw with 61-68% HP left where Rhythm left 37-43%, the Cave boss with 39-65% where
+ * Deep Breath left 17-45%, and Light's Desert boss with 60% where Shake Off left 16% (the Swamp's
+ * Antidote stays: Grit left 9-38% there against 66-79%). Balanced keeps each zone's charm (it passed
+ * live). PLACEHOLDER (OV2-STRIKER, lanes 1-2, 2026-10-17).
  */
 const STRIKER_T2_DISCIPLINE_CHARM: Readonly<Record<string, Readonly<Record<string, string>>>> = {
-  "striker-light": { forest: "plains-charm-t2" },
-  "striker-heavy": { forest: "plains-charm-t2" },
+  "striker-light": { forest: "plains-charm-t2", cave: "plains-charm-t2", desert: "plains-charm-t2" },
+  "striker-heavy": { forest: "plains-charm-t2", cave: "plains-charm-t2", desert: "plains-charm-t2" },
 };
 
 /** The charm worn at a T2 zone when it is not the zone's own (crafted in an earlier zone), if any. */
