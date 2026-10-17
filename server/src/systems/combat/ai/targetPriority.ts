@@ -127,6 +127,9 @@ const NEAREST_COMMIT_FRAC_SQ = 0.64;
 const PATH_LOSS_GRACE_MS = 1000;
 const lastPathOk = new WeakMap<PlayerEntity, { id: string; at: number }>();
 
+/** A returning monster this close to its post or spawn is home (`updatePacks` uses the same 28). */
+const HOME_RADIUS = 28;
+
 /** A glancing 1-damage hit is technically legal, but almost never a good target. */
 const GLANCE_PENALTY = 0.1;
 
@@ -361,8 +364,12 @@ function passesGates(
   // aggroed on the player are always engaged (retaliation). When nothing
   // qualifies, `selectAutoCombatAction` returns idle and the player holds.
   if (!isAggroedOnPlayer(monster, player)) {
-    // Let returning encounters finish their reset instead of chasing them home.
-    if (monster.hasAwareness?.state === "returning") return false;
+    // Let returning encounters finish their reset instead of chasing them home. One
+    // already back on its post is home: a pack that spots a player past its leash
+    // "returns" on the spot, and skipping it there left a player between two such
+    // packs flipping between them every tick, never reaching either (the T3 Jungle
+    // dungeon's guards, against +65% aggro-pull boots).
+    if (monster.hasAwareness?.state === "returning" && !isHome(monster)) return false;
     if (isPastLeashAnchor(monster)) return false;
     if (
       !world.collision.isWithinCenterRadius(
@@ -736,6 +743,15 @@ function isAggroedOnPlayer(monster: MonsterEntity, player: PlayerEntity): boolea
   return (
     monster.hasAggroTarget?.targetKind === "player" &&
     monster.hasAggroTarget.targetId === player.isPlayer.id
+  );
+}
+
+/** Within a step of its post (or spawn): the distance `updatePacks` ends a pack's return at. */
+function isHome(monster: MonsterEntity): boolean {
+  return isWithinRange(
+    monster.hasPosition.current,
+    monster.controlsMonster.holdPost ?? monster.controlsMonster.spawn,
+    HOME_RADIUS,
   );
 }
 
