@@ -68,27 +68,47 @@ function autoOrder(disciplineId: string): ClassConfig {
 export const STRIKER_T2_ZONE_CHARM: Readonly<Record<string, string>> = { jungle: "plains-charm-t2" };
 
 /**
- * Light and Heavy put Grit back on at the Forest, the Cave and the Desert as well: both death-looped
- * at the T2 Forest dungeon's twelve-guard pack in the Forest's own charm (Rhythm), four attackers of
- * 14 at a time, and the Light lost the Apex Timberclaw after it (boss 23% left). In classBossSim Grit
- * took the Timberclaw with 61-68% HP left where Rhythm left 37-43%, the Cave boss with 39-65% where
- * Deep Breath left 17-45%, and Light's Desert boss with 60% where Shake Off left 16% (the Swamp's
- * Antidote stays: Grit left 9-38% there against 66-79%). Balanced keeps each zone's charm (it passed
- * live). PLACEHOLDER (OV2-STRIKER, lanes 1-2, 2026-10-17).
+ * Pieces a T2 zone puts back on instead of its own (crafted in an earlier zone), by discipline; each
+ * replaces the zone's piece of the same slot. PLACEHOLDER (OV2-STRIKER, lanes 1-2, 2026-10-17):
+ *
+ * - Light and Heavy wear Grit at the Forest, the Cave and the Desert as well: both death-looped at the
+ *   T2 Forest dungeon's twelve-guard pack in the Forest's own charm (Rhythm), four attackers of 14 at a
+ *   time, and the Light lost the Apex Timberclaw after it (boss 23% left). In classBossSim Grit took
+ *   the Timberclaw with 61-68% HP left where Rhythm left 37-43%, the Cave boss with 39-65% where Deep
+ *   Breath left 17-45%, and Light's Desert boss with 60% where Shake Off left 16% (the Swamp's Antidote
+ *   stays: Grit left 9-38% there against 66-79%). Balanced keeps each zone's charm (it passed live).
+ * - Heavy puts the Maul back on at the Desert (it took the Bastard Sword at the Cave, `T2_WEAPONS`):
+ *   the Maul won that boss with 65% HP left, the Sword 20%.
+ * - Heavy wears the Swamp's vest (Bloodless: damage over time can't take you below a quarter while you
+ *   keep attacking) at the Jungle: the nine-guard pack's Vine Chameleon poison killed it three times
+ *   more in the Jungle vest, the Bastard Sword and Grit on (six guards down at best). The Jungle boss in
+ *   classBossSim: won with 39% HP left (the Jungle vest 56%).
  */
-const STRIKER_T2_DISCIPLINE_CHARM: Readonly<Record<string, Readonly<Record<string, string>>>> = {
-  "striker-light": { forest: "plains-charm-t2", cave: "plains-charm-t2", desert: "plains-charm-t2" },
-  "striker-heavy": { forest: "plains-charm-t2", cave: "plains-charm-t2", desert: "plains-charm-t2" },
+const T2_REWORN: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>> = {
+  "striker-light": { forest: ["plains-charm-t2"], cave: ["plains-charm-t2"], desert: ["plains-charm-t2"] },
+  "striker-heavy": {
+    forest: ["plains-charm-t2"],
+    cave: ["plains-charm-t2"],
+    jungle: ["swamp-vest-t2"],
+    desert: ["striker-maul-t2", "plains-charm-t2"],
+  },
 };
 
-/** The charm worn at a T2 zone when it is not the zone's own (crafted in an earlier zone), if any. */
-export function strikerT2ZoneCharm(biomeGroup: string, disciplineId?: string): string | undefined {
-  return (disciplineId ? STRIKER_T2_DISCIPLINE_CHARM[disciplineId]?.[biomeGroup] : undefined) ?? STRIKER_T2_ZONE_CHARM[biomeGroup];
+const slotOf = (id: string) => RECIPE_DATABASE.get(id)?.slot;
+
+/** The pieces a T2 zone puts back on instead of crafting them there (an earlier zone's), by discipline. */
+export function strikerT2Reworn(disciplineId: string, biomeGroup: string): string[] {
+  const own = T2_REWORN[disciplineId]?.[biomeGroup] ?? [];
+  const charm = STRIKER_T2_ZONE_CHARM[biomeGroup];
+  return [...own, ...(charm && !own.some((id) => slotOf(id) === slotOf(charm)) ? [charm] : [])];
 }
 
+/** A T2 zone's vest, charm and boots as the arm wears them: the zone's own, or a re-worn piece of that slot. */
 export function strikerT2ZoneSet(biomeGroup: string, disciplineId?: string): string[] {
-  const charm = strikerT2ZoneCharm(biomeGroup, disciplineId) ?? `${biomeGroup}-charm-t${TIER}`;
-  return [`${biomeGroup}-vest-t${TIER}`, charm, `${biomeGroup}-boots-t${TIER}`].filter((id) => RECIPE_DATABASE.has(id));
+  const reworn = disciplineId ? strikerT2Reworn(disciplineId, biomeGroup) : (STRIKER_T2_ZONE_CHARM[biomeGroup] ? [STRIKER_T2_ZONE_CHARM[biomeGroup]] : []);
+  return [`${biomeGroup}-vest-t${TIER}`, `${biomeGroup}-charm-t${TIER}`, `${biomeGroup}-boots-t${TIER}`]
+    .filter((id) => RECIPE_DATABASE.has(id))
+    .map((id) => reworn.find((piece) => slotOf(piece) === slotOf(id)) ?? id);
 }
 
 /**
@@ -98,29 +118,17 @@ export function strikerT2ZoneSet(biomeGroup: string, disciplineId?: string): str
  * and the finisher hit harder); Heavy takes the Mountain's Maul (a much bigger finisher, faster
  * wind-ups). PLACEHOLDER.
  *
- * Heavy also takes the Cave's Bastard Sword for the Cave and the Jungle, and puts the Maul back on
- * at the Desert (`T2_REWORN_WEAPON`). OV2-STRIKER: in the Maul (one swing every 1.8 s, a combo of
- * eight seconds) Heavy death-looped at the Jungle dungeon's nine-guard poison pack, three deaths with
- * Grit on; in classBossSim the Bastard Sword won the Cave and Jungle bosses with 55-56% HP left
- * (the Maul 39% and 79%), and the Maul the Desert boss with 65% (the Bastard Sword 20%). PLACEHOLDER.
+ * Heavy also takes the Cave's Bastard Sword for the Cave and the Jungle (and the Maul back at the
+ * Desert, `T2_REWORN`). OV2-STRIKER: in the Maul (one swing every 1.8 s, a combo of eight seconds)
+ * Heavy death-looped at the Jungle dungeon's nine-guard poison pack, three deaths with Grit on; in
+ * classBossSim the Bastard Sword won the Cave and Jungle bosses with 55-56% HP left (the Maul 39%
+ * and 79%). PLACEHOLDER.
  */
 const T2_WEAPONS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   "striker-light": { plains: "striker-broadblade-t2", forest: "striker-twin-fangs-t2" },
   "striker-balanced": { plains: "striker-broadblade-t2", forest: "striker-twin-fangs-t2", cave: "striker-bastard-sword-t2" },
   "striker-heavy": { plains: "striker-broadblade-t2", mountain: "striker-maul-t2", cave: "striker-bastard-sword-t2" },
 };
-
-/** A weapon put back on at a T2 zone (crafted in an earlier zone), by discipline. */
-const T2_REWORN_WEAPON: Readonly<Record<string, Readonly<Record<string, string>>>> = {
-  "striker-heavy": { desert: "striker-maul-t2" },
-};
-
-/** The pieces a T2 zone puts back on instead of crafting them there (an earlier zone's), by discipline. */
-export function strikerT2Reworn(disciplineId: string, biomeGroup: string): string[] {
-  const weapon = T2_REWORN_WEAPON[disciplineId]?.[biomeGroup];
-  const charm = strikerT2ZoneCharm(biomeGroup, disciplineId);
-  return [...(weapon ? [weapon] : []), ...(charm ? [charm] : [])];
-}
 
 /**
  * A finished earlier tier is not walked again: its steps run only while its completion does not
@@ -133,7 +141,8 @@ export function unlessDone(route: Route, what: string): RouteStep {
 
 /** What the arm wears from this T2 zone, weapon first (its recipe opens first). */
 export function strikerT2ZoneGear(disciplineId: string, biomeGroup: string): string[] {
-  const weapon = T2_WEAPONS[disciplineId]?.[biomeGroup] ?? T2_REWORN_WEAPON[disciplineId]?.[biomeGroup];
+  const weapon = T2_WEAPONS[disciplineId]?.[biomeGroup]
+    ?? T2_REWORN[disciplineId]?.[biomeGroup]?.find((id) => slotOf(id) === "weapon");
   return [...(weapon ? [weapon] : []), ...strikerT2ZoneSet(biomeGroup, disciplineId)];
 }
 
