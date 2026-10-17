@@ -7,15 +7,29 @@ import { unlessDone } from "./strikerT2";
 /**
  * The Striker's T4 route (T4-W2, bible §12.7 and §12.16).
  *
- * The whole `striker-t3` route for the leaf's discipline first (taking that discipline's first
- * specialization; the leaf does not depend on which), then a wait for the tier-4 promotion, the
- * leaf pick, and the seven T4 zones in the guide's order, each farmed to its cap and then its
+ * The whole `striker-t3` route for the leaf's discipline first (taking that discipline's
+ * specialization, `strikerT4SpecializationOf`; the leaf does not depend on which), then a wait for
+ * the tier-4 promotion, the leaf pick, and the seven T4 zones in the guide's order, each farmed to its cap and then its
  * tier-4 boss. A leaf is a skill node (`unlockSkill`), the same pick the Passive Tree makes; one
  * route per leaf, so a batch can run all nine arms. The Order stays on the auto setting, which the
  * server rebuilds as the T4 lessons and trophies arrive.
  *
  * Registered, but left out of `CONTROLLED_ROUTE_IDS` until it has run live.
  */
+
+/**
+ * The specialization a T4 route's T3 replay takes, by discipline: the discipline's first unless named
+ * here. PLACEHOLDER (OV2-STRIKER): Light takes Afterglow. In classBossSim Thousand Cuts (its first)
+ * lost the T3 and T4 Volcanic bosses (1 of 2 each, boss 1-11% left): every few seconds out of reach
+ * put the shine out, and its doubled on-hit is all it adds. Afterglow (the shine outlasts a break by
+ * a combo and lights the finisher) won all fourteen T3/T4 bosses, the Volcanic ones at full HP.
+ */
+const STRIKER_T4_SPECIALIZATION: Readonly<Record<string, string>> = { "striker-light": "striker-afterglow" };
+
+export function strikerT4SpecializationOf(disciplineId: string): string | undefined {
+  return STRIKER_T4_SPECIALIZATION[disciplineId]
+    ?? STRIKER_KIT.specializations.find((entry) => entry.disciplineId === disciplineId)?.id;
+}
 
 /** Route id by leaf id: `striker-t4-<name>`. */
 export const STRIKER_T4_ROUTE_IDS: Readonly<Record<string, string>> = Object.fromEntries(
@@ -67,9 +81,9 @@ export function strikerT4Route(leafId = "striker-ghoststep"): Route {
   if (!id || !leaf) {
     throw new Error(`unknown Striker leaf "${leafId}" (have: ${Object.keys(STRIKER_T4_ROUTE_IDS).join(", ")})`);
   }
-  const specialization = STRIKER_KIT.specializations.find((entry) => entry.disciplineId === leaf.disciplineId);
-  if (!specialization || !STRIKER_T3_ROUTE_IDS[specialization.id]) throw new Error(`no T3 route for ${leaf.disciplineId}`);
-  const t3 = strikerT3Route(specialization.id);
+  const specialization = strikerT4SpecializationOf(leaf.disciplineId);
+  if (!specialization || !STRIKER_T3_ROUTE_IDS[specialization]) throw new Error(`no T3 route for ${leaf.disciplineId}`);
+  const t3 = strikerT3Route(specialization);
 
   const steps: RouteStep[] = [
     unlessDone(t3, "the T3 route"),
