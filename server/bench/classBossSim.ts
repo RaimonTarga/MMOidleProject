@@ -21,6 +21,13 @@
  * discipline / specialization / leaf ids after the root. The output names each run's outcome,
  * the boss HP left, the fight length, the player's damage per second on the boss, the HP it
  * lost per second, and which hit effects fired (the class's pieces show up as effect names).
+ *
+ * `--guards` fights the dungeon's GUARD instead of its boss (2026-10-17): the guard the boss sim
+ * strips is where most live deaths and stalls were (the nine-guard poison packs, the two-guardian
+ * Trench post, a pack that spots a player past its own leash). The player walks in from a node
+ * edge (run 0 the south edge, then west, north, east) and fights with the same auto-combat the
+ * bot leaves on; a run is a win when every guardian is dead, and the guard reforms on its own
+ * clock as it does live. The row's `boss left` is then the guardians still standing.
  */
 import {
   DEFAULT_AUTOCOMBAT_CONFIG,
@@ -75,6 +82,7 @@ const RUNS = Number(argOf('--runs') ?? 3);
 const MAX_SECONDS = Number(argOf('--max-seconds') ?? 240);
 const UPGRADE = Number(argOf('--upgrade') ?? 0);
 const JSON_OUT = ARGV.includes('--json');
+const GUARDS = ARGV.includes('--guards');
 
 if (SKILL_TREE.get(CLASS_ROOT)?.tier !== 0) throw new Error(`unknown class "${CLASS}"`);
 
@@ -163,9 +171,22 @@ function playerSlices(nodeId: string, pos: { x: number; y: number }): PersistedP
   };
 }
 
+/** `--guards`: where a run walks in, a node edge's midpoint (south, west, north, east in turn). */
+function guardEntry(run: number): { x: number; y: number } {
+  const w = GAME_CONFIG.NODE_WIDTH;
+  const h = GAME_CONFIG.NODE_HEIGHT;
+  const inset = 160;
+  return [
+    { x: w / 2, y: h - inset },
+    { x: inset, y: h / 2 },
+    { x: w / 2, y: inset },
+    { x: w - inset, y: h / 2 },
+  ][run % 4];
+}
+
 function buildPlayer(world: World, node: BossNode, run: number): PlayerEntity {
   // A small spawn offset per run, so repeated runs are not one identical fight.
-  const pos = { x: BOT_SPAWN.x + ((run * 37) % 120) - 60, y: BOT_SPAWN.y };
+  const pos = GUARDS ? guardEntry(run) : { x: BOT_SPAWN.x + ((run * 37) % 120) - 60, y: BOT_SPAWN.y };
   const p = world.attachPlayerEntity(playerSlices(node.nodeId, pos), BENCH_BOT_ID);
   p.tracksProgression.playerTier = TIER;
   p.tracksProgression.skillPoints = 999;
@@ -202,6 +223,8 @@ interface Row {
   playerHpLeftPct: number;
   dpsOnBoss: number;
   hpLostPerS: number;
+  /** The lowest HP the player fell to, in percent of max. */
+  lowestHpPct: number;
   bossDpsPctOfPool: number;
   effects: Record<string, number>;
   events: Record<string, number>;
@@ -212,7 +235,11 @@ function fight(node: BossNode, run: number): Row {
   const dt = BENCH_DT_MS;
   try {
     setupArena(world, { nodeId: node.nodeId, biomeGroup: node.biomeGroup, contentTier: TIER, isDungeon: true });
-    forceBossPhase(world, node.nodeId);
+    if (GUARDS) ensureDungeon(world, node.nodeId);
+    else forceBossPhase(world, node.nodeId);
+    const guard = world.dungeons.get(node.nodeId);
+    const guardTotal = guard?.guardianIds.length ?? 0;
+    let lowestHp = 1;
     const p = buildPlayer(world, node, run);
     const effects: Record<string, number> = {};
     const events: Record<string, number> = {};
@@ -229,6 +256,7 @@ function fight(node: BossNode, run: number): Row {
     let bossMaxHp = MONSTER_DATABASE.get(node.bossId)?.stats.hp ?? 1;
     let bossHp = bossMaxHp;
     let bossStart = now;
+    const startedAt = now;
     let outcome: Row['outcome'] = 'timeout';
     while (ticks < maxTicks) {
       world.tick(dt, now);
@@ -245,6 +273,15 @@ function fight(node: BossNode, run: number): Row {
       const hp = p.hasHealth.hp;
       if (hp < lastHp) hpLost += lastHp - hp;
       lastHp = hp;
+      lowestHp = Math.min(lowestHp, hp / Math.max(1, p.hasHealth.maxHp));
+      if (GUARDS) {
+        const standing = world.dungeons.get(node.nodeId)?.guardianIds.filter((id) => world.hasMonster(id)).length ?? 0;
+        bossHp = standing;
+        bossMaxHp = Math.max(1, guardTotal);
+        if (p.hasHealth.hp <= 0 || p.isDead) { outcome = 'died'; break; }
+        if (standing === 0) { outcome = 'win'; break; }
+        continue;
+      }
       const boss = findBoss(world, node);
       if (boss) {
         if (!bossSeen) bossStart = now;
@@ -255,9 +292,9 @@ function fight(node: BossNode, run: number): Row {
       if (p.hasHealth.hp <= 0 || p.isDead) { outcome = 'died'; break; }
       if (bossSeen && !boss) { bossHp = 0; outcome = 'win'; break; }
     }
-    const seconds = (now - bossStart) / 1000;
+    const seconds = (now - (GUARDS ? startedAt : bossStart)) / 1000;
     return {
-      boss: MONSTER_DATABASE.get(node.bossId)?.name ?? node.bossId,
+      boss: GUARDS ? `guard of ${guardTotal}` : MONSTER_DATABASE.get(node.bossId)?.name ?? node.bossId,
       biome: node.biomeGroup,
       run,
       outcome,
@@ -265,9 +302,10 @@ function fight(node: BossNode, run: number): Row {
       bossHpLeftPct: Math.round((bossHp / bossMaxHp) * 100),
       playerMaxHp: Math.round(p.hasHealth.maxHp),
       playerHpLeftPct: Math.round((Math.max(0, p.hasHealth.hp) / p.hasHealth.maxHp) * 100),
-      dpsOnBoss: seconds > 0 ? Math.round((bossMaxHp - bossHp) / seconds) : 0,
+      dpsOnBoss: GUARDS ? 0 : seconds > 0 ? Math.round((bossMaxHp - bossHp) / seconds) : 0,
       hpLostPerS: seconds > 0 ? Math.round(hpLost / seconds) : 0,
       bossDpsPctOfPool: seconds > 0 ? Math.round((hpLost / seconds / p.hasHealth.maxHp) * 1000) / 10 : 0,
+      lowestHpPct: Math.round(lowestHp * 100),
       effects,
       events,
     };
@@ -295,7 +333,7 @@ async function main(): Promise<void> {
     console.log(
       `${r.boss.padEnd(24)} ${r.biome.padEnd(10)} #${r.run} ${r.outcome.padEnd(7)} ${r.seconds.toFixed(0).padStart(4)}s` +
       ` boss left ${String(r.bossHpLeftPct).padStart(3)}%  you ${String(r.playerHpLeftPct).padStart(3)}% of ${r.playerMaxHp}` +
-      `  dps ${r.dpsOnBoss}  taken/s ${r.hpLostPerS} (${r.bossDpsPctOfPool}% pool)`,
+      `  dps ${r.dpsOnBoss}  taken/s ${r.hpLostPerS} (${r.bossDpsPctOfPool}% pool)  lowest ${r.lowestHpPct}%`,
     );
   }
   const effects: Record<string, number> = {};
