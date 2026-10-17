@@ -76,10 +76,15 @@ export const STRIKER_T2_ZONE_CHARM: Readonly<Record<string, string>> = { jungle:
  *   time, and the Light lost the Apex Timberclaw after it (boss 23% left). In classBossSim Grit took
  *   the Timberclaw with 61-68% HP left where Rhythm left 37-43%, the Cave boss with 39-65% where Deep
  *   Breath left 17-45%, and Light's Desert boss with 60% where Shake Off left 16% (the Swamp's Antidote
- *   stays: Grit left 9-38% there against 66-79%). Balanced keeps each zone's charm but the Desert's:
- *   the final runs' Balanced lost the Dune-Stalker Emperor eight times in two rounds, each at its quarter (boss
- *   25-27% left), slowed inside the Execution circle (238 -> 76 HP in one hit); in classBossSim Grit left 58% HP
- *   against Shake Off's 50% (2026-10-17, conductor).
+ *   stays: Grit left 9-38% there against 66-79%). Balanced keeps each zone's charm but these (2026-10-17,
+ *   conductor):
+ *   - the Desert's: the final runs' Balanced lost the Dune-Stalker Emperor eight times in two rounds, each at its
+ *     quarter (boss 25-27% left), slowed inside the Execution circle (238 -> 76 HP in one hit); in classBossSim
+ *     Grit left 58% HP against Shake Off's 50%.
+ *   - the Forest's vest and charm: it meets the Apex Timberclaw before the Cave teaches Concuss. The earlier
+ *     passes won it only because one kill on the walk through the T2 Cave took that zone to 12 at 100x; without
+ *     it, three deaths (boss 28-40% left). classBossSim with the Cave at 6: the Forest vest and Rhythm die at 28%,
+ *     Grit alone wins at 24% HP left, the Plains vest kept as well (plating against the many small hits) at 53%.
  * - Heavy puts the Maul back on at the Desert (it took the Bastard Sword at the Cave, `T2_WEAPONS`):
  *   the Maul won that boss with 65% HP left, the Sword 20%.
  * - Heavy wears the Swamp's vest (Bloodless: damage over time can't take you below a quarter while you
@@ -89,7 +94,7 @@ export const STRIKER_T2_ZONE_CHARM: Readonly<Record<string, string>> = { jungle:
  */
 const T2_REWORN: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>> = {
   "striker-light": { forest: ["plains-charm-t2"], cave: ["plains-charm-t2"], desert: ["plains-charm-t2"] },
-  "striker-balanced": { desert: ["plains-charm-t2"] },
+  "striker-balanced": { forest: ["plains-vest-t2", "plains-charm-t2"], desert: ["plains-charm-t2"] },
   "striker-heavy": {
     forest: ["plains-charm-t2"],
     cave: ["plains-charm-t2"],

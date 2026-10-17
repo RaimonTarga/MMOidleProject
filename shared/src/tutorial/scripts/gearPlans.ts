@@ -43,7 +43,9 @@ const STRIKER: TutorialGearPlan = {
     },
     2: {
       plains: ['striker-broadblade-t2', 'plains-vest-t2', 'plains-charm-t2', 'plains-boots-t2'],
-      forest: ['striker-twin-fangs-t2', 'forest-vest-t2', 'forest-charm-t2', 'forest-boots-t2'],
+      // The Plains vest and Grit stay on in the Forest (2026-10-17: the Apex Timberclaw comes before
+      // the Cave teaches Concuss; their plating and Grit hold its many small hits).
+      forest: ['striker-twin-fangs-t2', 'forest-boots-t2'],
       mountain: ['mountain-vest-t2', 'mountain-charm-t2', 'mountain-boots-t2'],
       swamp: ['swamp-vest-t2', 'swamp-charm-t2', 'swamp-boots-t2'],
       cave: ['striker-bastard-sword-t2', 'cave-vest-t2', 'cave-charm-t2', 'cave-boots-t2'],
