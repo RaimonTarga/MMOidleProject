@@ -729,6 +729,19 @@ export const DEFAULT_RUNE_LOADOUT: EquippedRule[] = [
 ];
 
 /**
+ * The default standing orders once a class is picked (applied at the pick while the character still
+ * runs the untouched default). The Slinger keeps its distance instead of chasing (designer's call,
+ * 2026-10-16: bible §3, Keep Distance decides where it stands for its stationary reload; without it
+ * a guided Slinger traded shots at melee range and lost the first boss); every other class chases.
+ */
+export function defaultRuneLoadoutFor(combatArchetype: CombatArchetype | undefined): EquippedRule[] {
+  return DEFAULT_RUNE_LOADOUT.map((rule): EquippedRule =>
+    combatArchetype === "reload" && rule.conditionId === "in-combat" && rule.actionId === "chase-enemy"
+      ? { conditionId: "in-combat", actionId: "orbit" }
+      : { ...rule });
+}
+
+/**
  * The fragments a character owned before crafted runes went. Ownership is now
  * {@link runeIdsForArchetype}; this set stays for the test and bot fixtures
  * that hand a character this vocabulary.

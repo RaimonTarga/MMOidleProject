@@ -1,5 +1,5 @@
 import type { CombatArchetype, SkillNode } from '@mmo-idle/shared';
-import { SKILL_TREE, canUnlockSkill, runeIdsForArchetype } from '@mmo-idle/shared';
+import { DEFAULT_RUNE_LOADOUT, SKILL_TREE, canUnlockSkill, defaultRuneLoadoutFor, runeIdsForArchetype } from '@mmo-idle/shared';
 import type { World } from '../../../world/World';
 import type { PlayerEntity } from '../../../ecs/entity';
 import { syncArchetypeSlices } from '../../../ecs/archetypeSliceSync';
@@ -40,6 +40,11 @@ export function unlockSkill(world: World, entity: PlayerEntity, skillId: string)
     entity.usesSkills.combatArchetype = CLASS_ARCHETYPES[skillId] ?? null;
     // Every rune the class may use (rune ownership follows the class).
     entity.tracksProgression.runesOwned = runeIdsForArchetype(entity.usesSkills.combatArchetype);
+    // The class's default standing orders (the Slinger keeps its distance), only over the
+    // untouched default: a player's own rules are never replaced.
+    if (JSON.stringify(entity.tracksProgression.runesEquipped) === JSON.stringify(DEFAULT_RUNE_LOADOUT)) {
+      entity.tracksProgression.runesEquipped = defaultRuneLoadoutFor(entity.usesSkills.combatArchetype);
+    }
     // The class's own gear for the levels already reached (smart loot).
     checkRecipeUnlocks(entity);
   } else if (node.tier === 1) {
