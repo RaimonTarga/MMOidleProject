@@ -78,10 +78,6 @@ export const APPRENTICE_T2_GEAR: Readonly<Record<string, readonly string[]>> = {
 export const APPRENTICE_T2_FROST_GEAR: Readonly<Record<string, readonly string[]>> = {
   ...APPRENTICE_T2_GEAR,
   swamp: ["swamp-charm-t2"],
-  // The Plains vest goes back on at the Jungle (its plating answers many light hits, Warding
-  // Sigils every enemy carrying your sigils): in the Jungle's own vest both chains still died to
-  // that pack, three hitting at once (live). The sim's T2 bosses barely move (32-100% HP left).
-  jungle: ["plains-vest-t2"],
 };
 
 /**
@@ -92,7 +88,14 @@ export const APPRENTICE_T2_FROST_GEAR: Readonly<Record<string, readonly string[]
  * on it for 7-13 s. Three sigils a hit fill it in three. Class boss sim in this set: every T2 boss
  * won with 51-95% HP left.
  */
-export const APPRENTICE_T2_POISON_GEAR: Readonly<Record<string, readonly string[]>> = APPRENTICE_T2_FROST_GEAR;
+export const APPRENTICE_T2_POISON_GEAR: Readonly<Record<string, readonly string[]>> = {
+  ...APPRENTICE_T2_FROST_GEAR,
+  // The Plains vest goes back on at the Jungle: its plating answers many light hits and Warding
+  // Sigils every enemy carrying your sigils, which the plague makes every enemy of a pack (the
+  // Poison chain cleared the guard pack in it with no death). Frost lays sigils on one enemy at a
+  // time and keeps the Jungle's vest (more HP, evasion; it died three times in the Plains vest).
+  jungle: ["plains-vest-t2"],
+};
 
 /** The T2 gear a school's chain wears. */
 export function apprenticeT2Gear(disciplineId: string | null): Readonly<Record<string, readonly string[]>> {
