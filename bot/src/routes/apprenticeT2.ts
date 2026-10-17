@@ -78,6 +78,10 @@ export const APPRENTICE_T2_GEAR: Readonly<Record<string, readonly string[]>> = {
 export const APPRENTICE_T2_FROST_GEAR: Readonly<Record<string, readonly string[]>> = {
   ...APPRENTICE_T2_GEAR,
   swamp: ["swamp-charm-t2"],
+  // The Plains vest goes back on at the Jungle (its plating answers many light hits, Warding
+  // Sigils every enemy carrying your sigils): in the Jungle's own vest both chains still died to
+  // that pack, three hitting at once (live). The sim's T2 bosses barely move (32-100% HP left).
+  jungle: ["plains-vest-t2"],
 };
 
 /**
