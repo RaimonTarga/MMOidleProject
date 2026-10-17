@@ -60,8 +60,25 @@ const T3_WEAPONS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
  */
 export function strikerT3ZoneGear(disciplineId: string, biomeGroup: string): string[] {
   const weapon = T3_WEAPONS[disciplineId]?.[biomeGroup];
-  const set = ["vest", "charm", "boots"].map((slot) => `${biomeGroup}-${slot}-t${TIER}`).filter((id) => RECIPE_DATABASE.has(id));
+  const reworn = strikerT3Reworn(disciplineId, biomeGroup);
+  const slotOf = (id: string) => RECIPE_DATABASE.get(id)?.slot;
+  const set = ["vest", "charm", "boots"].map((slot) => `${biomeGroup}-${slot}-t${TIER}`).filter((id) => RECIPE_DATABASE.has(id))
+    .map((id) => reworn.find((piece) => slotOf(piece) === slotOf(id)) ?? id);
   return [...(weapon ? [weapon] : []), ...set];
+}
+
+/**
+ * Pieces a T3 zone puts back on instead of its own (crafted in an earlier T3 zone), by discipline.
+ * PLACEHOLDER (OV2-STRIKER): Heavy wears the Swamp's vest (Bloodless) at the Jungle, as at T2: the
+ * nine-guard pack's Venom Dart Frog poison killed it in the Jungle vest (lane 2, 2026-10-17); the
+ * Jungle boss in classBossSim: won with 79-96% HP left.
+ */
+const T3_REWORN: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>> = {
+  "striker-heavy": { jungle: ["swamp-vest-t3"] },
+};
+
+export function strikerT3Reworn(disciplineId: string, biomeGroup: string): string[] {
+  return [...(T3_REWORN[disciplineId]?.[biomeGroup] ?? [])];
 }
 
 export function strikerT3Route(specializationId = "striker-thousand-cuts"): Route {

@@ -15,6 +15,7 @@ import {
   STRIKER_T3_ROUTE_IDS,
   STRIKER_T3_ZONES,
   strikerT3FarmLevel,
+  strikerT3Reworn,
   strikerT3Route,
   strikerT3ZoneGear,
 } from "./strikerT3";
@@ -73,9 +74,16 @@ for (const [specializationId, id] of Object.entries(STRIKER_T3_ROUTE_IDS)) {
     ])],
   );
   // Gear: tier-3 recipes of the zone being farmed, in unlock order, inside its T3 farm; the first seal meets a full set.
+  const wornBefore = new Set<string>();
   for (const biomeGroup of STRIKER_T3_ZONES) {
     let last = 0;
     for (const itemId of strikerT3ZoneGear(spec.disciplineId, biomeGroup)) {
+      // A piece put back on (strikerT3Reworn) was crafted in an earlier T3 zone of the route.
+      if (strikerT3Reworn(spec.disciplineId, biomeGroup).includes(itemId)) {
+        assert(wornBefore.has(itemId), `${itemId}, put back on in ${biomeGroup}, was crafted earlier`);
+        continue;
+      }
+      wornBefore.add(itemId);
       const recipe = RECIPE_DATABASE.get(itemId);
       assert(recipe && recipe.recipeGroup === biomeGroup && ITEM_DATABASE.get(itemId)?.tier === 3, `${itemId} is tier-3 ${biomeGroup} gear`);
       assert(recipe.requiredBiomeLevel >= last && recipe.requiredBiomeLevel <= strikerT3FarmLevel(biomeGroup), `${itemId} unlocks in order, inside the farm`);
