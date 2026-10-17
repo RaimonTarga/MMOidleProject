@@ -41,12 +41,14 @@ export function strikerT4FarmLevel(biomeGroup: string): number {
  * jobs). PLACEHOLDER (OV-STRIKER): every arm meets the first T4 seal (the Mountain) in the tier's
  * Maul; Balanced then takes the Wasteland's Reaper's Scythe (its army fight: every beat splashes) and
  * the Bastard Sword in the Trench (the Cave's job moved there), Light the
- * Jungle's Twin Fangs.
+ * Jungle's Twin Fangs. Heavy takes the Scythe at the Wasteland too and keeps it (OV2-STRIKER: in
+ * classBossSim the Maul lost the Charnel-Crown Sovereign at 93% boss left, taking 9% of its HP a
+ * second from the risen; the Scythe won it 2/2, and the Trench duel 2/2 at 77% HP).
  */
 const T4_WEAPONS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   "striker-light": { mountain: "striker-maul-t4", jungle: "striker-twin-fangs-t4" },
   "striker-balanced": { mountain: "striker-maul-t4", graveyard: "striker-reapers-scythe-t4", trench: "striker-bastard-sword-t4" },
-  "striker-heavy": { mountain: "striker-maul-t4" },
+  "striker-heavy": { mountain: "striker-maul-t4", graveyard: "striker-reapers-scythe-t4" },
 };
 
 /**
