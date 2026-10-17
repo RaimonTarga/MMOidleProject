@@ -47,9 +47,10 @@ const STRIKER: TutorialGearPlan = {
       mountain: ['mountain-vest-t2', 'mountain-charm-t2', 'mountain-boots-t2'],
       swamp: ['swamp-vest-t2', 'swamp-charm-t2', 'swamp-boots-t2'],
       cave: ['striker-bastard-sword-t2', 'cave-vest-t2', 'cave-charm-t2', 'cave-boots-t2'],
-      // The route keeps the Plains' Grit on in the Jungle instead of its own charm.
+      // The route puts the Plains' Grit back on in the Jungle instead of its own charm, and keeps it
+      // on in the Desert (2026-10-17: Grit over Shake Off at the Dune-Stalker Emperor).
       jungle: ['jungle-vest-t2', 'plains-charm-t2', 'jungle-boots-t2'],
-      desert: ['desert-vest-t2', 'desert-charm-t2', 'desert-boots-t2'],
+      desert: ['desert-vest-t2', 'desert-boots-t2'],
     },
     3: {
       mountain: ['striker-maul-t3', 'mountain-vest-t3', 'mountain-charm-t3', 'mountain-boots-t3'],
