@@ -102,10 +102,13 @@ export const SLINGER_T2_GUNS: readonly DisciplineGun[] = [
  * the Jungle's vest as it enters the Jungle (anti-ambush base: more HP, evasion, damage-over-time
  * resistance; Lookout) in place of the Forest's Quickdraw: the live Siege died three times to the
  * Jungle dungeon's nine guards (poison: 152 of 347 damage in the last death's window), and the sim's
- * Jungle boss went 2/3 -> 3/3 in it (Desert 3/3 either way). PLACEHOLDER pick.
+ * Jungle boss went 2/3 -> 3/3 in it (Desert 3/3 either way). Trickshot too (2026-10-17): the final
+ * merged-tree Trickshot died seven times to the same pack (Vine Chameleon poison) and gave up on its
+ * guards twice before a third attempt went through. PLACEHOLDER pick.
  */
 export const SLINGER_T2_DISCIPLINE_PIECES: readonly DisciplineGun[] = [
   { discipline: "siege", zone: "jungle", id: "jungle-vest-t2" },
+  { discipline: "trickshot", zone: "jungle", id: "jungle-vest-t2" },
 ];
 
 /** How far the route farms a T2 zone: the tier-2 cap, as the guide does. */
