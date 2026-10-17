@@ -21,6 +21,9 @@ type DefaultPlacement = PayoffPlacement & { discipline?: readonly string[]; exce
  * The default (§9.13), in priority order, filtered to the pieces owned:
  * - T1: full → Spread with two or more enemies near, else Detonate; winds up → Seize; your HP low → Siphon.
  * - Poison: full → Detonate (the plague walks on its own; the Spread rule frees the moment), low → Wither.
+ *   With two or more enemies near, the full bar is left to the plague (PLACEHOLDER, OV2-APPRENTICE):
+ *   only a full carrier passes sigils, so a Detonate the moment the bar filled kept the plague from
+ *   ever walking, and the Poison chain had no pack damage (the T2 Jungle guard pack, live).
  *   "Low" is your HP, after Siphon (PLACEHOLDER, OV2-APPRENTICE): on the target's low moment Wither
  *   spent the bar every cooldown through a boss's last third, so Detonate stopped and the T4 Caldera
  *   Sovereign's race was lost 3 times in 4 (sim); on your HP it is the floor when the fight turns.
@@ -43,7 +46,8 @@ const DEFAULTS: readonly DefaultPlacement[] = [
   { moment: 'target-full', pieceId: 'apprentice-cinderfall', conditions: [{ id: 'enemies-near', param: 3 }] },
   { moment: 'target-full', pieceId: 'apprentice-cold-snap', conditions: [{ id: 'enemies-near', param: 3 }] },
   { moment: 'target-full', pieceId: 'apprentice-spread', conditions: [{ id: 'enemies-near', param: 2 }], except: ['apprentice-fire', 'apprentice-frost'] },
-  { moment: 'target-full', pieceId: 'apprentice-detonate', conditions: [] },
+  { moment: 'target-full', pieceId: 'apprentice-detonate', conditions: [{ id: 'enemies-near', param: 2, not: true }], discipline: ['apprentice-poison'] },
+  { moment: 'target-full', pieceId: 'apprentice-detonate', conditions: [], except: ['apprentice-poison'] },
   { moment: 'target-frozen', pieceId: 'apprentice-detonate', conditions: [], discipline: ['apprentice-frost'] },
   { moment: 'enemy-winds-up', pieceId: 'apprentice-seize', conditions: [] },
   { moment: 'touched', pieceId: 'apprentice-siphon', conditions: [{ id: 'hp-low', param: 0.5 }], discipline: ['apprentice-poison', 'apprentice-frost'] },
