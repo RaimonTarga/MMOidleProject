@@ -26,6 +26,7 @@ import {
 } from "@mmo-idle/shared";
 import type { PersistedPlayerSlices } from "../src/db/playerRepo";
 import { updatePacks } from "../src/systems/combat/ai/packs";
+import { setAggroTarget } from "../src/systems/combat/ai/targeting";
 import {
   activateDungeonAltar,
   ensureDungeon,
@@ -349,6 +350,36 @@ function distance(a: { x: number; y: number }, b: { x: number; y: number }): num
     "the biome's own boss spawned",
   );
   assert(boss.tracksDungeon?.source === "dungeonBoss", "the boss is tagged as such");
+}
+
+// ── 5b. A half-stripped guard reforms only once its fight is over ────────────
+// The guard reforms after a while with the altar untouched, so a dungeon is not left
+// stripped for the next visitor, but never under a player still fighting a survivor
+// (a slow killer saw the guardian it was halfway through come back at full HP).
+{
+  const { world, playerId } = setup(POST_HOLD_NODE);
+  const def = getDungeonDef(POST_HOLD_NODE)!;
+  const state = world.dungeons.get(POST_HOLD_NODE)!;
+  const [first, second] = state.guardianIds;
+  onDungeonMonsterRewarded(world, playerId, world.getMonsterEntity(first)!);
+  world.removeMonsterEntity(first);
+  const killedAt = state.lastGuardianKillAtMs!;
+  const survivor = world.getMonsterEntity(second)!;
+  setAggroTarget(world, survivor, { id: playerId, kind: "player" }, killedAt);
+
+  const late = killedAt + def.idlePreclearResetMs! + 1_000;
+  tickDungeons(world, late);
+  assert(world.dungeons.get(POST_HOLD_NODE) === state, "no reform while a survivor fights a player");
+  assert(world.hasMonster(second), "the guardian being fought stays as it is");
+  assert(!world.hasMonster(first), "and the dead one stays dead");
+
+  setAggroTarget(world, survivor, null, late);
+  tickDungeons(world, late + def.idlePreclearResetMs! - 1_000);
+  assert(world.dungeons.get(POST_HOLD_NODE) === state, "the clock runs from the end of the fight");
+  tickDungeons(world, late + def.idlePreclearResetMs! + 1_000);
+  const reformed = world.dungeons.get(POST_HOLD_NODE)!;
+  assert(reformed !== state && reformed.status === "idle", "then the guard reforms");
+  assert(reformed.guardianIds.length === guardianTotalFor(def), "with every guardian back");
 }
 
 // ── 6. Disturbing the altar turns every survivor at once ────────────────────

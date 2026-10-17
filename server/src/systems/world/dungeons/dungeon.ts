@@ -170,13 +170,16 @@ export function tickDungeons(world: World, now: number): void {
 
       case "idle":
         // Guardians cleared but the altar never touched: the guard reforms so a
-        // dungeon can't be left permanently stripped for the next visitor.
-        if (
-          def.idlePreclearResetMs &&
-          state.lastGuardianKillAtMs &&
-          now - state.lastGuardianKillAtMs >= def.idlePreclearResetMs
-        ) {
-          resetDungeon(world, nodeId, { reason: "preclear_timeout" });
+        // dungeon can't be left permanently stripped for the next visitor. Not
+        // while a surviving guardian is still fighting a player: the clock runs
+        // from the end of that fight (a slow killer saw the guard it was halfway
+        // through reform at full HP every 90 s and never reached the altar).
+        if (def.idlePreclearResetMs && state.lastGuardianKillAtMs) {
+          if (guardianFightingPlayer(world, state)) {
+            state.lastGuardianKillAtMs = now;
+          } else if (now - state.lastGuardianKillAtMs >= def.idlePreclearResetMs) {
+            resetDungeon(world, nodeId, { reason: "preclear_timeout" });
+          }
         }
         continue;
     }
@@ -688,6 +691,11 @@ function forceDungeonAggro(world: World, monster: MonsterEntity): void {
   }
   setAggroTarget(world, monster, { id: target.isPlayer.id, kind: "player" }, Date.now());
   setAttackTarget(world, monster, target.isPlayer.id);
+}
+
+/** A guardian still standing has a player as its aggro target. */
+function guardianFightingPlayer(world: World, state: DungeonState): boolean {
+  return state.guardianIds.some((id) => world.getMonsterEntity(id)?.hasAggroTarget?.targetKind === "player");
 }
 
 function maintainEngagedAggro(world: World, state: DungeonState): void {
