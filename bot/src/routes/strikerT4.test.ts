@@ -16,6 +16,7 @@ import {
   STRIKER_T4_ZONES,
   strikerT4FarmLevel,
   strikerT4Route,
+  strikerT4SpecializationOf,
   strikerT4ZoneGear,
 } from "./strikerT4";
 
@@ -57,8 +58,10 @@ for (const [leafId, id] of Object.entries(STRIKER_T4_ROUTE_IDS)) {
   assert(!CONTROLLED_ROUTE_IDS.includes(id), `${id} stays out of the controlled batch until it has run live`);
 
   // It is a T3 route of the leaf's discipline, then the promotion wait, the pick, and three steps per T4 zone.
-  const spec = STRIKER_KIT.specializations.find((entry) => entry.disciplineId === leaf.disciplineId)!;
-  const t3 = strikerT3Route(spec.id);
+  const spec = strikerT4SpecializationOf(leaf.disciplineId)!;
+  assert(STRIKER_KIT.specializations.some((entry) => entry.id === spec && entry.disciplineId === leaf.disciplineId),
+    `${spec} is a specialization of ${leaf.disciplineId}`);
+  const t3 = strikerT3Route(spec);
   // The T3 route comes first, unchanged, run only while it is not done (a resume skips the walk).
   const [replay] = route.steps;
   assert(replay.type === "ifPossible" && replay.when.type === "not", "the T3 route is wrapped in an unless-done");

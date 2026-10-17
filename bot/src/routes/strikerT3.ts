@@ -42,12 +42,14 @@ export function strikerT3FarmLevel(biomeGroup: string): number {
  * PLACEHOLDER (OV-STRIKER): every arm meets the first T3 seal (the Mountain) in the tier's Maul;
  * Balanced then takes the Cave's Bastard Sword; Light takes it too (it won the Cave T3 boss in
  * classBossSim at 43% HP where the Maul lost at 13% boss left), then the Jungle's Twin Fangs (the Forest's job
- * moved there).
+ * moved there). Heavy takes the Bastard Sword at the Cave too (OV2-STRIKER: the Maul's one swing in
+ * 1.8 s death-looped at the T2 Jungle guard pack; in classBossSim the Bastard Sword won the five T3
+ * bosses from the Cave on with 70-96% HP left, faster than the Maul).
  */
 const T3_WEAPONS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   "striker-light": { mountain: "striker-maul-t3", cave: "striker-bastard-sword-t3", jungle: "striker-twin-fangs-t3" },
   "striker-balanced": { mountain: "striker-maul-t3", cave: "striker-bastard-sword-t3" },
-  "striker-heavy": { mountain: "striker-maul-t3" },
+  "striker-heavy": { mountain: "striker-maul-t3", cave: "striker-bastard-sword-t3" },
 };
 
 /**
@@ -57,9 +59,30 @@ const T3_WEAPONS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
  * 51%). PLACEHOLDER (OV-STRIKER).
  */
 export function strikerT3ZoneGear(disciplineId: string, biomeGroup: string): string[] {
-  const weapon = T3_WEAPONS[disciplineId]?.[biomeGroup];
-  const set = ["vest", "charm", "boots"].map((slot) => `${biomeGroup}-${slot}-t${TIER}`).filter((id) => RECIPE_DATABASE.has(id));
+  const reworn = strikerT3Reworn(disciplineId, biomeGroup);
+  const slotOf = (id: string) => RECIPE_DATABASE.get(id)?.slot;
+  const weapon = T3_WEAPONS[disciplineId]?.[biomeGroup] ?? reworn.find((id) => slotOf(id) === "weapon");
+  const set = ["vest", "charm", "boots"].map((slot) => `${biomeGroup}-${slot}-t${TIER}`).filter((id) => RECIPE_DATABASE.has(id))
+    .map((id) => reworn.find((piece) => slotOf(piece) === slotOf(id)) ?? id);
   return [...(weapon ? [weapon] : []), ...set];
+}
+
+/**
+ * Pieces a T3 zone puts back on instead of its own (crafted in an earlier T3 zone), by discipline.
+ * PLACEHOLDER (OV2-STRIKER): Heavy wears the Swamp's vest (Bloodless) at the Jungle, as at T2: the
+ * nine-guard pack's Venom Dart Frog poison killed it in the Jungle vest (lane 2, 2026-10-17); the
+ * Jungle boss in classBossSim: won with 79-96% HP left. Light puts the Cave's Bastard Sword back on
+ * for the Volcanic boss: in Twin Fangs it lost the Cinder-Shell Magma-Salamander twice on the clean
+ * run (boss 1% and 8% left, 65 s; obsidian shells against small hits, Light's weakness); in
+ * classBossSim the Sword won it 3/3 in 20 s with full HP (the Fangs 40-46 s).
+ */
+const T3_REWORN: Readonly<Record<string, Readonly<Record<string, readonly string[]>>>> = {
+  "striker-light": { volcanic: ["striker-bastard-sword-t3"] },
+  "striker-heavy": { jungle: ["swamp-vest-t3"] },
+};
+
+export function strikerT3Reworn(disciplineId: string, biomeGroup: string): string[] {
+  return [...(T3_REWORN[disciplineId]?.[biomeGroup] ?? [])];
 }
 
 export function strikerT3Route(specializationId = "striker-thousand-cuts"): Route {
