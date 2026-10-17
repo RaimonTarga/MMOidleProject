@@ -13,6 +13,8 @@ export interface ClassSystemSpec<C extends ClassSystemConfig> {
   parse(raw: Record<string, unknown>): C | null;
   /** The class default for what the character owns (each section's §N.13). */
   defaults(ctx: ClassConfigContext): C;
+  /** The default's trophies for the relic slot, best first (§N.13); without it, the newest trophy. */
+  defaultRelics?(ctx: ClassConfigContext): string[];
   /** Every reason the config can't be used; empty when it can. */
   validate(config: C, ctx: ClassConfigContext): string[];
 }

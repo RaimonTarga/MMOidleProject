@@ -76,12 +76,16 @@ export function classConfigContext(
   };
 }
 
-/** The class default: what `auto` mode fields. The newest trophy goes in the relic slot. */
+/**
+ * The class default: what `auto` mode fields. The relic slot takes the class's own pick when
+ * its system has one, else the newest trophy.
+ */
 export function defaultClassConfig(ctx: ClassConfigContext): ClassConfig {
+  const spec = systemFor(ctx.archetype);
   return {
     mode: 'auto',
-    relic: ctx.trophiesNewestFirst.slice(0, ctx.relicSlots),
-    system: systemFor(ctx.archetype).defaults(ctx),
+    relic: (spec.defaultRelics?.(ctx) ?? ctx.trophiesNewestFirst).slice(0, ctx.relicSlots),
+    system: spec.defaults(ctx),
   };
 }
 
