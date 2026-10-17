@@ -241,6 +241,7 @@ function step(world: World, player: PlayerEntity, target?: MonsterEntity): void 
   step(world, player, target);
   assert.equal(sigils(target), 0, 'Cold Snap spends the sigils');
   assert.ok(has(neighbour, 'ability-slowed'), 'and chills every enemy around it');
+  assert.ok((getStatusEffect(neighbour.tracksCombat, 'ability-slowed')?.data['attackSlowPct'] ?? 0) > 0, 'the chill slows its attacks too');
 }
 
 // ── T2 lessons ───────────────────────────────────────────────────────────────

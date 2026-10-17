@@ -14,15 +14,29 @@ import {
   type ClassSystemSpec,
 } from './common';
 
-/** A default placement, kept only under the discipline it names, or under every discipline but `except`. */
-type DefaultPlacement = PayoffPlacement & { discipline?: string; except?: string };
+/** A default placement, kept only under the disciplines it names, or under every discipline but those in `except`. */
+type DefaultPlacement = PayoffPlacement & { discipline?: readonly string[]; except?: readonly string[] };
 
 /**
  * The default (§9.13), in priority order, filtered to the pieces owned:
  * - T1: full → Spread with two or more enemies near, else Detonate; winds up → Seize; your HP low → Siphon.
  * - Poison: full → Detonate (the plague walks on its own; the Spread rule frees the moment), low → Wither.
+ *   With two or more enemies near, the full bar is left to the plague (PLACEHOLDER, OV2-APPRENTICE):
+ *   only a full carrier passes sigils, so a Detonate the moment the bar filled kept the plague from
+ *   ever walking, and the Poison chain had no pack damage (the T2 Jungle guard pack, live).
+ *   "Low" is your HP, after Siphon (PLACEHOLDER, OV2-APPRENTICE): on the target's low moment Wither
+ *   spent the bar every cooldown through a boss's last third, so Detonate stopped and the T4 Caldera
+ *   Sovereign's race was lost 3 times in 4 (sim); on your HP it is the floor when the fight turns.
  * - Fire: full → Detonate (the T1 Spread rule goes, so a full bar always sets the chain off), shell up → Fuse.
- * - Frost: winds up → Seize, frozen → Detonate (the Shatter), three or more near → Cold Snap.
+ * - Frost: winds up → Seize, frozen → Detonate (the Shatter), three or more near → Cold Snap (on that
+ *   moment, not on a full bar among three: OV2-APPRENTICE, it fired 0 times a minute in the T2 Jungle
+ *   guard pack, where the full bar rarely met three enemies near). The T1
+ *   Spread rule goes here too (PLACEHOLDER, OV2-APPRENTICE): while it held the full bar among two or
+ *   more enemies a Frost Apprentice never detonated in a pack, and the T2 Jungle's nine guards killed
+ *   it three times in seven minutes (live, lane 6) with its damage down to the ticks.
+ * - Poison and Frost: Siphon also answers an enemy in melee with you once your HP is under half
+ *   (PLACEHOLDER, OV2-APPRENTICE): at a quarter it came too late for the T2 Jungle dungeon's guard
+ *   pack, three guards taking a full bar of HP in about seven seconds (live, both chains).
  * - Every later lesson on the moment it answers; Cinderfall (the Detonate sidegrade) takes a full
  *   bar among three or more enemies, Spore Burst (the Spread sidegrade) a target about to die,
  *   Transference a debuff landing on you once Recoil has answered it. Signal Fire and the
@@ -32,13 +46,15 @@ type DefaultPlacement = PayoffPlacement & { discipline?: string; except?: string
  */
 const DEFAULTS: readonly DefaultPlacement[] = [
   { moment: 'target-full', pieceId: 'apprentice-cinderfall', conditions: [{ id: 'enemies-near', param: 3 }] },
-  { moment: 'target-full', pieceId: 'apprentice-cold-snap', conditions: [{ id: 'enemies-near', param: 3 }] },
-  { moment: 'target-full', pieceId: 'apprentice-spread', conditions: [{ id: 'enemies-near', param: 2 }], except: 'apprentice-fire' },
-  { moment: 'target-full', pieceId: 'apprentice-detonate', conditions: [] },
-  { moment: 'target-frozen', pieceId: 'apprentice-detonate', conditions: [], discipline: 'apprentice-frost' },
+  { moment: 'target-full', pieceId: 'apprentice-spread', conditions: [{ id: 'enemies-near', param: 2 }], except: ['apprentice-fire', 'apprentice-frost'] },
+  { moment: 'target-full', pieceId: 'apprentice-detonate', conditions: [{ id: 'enemies-near', param: 2, not: true }], discipline: ['apprentice-poison'] },
+  { moment: 'target-full', pieceId: 'apprentice-detonate', conditions: [], except: ['apprentice-poison'] },
+  { moment: 'target-frozen', pieceId: 'apprentice-detonate', conditions: [], discipline: ['apprentice-frost'] },
   { moment: 'enemy-winds-up', pieceId: 'apprentice-seize', conditions: [] },
+  { moment: 'enemies-near', pieceId: 'apprentice-cold-snap', conditions: [] },
+  { moment: 'touched', pieceId: 'apprentice-siphon', conditions: [{ id: 'hp-low', param: 0.5 }], discipline: ['apprentice-poison', 'apprentice-frost'] },
   { moment: 'hp-low', pieceId: 'apprentice-siphon', conditions: [] },
-  { moment: 'target-low', pieceId: 'apprentice-wither', conditions: [] },
+  { moment: 'hp-low', pieceId: 'apprentice-wither', conditions: [] },
   { moment: 'target-low', pieceId: 'apprentice-spore-burst', conditions: [{ id: 'enemies-near', param: 3 }] },
   // T2 lessons, each on the moment it answers.
   { moment: 'charging-at-me', pieceId: 'apprentice-blast-back', conditions: [] },
@@ -74,8 +90,8 @@ export const APPRENTICE_SYSTEM: ClassSystemSpec<PayoffsConfig> = {
       kind: 'payoffs',
       placements: DEFAULTS
         .filter((entry) => ctx.pieceRanks.has(entry.pieceId)
-          && (!entry.discipline || entry.discipline === ctx.disciplineId)
-          && (!entry.except || entry.except !== ctx.disciplineId))
+          && (!entry.discipline || (ctx.disciplineId !== null && entry.discipline.includes(ctx.disciplineId)))
+          && !(ctx.disciplineId && entry.except?.includes(ctx.disciplineId)))
         .map(({ moment, pieceId, conditions }) => ({ moment, pieceId, conditions: [...conditions] })),
     };
   },

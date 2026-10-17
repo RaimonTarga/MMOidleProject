@@ -8,6 +8,7 @@
  * the per-tick update and the listener registration.
  */
 import {
+  ABILITY_SLOW_EFFECT_ID,
   APPRENTICE_KIT,
   applyStatusEffect,
   BRITTLE_EFFECT_ID,
@@ -280,7 +281,12 @@ export function firePayoffT2(world: World, player: PlayerEntity, p: Payoffs, pie
     case 'apprentice-cold-snap': {
       if (spend(target) <= 0) return false;
       for (const other of playerAoeTargets(world, player, target.hasPosition.current, params['radius'] ?? 180, target.isMonster.id)) {
-        applyMonsterSlow(world, other, params['slowPct'] ?? 0.35, params['ms'] ?? 2500, pid);
+        const slowPct = params['slowPct'] ?? 0.35;
+        applyMonsterSlow(world, other, slowPct, params['ms'] ?? 2500, pid);
+        // The chill slows attacks too, as Numb does (OV2-APPRENTICE): it is Frost's pack answer, and a
+        // movement slow does nothing against a pack already in melee with a class that stands and fights.
+        const chilled = getStatusEffect(other.tracksCombat, ABILITY_SLOW_EFFECT_ID);
+        if (chilled) chilled.data['attackSlowPct'] = Math.max(chilled.data['attackSlowPct'] ?? 0, slowPct);
       }
       return true;
     }

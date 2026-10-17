@@ -12,8 +12,31 @@ import { APPRENTICE_CLASS_ROOT, apprenticeT1Route, wear } from "./apprenticeT1";
  * T4 routes always did, so every tier's route plays the same character (PLACEHOLDER pick).
  */
 export const APPRENTICE_T2_ID = "apprentice-t2";
-/** The school every Apprentice route picks at T2. */
+/** The school the bare Apprentice routes pick at T2 (the overnight chain). */
 export const APPRENTICE_T2_DISCIPLINE = "apprentice-fire";
+
+/**
+ * One chain per school (OV2-APPRENTICE): Fire, the overnight chain, keeps the bare ids
+ * (`apprentice-t2`); Poison and Frost add a suffix (`apprentice-t2-poison`, `apprentice-t4-frost`).
+ */
+export const APPRENTICE_DISCIPLINE_SUFFIX: Readonly<Record<string, string>> = {
+  "apprentice-fire": "",
+  "apprentice-poison": "-poison",
+  "apprentice-frost": "-frost",
+};
+
+/** The route id of a tier for a school: `apprentice-t2`, `apprentice-t3-poison`, ... */
+export function apprenticeRouteId(tier: 2 | 3 | 4, disciplineId: string): string {
+  const suffix = APPRENTICE_DISCIPLINE_SUFFIX[disciplineId];
+  if (suffix === undefined) throw new Error(`unknown Apprentice school "${disciplineId}"`);
+  return `apprentice-t${tier}${suffix}`;
+}
+
+export const APPRENTICE_DISCIPLINE_NAME: Readonly<Record<string, string>> = {
+  "apprentice-fire": "Fire",
+  "apprentice-poison": "Poison",
+  "apprentice-frost": "Frost",
+};
 
 /** The T2 zones with the lesson each teaches, in the tutorial's order (`shared/.../scripts/apprentice.ts`). */
 export const APPRENTICE_T2_ZONES: readonly { biomeGroup: string; lesson: string }[] = [
@@ -34,7 +57,8 @@ function zone(biomeGroup: string): NodeRef {
  * The T2 pieces worn as each zone unlocks them (PLACEHOLDER picks, OV-APPRENTICE, chosen in the
  * class boss sim): the Plains and Forest sets first, then the Fire school's Runestone Staff (three
  * sigils a hit fill the bar for the chain), the Jungle's evasion vest and the Desert's fast boots.
- * The Forest charm (the most Recovery) stays on.
+ * The Forest charm (the most Recovery) stays on. Frost takes the same staff (it is a Frost weapon
+ * too, §9.5).
  */
 export const APPRENTICE_T2_GEAR: Readonly<Record<string, readonly string[]>> = {
   plains: ["apprentice-branching-wand-t2", "plains-vest-t2", "plains-charm-t2", "plains-boots-t2"],
@@ -43,6 +67,36 @@ export const APPRENTICE_T2_GEAR: Readonly<Record<string, readonly string[]>> = {
   jungle: ["jungle-vest-t2"],
   desert: ["desert-boots-t2"],
 };
+
+/**
+ * The Poison and Frost chains swap the Forest charm for the Swamp's (Bog Eye's cleansing pulse,
+ * Bitter Tonic's faster, bigger Siphon) (OV2-APPRENTICE, PLACEHOLDER): with the Forest charm both
+ * died at the T2 Jungle dungeon's nine-guard poison pack (Frost three times in seven minutes,
+ * Poison twice, live), which the boss sim never meets; in the sim the Swamp charm also lifts every
+ * T2 boss (Poison 45-99% HP left against 17-70%, Frost 63-100% against 40-91%).
+ */
+export const APPRENTICE_T2_FROST_GEAR: Readonly<Record<string, readonly string[]>> = {
+  ...APPRENTICE_T2_GEAR,
+  swamp: ["swamp-charm-t2"],
+};
+
+/**
+ * Poison wears the Frost set, Runestone Staff included (OV2-APPRENTICE, PLACEHOLDER): the Jungle
+ * dungeon's guard pack has to fall in one life (the walk back from the sanctuary outlasts the 90 s
+ * before the guard reforms), and the one-sigil-a-hit weapons fill Poison's larger bar too slowly:
+ * the Thornwood Rod and the Bog Censer each died there again and again (live, lane 5), three guards
+ * on it for 7-13 s. Three sigils a hit fill it in three. The Jungle's own vest stays on (its dot
+ * resistance meets the Jungle Snake, the guard pack's main damage: 150-225 of each death's last
+ * 8 s in the Plains vest, three deaths on a fresh character). Class boss sim: every T2 boss won.
+ */
+export const APPRENTICE_T2_POISON_GEAR: Readonly<Record<string, readonly string[]>> = APPRENTICE_T2_FROST_GEAR;
+
+/** The T2 gear a school's chain wears. */
+export function apprenticeT2Gear(disciplineId: string | null): Readonly<Record<string, readonly string[]>> {
+  if (disciplineId === "apprentice-poison") return APPRENTICE_T2_POISON_GEAR;
+  if (disciplineId === "apprentice-frost") return APPRENTICE_T2_FROST_GEAR;
+  return APPRENTICE_T2_GEAR;
+}
 
 /**
  * The rules the T2 bosses are fought with: the class's own auto default (the pass bar plays
@@ -55,6 +109,7 @@ export function apprenticeT2Payoffs(): ClassConfig {
 
 export function apprenticeT2Route(disciplineId: string | null = APPRENTICE_T2_DISCIPLINE): Route {
   const t1 = apprenticeT1Route();
+  const gear = apprenticeT2Gear(disciplineId);
   const steps: RouteStep[] = [...t1.steps];
   if (disciplineId) steps.push({ type: "unlockSkill", skillId: disciplineId, label: "pick the school" });
 
@@ -62,7 +117,7 @@ export function apprenticeT2Route(disciplineId: string | null = APPRENTICE_T2_DI
   for (const { biomeGroup } of APPRENTICE_T2_ZONES) {
     const at = zone(biomeGroup);
     steps.push({ type: "travel", to: at });
-    steps.push(...wear(at, APPRENTICE_T2_GEAR[biomeGroup] ?? []));
+    steps.push(...wear(at, gear[biomeGroup] ?? []));
     steps.push({
       type: "farm",
       at,
@@ -86,11 +141,11 @@ export function apprenticeT2Route(disciplineId: string | null = APPRENTICE_T2_DI
   }
 
   return {
-    id: APPRENTICE_T2_ID,
+    id: disciplineId ? apprenticeRouteId(2, disciplineId) : APPRENTICE_T2_ID,
     version: "1.0.0",
     classRoot: APPRENTICE_CLASS_ROOT,
     description:
-      "Apprentice T2: the T1 route, the Fire school, the seven T2 zones to their cap (wearing " +
+      `Apprentice T2: the T1 route, the ${disciplineId ? APPRENTICE_DISCIPLINE_NAME[disciplineId] : "unpicked"} school, the seven T2 zones to their cap (wearing ` +
       "each zone's gear), auto Payoff rules, and the seven T2 bosses.",
     steps,
     completion: allOf(

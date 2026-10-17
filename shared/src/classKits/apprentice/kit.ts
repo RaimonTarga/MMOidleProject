@@ -143,10 +143,11 @@ const PIECES: readonly ApprenticePiece[] = [
   }),
   payoff({
     id: 'apprentice-cold-snap',
-    params: { radius: 180, slowPct: 0.35, ms: 2500, cooldownMs: 6000 },
+    // ms 2500 → 4000 (OV2-APPRENTICE, PLACEHOLDER): the chill now slows attacks too, and covers most of its cooldown.
+    params: { radius: 180, slowPct: 0.35, ms: 4000, cooldownMs: 6000 },
     name: 'Cold Snap',
     family: 'frost',
-    text: "Spends the target's sigils to chill every enemy around it.",
+    text: "Spends the target's sigils to chill every enemy around it, slowing its movement and attacks.",
   }),
   // ── T2 (§9.16) ──
   payoff({

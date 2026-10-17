@@ -41,6 +41,7 @@ import { spiritT4Route } from "./spiritT4";
  * `conduit-t3` continues it past the tier-3 promotion (T3-W2); same status.
  * `conduit-t4` continues it past the tier-4 promotion (T4-W2); same status.
  * `conduit-t{2,3,4}-swarm` and `-elite` are the Conduit's other two discipline chains (OV2-CONDUIT); same status.
+ * `apprentice-t{2,3,4}-poison` and `-frost` are the Apprentice's other two school chains (OV2-APPRENTICE); same status.
  */
 
 /**
@@ -88,6 +89,10 @@ const APPRENTICE_ROUTE = apprenticeT1Route();
 const APPRENTICE_T2_ROUTE = apprenticeT2Route();
 const APPRENTICE_T3_ROUTE = apprenticeT3Route();
 const APPRENTICE_T4_ROUTE = apprenticeT4Route();
+/** The Apprentice's other two school chains (OV2): `apprentice-t2..t4-poison`, `apprentice-t2..t4-frost`. */
+const APPRENTICE_CHAIN_ROUTES = ["apprentice-poison", "apprentice-frost"].flatMap((discipline) => [
+  apprenticeT2Route(discipline), apprenticeT3Route(discipline), apprenticeT4Route(discipline),
+]);
 export const ROUTES = new Map<string, Route>([
   [SMOKE_ROUTE.id, SMOKE_ROUTE],
   [STRIKER_ROUTE.id, STRIKER_ROUTE],
@@ -118,6 +123,7 @@ export const ROUTES = new Map<string, Route>([
   [APPRENTICE_T2_ROUTE.id, APPRENTICE_T2_ROUTE],
   [APPRENTICE_T3_ROUTE.id, APPRENTICE_T3_ROUTE],
   [APPRENTICE_T4_ROUTE.id, APPRENTICE_T4_ROUTE],
+  ...APPRENTICE_CHAIN_ROUTES.map((route): [string, Route] => [route.id, route]),
 ]);
 
 /**
