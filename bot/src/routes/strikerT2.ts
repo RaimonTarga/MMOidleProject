@@ -97,12 +97,30 @@ export function strikerT2ZoneSet(biomeGroup: string, disciplineId?: string): str
  * (attack speed, on-hit); Balanced takes them, then the Cave's Bastard Sword (damage techniques
  * and the finisher hit harder); Heavy takes the Mountain's Maul (a much bigger finisher, faster
  * wind-ups). PLACEHOLDER.
+ *
+ * Heavy also takes the Cave's Bastard Sword for the Cave and the Jungle, and puts the Maul back on
+ * at the Desert (`T2_REWORN_WEAPON`). OV2-STRIKER: in the Maul (one swing every 1.8 s, a combo of
+ * eight seconds) Heavy death-looped at the Jungle dungeon's nine-guard poison pack, three deaths with
+ * Grit on; in classBossSim the Bastard Sword won the Cave and Jungle bosses with 55-56% HP left
+ * (the Maul 39% and 79%), and the Maul the Desert boss with 65% (the Bastard Sword 20%). PLACEHOLDER.
  */
 const T2_WEAPONS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   "striker-light": { plains: "striker-broadblade-t2", forest: "striker-twin-fangs-t2" },
   "striker-balanced": { plains: "striker-broadblade-t2", forest: "striker-twin-fangs-t2", cave: "striker-bastard-sword-t2" },
-  "striker-heavy": { plains: "striker-broadblade-t2", mountain: "striker-maul-t2" },
+  "striker-heavy": { plains: "striker-broadblade-t2", mountain: "striker-maul-t2", cave: "striker-bastard-sword-t2" },
 };
+
+/** A weapon put back on at a T2 zone (crafted in an earlier zone), by discipline. */
+const T2_REWORN_WEAPON: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  "striker-heavy": { desert: "striker-maul-t2" },
+};
+
+/** The pieces a T2 zone puts back on instead of crafting them there (an earlier zone's), by discipline. */
+export function strikerT2Reworn(disciplineId: string, biomeGroup: string): string[] {
+  const weapon = T2_REWORN_WEAPON[disciplineId]?.[biomeGroup];
+  const charm = strikerT2ZoneCharm(biomeGroup, disciplineId);
+  return [...(weapon ? [weapon] : []), ...(charm ? [charm] : [])];
+}
 
 /**
  * A finished earlier tier is not walked again: its steps run only while its completion does not
@@ -115,7 +133,7 @@ export function unlessDone(route: Route, what: string): RouteStep {
 
 /** What the arm wears from this T2 zone, weapon first (its recipe opens first). */
 export function strikerT2ZoneGear(disciplineId: string, biomeGroup: string): string[] {
-  const weapon = T2_WEAPONS[disciplineId]?.[biomeGroup];
+  const weapon = T2_WEAPONS[disciplineId]?.[biomeGroup] ?? T2_REWORN_WEAPON[disciplineId]?.[biomeGroup];
   return [...(weapon ? [weapon] : []), ...strikerT2ZoneSet(biomeGroup, disciplineId)];
 }
 

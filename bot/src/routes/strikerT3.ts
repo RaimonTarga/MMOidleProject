@@ -42,12 +42,14 @@ export function strikerT3FarmLevel(biomeGroup: string): number {
  * PLACEHOLDER (OV-STRIKER): every arm meets the first T3 seal (the Mountain) in the tier's Maul;
  * Balanced then takes the Cave's Bastard Sword; Light takes it too (it won the Cave T3 boss in
  * classBossSim at 43% HP where the Maul lost at 13% boss left), then the Jungle's Twin Fangs (the Forest's job
- * moved there).
+ * moved there). Heavy takes the Bastard Sword at the Cave too (OV2-STRIKER: the Maul's one swing in
+ * 1.8 s death-looped at the T2 Jungle guard pack; in classBossSim the Bastard Sword won the five T3
+ * bosses from the Cave on with 70-96% HP left, faster than the Maul).
  */
 const T3_WEAPONS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   "striker-light": { mountain: "striker-maul-t3", cave: "striker-bastard-sword-t3", jungle: "striker-twin-fangs-t3" },
   "striker-balanced": { mountain: "striker-maul-t3", cave: "striker-bastard-sword-t3" },
-  "striker-heavy": { mountain: "striker-maul-t3" },
+  "striker-heavy": { mountain: "striker-maul-t3", cave: "striker-bastard-sword-t3" },
 };
 
 /**
