@@ -8,7 +8,7 @@
 //   node tools/lane/lane.mjs reset <n>     stop, then drop and recreate lane n's game database
 //
 // Lane n: port 4310+n, database gamedb_ov<n> (in the `mmo-gamedb` container), Redis db 8+n,
-// the shared log database logdb_rework. Lanes 0-6 exist. The server log goes to
+// the shared log database logdb_rework. Lanes 0-7 exist (Redis has dbs 8-15 for them). The server log goes to
 // ../lanes/lane<n>/server.log (outside the repo), its pid to ../lanes/lane<n>/server.pid.
 // A bot points at the lane with `--server=http://localhost:<port>`.
 //
@@ -25,7 +25,7 @@ const LANES_DIR = path.resolve(ROOT, '..', 'lanes');
 
 function lane(n) {
   const id = Number(n);
-  if (!Number.isInteger(id) || id < 0 || id > 6) throw new Error(`lane must be 0-6, got "${n}"`);
+  if (!Number.isInteger(id) || id < 0 || id > 7) throw new Error(`lane must be 0-7, got "${n}"`);
   const dir = path.join(LANES_DIR, `lane${id}`);
   return {
     id,
@@ -125,7 +125,7 @@ function psql(sql) {
 const [cmd, n] = process.argv.slice(2);
 if (cmd === 'start') await start(lane(n));
 else if (cmd === 'stop') stop(lane(n));
-else if (cmd === 'status') await status(n === undefined ? [0, 1, 2, 3, 4, 5, 6] : [n]);
+else if (cmd === 'status') await status(n === undefined ? [0, 1, 2, 3, 4, 5, 6, 7] : [n]);
 else if (cmd === 'reset') {
   const l = lane(n);
   stop(l);
