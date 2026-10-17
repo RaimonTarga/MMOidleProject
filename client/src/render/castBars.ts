@@ -40,6 +40,11 @@ export function drawCastBars(state: RenderState, scene: GameScene): void {
   const now = Date.now();
 
   for (const [id, cast] of state.castState) {
+    // A wind-up slow (Numb II) runs the server's clock at `1 - pct`: push the end out by the
+    // same share of each frame, as the server pushes the blow, so the bar empties when it lands.
+    const slow = (state.view.get(id) as { windupSlowPct?: number } | undefined)?.windupSlowPct ?? 0;
+    if (slow > 0 && cast.stretchedAt !== undefined) cast.castMs += (now - cast.stretchedAt) * slow;
+    cast.stretchedAt = now;
     // Drop a stale cast if its end event never arrived.
     if (now - cast.startedAt > cast.castMs + CAST_EXPIRY_GRACE_MS) {
       endCastBar(state, id);

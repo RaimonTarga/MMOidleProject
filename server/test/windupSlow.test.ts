@@ -112,6 +112,10 @@ const slamZone = (world: World, ownerId: string) =>
   tick(world, 10);
   assert.equal(chargedCastEndsAt(monster), endsAt + 500, 'a second under a 0.5 wind-up slow pushes the blow half a second later');
   assert.equal(slamZone(world, monster.isMonster.id)?.resolvesAtMs, endsAt + 500, 'and its circle fills with it');
+  assert.equal(monster.hasStatus.windupSlowPct, 0.5, 'the slow is published for the cast bar on the client');
+  getStatusEffect(monster.tracksCombat, ABILITY_SLOW_EFFECT_ID)!.remainingMs = 0;
+  tick(world, 1);
+  assert.equal(monster.hasStatus.windupSlowPct, undefined, 'and cleared when it ends');
 }
 
 // 2. A boss pattern's cast step runs slow, and so does the telegraph after it.

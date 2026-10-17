@@ -137,6 +137,8 @@ export interface HasStatus {
   activeBuffs?: PlayerBuff[];
   /** Bosses only — populated by `bossScripts.ts` each tick. */
   bossEffects?: string[];
+  /** Monsters only — the fraction its wind-ups run slow by (Numb II), so the client's cast bar keeps pace. */
+  windupSlowPct?: number;
   /** Bosses only — active effect stack counts, keyed by `bossEffects` id. */
   bossEffectStacks?: Record<string, number>;
   /** Bosses only — live clocks for the effects named by `bossEffects`. */

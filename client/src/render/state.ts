@@ -76,7 +76,8 @@ export interface RenderState {
   /** Monster charged-attack wind-up: the skill-name label (the bar reuses the
    *  cooldown bar, tinted red) + the cast timing, keyed by monster id. */
   castLabel: Map<NetworkId, Phaser.GameObjects.Text>;
-  castState: Map<NetworkId, { startedAt: number; castMs: number; label: string }>;
+  /** `stretchedAt`: when the cast was last stretched for a wind-up slow (`drawCastBars`). */
+  castState: Map<NetworkId, { startedAt: number; castMs: number; label: string; stretchedAt?: number }>;
   /** Detonate's wind-up, keyed by the TARGET monster's id (not the caster's):
    *  the FX belongs on the thing carrying the afflictions. See detonateWindup.ts. */
   detonateWindup: Map<NetworkId, DetonateWindupState>;

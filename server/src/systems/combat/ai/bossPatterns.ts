@@ -733,6 +733,7 @@ const WINDUP_STEP_KINDS: ReadonlySet<BossPatternStep['kind']> = new Set<BossPatt
  */
 function stretchWindups(world: World, monster: MonsterEntity, dt: number, now: number): void {
   const pct = monsterWindupSlowPct(monster);
+  publishWindupSlow(world, monster, pct);
   if (pct <= 0) return;
   const delayMs = dt * pct;
   let stretched = delayMonsterCasts(monster, delayMs, now);
@@ -745,6 +746,14 @@ function stretchWindups(world: World, monster: MonsterEntity, dt: number, now: n
     }
   }
   if (stretched) delayGroundZonesByOwner(world, monster.hasPosition.nodeId, monster.isMonster.id, delayMs, now);
+}
+
+/** The client stretches a cast bar by the same fraction (Numb II), so it ends when the blow lands. */
+function publishWindupSlow(world: World, monster: MonsterEntity, pct: number): void {
+  if ((monster.hasStatus.windupSlowPct ?? 0) === pct) return;
+  if (pct > 0) monster.hasStatus.windupSlowPct = pct;
+  else delete monster.hasStatus.windupSlowPct;
+  markSliceDirty(world, monster, 'hasStatus');
 }
 
 export function updateBossPatterns(world: World, dt: number, now = Date.now()): void {

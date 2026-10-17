@@ -257,6 +257,8 @@ export interface MonsterView {
   bossEffectDurations?: Record<string, { remainingMs: number; totalMs: number }>;
   bossPhase?: string;
   bossWeather?: HasStatus['bossWeather'];
+  /** The fraction its wind-ups run slow by (Numb II): the cast bar stretches with it. */
+  windupSlowPct?: number;
   enemyBarrier?: NonNullable<HasStatus['enemyBarrier']>;
   targetStatus?: TargetStatusView[];
   /** Set while the monster is burrowed / in cover: untargetable, and drawn as such. */
@@ -477,6 +479,7 @@ export function composeMonsterView(
     bossEffectDurations: entity.hasStatus?.bossEffectDurations,
     bossPhase: entity.hasStatus?.bossPhase,
     bossWeather: entity.hasStatus?.bossWeather,
+    windupSlowPct: entity.hasStatus?.windupSlowPct,
     enemyBarrier: entity.hasStatus?.enemyBarrier,
     targetStatus: entity.hasStatus?.targetStatus,
     concealed: entity.hasStatus?.concealed,
