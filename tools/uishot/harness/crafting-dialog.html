@@ -9,6 +9,7 @@
        ?rows=N             recipes / upgradeable items (default 24, 0 = empty)
        ?filters=few        drop the biome and tier filter rows
        ?maxed=1            Upgrade: every card is MAX (short cards, no cost)
+       ?classline=1        Make: the detail shows a shared base's class line (ClassLineNote)
 -->
 <html lang="en">
 <head>
@@ -19,6 +20,7 @@
   <link rel="stylesheet" href="../../../client/src/hud/primitives/browserPane.css" />
   <link rel="stylesheet" href="../../../client/src/ui/materialChip.css" />
   <link rel="stylesheet" href="../../../client/src/ui/crafting.css" />
+  <link rel="stylesheet" href="../../../client/src/ui/classLineNote.css" />
   <style>
     html, body { margin: 0; height: 100%; background: #14120e; }
     /* Stands in for GameIcon/ItemIcon, which need the packed atlas. */
@@ -114,6 +116,10 @@ function makeDetail() {
     + '<div class="make-detail__meta">Weapon &middot; T2 &middot; Forest</div>'
     + '</div></div>'
     + '<p class="make-detail__blurb">A split-haft cleaver grown rather than forged; the bark keeps closing over the notches.</p>'
+    + (new URLSearchParams(location.search).get('classline')
+      ? '<p class="class-line-note"><span class="class-line-note__name">Grit</span>'
+        + '<span class="class-line-note__text">Part of every hit you take heals back over a few seconds while you keep attacking; stop and it is lost.</span></p>'
+      : '')
     + '<div class="craft-recipe__stats">'
     + [['+24', 'Attack'], ['+6%', 'Attack Speed'], ['+11', 'Plating']].map(p =>
         '<span class="craft-stat-pill"><span class="craft-stat-pill__value">' + p[0]
