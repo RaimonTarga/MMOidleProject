@@ -5,7 +5,9 @@
 // that spots the player there "returns" on the same tick. Auto-combat skipped returning
 // monsters, so a Squire standing between two such packs switched targets every tick,
 // never reached either, and the guard phase gave up after 15 minutes (OV final runs,
-// 2026-10-17). A monster still walking home stays skipped.
+// 2026-10-17). A monster still walking home stays skipped, unless it is a dungeon guardian: its
+// way home is inside the arena it guards (a Spirit's push squalls kept the T4 Mountain's slow
+// Stone Wardens walking back, hidden from auto-combat, until the guard reformed).
 //
 // Run: pnpm --filter @mmo-idle/server exec tsx --conditions=development test/returningAtHome.test.ts
 
@@ -71,9 +73,18 @@ function addPlayer(world: World, pos: { x: number; y: number }): PlayerEntity {
   const home = selectAutoCombatAction(world, player, player.usesAutocombat, Date.now());
   assert(home.kind === "attack" && home.target === monster, "a returning monster on its post can be picked");
 
-  monster.hasPosition.current = { x: post.x - 200, y: post.y };
+  // A dungeon guardian pushed off its post (a Spirit's squalls) stays a target on its way back.
+  monster.hasPosition.current = { x: post.x - 400, y: post.y };
+  const pushed = selectAutoCombatAction(world, player, player.usesAutocombat, Date.now());
+  assert(pushed.kind === "attack" && pushed.target === monster, "a guardian walking back to its post is still a target");
+
+  // Any other monster walking home is left to finish its reset.
+  delete monster.tracksDungeon;
   const away = selectAutoCombatAction(world, player, player.usesAutocombat, Date.now());
   assert(away.kind === "idle", "a returning monster still walking home is left to finish its reset");
+  monster.hasPosition.current = { ...post };
+  const back = selectAutoCombatAction(world, player, player.usesAutocombat, Date.now());
+  assert(back.kind === "attack" && back.target === monster, "and picked again once home");
 }
 
 // ── The wiring: the spot between two guard packs reaches the guard ────────────

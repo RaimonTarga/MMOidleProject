@@ -369,8 +369,14 @@ function passesGates(
     // "returns" on the spot, and skipping it there left a player between two such
     // packs flipping between them every tick, never reaching either (the T3 Jungle
     // dungeon's guards, against +65% aggro-pull boots).
-    if (monster.hasAwareness?.state === "returning" && !isHome(monster)) return false;
-    if (isPastLeashAnchor(monster)) return false;
+    //
+    // A dungeon guardian is never skipped for either: its way home is inside the arena it
+    // guards, not somewhere the chase drags the player. A Spirit's push squalls kept the T4
+    // Mountain's Stone Wardens (speed 16) walking back to their posts for most of a minute
+    // each, hidden from auto-combat, until the guard reformed (15 minutes, final runs).
+    const guardian = monster.tracksDungeon?.source === "dungeonGuardian";
+    if (!guardian && monster.hasAwareness?.state === "returning" && !isHome(monster)) return false;
+    if (!guardian && isPastLeashAnchor(monster)) return false;
     if (
       !world.collision.isWithinCenterRadius(
         player.hasPosition.current,

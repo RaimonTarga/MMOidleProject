@@ -28,6 +28,8 @@
  * edge (run 0 the south edge, then west, north, east) and fights with the same auto-combat the
  * bot leaves on; a run is a win when every guardian is dead, and the guard reforms on its own
  * clock as it does live. The row's `boss left` is then the guardians still standing.
+ *
+ * `--charged` starts a Spirit's storm full, as it is when a live Spirit walks in after a farm or a walk.
  */
 import {
   DEFAULT_AUTOCOMBAT_CONFIG,
@@ -83,6 +85,8 @@ const MAX_SECONDS = Number(argOf('--max-seconds') ?? 240);
 const UPGRADE = Number(argOf('--upgrade') ?? 0);
 const JSON_OUT = ARGV.includes('--json');
 const GUARDS = ARGV.includes('--guards');
+/** `--charged`: the Spirit's storm starts full, as a live Spirit walks in (the default starts it empty). */
+const CHARGED = ARGV.includes('--charged');
 
 if (SKILL_TREE.get(CLASS_ROOT)?.tier !== 0) throw new Error(`unknown class "${CLASS}"`);
 
@@ -207,6 +211,7 @@ function buildPlayer(world: World, node: BossNode, run: number): PlayerEntity {
   syncArchetypeSlices(world, p);
   Object.assign(p.usesAutocombat, DEFAULT_AUTOCOMBAT_CONFIG, { auto: true, autoTraverse: false });
   p.hasHealth.hp = p.hasHealth.maxHp;
+  if (CHARGED && p.usesEnergy) p.usesEnergy.energy = p.usesEnergy.energyMax;
   return p;
 }
 
