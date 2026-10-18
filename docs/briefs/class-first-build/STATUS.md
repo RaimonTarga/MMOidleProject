@@ -3,7 +3,13 @@
 Kept by the conductor. Plan: [class-first-build-plan-2026-10-14.md](../class-first-build-plan-2026-10-14.md).
 Integration branch `rework/class-first` (conductor worktree `../mmo-rework`).
 
-**Updated:** 2026-10-16 (overnight polish, see [OVERNIGHT-REPORT.md](OVERNIGHT-REPORT.md)): all nine OV agents
+**Updated:** 2026-10-18 (round 2, see [OVERNIGHT-REPORT.md](OVERNIGHT-REPORT.md), round 2 on top): the designer's five
+answers applied; all eighteen discipline chains (three per class) pass T1-T4 on the final tree; OV2 agents merged
+(Striker, Squire, Conduit, Slinger, Spirit, Apprentice, guide, guide smoke); fixes for review: the dungeon guard
+reform, auto-combat at guard packs (returning monsters at home, guardians walking home), the class line in the
+client, the Numb II cast bar; `classBossSim --guards` fights a dungeon's guard. Suite 402/402, typecheck clean.
+
+Earlier: 2026-10-16 (overnight polish): all nine OV agents
 merged (six classes, hooks, docs, client); every class route crafts its gear and is tuned toward the T1-T4 bar;
 the monster tier factor, tier-aware travel and the playtest command (`node tools/lane/playtest.mjs`) are in.
 **Baseline:** `rework/class-first` after the OV merges and their test fixes, typecheck clean (suite count in
